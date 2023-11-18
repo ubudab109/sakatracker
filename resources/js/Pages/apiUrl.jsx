@@ -1,0 +1,1 @@
+export const globalVariable = 'https://sakainvtrack.issbox.com/api';
