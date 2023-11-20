@@ -15,7 +15,6 @@ export default function Modal({
     datas = null,
     onClose = () => {},
 }) {
-    console.log(datas);
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
         status: '',
         note: props ? props.data.revision_vendor.note : '',
@@ -132,7 +131,7 @@ export default function Modal({
                   >
                     <form onSubmit={submit}>
                         <div class="grid grid-cols-2 gap-4">
-                        {files.length > 0 && (<>
+                        {Array.isArray(files) && files.length > 0 && (<>
                             <div class="flex justify-start gap-3">
                             {files[idxfile].name} ({idxfile+1}/{files.length})
                                 {props != null ? 
@@ -195,7 +194,7 @@ export default function Modal({
                     </form>
                   </Dialog.Title>
                   <div className="mt-2" style={{height:'92%'}}>
-                    {files.length > 0 && (<iframe width={'100%'} height={'100%'} src={files[idxfile].ispdf ? baseUrl+'/pdfview?file='+files[idxfile].edited : files[idxfile].edited}></iframe>)}
+                    {files.length > 0 && (<iframe width={'100%'} height={'100%'} src={Array.isArray(files) ? (files[idxfile].ispdf ? baseUrl+'/pdfview?file='+files[idxfile].edited : files[idxfile].edited) : files}></iframe>)}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

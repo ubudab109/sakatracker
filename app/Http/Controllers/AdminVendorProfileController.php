@@ -178,6 +178,7 @@ class AdminVendorProfileController extends Controller
         }
         $registerList = RevisionRegisterVendor::where('status', 'menunggu persetujuan')
         ->whereIn('approval_role', $roleUser)
+        ->orderBy('id', 'desc')
         ->get();
 
         $vendorIds = []; // Untuk melacak vendor_id yang telah muncul
@@ -205,9 +206,8 @@ class AdminVendorProfileController extends Controller
 
         $data['revision_vendors'] = RevisionRegisterVendor::with('vendor')
         ->whereIn('id', $data['revision_vendors'])
-        ->orderBy('updated_at')
+        ->orderBy('id', 'desc')
         ->get();
-
         return Inertia::render('Admin/VendorProfile/Index', [
             'data' => $data
         ]);

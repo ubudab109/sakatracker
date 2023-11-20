@@ -5,6 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import $ from 'jquery';
 import 'datatables.net';
+import { npwpFormat } from '@/Utils/helper';
 
 
 export default function TableVendor(props) {
@@ -60,7 +61,7 @@ export default function TableVendor(props) {
                                     </td>
                                     <td className='border border-slate-600'>{`${item.vendor_latest.id_manual}`}</td>
                                     <td className='border border-slate-600'>{item.vendor_latest.name}, {item.vendor_latest.legality}</td>
-                                    <td className='border border-slate-600'>{item.vendor_latest.npwp}</td>
+                                    <td className='border border-slate-600'>{npwpFormat(item.vendor_latest.npwp.toString())}</td>
                                     <td className='border border-slate-600'>{item.vendor_latest.email}</td>
                                     <td className='border border-slate-600'>{item.vendor_latest.phone_number}</td>
                                     <td className='border border-slate-600'>{formatDate(item.vendor_latest.updated_at)}</td>

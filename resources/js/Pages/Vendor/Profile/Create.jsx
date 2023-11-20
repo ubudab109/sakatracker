@@ -433,6 +433,7 @@ export default function Create(props) {
                                             id="email"
                                             name="email"
                                             type="email"
+                                            readOnly
                                             value={data.email}
                                             className="mt-1 block w-full"
                                             autoComplete="email"

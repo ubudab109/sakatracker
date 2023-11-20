@@ -22,6 +22,7 @@ export default function Index(props) {
         attachment: '',
         reject_user_id: '',
     });
+    const [fileOpen, setFileOpen] = useState('');
     
     const submit = (e) => {
         e.preventDefault();
@@ -69,11 +70,13 @@ export default function Index(props) {
 
     const fileTypes = ["PDF"];
 
-    const openPopup = () => {
+    const openPopup = (file) => {
+        setFileOpen(file);
         setIsPopupOpen(true);
     };
 
     const closePopup = () => {
+        setFileOpen('');
         setIsPopupOpen(false);
     };
 
@@ -285,8 +288,10 @@ export default function Index(props) {
                                             1 Berkas
                                             {props.data.invoice && (
                                                 <a
-                                                    href={props.data.invoice.tax_invoice}
-                                                    target="_blank"
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(props.data.invoice.tax_invoice)
+                                                    }
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -316,8 +321,10 @@ export default function Index(props) {
                                             1 Berkas
                                             {props.data.invoice && (
                                                 <a
-                                                    href={props.data.invoice.invoice}
-                                                    target="_blank"
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(props.data.invoice.invoice)
+                                                    }
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -348,7 +355,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.exchange_invoice_attachments)
                                                 }
                                             >
                                                 <svg

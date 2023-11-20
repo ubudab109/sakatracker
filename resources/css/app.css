@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dataTables_length select:not([size]) {
+    background-position: left 17px center !important;
+    font-size: 12px !important;
+}

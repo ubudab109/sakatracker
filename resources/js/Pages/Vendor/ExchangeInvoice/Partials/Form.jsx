@@ -16,7 +16,6 @@ import Modal from "@/Components/Modal";
 import PDFPopup from "@/Components/PDFPopup";
 
 export default function Form(props) {
-    console.log(props);
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
         // category: props.data.invoice == null ? '' : props.data.invoice.category,
         location: props.data.invoice == null ? '' : props.data.invoice.location,
