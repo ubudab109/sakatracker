@@ -176,7 +176,11 @@ class AdminVendorProfileController extends Controller
                 array_push($roleUser, $item->role->name);
             }
         }
-        $registerList = RevisionRegisterVendor::where('status', 'menunggu persetujuan')
+        $registerList = RevisionRegisterVendor::
+        where('status', 'menunggu persetujuan')
+        ->whereDoesntHave('vendor', function($q){
+            $q->where('status_account', 'ditolak');
+        })
         ->whereIn('approval_role', $roleUser)
         ->orderBy('id', 'desc')
         ->get();
@@ -214,27 +218,14 @@ class AdminVendorProfileController extends Controller
     }
 
     public function edit($id) {
-        // $roleUser = [];
-        // if(Auth::user()->user_role != null) {
-        //     foreach(Auth::user()->user_role as $item) {
-        //         array_push($roleUser, $item->role->name);
-        //     }
-        // }
-        // $data['show_ppn_top'] = false;
-        // if(in_array('accounting', $roleUser) || in_array('purchasing', $roleUser)) {
-        //     $data['show_ppn_top'] = true;
-        // }
         $data['permissions'] = $this->checkPermission('verification');
-        
         $data['revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('id', $id)->first();
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();
         $data['payment_terms'] = PaymentTerm::all();
         $data['latest_vendor'] = Vendor::where('user_id', $data['revision_vendor']->vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
-
         $newdocs = [];
         $docs = [];
-
         if ($data['revision_vendor']) {
             foreach ($data['revision_vendor']->vendor->getAttributes() as $key => $value) {
                 if (strpos($key, "file_") === 0 && !empty($value)) {
@@ -272,7 +263,10 @@ class AdminVendorProfileController extends Controller
         $roleUser = [];
         if(Auth::user()->user_role != null) {
             foreach(Auth::user()->user_role as $item) {
-                array_push($roleUser, $item->role->name);
+                foreach($item->role->permissions as $role_permission)
+                {
+                    array_push($roleUser, $role_permission->name);
+                }
             }
         }
         $data = RevisionRegisterVendor::where('id', $id)->first();
@@ -280,10 +274,28 @@ class AdminVendorProfileController extends Controller
         $ppn = '';
         $document = '';
         $note = '';
-        if(in_array('accounting', $roleUser) || in_array('purchasing', $roleUser))
+        if(in_array('update_ppn_top_vendor_profile', $roleUser))
         {
             $top = 'required|string|max:255';
             $ppn = 'required|string|max:255';
+        }
+
+        $skb = '';
+        $pph = '';
+        $coa_prepayment = '';
+        $coa_liability_account = '';
+        $coa_receiving = '';
+        $ship_to = '';
+        $bill_to = '';
+        if(in_array('update_skb_accounting_vendor_profile', $roleUser))
+        {
+            $skb = 'required|string|max:255';
+            $pph = 'required|string|max:255';
+            $coa_prepayment = 'required|string|max:255';
+            $coa_liability_account = 'required|string|max:255';
+            $coa_receiving = 'required|string|max:255';
+            $ship_to = 'required|string|max:255';
+            $bill_to = 'required|string|max:255';
         }
 
         if($request->status == 'ditolak') {
@@ -297,6 +309,14 @@ class AdminVendorProfileController extends Controller
             'document' => $document,
             'top' => $top,
             'ppn' => $ppn,
+
+            'skb' => $skb,
+            'pph' => $pph,
+            'coa_prepayment' => $coa_prepayment,
+            'coa_liability_account' => $coa_liability_account,
+            'coa_receiving' => $coa_receiving,
+            'ship_to' => $ship_to,
+            'bill_to' => $bill_to,
         ]);
 
         $documentPath = $data->document ?? '';
@@ -313,6 +333,14 @@ class AdminVendorProfileController extends Controller
             'document' => $documentPath,
             'ppn' => $request->ppn ?? '',
             'top' => $request->top ?? '',
+
+            'skb' => $request->skb ?? '',
+            'pph' => $request->pph ?? '',
+            'coa_prepayment' => $request->coa_prepayment ?? '',
+            'coa_liability_account' => $request->coa_liability_account ?? '',
+            'coa_receiving' => $request->coa_receiving ?? '',
+            'ship_to' => $request->ship_to ?? '',
+            'bill_to' => $request->bill_to ?? '',
         ]);
 
         $data->vendor->update([

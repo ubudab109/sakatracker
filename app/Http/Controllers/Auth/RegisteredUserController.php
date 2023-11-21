@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'npwp' => 'required|string|max:255|unique:'.Vendor::class,
             'legality' => 'max:255',
@@ -58,10 +59,9 @@ class RegisteredUserController extends Controller
             'postal_code' => 'required|max:255',
             'phone_number' => 'required|max:255',
             'mobile_phone_number' => 'required|max:255',
-            'type_of_business' => 'required|string|max:255',
+            'type_of_business' => 'required|string',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
 
         try {
             DB::beginTransaction();

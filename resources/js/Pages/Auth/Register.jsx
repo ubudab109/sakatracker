@@ -48,7 +48,7 @@ export default function Register(props) {
     const [selectedOptionCountry, setSelectedOptionCountry] = useState(102);
     const [selectedOptionProvince, setSelectedOptionProvince] = useState('');
     const [selectedOptionCity, setSelectedOptionCity] = useState('');
-    const [selectedCompanyType, setSelectedCompanyType] = useState('');
+    const [selectedNameBusiness, setSelectedNameBusiness] = useState('');
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
     const [dataApi, setDataApi] = useState(true);
@@ -57,9 +57,9 @@ export default function Register(props) {
 
     const [selectedOptionLegality, setSelectedOptionLegality] = useState('');
 
-    const handleCompanyType = (event) => {
-        data.type_of_business = event.target.value;
-        setSelectedCompanyType(data.type_of_business);
+    const handleNameBusiness = (event) => {
+        data.name_business = event.target.value;
+        setSelectedNameBusiness(data.name_business);
     }  
 
     const handleLegalityChange = (event) => {
@@ -272,8 +272,8 @@ export default function Register(props) {
                         id="type_of_business"
                         name="type_of_business"
                         required
-                        value={selectedCompanyType}
-                        onChange={handleCompanyType}
+                        value={selectedNameBusiness}
+                        onChange={handleNameBusiness}
                     >
                         <option value={''} defaultValue={''} disabled>Jenis Usaha</option>
                         {typeOfBusiness.map((item, index) => (

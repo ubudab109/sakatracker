@@ -223,6 +223,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/exchange-invoice/', [AdminExchangeInvoiceController::class, 'index'])->name('admin.exchange-invoice.index');
     Route::get('/admin/exchange-invoice/{id}', [AdminExchangeInvoiceController::class, 'show'])->name('admin.exchange-invoice.show');
+    Route::get('/admin/exchange-invoice/{id}/rfp', [AdminExchangeInvoiceController::class, 'showRfp'])->name('admin.exchange-invoice.show-rfp');
     Route::post('/admin/exchange-invoice/{id}', [AdminExchangeInvoiceController::class, 'update'])->name('admin.exchange-invoice.update');
 
     Route::get('/admin/matching/', [AdminMatchingController::class, 'index'])->name('admin.matching.index');

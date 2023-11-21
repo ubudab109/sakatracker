@@ -19,6 +19,7 @@ use App\Models\PurchaseOrder;
 use App\Models\OracleRfpView;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\SlaWeekend;
 use App\Models\SlaHoliday;
 use Spatie\PdfToImage\Pdf;
@@ -28,6 +29,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Zxing\QrReader;
 use Carbon\Carbon;
+use Storage;
 use File;
 use Auth;
 use Mail;
@@ -109,15 +111,15 @@ class ExchangeInvoiceController extends Controller
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = ExchangeInvoiceLocation::get();
-        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        $poArray = $po->map(function ($po) {
-            return [
-                'value' => $po->po_header_id,
-                'label' => $po->po_num,
-            ];
-        });
+        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        // $poArray = $po->map(function ($po) {
+        //     return [
+        //         'value' => $po->po_header_id,
+        //         'label' => $po->po_num,
+        //     ];
+        // });
 
-        $data['po_array'] = $poArray->toArray();
+        // $data['po_array'] = $poArray->toArray();
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         return Inertia::render('Vendor/ExchangeInvoice/Create', [
@@ -339,16 +341,49 @@ class ExchangeInvoiceController extends Controller
                         $exchangeInvoice->update([
                             'status' => 'tukar faktur tidak valid'
                         ]);
+
+                        $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                        $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $exchangeInvoice->id;
+                        $notifApprover['url'] = '/exchange-invoice/' . $exchangeInvoice->id;
+    
+                        Notification::create([
+                            'user_id' => $vendor->user_id,
+                            'title' => $notifApprover['title'],
+                            'description' => $notifApprover['description'],
+                            'url' => $notifApprover['url'],
+                        ]);
                     }
                 } else {
                     // Handle error if the response status code is not 200
                     $exchangeInvoice->update([
                         'status' => 'tukar faktur tidak valid'
                     ]);
+
+                    $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                    $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $exchangeInvoice->id;
+                    $notifApprover['url'] = '/exchange-invoice/' . $exchangeInvoice->id;
+
+                    Notification::create([
+                        'user_id' => $vendor->user_id,
+                        'title' => $notifApprover['title'],
+                        'description' => $notifApprover['description'],
+                        'url' => $notifApprover['url'],
+                    ]);
                 }
             } else {
                 $exchangeInvoice->update([
                     'status' => 'tukar faktur tidak valid'
+                ]);
+
+                $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $exchangeInvoice->id;
+                $notifApprover['url'] = '/exchange-invoice/' . $exchangeInvoice->id;
+
+                Notification::create([
+                    'user_id' => $vendor->user_id,
+                    'title' => $notifApprover['title'],
+                    'description' => $notifApprover['description'],
+                    'url' => $notifApprover['url'],
                 ]);
             }
         }
@@ -406,8 +441,55 @@ class ExchangeInvoiceController extends Controller
 
         // $data['printed_date'] = date('d-m-Y H:i:s');
 
+        $newdocs = [];
+        $docs = [];
+
+        if ($data['invoice']->exchange_invoice_attachments) {
+            foreach ($data['invoice']->exchange_invoice_attachments as $file) {
+                $doc_path = parse_url($file->file, PHP_URL_PATH);
+                $nama_doc = basename($doc_path);
+
+                //have edited file
+                $folder = explode("/",$doc_path);
+                $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
+                $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                $exist = Storage::disk('public')->exists($fileedited);
+                $newdoc = [
+                    'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                    'origin'=>Storage::disk('public')->url($fileorigin),
+                    'name'=>$folder[count($folder)-2],
+                    'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                ];
+                $newdocs[] = $newdoc;
+            }
+        }
+
+        $arrayFile = ['invoice', 'tax_invoice', 'quotation', 'bast', 'po'];
+        foreach($arrayFile as $array)
+        {
+            $doc_path = parse_url($data['invoice'][$array], PHP_URL_PATH);
+            $nama_doc = basename($doc_path);
+
+            //have edited file
+            $folder = explode("/",$doc_path);
+            if(count($folder) == 4)
+            {
+                $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
+                $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                $exist = Storage::disk('public')->exists($fileedited);
+                $newdoc = [
+                    'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                    'origin'=>Storage::disk('public')->url($fileorigin),
+                    'name'=>$folder[count($folder)-2],
+                    'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                ];
+                $newdocs[] = $newdoc;
+            }
+        }
+
         return Inertia::render('Vendor/ExchangeInvoice/Show', [
-            'data' => $data
+            'data' => $data,
+            'newdocs'=>$newdocs
         ]);
     }
 
@@ -677,16 +759,49 @@ class ExchangeInvoiceController extends Controller
                         $data->update([
                             'status' => 'tukar faktur tidak valid'
                         ]);
+
+                        $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                        $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $data->id;
+                        $notifApprover['url'] = '/exchange-invoice/' . $data->id;
+    
+                        Notification::create([
+                            'user_id' => $data->vendor->user_id,
+                            'title' => $notifApprover['title'],
+                            'description' => $notifApprover['description'],
+                            'url' => $notifApprover['url'],
+                        ]);
                     }
                 } else {
                     // Handle error if the response status code is not 200
                     $data->update([
                         'status' => 'tukar faktur tidak valid'
                     ]);
+
+                    $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                    $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $data->id;
+                    $notifApprover['url'] = '/exchange-invoice/' . $data->id;
+
+                    Notification::create([
+                        'user_id' => $data->vendor->user_id,
+                        'title' => $notifApprover['title'],
+                        'description' => $notifApprover['description'],
+                        'url' => $notifApprover['url'],
+                    ]);
                 }
             } else {
                 $data->update([
                     'status' => 'tukar faktur tidak valid'
+                ]);
+
+                $notifApprover['title'] = 'Tukar Faktur Tidak Valid';
+                $notifApprover['description'] = 'Tukar Faktur dengan No. Dokumen: ' . 'DTF000' . $data->id;
+                $notifApprover['url'] = '/exchange-invoice/' . $data->id;
+
+                Notification::create([
+                    'user_id' => $data->vendor->user_id,
+                    'title' => $notifApprover['title'],
+                    'description' => $notifApprover['description'],
+                    'url' => $notifApprover['url'],
                 ]);
             }
         } elseif($request->status_submit == 'menunggu persetujuan') {

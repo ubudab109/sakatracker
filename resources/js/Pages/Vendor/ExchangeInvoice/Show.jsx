@@ -5,9 +5,13 @@ import React from "react";
 import PrimaryButton from '@/Components/PrimaryButton';
 import History from './Partials/History';
 import SecondaryButton from '@/Components/SecondaryButton';
+import { ArrowLeft } from 'react-feather';
+import ModalViewer from "@/Components/ModalViewer";
+import { useState } from 'react';
 
 export default function Index(props) {
     console.log(props);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
     // Create our number formatter.
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -28,12 +32,32 @@ export default function Index(props) {
       
         return `${day}-${month}-${year}`;
     }
+
+    const [file, setFile] = useState();
+    const handleChangeFile = (file) => {
+        setFile(file);
+        setData('attachment', file);
+    };
+
+    const openPopup = () => {
+        setIsPopupOpen(true);
+    };
+
+    const closePopup = () => {
+        setIsPopupOpen(false);
+    };
     return (
         <AuthenticatedLayout
             user={props.auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
             <Head title="Detail Tukar Faktur" />
+
+            <ModalViewer
+                files={props.newdocs}
+                show={isPopupOpen}
+                onClose={closePopup}
+            />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 className="mb-sm-0 font-size-18">Tukar Faktur</h4>
@@ -46,8 +70,9 @@ export default function Index(props) {
             </div>
 
             <div className="pt-6">
-                <div className="">
-                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+                <div className="flex items-center gap-2">
+                    <a href={route('exchange-invoice.index')}><ArrowLeft /></a>
+                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg w-full">
                         <div className="p-6 text-gray-900 font-bold">Detail Tukar Faktur</div>
                     </div>
                 </div>
@@ -56,7 +81,7 @@ export default function Index(props) {
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <div className='grid grid-cols-1 md:grid-cols-2'>
+                    <div className='grid grid-cols-1 md:grid-cols-2'>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -72,17 +97,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>Nomor Invoice</p>
                                         <p className='text-center'>:</p>
-                                        <p>Invoice 123</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Kategori</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.category}</p>
+                                        <p>{props.data.invoice.invoice_number}</p>
                                     </div>
                                 </div>
                             </div>
@@ -117,12 +132,56 @@ export default function Index(props) {
                                 </div>
                             </div>
                             <div></div>
+                            {props.data.invoice.is_po == 1 ?
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>NO PO</p>
+                                            <p className='text-center'>:</p>
+                                            <p>{props.data.invoice.po_number}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            : ''}
+                            {props.data.invoice.is_po == 1 ?
+                            <div></div>
+                            : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>Periode</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.date}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>Status Approval</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.status_approval}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>DPP</p>
+                                        <p className='text-center'>:</p>
+                                        <p>Rp. {props.data.invoice.dpp}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>PPN</p>
+                                        <p className='text-center'>:</p>
+                                        <p>Rp. {props.data.invoice.ppn}</p>
                                     </div>
                                 </div>
                             </div>
@@ -150,9 +209,202 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
+                                        <p>File Tukar Faktur</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>File Invoice</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.invoice != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>File BAST</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.bast != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>File Quotation</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.quotation != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            {props.data.invoice.is_po == 1 ?
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>File PO</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.po != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            : '' }
+                            {props.data.invoice.is_po == 1 ?
+                            <div></div>
+                            : '' }
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
                                         <p>Lampiran</p>
                                         <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
+                                            {props.data.invoice.exchange_invoice_attachments.length > 0 && (
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup()
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>)}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

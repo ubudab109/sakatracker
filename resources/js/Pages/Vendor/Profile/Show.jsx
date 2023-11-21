@@ -8,6 +8,7 @@ import { useState } from 'react';
 import PDFPopup from '@/Components/PDFPopup';
 import PDFViewer from './Components/PDFViewer';
 import ModalViewer from '@/Components/ModalViewer';
+import { ArrowLeft } from 'react-feather';
 
 export default function Show(props) {
     console.log(props);
@@ -51,8 +52,9 @@ export default function Show(props) {
             </div>
 
             <div className="pt-6">
-                <div className="">
-                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+                <div className="flex items-center gap-2">
+                    <a href={route('vendor.index')}><ArrowLeft /></a>
+                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg w-full">
                         <div className="p-6 text-gray-900 font-bold">Detail Perubahan Data</div>
                     </div>
                 </div>
@@ -490,7 +492,7 @@ export default function Show(props) {
                         </div> 
                         : ''}
 
-                        {/* {props.data.timeline != '' ? 
+                        {props.data.timeline != '' ? 
                             <div className='p-6'>
                                 <p className="font-bold mb-3">Timeline Pengajuan</p>
                                 <ul className="steps mb-12">
@@ -520,7 +522,7 @@ export default function Show(props) {
                                     </div>
                                 ))}
                             </div> 
-                        : ''} */}
+                        : ''}
 
                         <p className="font-bold mb-3 p-6">
                             <Link href={route('vendor.index')}>

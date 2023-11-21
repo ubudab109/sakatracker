@@ -25,12 +25,14 @@ export default function Show(props) {
         setIsPopupOpen(false);
     };
 
-    const openPopup1 = () => {
-        console.info(props.newdocs);
+    const openPopup1 = (fileUrl) => {
+        setPdfUrl(fileUrl);
+        console.info(pdfUrl);
         setIsPopupOpen1(true);
     };
 
     const closePopup1 = () => {
+        setPdfUrl("");
         setIsPopupOpen1(false);
     };
     return (
@@ -52,7 +54,7 @@ export default function Show(props) {
             />
 
             <ModalViewer
-                files={props.newdocs}
+                files={pdfUrl}
                 show={isPopupOpen1}
                 onClose={closePopup1}
             />
@@ -345,7 +347,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -376,7 +378,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_sppkp)
                                                         }
                                                     >
                                                         <svg
@@ -411,7 +413,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_siup)
                                                         }
                                                     >
                                                         <svg
@@ -443,7 +445,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_tdp)
                                                         }
                                                     >
                                                         <svg
@@ -475,7 +477,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_nib)
                                                         }
                                                     >
                                                         <svg
@@ -521,7 +523,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_board_of_directors_composition)
                                                         }
                                                     >
                                                         <svg
@@ -607,7 +609,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -638,7 +640,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_sppkp)
                                                         }
                                                     >
                                                         <svg
@@ -673,7 +675,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_siup)
                                                         }
                                                     >
                                                         <svg
@@ -705,7 +707,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_tdp)
                                                         }
                                                     >
                                                         <svg
@@ -737,7 +739,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_nib)
                                                         }
                                                     >
                                                         <svg
@@ -786,7 +788,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_board_of_directors_composition)
                                                         }
                                                     >
                                                         <svg
@@ -834,7 +836,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_non_pkp_statement)
                                                         }
                                                     >
                                                         <svg
@@ -892,7 +894,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -961,7 +963,7 @@ export default function Show(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.vendor.file_non_pkp_statement)
                                                         }
                                                     >
                                                         <svg

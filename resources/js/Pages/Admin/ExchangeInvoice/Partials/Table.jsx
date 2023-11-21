@@ -56,7 +56,7 @@ export default function Table(props) {
                                         </div>
                                     </td>
                                     <td>{item.document_number}</td>
-                                    <td>3</td>
+                                    <td>{item.invoice_number}</td>
                                     <td>{item.date}</td>
                                     <td>
                                         {item.is_po == 1 ? 'PO' : item.is_po == 1 ? 'Tanpa PO' : 'MT'}
