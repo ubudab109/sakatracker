@@ -28,6 +28,8 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SignUpController;
 use App\Http\Controllers\PrefixController;
 use App\Http\Controllers\SuffixController;
+use App\Http\Controllers\ShipToController;
+use App\Http\Controllers\BillToController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\AdminController;
@@ -143,6 +145,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/prefix/update/{id}', [PrefixController::class, 'update'])->name('prefix.update');
     Route::delete('/prefix/{id}/destroy', [PrefixController::class, 'destroy'])->name('prefix.destroy');
 
+    Route::get('/ship-to', [ShipToController::class, 'index'])->name('ship-to.index');
+    Route::get('/ship-to/create', [ShipToController::class, 'create'])->name('ship-to.create');
+    Route::post('/ship-to', [ShipToController::class, 'store'])->name('ship-to.store');
+    Route::get('/ship-to/{id}/edit', [ShipToController::class, 'edit'])->name('ship-to.edit');
+    Route::post('/ship-to/update/{id}', [ShipToController::class, 'update'])->name('ship-to.update');
+    Route::delete('/ship-to/{id}/destroy', [ShipToController::class, 'destroy'])->name('ship-to.destroy');
+
+    Route::get('/bill-to', [BillToController::class, 'index'])->name('bill-to.index');
+    Route::get('/bill-to/create', [BillToController::class, 'create'])->name('bill-to.create');
+    Route::post('/bill-to', [BillToController::class, 'store'])->name('bill-to.store');
+    Route::get('/bill-to/{id}/edit', [BillToController::class, 'edit'])->name('bill-to.edit');
+    Route::post('/bill-to/update/{id}', [BillToController::class, 'update'])->name('bill-to.update');
+    Route::delete('/bill-to/{id}/destroy', [BillToController::class, 'destroy'])->name('bill-to.destroy');
+
     Route::get('/vendor/company-profile', [CompanyProfileController::class, 'index'])->name('vendor.company-profile.index');
 
     Route::get('/vendor/report', [VendorReportController::class, 'index'])->name('vendor.report.index');
@@ -233,6 +249,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/admin/sla-weekend/', [SlaWeekendController::class, 'store'])->name('admin.sla-weekend.store');
     
+    Route::post('/admin/import/sla-holiday', [SlaHolidayController::class, 'import'])->name('admin.sla-holiday.import');
     Route::get('/admin/sla-holiday/', [SlaHolidayController::class, 'create'])->name('admin.sla-holiday.create');
     Route::post('/admin/sla-holiday/', [SlaHolidayController::class, 'store'])->name('admin.sla-holiday.store');
     Route::get('/admin/sla-holiday/{id}/edit', [SlaHolidayController::class, 'edit'])->name('admin.sla-holiday.edit');

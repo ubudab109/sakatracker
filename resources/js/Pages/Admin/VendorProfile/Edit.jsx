@@ -10,11 +10,13 @@ import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import PDFPopup from '@/Components/PDFPopup';
 import ModalViewer from "@/Components/ModalViewer";
-import { ArrowLeft, Check, CheckSquare, X } from 'react-feather';
+import { ArrowLeft, Check, CheckSquare, Edit, Plus, Trash, X } from 'react-feather';
 import DangerButton from '@/Components/DangerButton';
+import ModifyButton from '@/Components/ModifyButton';
+import Modal from '@/Components/Modal';
 
 export default function Index(props) {
-    // console.log(props);
+    console.log(props);
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
         status: '',
         note: props.data.revision_vendor.note,
@@ -23,9 +25,9 @@ export default function Index(props) {
         ppn: props.data.revision_vendor.vendor.ppn,
         skb: props.data.revision_vendor.vendor.skb,
         pph: props.data.revision_vendor.vendor.pph,
-        coa_prepayment: props.data.revision_vendor.vendor.coa_prepayment,
-        coa_liability_account: props.data.revision_vendor.vendor.coa_liability_account,
-        coa_receiving: props.data.revision_vendor.vendor.coa_receiving,
+        // coa_prepayment: props.data.revision_vendor.vendor.coa_prepayment,
+        // coa_liability_account: props.data.revision_vendor.vendor.coa_liability_account,
+        // coa_receiving: props.data.revision_vendor.vendor.coa_receiving,
         ship_to: props.data.revision_vendor.vendor.ship_to,
         bill_to: props.data.revision_vendor.vendor.bill_to,
         approval_role: '',
@@ -37,10 +39,22 @@ export default function Index(props) {
         nib_note: props.data.revision_vendor.vendor.nib_note,
         board_of_directors_composition_note: props.data.revision_vendor.vendor.board_of_directors_composition_note,
         non_pkp_statement_note: props.data.revision_vendor.vendor.non_pkp_statement_note,
+
+        file_npwp_validate: props.data.revision_vendor.vendor.npwp_note,
+        file_sppkp_validate: props.data.revision_vendor.vendor.sppkp_note,
+        file_siup_validate: props.data.revision_vendor.vendor.siup_note,
+        file_tdp_validate: props.data.revision_vendor.vendor.tdp_note,
+        file_nib_validate: props.data.revision_vendor.vendor.nib_note,
+        file_board_of_directors_composition_note: props.data.revision_vendor.vendor.board_of_directors_composition_note,
+        file_non_pkp_statement_validate: props.data.revision_vendor.vendor.non_pkp_statement_note,
     });
 
     const [selectedOptionTop, setSelectedOptionTop] = useState(props.data.revision_vendor.vendor.top);
     const [selectedOptionPpn, setSelectedOptionPpn] = useState(props.data.revision_vendor.vendor.ppn);
+    const [selectedOptionSkb, setSelectedOptionSkb] = useState(props.data.revision_vendor.vendor.skb);
+    const [selectedOptionPph, setSelectedOptionPph] = useState(props.data.revision_vendor.vendor.pph);
+    const [selectedOptionShipTo, setSelectedOptionShipTo] = useState(props.data.revision_vendor.vendor.ship_to);
+    const [selectedOptionBillTo, setSelectedOptionBillTo] = useState(props.data.revision_vendor.vendor.pph);
 
     const handleTopChange = (event) => {
         data.top = event.target.value;
@@ -50,6 +64,26 @@ export default function Index(props) {
     const handlePpnChange = (event) => {
         data.ppn = event.target.value;
         setSelectedOptionPpn(data.ppn);
+    }
+
+    const handleSkbChange = (event) => {
+        data.skb = event.target.value;
+        setSelectedOptionSkb(data.skb);
+    }
+
+    const handlePphChange = (event) => {
+        data.pph = event.target.value;
+        setSelectedOptionPph(data.pph);
+    }
+
+    const handleShipToChange = (event) => {
+        data.ship_to = event.target.value;
+        setSelectedOptionShipTo(data.ship_to);
+    }
+
+    const handleBillToChange = (event) => {
+        data.bill_to = event.target.value;
+        setSelectedOptionBillTo(data.bill_to);
     }
 
     const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -95,8 +129,8 @@ export default function Index(props) {
         setIsPopupOpen(false);
     };
 
-    const openPopup1 = () => {
-        console.info(props.newdocs);
+    const openPopup1 = (file) => {
+        setPdfUrl(file);
         setIsPopupOpen1(true);
     };
 
@@ -105,13 +139,13 @@ export default function Index(props) {
     };
 
     const initialState = {
-        fileNpwpStatus: props.data.revision_vendor.vendor.npwp_note ? false : true,
-        fileSppkpStatus: props.data.revision_vendor.vendor.sppkp_note ? false : true,
-        fileSiupStatus: props.data.revision_vendor.vendor.siup_note ? false : true,
-        fileTdpStatus: props.data.revision_vendor.vendor.tdp_note ? false : true,
-        fileNibStatus: props.data.revision_vendor.vendor.nib_note ? false : true,
-        fileBodcStatus: props.data.revision_vendor.vendor.board_of_directors_composition_note ? false : true,
-        fileNonPkpStatus: props.data.revision_vendor.vendor.non_pkp_statement_note ? false : true,
+        fileNpwpStatus: props.data.revision_vendor.vendor.npwp_note ? false : null,
+        fileSppkpStatus: props.data.revision_vendor.vendor.sppkp_note ? false : null,
+        fileSiupStatus: props.data.revision_vendor.vendor.siup_note ? false : null,
+        fileTdpStatus: props.data.revision_vendor.vendor.tdp_note ? false : null,
+        fileNibStatus: props.data.revision_vendor.vendor.nib_note ? false : null,
+        fileBodcStatus: props.data.revision_vendor.vendor.board_of_directors_composition_note ? false : null,
+        fileNonPkpStatus: props.data.revision_vendor.vendor.non_pkp_statement_note ? false : null,
       };
       
       const [fileStatus, setFileStatus] = useState(initialState);
@@ -123,7 +157,11 @@ export default function Index(props) {
           } 
           if (name === fileName && stat === 0) {
             setFileStatus((prevStatus) => ({ ...prevStatus, [statusKey]: true }));
-            data[fileName] = ''; // Assuming 'data' is defined somewhere
+            data[fileName] = 'acc';
+          }
+          if(statusKey == 'validate' && `${name}_validate` === fileName)
+          {
+            data[fileName] = '1';
           }
         };
         
@@ -134,7 +172,107 @@ export default function Index(props) {
         setDataAndStatus('file_nib', 'fileNibStatus');
         setDataAndStatus('file_board_of_directors_composition', 'fileBodcStatus');
         setDataAndStatus('file_non_pkp_statement', 'fileNonPkpStatus');
+        setDataAndStatus('file_npwp_validate', 'validate');
+        setDataAndStatus('file_sppkp_validate', 'validate');
+        setDataAndStatus('file_siup_validate', 'validate');
+        setDataAndStatus('file_tdp_validate', 'validate');
+        setDataAndStatus('file_nib_validate', 'validate');
+        setDataAndStatus('file_board_of_directors_composition_validate', 'validate');
+        setDataAndStatus('file_non_pkp_statement_validate', 'validate');
         // Add more conditions as needed for other files
+      };
+
+    const [isModalSSOpen, setIsModalSSOpen] = useState(false);
+
+    const openModalSS = () => {
+        setIsModalSSOpen(true);
+    };
+
+    const closeModalSS = () => {
+        setIsModalSSOpen(false);
+    };
+
+    const submitModalSS = () => {
+        console.log(formDataSS.entries);
+    };
+
+    const [formDataSS, setFormDataSS] = useState({
+        entries: [], // Array untuk menyimpan setiap entri
+        currentEntry: {
+        supplier_site: '',
+        coa_prepayment: {
+            coa_prepayment_1: '',
+            coa_prepayment_2: '',
+            coa_prepayment_3: '',
+            coa_prepayment_4: '',
+            coa_prepayment_5: '',
+            coa_prepayment_6: '',
+            coa_prepayment_7: '',
+        },
+        },
+      });
+
+      const handleChangeSS = (event) => {
+        const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
+        setFormDataSS((prevFormData) => ({
+        ...prevFormData,
+        currentEntry: {
+            ...prevFormData.currentEntry,
+            supplier_site: selectedOptions,
+        },
+        }));
+      };
+    
+      const handleChangeItemSS = (coaName, coaNumber, event) => {
+        const { value } = event.target;
+        setFormDataSS((prevFormData) => ({
+        ...prevFormData,
+        currentEntry: {
+            ...prevFormData.currentEntry,
+            coa_prepayment: {
+            ...prevFormData.currentEntry.coa_prepayment,
+            [`coa_prepayment_${coaNumber}`]: value,
+            },
+        },
+        }));
+      };
+
+      const addEntry = () => {
+        const currentCoaValues = Object.values(formDataSS.currentEntry.coa_prepayment);
+
+        if (currentCoaValues.every((value) => value !== '')) {
+            setFormDataSS((prevFormData) => ({
+              entries: [...prevFormData.entries, prevFormData.currentEntry],
+              currentEntry: {
+                supplier_site: '',
+                coa_prepayment: {
+                  coa_prepayment_1: '',
+                  coa_prepayment_2: '',
+                  coa_prepayment_3: '',
+                  coa_prepayment_4: '',
+                  coa_prepayment_5: '',
+                  coa_prepayment_6: '',
+                  coa_prepayment_7: '',
+                },
+              },
+            }));
+          } else {
+            // Tampilkan pesan kesalahan atau ambil tindakan lain sesuai kebutuhan
+            alert('Harap pilih semua opsi CoA sebelum menambahkan entri baru.');
+          }
+          closeModalSS();
+      };
+
+      const handleDeleteEntry = (index) => {
+        setFormDataSS((prevFormData) => {
+          const updatedEntries = [...prevFormData.entries];
+          updatedEntries.splice(index, 1);
+          
+          return {
+            ...prevFormData,
+            entries: updatedEntries,
+          };
+        });
       };
 
     return (
@@ -462,7 +600,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -481,11 +619,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_npwp_validate}
+                                                    />
                                                 </>
                                              : '' }
                                             <p>&nbsp;</p>
@@ -517,7 +658,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_sppkp)
                                                         }
                                                     >
                                                         <svg
@@ -536,11 +677,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_sppkp', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileSppkpStatus == null ? 'gray' : fileStatus.fileSppkpStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_sppkp', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileSppkpStatus == null ? 'gray' : fileStatus.fileSppkpStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_sppkp_validate}
+                                                    />
                                                 </>
                                             : <p>-</p> }
                                             / 
@@ -580,7 +724,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_siup)
                                                         }
                                                     >
                                                         <svg
@@ -599,11 +743,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_siup', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileSiupStatus == null ? 'gray' : fileStatus.fileSiupStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_siup', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileSiupStatus == null ? 'gray' : fileStatus.fileSiupStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_siup_validate}
+                                                    />
                                                 </>
                                             : <p>-</p> }
                                             / 
@@ -643,7 +790,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_tdp)
                                                         }
                                                     >
                                                         <svg
@@ -662,11 +809,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_tdp', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileTdpStatus == null ? 'gray' : fileStatus.fileTdpStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_tdp', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileTdpStatus == null ? 'gray' : fileStatus.fileTdpStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_tdp_validate}
+                                                    />
                                                 </>
                                             : <p>-</p> }
                                             / 
@@ -706,7 +856,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_nib)
                                                         }
                                                     >
                                                         <svg
@@ -725,11 +875,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_nib', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileNibStatus == null ? 'gray' : fileStatus.fileNibStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_nib', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileNibStatus == null ? 'gray' : fileStatus.fileNibStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_nib_validate}
+                                                    />
                                                 </>
                                             : <p>-</p> }
                                             / 
@@ -778,7 +931,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_board_of_directors_composition)
                                                         }
                                                     >
                                                         <svg
@@ -797,11 +950,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_board_of_directors_composition', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileBodcStatus == null ? 'gray' : fileStatus.fileBodcStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_board_of_directors_composition', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileBodcStatus == null ? 'gray' : fileStatus.fileBodcStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_board_of_directors_composition_validate}
+                                                    />
                                                 </>
                                             : <p>-</p> }
                                             <p>&nbsp;</p>
@@ -867,7 +1023,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -886,11 +1042,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 0)} hidden={submitSuccess}>
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 1)} hidden={submitSuccess}>
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_npwp_validate}
+                                                    />
                                                 </>
                                             : '' }
                                             <p>&nbsp;</p>
@@ -922,7 +1081,7 @@ export default function Index(props) {
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup1()
+                                                        openPopup1(props.data.revision_vendor.vendor.file_sppkp)
                                                     }
                                                 >
                                                     <svg
@@ -941,11 +1100,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_sppkp', 0)} hidden={submitSuccess}>
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileSppkpStatus == null ? 'gray' : fileStatus.fileSppkpStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_sppkp', 1)} hidden={submitSuccess}>
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileSppkpStatus == null ? 'gray' : fileStatus.fileSppkpStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_sppkp_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             / 
@@ -985,7 +1147,7 @@ export default function Index(props) {
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup1()
+                                                        openPopup1(props.data.revision_vendor.vendor.file_siup)
                                                     }
                                                 >
                                                     <svg
@@ -1004,11 +1166,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_siup', 0)} hidden={submitSuccess}>
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileSiupStatus == null ? 'gray' : fileStatus.fileSiupStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_siup', 1)} hidden={submitSuccess}>
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileSiupStatus == null ? 'gray' : fileStatus.fileSiupStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_siup_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             / 
@@ -1051,11 +1216,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a> 
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_tdp', 0)} hidden={submitSuccess}>
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileTdpStatus == null ? 'gray' : fileStatus.fileTdpStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_tdp', 1)} hidden={submitSuccess}>
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileTdpStatus == null ? 'gray' : fileStatus.fileTdpStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_tdp_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             / 
@@ -1095,7 +1263,7 @@ export default function Index(props) {
                                                 <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup1()
+                                                    openPopup1(props.data.revision_vendor.vendor.file_nib)
                                                 }
                                             >
                                                 <svg
@@ -1114,11 +1282,14 @@ export default function Index(props) {
                                                 </svg>
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_nib', 0)}hidden={submitSuccess} >
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileNibStatus == null ? 'gray' : fileStatus.fileNibStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_nib', 1)}hidden={submitSuccess} >
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileNibStatus == null ? 'gray' : fileStatus.fileNibStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_nib_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             / 
@@ -1168,7 +1339,7 @@ export default function Index(props) {
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup1()
+                                                        openPopup1(props.data.revision_vendor.vendor.file_board_of_directors_composition)
                                                     }
                                                 >
                                                     <svg
@@ -1187,11 +1358,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_board_of_directors_composition', 0)} hidden={submitSuccess}>
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileBodcStatus == null ? 'gray' : fileStatus.fileBodcStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_board_of_directors_composition', 1)}hidden={submitSuccess}>
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileBodcStatus == null ? 'gray' : fileStatus.fileBodcStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_board_of_directors_composition_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             <p>&nbsp;</p>
@@ -1239,7 +1413,7 @@ export default function Index(props) {
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup1()
+                                                        openPopup1(props.data.revision_vendor.vendor.file_non_pkp_statement)
                                                     }
                                                 >
                                                     <svg
@@ -1258,11 +1432,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a>
                                                 <a hidden={submitSuccess} href="javascript:;" onClick={(e) => clickStatusFile('file_non_pkp_statement', 0)} >
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileNonPkpStatus == null ? 'gray' : fileStatus.fileNonPkpStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a hidden={submitSuccess} href="javascript:;" onClick={(e) => clickStatusFile('file_non_pkp_statement', 1)} >
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileNonPkpStatus == null ? 'gray' : fileStatus.fileNonPkpStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_non_pkp_statement_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             <p>&nbsp;</p>
@@ -1309,7 +1486,7 @@ export default function Index(props) {
                                                     <a
                                                         href="javascript:;"
                                                         onClick={(e) =>
-                                                            openPopup1()
+                                                            openPopup1(props.data.revision_vendor.vendor.file_npwp)
                                                         }
                                                     >
                                                         <svg
@@ -1328,11 +1505,14 @@ export default function Index(props) {
                                                         </svg>
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 0)}hidden={submitSuccess} >
-                                                        <Check className='text-green-500' />
+                                                        <Check className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == true ? 'green' : 'gray'}-500`} />
                                                     </a>
                                                     <a href="javascript:;" onClick={(e) => clickStatusFile('file_npwp', 1)}hidden={submitSuccess} >
-                                                        <X className='text-red-500' />
+                                                        <X className={`text-${fileStatus.fileNpwpStatus == null ? 'gray' : fileStatus.fileNpwpStatus == false ? 'red' : 'gray'}-500`} />
                                                     </a>
+                                                    <InputError 
+                                                        message={errors.file_npwp_validate}
+                                                    />
                                                 </>
                                             : '' }
                                             <p>&nbsp;</p>
@@ -1397,7 +1577,7 @@ export default function Index(props) {
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup1()
+                                                        openPopup1(props.data.revision_vendor.vendor.file_non_pkp_statement)
                                                     }
                                                 >
                                                     <svg
@@ -1416,11 +1596,14 @@ export default function Index(props) {
                                                     </svg>
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_non_pkp_statement', 0)} hidden={submitSuccess}>
-                                                    <Check className='text-green-500' />
+                                                    <Check className={`text-${fileStatus.fileNonPkpStatus == null ? 'gray' : fileStatus.fileNonPkpStatus == true ? 'green' : 'gray'}-500`} />
                                                 </a>
                                                 <a href="javascript:;" onClick={(e) => clickStatusFile('file_non_pkp_statement', 1)}hidden={submitSuccess} >
-                                                    <X className='text-red-500' />
+                                                    <X className={`text-${fileStatus.fileNonPkpStatus == null ? 'gray' : fileStatus.fileNonPkpStatus == false ? 'red' : 'gray'}-500`} />
                                                 </a>
+                                                <InputError 
+                                                    message={errors.file_non_pkp_statement_validate}
+                                                />
                                             </>
                                             : <p>-</p> }
                                             <p>&nbsp;</p>
@@ -1435,7 +1618,7 @@ export default function Index(props) {
                                     <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2'>
                                         <div className=''>
                                             <div hidden={submitSuccess}>
-                                                <div className="mb-3" hidden={fileStatus.fileNpwpStatus}>
+                                                <div className="mb-3" hidden={fileStatus.fileNpwpStatus != null ? fileStatus.fileNpwpStatus : true}>
                                                     <InputLabel value="Catatan File NPWP" className="font-bold"/>
                                                     <textarea 
                                                         name="npwp_note"
@@ -1447,7 +1630,8 @@ export default function Index(props) {
 
                                                     <InputError message={errors.npwp_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileSppkpStatus}>
+                                                {props.data.revision_vendor.vendor.type_of_business != 'Pribadi' ?
+                                                <div className="mb-3" hidden={fileStatus.fileSppkpStatus != null ? fileStatus.fileSppkpStatus : true}>
                                                     <InputLabel value="Catatan File SPPKP" className="font-bold"/>
                                                     <textarea 
                                                         name="sppkp_note"
@@ -1459,7 +1643,9 @@ export default function Index(props) {
 
                                                     <InputError message={errors.sppkp_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileSiupStatus}>
+                                                : '' }
+                                                {props.data.revision_vendor.vendor.type_of_business != 'Pribadi' ?
+                                                <div className="mb-3" hidden={fileStatus.fileSiupStatus != null ? fileStatus.fileSiupStatus : true}>
                                                     <InputLabel value="Catatan File SIUP" className="font-bold"/>
                                                     <textarea 
                                                         name="siup_note"
@@ -1471,7 +1657,9 @@ export default function Index(props) {
 
                                                     <InputError message={errors.siup_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileTdpStatus}>
+                                                : '' }
+                                                {props.data.revision_vendor.vendor.type_of_business != 'Pribadi' ?
+                                                <div className="mb-3" hidden={fileStatus.fileTdpStatus != null ? fileStatus.fileTdpStatus : true}>
                                                     <InputLabel value="Catatan File TDP" className="font-bold"/>
                                                     <textarea 
                                                         name="tdp_note"
@@ -1483,7 +1671,9 @@ export default function Index(props) {
 
                                                     <InputError message={errors.tdp_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileNibStatus}>
+                                                : '' }
+                                                {props.data.revision_vendor.vendor.type_of_business != 'Pribadi' ?
+                                                <div className="mb-3" hidden={fileStatus.fileNibStatus != null ? fileStatus.fileNibStatus : true}>
                                                     <InputLabel value="Catatan File NIB" className="font-bold"/>
                                                     <textarea 
                                                         name="nib_note"
@@ -1495,7 +1685,9 @@ export default function Index(props) {
 
                                                     <InputError message={errors.nib_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileBodcStatus}>
+                                                : '' }
+                                                {props.data.revision_vendor.vendor.type_of_business != 'Pribadi' ?
+                                                <div className="mb-3" hidden={fileStatus.fileBodcStatus != null ? fileStatus.fileBodcStatus : true}>
                                                     <InputLabel value="Catatan File Akta Susunan Direksi" className="font-bold"/>
                                                     <textarea 
                                                         name="board_of_directors_composition_note"
@@ -1507,18 +1699,21 @@ export default function Index(props) {
 
                                                     <InputError message={errors.board_of_directors_composition_note} className="mt-2" />
                                                 </div>
-                                                <div className="mb-3" hidden={fileStatus.fileNonPkpStatus}>
-                                                    <InputLabel value="Catatan File Surat pernyataan non pkp" className="font-bold"/>
-                                                    <textarea 
-                                                        name="non_pkp_statement_note"
-                                                        className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                        placeholder="catatan file Surat pernyataan non pkp *"
-                                                        onChange={(e) => setData('non_pkp_statement_note', e.target.value)}
-                                                        value={data.non_pkp_statement_note}
-                                                    />
+                                                : '' }
+                                                {props.data.revision_vendor.vendor.type_of_business != 'PKP' ?
+                                                    <div className="mb-3" hidden={fileStatus.fileNonPkpStatus != null ? fileStatus.fileNonPkpStatus : true}>
+                                                        <InputLabel value="Catatan File Surat pernyataan non pkp" className="font-bold"/>
+                                                        <textarea 
+                                                            name="non_pkp_statement_note"
+                                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                                            placeholder="catatan file Surat pernyataan non pkp *"
+                                                            onChange={(e) => setData('non_pkp_statement_note', e.target.value)}
+                                                            value={data.non_pkp_statement_note}
+                                                        />
 
-                                                    <InputError message={errors.non_pkp_statement_note} className="mt-2" />
-                                                </div>
+                                                        <InputError message={errors.non_pkp_statement_note} className="mt-2" />
+                                                    </div>
+                                                : ''}
                                             </div>
                                             {props.data.approver_revision_done.length > 0 ?
                                                 <div className="w-full mb-3"  hidden={submitSuccess}>
@@ -1608,7 +1803,7 @@ export default function Index(props) {
                                                         />
                                                     </div>
                                                     <div className="mb-3">
-                                                    <InputLabel value="PPN" className="font-bold" required={true}/>
+                                                        <InputLabel value="PPN" className="font-bold" required={true}/>
                                                         <select className="select select-bordered w-full mt-1"
                                                             id="ppn"
                                                             name="ppn"
@@ -1643,20 +1838,16 @@ export default function Index(props) {
                                             {props.data.permissions.includes('update_skb_accounting_vendor_profile') ?
                                                 <div className={`ml-5`}>
                                                     <div className="mb-3">
-                                                        <InputLabel htmlFor="skb" value="SKB" required={true} />
-
-                                                        <TextInput 
+                                                        <InputLabel value="SKB" className="font-bold" required={true}/>
+                                                        <select className="select select-bordered w-full mt-1"
                                                             id="skb"
                                                             name="skb"
-                                                            value={data.skb}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="skb"
-                                                            placeholder="skb.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('skb', e.target.value)}
-                                                            
-                                                        />
-
+                                                            value={selectedOptionSkb}
+                                                            onChange={handleSkbChange}
+                                                        >
+                                                            <option value="ada">Ada</option>
+                                                            <option value="tidak ada">Tidak Ada</option>
+                                                        </select>
                                                         <InputError 
                                                             message={errors.skb}
                                                             className="mt-2"
@@ -1664,20 +1855,16 @@ export default function Index(props) {
                                                     </div>
 
                                                     <div className="mb-3">
-                                                        <InputLabel htmlFor="pph" value="PPH" required={true} />
-
-                                                        <TextInput 
+                                                        <InputLabel value="PPH" className="font-bold" required={true}/>
+                                                        <select className="select select-bordered w-full mt-1"
                                                             id="pph"
                                                             name="pph"
-                                                            value={data.pph}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="pph"
-                                                            placeholder="pph.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('pph', e.target.value)}
-                                                            
-                                                        />
-
+                                                            value={selectedOptionPph}
+                                                            onChange={handlePphChange}
+                                                        >
+                                                            <option value="ada">Ada</option>
+                                                            <option value="tidak ada">Tidak Ada</option>
+                                                        </select>
                                                         <InputError 
                                                             message={errors.pph}
                                                             className="mt-2"
@@ -1685,83 +1872,20 @@ export default function Index(props) {
                                                     </div>
 
                                                     <div className="mb-3">
-                                                        <InputLabel htmlFor="coa_prepayment" value="COA PREPAYMENT" required={true} />
-
-                                                        <TextInput 
-                                                            id="coa_prepayment"
-                                                            name="coa_prepayment"
-                                                            value={data.coa_prepayment}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="coa_prepayment"
-                                                            placeholder="coa prepayment.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('coa_prepayment', e.target.value)}
-                                                            
-                                                        />
-
-                                                        <InputError 
-                                                            message={errors.coa_prepayment}
-                                                            className="mt-2"
-                                                        />
-                                                    </div>
-
-                                                    <div className="mb-3">
-                                                        <InputLabel htmlFor="coa_liability_account" value="COA LIABILITY ACCOUNT" required={true} />
-
-                                                        <TextInput 
-                                                            id="coa_liability_account"
-                                                            name="coa_liability_account"
-                                                            value={data.coa_liability_account}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="coa_liability_account"
-                                                            placeholder="coa liability account.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('coa_liability_account', e.target.value)}
-                                                            
-                                                        />
-
-                                                        <InputError 
-                                                            message={errors.coa_liability_account}
-                                                            className="mt-2"
-                                                        />
-                                                    </div>
-
-                                                    <div className="mb-3">
-                                                        <InputLabel htmlFor="coa_receiving" value="COA RECEIVING" required={true} />
-
-                                                        <TextInput 
-                                                            id="coa_receiving"
-                                                            name="coa_receiving"
-                                                            value={data.coa_receiving}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="coa_receiving"
-                                                            placeholder="coa receiving.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('coa_receiving', e.target.value)}
-                                                            
-                                                        />
-
-                                                        <InputError 
-                                                            message={errors.coa_receiving}
-                                                            className="mt-2"
-                                                        />
-                                                    </div>
-
-                                                    <div className="mb-3">
-                                                        <InputLabel htmlFor="ship_to" value="SHIP TO" required={true} />
-
-                                                        <TextInput 
+                                                        <InputLabel value="Ship To" className="font-bold" required={true}/>
+                                                        <select className="select select-bordered w-full mt-1"
                                                             id="ship_to"
                                                             name="ship_to"
-                                                            value={data.ship_to}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="ship_to"
-                                                            placeholder="ship to.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('ship_to', e.target.value)}
-                                                            
-                                                        />
-
+                                                            value={selectedOptionShipTo}
+                                                            onChange={handleShipToChange}
+                                                        >
+                                                            <option value="" hidden>Ship To</option>
+                                                            {props.data.ship_to.map((item) => (
+                                                                <option key={item.id} value={item.tax}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
                                                         <InputError 
                                                             message={errors.ship_to}
                                                             className="mt-2"
@@ -1769,24 +1893,62 @@ export default function Index(props) {
                                                     </div>
 
                                                     <div className="mb-3">
-                                                        <InputLabel htmlFor="bill_to" value="BILL TO" required={true} />
-
-                                                        <TextInput 
+                                                        <InputLabel value="Bill To" className="font-bold" required={true}/>
+                                                        <select className="select select-bordered w-full mt-1"
                                                             id="bill_to"
                                                             name="bill_to"
-                                                            value={data.bill_to}
-                                                            className="mt-1 block w-full"
-                                                            autoComplete="bill_to"
-                                                            placeholder="bill to.."
-                                                            isFocused={true}
-                                                            onChange={(e) => setData('bill_to', e.target.value)}
-                                                            
-                                                        />
-
+                                                            value={selectedOptionBillTo}
+                                                            onChange={handleBillToChange}
+                                                        >
+                                                            <option value="" hidden>Bill To</option>
+                                                            {props.data.bill_to.map((item) => (
+                                                                <option key={item.id} value={item.tax}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
                                                         <InputError 
                                                             message={errors.bill_to}
                                                             className="mt-2"
                                                         />
+                                                    </div>
+                                                    
+                                                    <InputLabel value="Supplier Site" className="font-bold"/>
+                                                    <div>
+                                                        {formDataSS.entries.map((entry, index) => (
+                                                            <>
+                                                                <div key={index} className="border-2 p-4">
+                                                                    <InputLabel value={`Supplier Site: ${entry.supplier_site}`} className="font-bold"/>
+                                                                    <div className="grid grid-cols-1 mb-3">
+                                                                        <table className="table table-xs">
+                                                                        <thead>
+                                                                            <tr className="border-t bg-gray-100">
+                                                                            <th colSpan="7">COA PREPAYMENT</th>
+                                                                            </tr>
+                                                                            <tr></tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr className="border-collapse border-1 border-gray-500">
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_1}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_2}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_3}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_4}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_5}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_6}</td>
+                                                                            <td>{entry.coa_prepayment.coa_prepayment_7}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                        </table>
+                                                                        <div className='float-right'>
+                                                                            <DangerButton type="button" onClick={() => handleDeleteEntry(index)}><Trash /></DangerButton>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </>
+                                                        ))}
+                                                    </div>
+                                                    <div className='mt-3'>
+                                                        <ModifyButton type="button" onClick={(e) => openModalSS(e)}><Plus /></ModifyButton>
                                                     </div>
                                                 </div>
                                             : 
@@ -1900,6 +2062,56 @@ export default function Index(props) {
                     </div>
                 </div>
             </Transition>
+
+            <Modal show={isModalSSOpen} onClose={closeModalSS}>
+                <div className="p-3 mb-3">
+                    <div className='flex justify-center'>
+                        <InputLabel value="Tambah Supplier Site" className="font-bold text-xl" required={true}/>
+                    </div>
+                    <div className='mb-3'>
+                        <InputLabel value="Supplier Site" className="font-bold" required={true}/>
+
+                        <div className="grid grid-cols-1 items-center gap-3">
+                            <select className="select select-bordered w-full mt-1"
+                                id="supplier_site"
+                                name="supplier_site"
+                                // value={selectedValue5}
+                                onChange={handleChangeSS}
+                                value={formDataSS.currentEntry.supplier_site}
+                                required
+                            >
+                                <option value="" hidden>Pilih</option>
+                                <option value="trade asset">Trade Asset</option>
+                                <option value="non trade asset">Non Trade Asset</option>
+                            </select>
+                        </div>
+                        <div className="grid grid-cols-1 items-center gap-3 mt-3">
+                            <InputLabel value="Coa Prepayment" className="font-bold" required={true}/>
+                        </div>
+                        <div className="grid grid-cols-7 items-center gap-1">
+                            {[1, 2, 3, 4, 5, 6, 7].map(coaNumber => (
+                                <select
+                                key={coaNumber}
+                                className="select select-bordered w-full mt-1"
+                                id={`coa_prepayment_${coaNumber}`}
+                                name={`coa_prepayment_${coaNumber}`}
+                                onChange={(event) => handleChangeItemSS('coa_1', coaNumber, event)}
+                                value={formDataSS.currentEntry.coa_prepayment[`coa_prepayment_${coaNumber}`]}
+                                required
+                                >
+                                <option value="" hidden>Pilih</option>
+                                <option value={`lorem ipsum ${coaNumber}`}>lorem ipsum {coaNumber}</option>
+                                {/* Tambahkan opsi lain jika diperlukan */}
+                                </select>
+                            ))}
+                            </div>
+                        </div>
+                    <div className="mt-6 flex justify-end gap-3">
+                        <SecondaryButton onClick={closeModalSS}>Tutup</SecondaryButton>
+                        <PrimaryButton onClick={addEntry}>Simpan</PrimaryButton>
+                    </div>
+                </div>
+            </Modal>
 
         </AuthenticatedLayout>
     );

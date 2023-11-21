@@ -257,8 +257,7 @@ class AdminExchangeInvoiceController extends Controller
 
         $data['approver_revision_done'] = RevisionExchangeInvoice::with('user')->where('approval_permission', null)->where('exchange_invoice_id', $id)->where('status', 'disetujui')->get();
 
-        $data['outstanding_invoice'] = null;
-        // OracleOutstandingInvoice::with('rfp_views')->where('invoice_num', $data['invoice']->invoice_number)->first();
+        $data['outstanding_invoice'] = OracleOutstandingInvoice::with('rfp_views')->where('invoice_num', $data['invoice']->invoice_number)->first();
 
         $data['total_debit'] = $data['outstanding_invoice']->tax_amount ?? 0;
         $data['total_credit'] = $data['outstanding_invoice']->total_amount ?? 0;
@@ -399,8 +398,7 @@ class AdminExchangeInvoiceController extends Controller
 
         $data['approver_revision_done'] = RevisionExchangeInvoice::with('user')->where('approval_permission', null)->where('exchange_invoice_id', $id)->where('status', 'disetujui')->get();
 
-        $data['outstanding_invoice'] = null;
-        // OracleOutstandingInvoice::with('rfp_views')->where('invoice_num', $data['invoice']->invoice_number)->first();
+        $data['outstanding_invoice'] = OracleOutstandingInvoice::with('rfp_views')->where('invoice_num', $data['invoice']->invoice_number)->first();
 
         $data['total_debit'] = $data['outstanding_invoice']->tax_amount ?? 0;
         $data['total_credit'] = $data['outstanding_invoice']->total_amount ?? 0;

@@ -111,15 +111,15 @@ class ExchangeInvoiceController extends Controller
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = ExchangeInvoiceLocation::get();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_header_id,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_header_id,
+                'label' => $po->po_num,
+            ];
+        });
 
-        // $data['po_array'] = $poArray->toArray();
+        $data['po_array'] = $poArray->toArray();
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         return Inertia::render('Vendor/ExchangeInvoice/Create', [

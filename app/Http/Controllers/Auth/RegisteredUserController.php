@@ -95,6 +95,7 @@ class RegisteredUserController extends Controller
                 'mobile_phone_number' => $request->mobile_phone_number,
                 'email' => $request->email,
                 'suffix' => $request->suffix,
+                'prefix' => $request->prefix,
                 'file_npwp' => '',
                 'file_sppkp' => '',
                 'file_siup' => '',

@@ -19,6 +19,8 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Tax;
+use App\Models\ShipTo;
+use App\Models\BillTo;
 use Carbon\Carbon;
 use Storage;
 use Auth;
@@ -223,9 +225,13 @@ class AdminVendorProfileController extends Controller
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();
         $data['payment_terms'] = PaymentTerm::all();
+        $data['ship_to'] = ShipTo::all();
+        $data['bill_to'] = BillTo::all();
         $data['latest_vendor'] = Vendor::where('user_id', $data['revision_vendor']->vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+
         $newdocs = [];
         $docs = [];
+
         if ($data['revision_vendor']) {
             foreach ($data['revision_vendor']->vendor->getAttributes() as $key => $value) {
                 if (strpos($key, "file_") === 0 && !empty($value)) {
@@ -276,8 +282,10 @@ class AdminVendorProfileController extends Controller
         $note = '';
         if(in_array('update_ppn_top_vendor_profile', $roleUser))
         {
-            $top = 'required|string|max:255';
-            $ppn = 'required|string|max:255';
+            if($request->status == 'disetujui') {
+                $top = 'required|string|max:255';
+                $ppn = 'required|string|max:255';
+            }
         }
 
         $skb = '';
@@ -289,18 +297,100 @@ class AdminVendorProfileController extends Controller
         $bill_to = '';
         if(in_array('update_skb_accounting_vendor_profile', $roleUser))
         {
-            $skb = 'required|string|max:255';
-            $pph = 'required|string|max:255';
-            $coa_prepayment = 'required|string|max:255';
-            $coa_liability_account = 'required|string|max:255';
-            $coa_receiving = 'required|string|max:255';
-            $ship_to = 'required|string|max:255';
-            $bill_to = 'required|string|max:255';
+            if($request->status == 'disetujui') {
+                $skb = 'required|string|max:255';
+                $pph = 'required|string|max:255';
+                // $coa_prepayment = 'required|string|max:255';
+                // $coa_liability_account = 'required|string|max:255';
+                // $coa_receiving = 'required|string|max:255';
+                $ship_to = 'required|string|max:255';
+                $bill_to = 'required|string|max:255';
+            }
         }
 
         if($request->status == 'ditolak') {
             // $document = 'required|mimes:jpg,png,pdf|max:2048';
             $note = 'required|string|max:1000';
+        }
+
+        $validate_npwp_note = '';
+        $validate_sppkp_note = '';
+        $validate_siup_note = '';
+        $validate_tdp_note = '';
+        $validate_nib_note = '';
+        $validate_board_of_directors_composition_note = '';
+        $validate_non_pkp_statement_note = '';
+
+        $validate_file_npwp_validate = 'required';
+        $validate_file_siup_validate = '';
+        $validate_file_sppkp_validate = '';
+        $validate_file_tdp_validate = '';
+        $validate_file_nib_validate = '';
+        $validate_file_board_of_directors_composition_validate = '';
+        $validate_file_non_pkp_statement_validate = '';
+        if($request->status == 'disetujui') {
+            $validate_file_npwp_validate = $request->file_npwp_validate != '1' ? 'required' : '';
+        }
+
+        if($request->status == 'ditolak') {
+            if($request->file_npwp_validate != '1')
+            {
+                $validate_npwp_note = $request->npwp_note == null ? 'required' : '';
+            }
+        }
+
+        if($data->vendor->type_of_business != 'Pribadi')
+        {
+            $validate_file_siup_validate = 'required';
+            $validate_file_sppkp_validate = 'required';
+            $validate_file_tdp_validate = 'required';
+            $validate_file_nib_validate = 'required';
+            $validate_file_board_of_directors_composition_validate = 'required';
+            if($request->status == 'disetujui') {
+                $validate_file_siup_validate = $request->file_siup_validate != '1' ? 'required' : '';
+                $validate_file_sppkp_validate = $request->file_sppkp_validate != '1' ? 'required' : '';
+                $validate_file_tdp_validate = $request->file_tdp_validate != '1' ? 'required' : '';
+                $validate_file_nib_validate = $request->file_nib_validate != '1' ? 'required' : '';
+                $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != '1' ? 'required' : '';
+            }
+
+            if($request->status == 'ditolak') {
+                if($request->file_sppkp_validate != '1')
+                {
+                    $validate_sppkp_note = $request->sppkp_note == null ? 'required' : '';
+                }
+                if($request->file_siup_validate != '1')
+                {
+                    $validate_siup_note = $request->siup_note == null ? 'required' : '';
+                }
+                if($request->file_tdp_validate != '1')
+                {
+                    $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
+                }
+                if($request->file_nib_validate != '1')
+                {
+                    $validate_nib_note = $request->nib_note == null ? 'required' : '';
+                }
+                if($request->file_board_of_directors_composition_validate != '1')
+                {
+                    $validate_board_of_directors_composition_note = $request->board_of_directors_composition_note == null ? 'required' : '';
+                }
+            }
+        }
+
+        if($data->vendor->type_of_business != 'PKP')
+        {
+            $validate_file_non_pkp_statement_validate = 'required';
+            if($request->status == 'disetujui') {
+                $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != '1' ? 'required' : '';
+            }
+
+            if($request->status == 'ditolak') {
+                if($request->file_non_pkp_statement_validate != '1')
+                {
+                    $validate_non_pkp_note = $request->non_pkp_note == null ? 'required' : '';
+                }
+            }
         }
 
         $request->validate([
@@ -317,7 +407,25 @@ class AdminVendorProfileController extends Controller
             'coa_receiving' => $coa_receiving,
             'ship_to' => $ship_to,
             'bill_to' => $bill_to,
+
+            'npwp_note' => $validate_npwp_note,
+            'sppkp_note' => $validate_sppkp_note,
+            'siup_note' => $validate_siup_note,
+            'tdp_note' => $validate_tdp_note,
+            'nib_note' => $validate_nib_note,
+            'board_of_directors_composition_note' => $validate_board_of_directors_composition_note,
+            'non_pkp_statement_note' => $validate_non_pkp_statement_note,
+
+            'file_npwp_validate' => $validate_file_npwp_validate,
+            'file_sppkp_validate' => $validate_file_sppkp_validate,
+            'file_siup_validate' => $validate_file_siup_validate,
+            'file_tdp_validate' => $validate_file_tdp_validate,
+            'file_nib_validate' => $validate_file_nib_validate,
+            'file_board_of_directors_composition_validate' => $validate_file_board_of_directors_composition_validate,
+            'file_non_pkp_statement_validate' => $validate_file_non_pkp_statement_validate,
         ]);
+
+        
 
         $documentPath = $data->document ?? '';
         if ($request->hasFile('document')) {

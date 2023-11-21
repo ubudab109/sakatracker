@@ -76,8 +76,10 @@ export default function Form(props) {
         if(setSelectedValue4 === setSelectedValue) {
             if(dataValue === '1') {
                 setSelectedButtonPO(false);
+                setShowTotalPpnTax(true);
             } else {
                 setSelectedButtonPO(true);
+                setShowTotalPpnTax(false);
             }
         }
     };
@@ -141,34 +143,51 @@ export default function Form(props) {
     const [dataItemsGR, setDataItemsGR] = useState(props.data.invoice == null ? [] : props.data.invoice.purchase_orders);
     const [sumTotalGR, setSumTotalGR] = useState(0);
 
+    const [sumTotalTaxGR, setSumTotalTaxGR] = useState(0);
+
+    const [taxPercentage, setTaxPercentage] = useState(0);
+    const calculateTaxPercentage = (totalAmount, totalAmountWithTax) => {
+        const calculatedTaxPercentage =
+            ((totalAmountWithTax - totalAmount) / totalAmount) * 100;
+        setTaxPercentage(calculatedTaxPercentage);
+    };
+
     const handleCheckboxChange = (gr) => {
-        console.log('test', gr);
+        console.log("test", gr);
         var totalGR = parseInt(sumTotalGR);
+        var totalTaxGR = parseInt(sumTotalTaxGR);
         if (selectedItemsGR.includes(gr)) {
-            console.log('dor', 0)
-          gr.array.forEach((item) => {
-            totalGR -= parseInt(item.purchase_order_detail.sub_total);
-          });
-          setSelectedItemsGR(selectedItemsGR.filter(item => item !== gr));
+            console.log("dor", 0);
+            gr.array.forEach((item) => {
+                totalGR -= parseInt(item.purchase_order_detail.sub_total);
+                totalTaxGR -= parseInt(item.purchase_order_detail.tax);
+            });
+            setSelectedItemsGR(selectedItemsGR.filter((item) => item !== gr));
         } else {
-            console.log('dor', 1)
+            console.log("dor", 1);
             gr.array.forEach((item) => {
                 totalGR += parseInt(item.purchase_order_detail.sub_total);
+                totalTaxGR += parseInt(item.purchase_order_detail.tax);
             });
             setSelectedItemsGR([...selectedItemsGR, gr]);
         }
         console.log(selectedItemsGR);
         setSumTotalGR(totalGR);
+        setSumTotalTaxGR(totalTaxGR);
+        calculateTaxPercentage(totalGR, totalGR + totalTaxGR);
     };
 
+    const [showTotalPpnTax, setShowTotalPpnTax] = useState(false);
     const submitModalGR = () => {
         data.order_id = selectedValue5;
         data.po_number = selectedLabel5;
         data.gr_items = selectedItemsGR;
         data.total = sumTotalGR;
+        data.dpp = sumTotalTaxGR;
+        data.ppn = taxPercentage;
         setDataItemsGR(selectedItemsGR);
         setIsModalGROpen(false);
-    }
+    };
 
     function formatDate(timestamp) {
         const date = new Date(timestamp);
@@ -515,10 +534,14 @@ export default function Form(props) {
                                 className="mt-2"
                             />
                         </div>
-                        <div className="mb-1">
-                            <InputLabel htmlFor="dpp" value="DPP" required={true} />
+                        <div className="mb-1" hidden={showTotalPpnTax}>
+                            <InputLabel
+                                htmlFor="dpp"
+                                value="DPP"
+                                required={true}
+                            />
 
-                            <TextInput 
+                            <TextInput
                                 id="dpp"
                                 name="dpp"
                                 value={data.dpp}
@@ -527,19 +550,19 @@ export default function Form(props) {
                                 autoComplete="dpp"
                                 placeholder="DPP"
                                 isFocused={true}
-                                onChange={(e) => setData('dpp', e.target.value)}
-                                
+                                onChange={(e) => setData("dpp", e.target.value)}
                             />
 
-                            <InputError 
-                                message={errors.dpp}
-                                className="mt-2"
-                            />
+                            <InputError message={errors.dpp} className="mt-2" />
                         </div>
-                        <div className="mb-1">
-                            <InputLabel htmlFor="ppn" value="PPN" required={true} />
+                        <div className="mb-1" hidden={showTotalPpnTax}>
+                            <InputLabel
+                                htmlFor="ppn"
+                                value="PPN"
+                                required={true}
+                            />
 
-                            <TextInput 
+                            <TextInput
                                 id="ppn"
                                 name="ppn"
                                 value={data.ppn}
@@ -548,35 +571,45 @@ export default function Form(props) {
                                 autoComplete="PPN"
                                 placeholder="PPN"
                                 isFocused={true}
-                                onChange={(e) => setData('ppn', e.target.value)}
-                                
+                                onChange={(e) => setData("ppn", e.target.value)}
                             />
 
-                            <InputError 
-                                message={errors.ppn}
+                            <InputError message={errors.ppn} className="mt-2" />
+                        </div>
+                        <div className="mb-1" hidden={showTotalPpnTax}>
+                            <InputLabel
+                                htmlFor="total"
+                                value="Total"
+                                required={true}
+                            />
+
+                            <TextInput
+                                id="total"
+                                name="total"
+                                value={data.total}
+                                type="number"
+                                className="mt-1 block w-full"
+                                autoComplete="Total"
+                                placeholder="Total"
+                                isFocused={true}
+                                onChange={(e) =>
+                                    setData("total", e.target.value)
+                                }
+                            />
+
+                            <InputError
+                                message={errors.total}
                                 className="mt-2"
                             />
                         </div>
-                        <div className="mb-1">
-                                <InputLabel htmlFor="total" value="Total" required={true} />
-
-                                <TextInput 
-                                    id="total"
-                                    name="total"
-                                    value={data.total}
-                                    type="number"
-                                    className="mt-1 block w-full"
-                                    autoComplete="Total"
-                                    placeholder="Total"
-                                    isFocused={true}
-                                    onChange={(e) => setData('total', e.target.value)}
-                                    
-                                />
-
-                                <InputError 
-                                    message={errors.total}
-                                    className="mt-2"
-                                />
+                        <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
+                            <b>DPP: {sumTotalTaxGR}</b>
+                        </div>
+                        <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
+                            <b>PPN: {taxPercentage}</b>
+                        </div>
+                        <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
+                            <b>Total: {sumTotalGR}</b>
                         </div>
                     </div>
                 </div>

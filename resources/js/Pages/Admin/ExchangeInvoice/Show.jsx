@@ -70,7 +70,7 @@ export default function Index(props) {
 
     const fileTypes = ["PDF"];
 
-    const openPopup = (file) => {
+    const openPopup = () => {
         setFileOpen(file);
         setIsPopupOpen(true);
     };
@@ -504,115 +504,281 @@ export default function Index(props) {
                                 </table>
                             </div>
                         : '' }
-                        {props.data.revision_id != null ? 
-                            <form onSubmit={submit}>
-                                <div className='grid grid-cols-1 md:grid-cols-2'>
-                                    <div className='mb-3'>
-                                        <div className='flex justify-around font-bold'>
-                                            <div className='grid grid-cols-3 w-full'>
-                                                <b>TINDAKAN</b>
-                                                <p className='text-center'></p>
-                                                <p></p>
+                        {props.data.revision_id != null ? (
+                            <>
+                                {props.data.outstanding_invoice ? (
+                                    <form onSubmit={submit}>
+                                        <div className="grid grid-cols-1 md:grid-cols-2">
+                                            <div className="mb-3">
+                                                <div className="flex justify-around font-bold">
+                                                    <div className="grid grid-cols-3 w-full">
+                                                        <b>TINDAKAN</b>
+                                                        <p className="text-center"></p>
+                                                        <p></p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div hidden={selectedOptionApprover}></div>
-                                    {props.data.approver_revision_done.length > 0 ?
-                                        <div className='mb-3' hidden={selectedOptionApprover}>
-                                            <div className='flex justify-around font-bold'>
-                                                <div className='grid grid-cols-1 w-full'>
-                                                        <InputLabel value="Approver Invoice" className="font-bold" />
-                                                        <select className="select select-bordered w-full mt-1"
-                                                            id="reject_user_id"
-                                                            name="reject_user_id"
-                                                            value={selectedOptionApproverVendor}
-                                                            onChange={handleApproverVendorChange}
+                                            <div
+                                                hidden={selectedOptionApprover}
+                                            ></div>
+                                            {props.data.approver_revision_done
+                                                .length > 0 ? (
+                                                <div
+                                                    className="mb-3"
+                                                    hidden={
+                                                        selectedOptionApprover
+                                                    }
+                                                >
+                                                    <div className="flex justify-around font-bold">
+                                                        <div className="grid grid-cols-1 w-full">
+                                                            <InputLabel
+                                                                value="Approver Invoice"
+                                                                className="font-bold"
+                                                            />
+                                                            <select
+                                                                className="select select-bordered w-full mt-1"
+                                                                id="reject_user_id"
+                                                                name="reject_user_id"
+                                                                value={
+                                                                    selectedOptionApproverVendor
+                                                                }
+                                                                onChange={
+                                                                    handleApproverVendorChange
+                                                                }
+                                                            >
+                                                                <option
+                                                                    value=""
+                                                                    hidden
+                                                                >
+                                                                    Pilih
+                                                                </option>
+                                                                {props.data.approver_revision_done.map(
+                                                                    (
+                                                                        item,
+                                                                        index
+                                                                    ) => (
+                                                                        <option
+                                                                            value={
+                                                                                item.user_id
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                item
+                                                                                    .user
+                                                                                    .name
+                                                                            }
+                                                                        </option>
+                                                                    )
+                                                                )}
+                                                            </select>
+
+                                                            <InputError
+                                                                message={
+                                                                    errors.status
+                                                                }
+                                                                className="mt-2"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                ""
+                                            )}
+                                            <div></div>
+                                            <div
+                                                className="mb-3"
+                                                hidden={
+                                                    showOptionApproverInvoice
+                                                }
+                                            >
+                                                <div className="flex justify-around font-bold">
+                                                    <div className="grid grid-cols-1 w-full">
+                                                        <InputLabel
+                                                            value="Approver Invoice"
+                                                            className="font-bold"
+                                                            required={true}
+                                                        />
+                                                        <select
+                                                            className="select select-bordered w-full mt-1"
+                                                            id="approver_invoice"
+                                                            name="approver_invoice"
+                                                            value={
+                                                                selectedApproverInvoice
+                                                            }
+                                                            onChange={
+                                                                handleApproverInvoiceChange
+                                                            }
                                                         >
-                                                            <option value="" hidden>Pilih</option>
-                                                            {props.data.approver_revision_done.map((item, index) => (
-                                                                <option value={item.user_id}>{item.user.name}</option>
-                                                            ))}
+                                                            <option
+                                                                value=""
+                                                                hidden
+                                                            >
+                                                                Pilih
+                                                            </option>
+                                                            {props.data.approver_invoices.map(
+                                                                (
+                                                                    item,
+                                                                    index
+                                                                ) => (
+                                                                    <option
+                                                                        value={
+                                                                            item.id
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </option>
+                                                                )
+                                                            )}
                                                         </select>
 
-                                                        <InputError message={errors.status} className="mt-2" />
+                                                        <InputError
+                                                            message={
+                                                                errors.approver_invoice
+                                                            }
+                                                            className="mt-2"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                hidden={
+                                                    showOptionApproverInvoice
+                                                }
+                                            ></div>
+                                            <div className="mb-3">
+                                                <div className="flex justify-around font-bold">
+                                                    <div className="grid grid-cols-1 w-full">
+                                                        <InputLabel
+                                                            value="Catatan"
+                                                            className="font-bold"
+                                                        />
+                                                        <textarea
+                                                            name="note"
+                                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                                            placeholder="catatan *"
+                                                            onChange={(e) =>
+                                                                setData(
+                                                                    "note",
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                            value={data.note}
+                                                        />
+
+                                                        <InputError
+                                                            message={
+                                                                errors.note
+                                                            }
+                                                            className="mt-2"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div></div>
+                                            <div className="mb-3">
+                                                <div className="flex justify-around font-bold">
+                                                    <div className="grid grid-cols-1 w-full">
+                                                        <InputLabel
+                                                            value="Lampiran Lainnya"
+                                                            className="font-bold"
+                                                            required={true}
+                                                        />
+                                                        <div className="w-full">
+                                                            <FileUploader
+                                                                handleChange={
+                                                                    handleChangeFile
+                                                                }
+                                                                name="attachment"
+                                                                types={
+                                                                    fileTypes
+                                                                }
+                                                                multiple={true}
+                                                            />
+                                                        </div>
+                                                        <p>
+                                                            {file
+                                                                ? `Total File: ${file.length}`
+                                                                : "no files uploaded yet"}
+                                                        </p>
+
+                                                        <InputError
+                                                            message={
+                                                                errors.file
+                                                            }
+                                                            className="mt-2"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div></div>
+                                            <div className="mb-3">
+                                                <div className="flex justify-center font-bold">
+                                                    <div className="grid grid-cols-2 text-center items-center w-full">
+                                                        <DangerButton
+                                                            className="w-full items-center justify-center"
+                                                            hidden={
+                                                                submitSuccess
+                                                            }
+                                                            onClick={() =>
+                                                                handleStatusChange(
+                                                                    "ditolak"
+                                                                )
+                                                            }
+                                                        >
+                                                            Tolak
+                                                        </DangerButton>
+                                                        <PrimaryButton
+                                                            className="w-full items-center justify-center"
+                                                            hidden={
+                                                                submitSuccess
+                                                            }
+                                                            onClick={() =>
+                                                                handleStatusChange(
+                                                                    "disetujui"
+                                                                )
+                                                            }
+                                                        >
+                                                            Setuju
+                                                        </PrimaryButton>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div></div>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <>
+                                        <div className="mb-3">
+                                            <div className="flex justify-around font-bold">
+                                                <div className="grid grid-cols-3 w-full">
+                                                    <b>TINDAKAN</b>
+                                                    <p className="text-center"></p>
+                                                    <p></p>
                                                 </div>
                                             </div>
                                         </div>
-                                    : ''}
-                                    <div></div>
-                                    <div className='mb-3' hidden={showOptionApproverInvoice}>
-                                        <div className='flex justify-around font-bold'>
-                                            <div className='grid grid-cols-1 w-full'>
-                                                <InputLabel value="Approver Invoice" className="font-bold" required={true}/>
-                                                    <select className="select select-bordered w-full mt-1"
-                                                        id="approver_invoice"
-                                                        name="approver_invoice"
-                                                        value={selectedApproverInvoice}
-                                                        onChange={handleApproverInvoiceChange}
-                                                    >
-                                                        <option value="" hidden>Pilih</option>
-                                                        {props.data.approver_invoices.map((item, index) => (
-                                                            <option value={item.id}>{item.name}</option>
-                                                        ))}
-                                                    </select>
+                                        <b className="text-red-500">
+                                            Data tidak ditemukan di oracle
+                                        </b>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            ""
+                        )}
 
-                                                <InputError message={errors.approver_invoice} className="mt-2" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div hidden={showOptionApproverInvoice}></div>
-                                    <div className='mb-3'>
-                                        <div className='flex justify-around font-bold'>
-                                            <div className='grid grid-cols-1 w-full'>
-                                                <InputLabel value="Catatan" className="font-bold"/>
-                                                    <textarea 
-                                                        name="note"
-                                                        className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                        placeholder="catatan *"
-                                                        onChange={(e) => setData('note', e.target.value)}
-                                                        value={data.note}
-                                                    />
-
-                                                <InputError message={errors.note} className="mt-2" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div></div>
-                                    <div className='mb-3'>
-                                        <div className='flex justify-around font-bold'>
-                                            <div className='grid grid-cols-1 w-full'>
-                                                <InputLabel value="Lampiran Lainnya" className="font-bold" required={true}/>
-                                                <div className="w-full">
-                                                    <FileUploader handleChange={handleChangeFile} name="attachment" types={fileTypes} multiple={true} />
-                                                </div>
-                                                <p>{file ? `Total File: ${file.length}` : "no files uploaded yet"}</p>
-
-                                                <InputError message={errors.file} className="mt-2" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div></div>
-                                    <div className='mb-3'>
-                                        <div className='flex justify-center font-bold'>
-                                            <div className='grid grid-cols-2 text-center items-center w-full'>
-                                                <DangerButton className='w-full items-center justify-center'  hidden={submitSuccess} onClick={() => handleStatusChange('ditolak')}>
-                                                    Tolak
-                                                </DangerButton>
-                                                <PrimaryButton className='w-full items-center justify-center'  hidden={submitSuccess} onClick={() => handleStatusChange('disetujui')}>
-                                                    Setuju
-                                                </PrimaryButton>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div></div>
-                                </div>
-                            </form>
-                        : '' }
-                        <div className='mt-3'>
-                            <b>History</b>
-                            <br />
-                            <History data={props.data.timeline} />
-                        </div>
+                        {props.data.outstanding_invoice ? (
+                            <div className="mt-3">
+                                <b>History</b>
+                                <br />
+                                <History data={props.data.timeline} />
+                            </div>
+                        ) : (
+                            ""
+                        )}
                         <div className="flex justify-end items-end gap-2 mt-2">
                             <Link href={route('admin.exchange-invoice.index')}>
                                 <SecondaryButton>

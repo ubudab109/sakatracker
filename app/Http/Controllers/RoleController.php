@@ -23,7 +23,27 @@ class RoleController extends Controller
                 'name' => 'role',
                 'permission' => ['index', 'store', 'update', 'delete'],
                 'label' => ['Lihat', 'Tambah', 'Edit', 'Hapus']
-            ], [
+            ],[
+                'title' => 'Suffix',
+                'name' => 'suffix',
+                'permission' => ['index'],
+                'label' => ['Lihat']
+            ],[
+                'title' => 'Prefix',
+                'name' => 'prefix',
+                'permission' => ['index'],
+                'label' => ['Lihat']
+            ],[
+                'title' => 'ShipTo',
+                'name' => 'ship_to',
+                'permission' => ['index'],
+                'label' => ['Lihat']
+            ],[
+                'title' => 'BillTo',
+                'name' => 'bill_to',
+                'permission' => ['index'],
+                'label' => ['Lihat']
+            ],[
                 'title' => 'Master User',
                 'name' => 'user',
                 'permission' => ['index', 'store', 'update', 'delete'],

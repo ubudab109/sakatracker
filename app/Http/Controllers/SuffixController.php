@@ -6,14 +6,36 @@ use App\Models\Suffix;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+use Auth;
 
 class SuffixController extends Controller
 {
+    public function checkPermission($role)
+    {
+        $permissions = [];
+        if (Auth::user()->user_role != null) {
+            foreach (Auth::user()->user_role as $user_role) {
+                $permissions[] = $user_role->role->permissions->pluck('name')->toArray();
+            }
+
+            $permissions = array_unique(array_merge(...$permissions));
+        }
+
+        if(!in_array($role . '_suffix', $permissions))
+        {
+            return abort(404);   
+        } else {
+            return $permissions;
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $data['permissions'] = $this->checkPermission('index');
+
         $data['datas'] = Suffix::all();
 
         return Inertia::render('Admin/Suffix/Index', [

@@ -21,7 +21,7 @@ export default function ModalDelete({ show, onClose, item }) {
     const deleteUser = (e) => {
         e.preventDefault();
 
-        destroy(route('admin.sla-holiday.destroy', item.id), {
+        destroy(route('ship-to.destroy', item.id), {
             preserveScroll: true,
             onSuccess: () => onClose(),
             onFinish: () => reset(),
@@ -44,7 +44,7 @@ export default function ModalDelete({ show, onClose, item }) {
                         <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
 
                         <DangerButton className="ml-3" disabled={processing}>
-                            Delete Data
+                            Delete Account
                         </DangerButton>
                     </div>
                 </form>

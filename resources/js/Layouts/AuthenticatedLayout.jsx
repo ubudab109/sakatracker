@@ -274,18 +274,38 @@ return (
                                 </a>
                             </li>
                          : ''}
+                        {permissions.includes('index_suffix') ?
                         <li>
                             <a href={route( "suffix.index" )}>
                                 <Database />
                                 <span>Suffix</span>
                             </a>
                         </li>
+                        : ''}
+                        {permissions.includes('index_prefix') ?
                         <li>
                             <a href={route( "prefix.index" )}>
                                 <Database />
                                 <span>Prefix</span>
                             </a>
                         </li>
+                        : ''}
+                        {permissions.includes('index_ship_to') ?
+                        <li>
+                            <a href={route( "ship-to.index" )}>
+                                <Database />
+                                <span>ShipTo</span>
+                            </a>
+                        </li>
+                        : ''}
+                        {permissions.includes('index_bill_to') ?
+                        <li>
+                            <a href={route( "bill-to.index" )}>
+                                <Database />
+                                <span>BillTo</span>
+                            </a>
+                        </li>
+                        : ''}
                          {permissions.includes('index_user') ?
                             <li>
                                 <a href={route("master-user.index")}>

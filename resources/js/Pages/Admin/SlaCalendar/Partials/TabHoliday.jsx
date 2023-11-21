@@ -6,10 +6,18 @@ import $ from 'jquery';
 import 'datatables.net';
 import { Edit, Trash, X, Check } from 'react-feather';
 import ModifyButton from '@/Components/ModifyButton';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
+import Modal from "@/Components/Modal";
+import InputLabel from '@/Components/InputLabel';
+import InputError from '@/Components/InputError';
+import SecondaryButton from '@/Components/SecondaryButton';
+import { Transition } from '@headlessui/react';
 
 export default function Table(props) {
     console.log(props);
+    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+        excel: '',
+    });
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
@@ -31,15 +39,36 @@ export default function Table(props) {
         return `${day}-${month}-${year} ${hours}:${minutes}`;
     }
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route('admin.sla-holiday.import'), {
+            onSuccess: closeModal()
+        });
+    };
+
     return (
         <div className="pt-6">
             {props.data.permissions.includes('store_sla_calendar') ?
                 <div className="mb-3 text-end">
+                    <ModifyButton type="button" onClick={(e) => openModal(e)}>
+                        Import
+                    </ModifyButton>
                     <Link href={route('admin.sla-holiday.create')}>
                         <ModifyButton>
                             Tambah
                         </ModifyButton>
-                    </Link>    
+                    </Link>
                 </div>
             :''}
             <div className="max-w-7xl mx-auto">
@@ -85,6 +114,39 @@ export default function Table(props) {
                     </table>
                 </div>
             </div>
+            <Modal show={isModalOpen} onClose={closeModal}>
+                <form method="post" onSubmit={submit}>
+                    <div className='border-b-2 p-3'>
+                        <b>Import Data</b>
+                        <p>kolom excel harus terdiri dari 2 Row yaitu: </p>
+                        <p>Row 1 = tanggal dengan format Y-m-d</p>
+                        <p>Row 2 = deskripsi hari libur</p>
+                        <p>*note tanpa header</p>
+                        <div className="mb-1 mt-3">
+                            <InputLabel htmlFor="excel" value="Attach File Excel" required={true} />
+
+                            <div className="flex items-center align-middle">
+                                <input name="excel" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                    onChange={(e) => setData('excel', e.target.files[0])}
+                                />
+                            </div>
+
+                            <InputError 
+                                message={errors.excel}
+                                className="mt-2"
+                            />
+
+                            <div className="mt-6 flex justify-end">
+                                <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
+
+                                <ModifyButton className="ml-3" disabled={processing}>
+                                    Import
+                                </ModifyButton>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </Modal>
             {itemToDelete && (
                 <ModalDelete
                     show={showModal}

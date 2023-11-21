@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SlaHolidayImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
@@ -28,6 +30,24 @@ class SlaHolidayController extends Controller
         } else {
             return implode(' | ', $permissions);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel' => 'required|mimes:xlsx|max:2048'
+        ]);
+
+        $filePath = '';
+        if ($request->hasFile('excel')) {
+            $save = $request->file('excel')->store('public/excel');
+            $filename = $request->file('excel')->hashName();
+            $filePath = url('/') . '/storage/excel/' . $filename;
+        }
+
+        Excel::import(new SlaHolidayImport, storage_path('/app/public/excel/') . $filename);
+        
+        return Redirect::route('admin.sla-calendar.index');
     }
 
     /**

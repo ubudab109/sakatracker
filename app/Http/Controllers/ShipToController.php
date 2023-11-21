@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Prefix;
+use App\Models\ShipTo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use Auth;
 
-class PrefixController extends Controller
+class ShipToController extends Controller
 {
     public function checkPermission($role)
     {
@@ -21,7 +21,7 @@ class PrefixController extends Controller
             $permissions = array_unique(array_merge(...$permissions));
         }
 
-        if(!in_array($role . '_prefix', $permissions))
+        if(!in_array($role . '_ship_to', $permissions))
         {
             return abort(404);   
         } else {
@@ -35,9 +35,10 @@ class PrefixController extends Controller
     public function index()
     {
         $data['permissions'] = $this->checkPermission('index');
-        $data['datas'] = Prefix::all();
 
-        return Inertia::render('Admin/Prefix/Index', [
+        $data['datas'] = ShipTo::all();
+
+        return Inertia::render('Admin/ShipTo/Index', [
             'data' => $data
         ]);
     }
@@ -47,7 +48,7 @@ class PrefixController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Prefix/Create');
+        return Inertia::render('Admin/ShipTo/Create');
     }
 
     /**
@@ -56,14 +57,14 @@ class PrefixController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:'.Prefix::class,
+            'name' => 'required|string|max:255|unique:'.ShipTo::class,
         ]);
     
-        Prefix::create([
+        $ShipTo = ShipTo::create([
             'name' => $request->name
         ]);
 
-        return Redirect::route('prefix.create');
+        return Redirect::route('ship-to.create');
     }
 
     /**
@@ -79,9 +80,9 @@ class PrefixController extends Controller
      */
     public function edit($id)
     {
-        $data['prefix'] = Prefix::where('id', $id)->first();
+        $data['ship_to'] = ShipTo::where('id', $id)->first();
 
-        return Inertia::render('Admin/Prefix/Edit', [
+        return Inertia::render('Admin/ShipTo/Edit', [
             'data' => $data
         ]);
     }
@@ -91,14 +92,14 @@ class PrefixController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Prefix::where('id', $id)->first();
+        $data = ShipTo::where('id', $id)->first();
 
-        $checkName = Prefix::where('name', $request->name)->first();
+        $checkName = ShipTo::where('name', $request->name)->first();
 
         $validateName = '';
 
         if ($checkName && $checkName->id !== $data->id) {
-            $validateName = '|unique:' . Prefix::class;
+            $validateName = '|unique:' . ShipTo::class;
         }
 
         $request->validate([
@@ -110,7 +111,7 @@ class PrefixController extends Controller
         ]);
 
 
-        return Redirect::route('prefix.edit', $data->id);
+        return Redirect::route('ship-to.edit', $data->id);
     }
 
     /**
@@ -118,8 +119,8 @@ class PrefixController extends Controller
      */
     public function destroy($id)
     {
-        Prefix::where('id', $id)->delete();
+        ShipTo::where('id', $id)->delete();
 
-        return Redirect::route('prefix.index');
+        return Redirect::route('ship-to.index');
     }
 }
