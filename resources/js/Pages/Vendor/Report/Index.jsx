@@ -1,3 +1,4 @@
+import '../../../../css/chart.css';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import React from "react";
@@ -8,6 +9,8 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import ChartOverdue from './Partials/ChartOverdue';
 import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
+import CardDashboardChart from '@/Components/CardDashboardChart';
+
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -29,23 +32,22 @@ export default function Index(props) {
                 </div>
             </div>
 
-            <div className="pt-6">
+            {/* <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                         <div className="p-6 text-gray-900 font-bold">Home</div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="pt-6">
                 <div className="">
-                    <div className="border-1 border-black rounded-lg p-2">
+                    <div className="border-0 border-black rounded-lg p-0">
                         <form method="get">
                             <div className='flex gap-3 justify-evenly items-center'>
                                 <div className='w-full'>
-                                    <InputLabel htmlFor="month" value="Filter Bulan" />
-
-                                    <TextInput 
+                                    <br />
+                                    <TextInput
                                         id="month"
                                         name="month"
                                         value={data.month}
@@ -54,7 +56,7 @@ export default function Index(props) {
                                         autoComplete="month"
                                         isFocused={true}
                                         onChange={(e) => setData('month', e.target.value)}
-                                        
+
                                     />
                                 </div>
                                 <div>
@@ -69,9 +71,19 @@ export default function Index(props) {
                 </div>
             </div>
 
-            <CardOutstanding className="pt-6" data={props.data.card_outstanding} month={data.month} />
+            <div className="row mt-5">
+                <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} />
+                <CardDashboardChart name="Outstanding Invoice" data={props.data.card_outstanding.invoice_amount} />
+                <CardDashboardChart name="Outstanding Invoice Amount" data={props.data.card_outstanding.formated_invoice_total} />
+            </div>
 
-            <div className='flex justify-evenly items-center mt-3 gap-3'>
+            {/* <CardOutstanding className="pt-6" data={props.data.card_outstanding} month={data.month} /> */}
+            <div className="row">
+                <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
+                <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
+                <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
+            </div>
+            {/* <div className='flex justify-evenly items-center mt-3 gap-3'>
                 <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
                     <p className='mt-3 text-center text-lg font-bold'>OTP (%)</p>
                     <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
@@ -84,7 +96,7 @@ export default function Index(props) {
                     <p className='mt-3 text-center text-lg font-bold'>Invoice Processing Invoice</p>
                     <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
                 </div>
-            </div>
+            </div> */}
 
         </AuthenticatedLayout>
     );

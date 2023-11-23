@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\RevisionBatchPayment;
 use App\Models\SlaWeekend;
 use App\Models\SlaHoliday;
+use App\Models\Vendor;
+use App\Traits\ExchangeInvoiceTrait;
 use Carbon\Carbon;
 
 use App\Models\RevisionExchangeInvoice;
@@ -23,6 +25,8 @@ use Mail;
 
 class BatchPaymentController extends Controller
 {
+    use ExchangeInvoiceTrait;
+
     public function checkPermission($role)
     {
         $permissions = [];
@@ -72,7 +76,7 @@ class BatchPaymentController extends Controller
 
     public function createBatchPayment(Request $request){
         $batchPayment = BatchPayment::create();
-        $noBatch      = sprintf("PB%04d", $batchPayment->id);
+        $noBatch      = $this->formatBatchInvoiceNumber();
     
         $batchPayment->update([
             'no_batch' => $noBatch,
@@ -90,7 +94,14 @@ class BatchPaymentController extends Controller
                     'batch_payment_id' => $batchPayment->id,
                     'exchange_invoice_id' => $invoiceid
                 ]);
-				$invoice = ExchangeInvoice::where('id', $invoiceid)->first();
+				$invoice = ExchangeInvoice::where('id', $invoiceid)->with('vendor')->first();
+                if ($invoice->vendor) {
+                    $vendor = Vendor::find($invoice->vendor->id);
+                    $noBatch = $this->formatBatchInvoiceNumber($vendor);
+                    $batchPayment->update([
+                        'no_batch' => $noBatch
+                    ]);
+                }
 				$total += $invoice->total;
             }
         }

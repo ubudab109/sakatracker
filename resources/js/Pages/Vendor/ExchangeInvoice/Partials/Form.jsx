@@ -14,6 +14,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import ModalGR from "./ModalGR";
 import Modal from "@/Components/Modal";
 import PDFPopup from "@/Components/PDFPopup";
+import { convertMb } from "@/Utils/helper";
 
 export default function Form(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -21,11 +22,11 @@ export default function Form(props) {
         location: props.data.invoice == null ? '' : props.data.invoice.location,
         date: props.data.invoice == null ? '' : props.data.invoice.date,
         dpp: props.data.invoice == null ? '' : props.data.invoice.dpp,
-        tax_invoice: '',
-        invoice: '',
-        bast: '',
-        po: '',
-        quotation: '',
+        tax_invoice: null,
+        invoice: null,
+        bast: null,
+        po: null,
+        quotation: null,
         ppn: props.data.invoice == null ? '' : props.data.invoice.ppn,
         invoice_number: props.data.invoice == null ? 0 : props.data.invoice.invoice_number,
         // tax_invoice_number: props.data.invoice == null ? 0 : props.data.invoice.tax_invoice_number,
@@ -45,7 +46,7 @@ export default function Form(props) {
     const submit = (e) => {
         e.preventDefault();
         console.log(errors);
-        if(props.data.invoice == null) {
+        if (props.data.invoice == null) {
             post(route('exchange-invoice.store'));
         } else {
             post(route('exchange-invoice.update', props.data.invoice.id));
@@ -73,8 +74,8 @@ export default function Form(props) {
     const handleOptionChange = (dataValue, setSelectedValue) => {
         setSelectedValue(dataValue);
 
-        if(setSelectedValue4 === setSelectedValue) {
-            if(dataValue === '1') {
+        if (setSelectedValue4 === setSelectedValue) {
+            if (dataValue === '1') {
                 setSelectedButtonPO(false);
                 setShowTotalPpnTax(true);
             } else {
@@ -97,23 +98,66 @@ export default function Form(props) {
 
         setSelectedLabel5(event.label);
         // data.po_number = selectedOption.label;
-        
+
         fetch(`/api/purchase-order-detail?order_id=${event.value}`)
-        .then((response) => response.json())
-        .then((res) => {
-            setDataGoodReceipt(res.datas);
-            console.log(res.datas);
-        })
-        .catch((error) => {
-            console.error('Error fetching data:', error);
-        });
+            .then((response) => response.json())
+            .then((res) => {
+                setDataGoodReceipt(res.datas);
+                console.log(res.datas);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
     };
 
-    const [file, setFile] = useState(props.data.invoice == null ? '' : props.data.invoice.exchange_invoice_attachments);
-    const handleChangeFile = (file) => {
-        setFile(file);
-        setData('attachment', file);
+    const [files, setFiles] = useState(props.data.invoice == null ? '' : props.data.invoice.exchange_invoice_attachments);
+    const [objectFilesUrl, setObjectFilesUrl] = useState([]);
+    const [limitedFiles, setLimitedFiles] = useState(0);
+    const handleChangeFile = (fileUploaded) => {
+        const uploaded = [...files];
+        const objectUrl = [...objectFilesUrl];
+        let currentSize = 0;
+        fileUploaded.some((file) => {
+            if (uploaded.findIndex(f => f.name === file.name) === -1) {
+                uploaded.push(file);
+                const objectFile = Object.assign(file);
+                const url = URL.createObjectURL(objectFile);
+                let sizeFile = convertMb(file.size);
+                objectUrl.push({
+                    url: url,
+                    fileName: file.name,
+                    fileSize: sizeFile
+                });
+                currentSize += sizeFile;
+                setLimitedFiles(currentSize);
+            }
+        });
+        setFiles(uploaded);
+        setObjectFilesUrl(objectUrl);
+        setData('attachment', uploaded);
     };
+
+    const removeFiles = (fileName, fileSize) => {
+        const fileUploaded = [...files];
+        const objectUrl = [...objectFilesUrl];
+        const indexFile = fileUploaded.findIndex(f => f.name === fileName);
+        const indexObjectUrl = objectUrl.findIndex(o => o.fileName === fileName);
+        fileUploaded.splice(indexFile, 1);
+        objectUrl.splice(indexObjectUrl, 1);
+        setFiles(fileUploaded);
+        setObjectFilesUrl(objectUrl);
+        setLimitedFiles(limitedFiles - fileSize);
+        setData('attachment', fileUploaded);
+    }
+
+    useEffect(() => {
+        return () => objectFilesUrl.map(url => URL.revokeObjectURL(url));
+    })
+
+    const handleFileEvent = (file) => {
+        const choosenFiles = Array.prototype.slice.call(file);
+        handleChangeFile(choosenFiles);
+    }
 
     const [isModalGROpen, setIsModalGROpen] = useState(false);
 
@@ -131,7 +175,7 @@ export default function Form(props) {
 
     const openPopup = (item) => {
         // console.log(item);
-        setPdfUrl(item); 
+        setPdfUrl(item);
         setIsPopupOpen(true);
     };
 
@@ -196,9 +240,9 @@ export default function Form(props) {
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-      
+
         return `${day}-${month}-${year}`;
-      }
+    }
 
     const fileTypes = ["PDF"];
 
@@ -213,7 +257,7 @@ export default function Form(props) {
         { value: 'forest', label: 'Forest', color: '#00875A' },
         { value: 'slate', label: 'Slate', color: '#253858' },
         { value: 'silver', label: 'Silver', color: '#666666' },
-      ];
+    ];
 
     return (
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
@@ -226,9 +270,9 @@ export default function Form(props) {
 
                 <p className="text-gray-500 mb-3">Anda menggunakan data profil yang disetujui tanggal {formatDate(props.data.user.updated_at)} (< a href={route('vendor.company-profile.index')}>Lihat Detail</a>)</p>
 
-                <div className="grid grid-cols-2">              
+                <div className="grid grid-cols-2">
                     <div className="mb-3 ">
-                        <InputLabel value="PO/Non PO" className="font-bold" required={true}/>
+                        <InputLabel value="PO/Non PO" className="font-bold" required={true} />
 
                         <div className="flex items-center gap-3">
                             <select className="select select-bordered w-full mt-1"
@@ -267,10 +311,10 @@ export default function Form(props) {
                             </thead>
                             <tbody>
                                 {dataItemsGR.map((item, index) => (
-                                <>
-                                    {item.array.map((item1, index) => (
-                                        <tr className="border-collapse border-1 border-gray-500">        
-                                            {/* <td>
+                                    <>
+                                        {item.array.map((item1, index) => (
+                                            <tr className="border-collapse border-1 border-gray-500">
+                                                {/* <td>
                                                 <label className="inline-flex items-center">
                                                     <input
                                                         type="checkbox"
@@ -281,23 +325,23 @@ export default function Form(props) {
                                                     />
                                                 </label>
                                             </td> */}
-                                            <td>{data.document_number == null ? item1.good_receipt.receipt_num : data.document_number}</td>
-                                            <td>
-                                                {data.invoice_number}
-                                            </td>
-                                            <td>{formatDate(data.date_gr == null ? item1.good_receipt.receive_date : data.date_gr)}</td>
-                                            <td>{data.quantity == null ? item1.purchase_order_detail.quantity_ordered : data.quantity}</td>
-                                            <td>{data.unit_price == null ? item1.purchase_order_detail.unit_price : data.unit_price}</td>
-                                            <td>{data.total_price == null ? item1.purchase_order_detail.sub_total : data.total_price}</td>
-                                        </tr>
-                                    ))}
-                                </>
+                                                <td>{data.document_number == null ? item1.good_receipt.receipt_num : data.document_number}</td>
+                                                <td>
+                                                    {data.invoice_number}
+                                                </td>
+                                                <td>{formatDate(data.date_gr == null ? item1.good_receipt.receive_date : data.date_gr)}</td>
+                                                <td>{data.quantity == null ? item1.purchase_order_detail.quantity_ordered : data.quantity}</td>
+                                                <td>{data.unit_price == null ? item1.purchase_order_detail.unit_price : data.unit_price}</td>
+                                                <td>{data.total_price == null ? item1.purchase_order_detail.sub_total : data.total_price}</td>
+                                            </tr>
+                                        ))}
+                                    </>
                                 ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                     <div>
                         {/* <div className="mb-1">
@@ -317,7 +361,7 @@ export default function Form(props) {
                             <InputError message={errors.category} className="mt-2" />
                         </div> */}
                         <div className="mb-1">
-                            <InputLabel value="Lokasi" className="font-bold" required={true}/>
+                            <InputLabel value="Lokasi" className="font-bold" required={true} />
                             <select className="select select-bordered w-full mt-1"
                                 id="location"
                                 name="location"
@@ -356,17 +400,17 @@ export default function Form(props) {
                             <InputLabel htmlFor="tax_invoice" value="Attach File Faktur Pajak" required={true} />
 
                             <div className="flex items-center align-middle">
-                                <input name="tax_invoice" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                <input name="tax_invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => setData('tax_invoice', e.target.files[0])}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.tax_invoice} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                     </svg>
-                                </a> : '' }
+                                </a> : ''}
                             </div>
 
-                            <InputError 
+                            <InputError
                                 message={errors.tax_invoice}
                                 className="mt-2"
                             />
@@ -374,7 +418,7 @@ export default function Form(props) {
                         <div className="mb-1">
                             <InputLabel htmlFor="invoice_number" value="Nomor Invoice" required={true} />
 
-                            <TextInput 
+                            <TextInput
                                 id="invoice_number"
                                 name="invoice_number"
                                 value={data.invoice_number}
@@ -384,10 +428,10 @@ export default function Form(props) {
                                 placeholder="invoice number"
                                 isFocused={true}
                                 onChange={(e) => setData('invoice_number', e.target.value)}
-                                
+
                             />
 
-                            <InputError 
+                            <InputError
                                 message={errors.invoice_number}
                                 className="mt-2"
                             />
@@ -396,17 +440,17 @@ export default function Form(props) {
                             <InputLabel htmlFor="invoice" value="Attach File Invoice" required={true} />
 
                             <div className="flex items-center align-middle">
-                                <input name="invoice" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                <input name="invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => setData('invoice', e.target.files[0])}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.invoice} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                     </svg>
-                                </a> : '' }
+                                </a> : ''}
                             </div>
 
-                            <InputError 
+                            <InputError
                                 message={errors.invoice}
                                 className="mt-2"
                             />
@@ -415,23 +459,23 @@ export default function Form(props) {
                             <InputLabel htmlFor="bast" value="BAST/Surat Jalan" required={true} />
 
                             <div className="flex items-center align-middle">
-                                <input name="bast" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                <input name="bast" type="file" className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => setData('bast', e.target.files[0])}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.bast} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                     </svg>
-                                </a> : '' }
+                                </a> : ''}
                             </div>
 
-                            <InputError 
+                            <InputError
                                 message={errors.bast}
                                 className="mt-2"
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Menggunakan Ematerai" className="font-bold" required={true}/>
+                            <InputLabel value="Menggunakan Ematerai" className="font-bold" required={true} />
                             <select className="select select-bordered w-full mt-1"
                                 id="is_materai"
                                 name="is_materai"
@@ -446,8 +490,8 @@ export default function Form(props) {
                             <InputError message={errors.is_materai} className="mt-2" />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Catatan" className="font-bold" required={true}/>
-                            <textarea 
+                            <InputLabel value="Catatan" className="font-bold" required={true} />
+                            <textarea
                                 name="note"
                                 className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
                                 placeholder="Catatan"
@@ -458,19 +502,35 @@ export default function Form(props) {
                             <InputError message={errors.note} className="mt-2" />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Lampiran Lainnya" className="font-bold" required={true}/>
+                            <InputLabel value="Lampiran Lainnya" className="font-bold" required={true} />
                             <div className="w-full">
-                                <FileUploader handleChange={handleChangeFile} name="attachment" types={fileTypes} multiple={true} />
+                                <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
                             </div>
-                            <p>{file ? `Total File: ${file.length}` : "no files uploaded yet"}</p>
-
+                            <div className="row">
+                                {objectFilesUrl.length > 0 ? objectFilesUrl.map(url => (
+                                    <div className="col-12 mr-2">
+                                        <div className="card">
+                                            <div className="card-body">
+                                                <iframe src={url.url} key={url.fileName} style={{width: '100%'}}></iframe>
+                                            </div>
+                                            <div className="card-footer">
+                                                <button type="button" onClick={() => removeFiles(url.fileName, url.fileSize)} className="btn btn-sm" style={{background: 'red', color: "white"}}>Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )) : null}
+                            </div>
+                            <p>{files ? `Total File: ${files.length}` : "no files uploaded yet"}</p>
+                            {
+                                limitedFiles > 25 ? <InputError message="Maximum files is 25 MB" className="mt-2" /> : null
+                            }
                             <InputError message={errors.file} className="mt-2" />
                         </div>
                     </div>
 
                     <div>
                         <div className="mb-1" hidden={selectedButtonPO}>
-                            <InputLabel value="Nomor PO" className="font-bold" required={true}/>
+                            <InputLabel value="Nomor PO" className="font-bold" required={true} />
 
                             <div className="flex items-center gap-3">
                                 <p className="text-gray-500 form-control">{data.po_number ? data.po_number : '-'}</p>
@@ -480,17 +540,17 @@ export default function Form(props) {
                             <InputLabel htmlFor="po" value="Attach File PO" required={true} />
 
                             <div className="flex items-center align-middle">
-                                <input name="po" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                <input name="po" type="file" className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => setData('po', e.target.files[0])}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.po} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                     </svg>
-                                </a> : '' }
+                                </a> : ''}
                             </div>
 
-                            <InputError 
+                            <InputError
                                 message={errors.po}
                                 className="mt-2"
                             />
@@ -499,17 +559,17 @@ export default function Form(props) {
                             <InputLabel htmlFor="quotation" value="Attach File Quotation" required={true} />
 
                             <div className="flex items-center align-middle">
-                                <input name="quotation" type="file" className="file-input file-input-bordered w-full max-w-xs" 
+                                <input name="quotation" type="file" className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => setData('quotation', e.target.files[0])}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.quotation} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                     </svg>
-                                </a> : '' }
+                                </a> : ''}
                             </div>
 
-                            <InputError 
+                            <InputError
                                 message={errors.quotation}
                                 className="mt-2"
                             />
@@ -517,7 +577,7 @@ export default function Form(props) {
                         <div className="mb-1">
                             <InputLabel htmlFor="date" value="Tanggal Invoice" required={true} />
 
-                            <TextInput 
+                            <TextInput
                                 id="date"
                                 name="date"
                                 value={data.date}
@@ -526,10 +586,10 @@ export default function Form(props) {
                                 autoComplete="date"
                                 isFocused={true}
                                 onChange={(e) => setData('date', e.target.value)}
-                                
+
                             />
 
-                            <InputError 
+                            <InputError
                                 message={errors.date}
                                 className="mt-2"
                             />
@@ -646,26 +706,26 @@ export default function Form(props) {
                         </div>
                     </div>
                 </div> */}
-                
+
                 <div className="flex justify-end items-end gap-2 mt-2">
                     <Link href={route('exchange-invoice.index')}>
                         <SecondaryButton>
                             Back
                         </SecondaryButton>
                     </Link>
-                    {props.data.invoice != null 
-                        ? props.data.noDraft == 1 
-                            ? '' 
-                            : 
-                            <PrimaryButton onClick={(e) => {setData('status_submit', 'draft')}}>
+                    {props.data.invoice != null
+                        ? props.data.noDraft == 1
+                            ? ''
+                            :
+                            <PrimaryButton onClick={(e) => { setData('status_submit', 'draft') }}>
                                 Simpan Draft
-                            </PrimaryButton> 
-                        : 
-                        <PrimaryButton onClick={(e) => {setData('status_submit', 'draft')}}>
+                            </PrimaryButton>
+                        :
+                        <PrimaryButton onClick={(e) => { setData('status_submit', 'draft') }}>
                             Simpan Draft
                         </PrimaryButton>
                     }
-                    <PrimaryButton onClick={(e) => {setData('status_submit', 'menunggu persetujuan')}}>
+                    <PrimaryButton onClick={(e) => { setData('status_submit', 'menunggu persetujuan') }}>
                         Submit
                     </PrimaryButton>
                     <Transition
@@ -686,7 +746,7 @@ export default function Form(props) {
                 </div>
                 <div className="p-3">
                     <div className='mb-3'>
-                        <InputLabel value="Nomor PO" className="font-bold" required={true}/>
+                        <InputLabel value="Nomor PO" className="font-bold" required={true} />
 
                         <div className="flex items-center gap-3">
                             {/* <select className="select select-bordered w-full mt-1"
@@ -733,8 +793,8 @@ export default function Form(props) {
                                 {dataGoodReceipt.map((item, index) => (
                                     <>
                                         {item.array.map((item1, index) => (
-                                            <tr className="border-collapse border-1 border-gray-500">   
-                                                {index == 0 ? 
+                                            <tr className="border-collapse border-1 border-gray-500">
+                                                {index == 0 ?
                                                     <td rowSpan={item.array.length}>
                                                         <label className="inline-flex items-center">
                                                             <input
@@ -746,8 +806,8 @@ export default function Form(props) {
                                                             />
                                                         </label>
                                                     </td>
-                                                : ''
-                                                }     
+                                                    : ''
+                                                }
                                                 <td>{item1.good_receipt.receipt_num}</td>
                                                 <td>
                                                     {data.invoice_number}
@@ -768,14 +828,14 @@ export default function Form(props) {
                             Data GR Tidak ditemukan?
                             <a href={`/request-good-receipt/create?po_number=${selectedLabel5}`} className="text-blue-500"> Request GR</a>
                         </p>
-                    : ''}
+                        : ''}
                     <div className="mt-6 flex justify-end gap-3">
                         <SecondaryButton onClick={closeModalGR}>Tutup</SecondaryButton>
                         <PrimaryButton onClick={submitModalGR}>Simpan</PrimaryButton>
                     </div>
                 </div>
             </Modal>
-            
+
         </div>
-    );    
+    );
 }

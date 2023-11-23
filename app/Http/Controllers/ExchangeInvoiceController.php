@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ExchangeInvoiceTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 
@@ -36,6 +37,8 @@ use Mail;
 
 class ExchangeInvoiceController extends Controller
 {
+    use ExchangeInvoiceTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -111,15 +114,15 @@ class ExchangeInvoiceController extends Controller
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = ExchangeInvoiceLocation::get();
-        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        $poArray = $po->map(function ($po) {
-            return [
-                'value' => $po->po_header_id,
-                'label' => $po->po_num,
-            ];
-        });
+        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        // $poArray = $po->map(function ($po) {
+        //     return [
+        //         'value' => $po->po_header_id,
+        //         'label' => $po->po_num,
+        //     ];
+        // });
 
-        $data['po_array'] = $poArray->toArray();
+        // $data['po_array'] = $poArray->toArray();
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         return Inertia::render('Vendor/ExchangeInvoice/Create', [
@@ -192,7 +195,6 @@ class ExchangeInvoiceController extends Controller
             $filename = $request->file('quotation')->hashName();
             $quotationPath = url('/') . '/storage/quotation/' . $filename;
         }
-
         $exchangeInvoice = ExchangeInvoice::create([
             'vendor_id' => $vendor->id,
             // 'category' => $request->category,
@@ -213,7 +215,7 @@ class ExchangeInvoiceController extends Controller
             'bast' => $bastPath,
             'po' => $poPath,
             'quotation' => $quotationPath,
-            // 'tax_invoice_number' => $request->tax_invoice_number,
+            'tax_invoice_number' => $this->formatInvoiceNumber($vendor),
         ]);
 
         $exchangeInvoice->update([
