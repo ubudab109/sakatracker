@@ -319,6 +319,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/request-good-receipt', [AdminRequestGoodReceiptController::class, 'index'])->name('admin.request-good-receipt.index');
     Route::get('/admin/request-good-receipt/{id}/edit', [AdminRequestGoodReceiptController::class, 'edit'])->name('admin.request-good-receipt.edit');
     Route::post('/admin/request-good-receipt/{id}', [AdminRequestGoodReceiptController::class, 'update'])->name('admin.request-good-receipt.update');
+    Route::post('/generate-rfp/{id}', [AdminExchangeInvoiceController::class, 'rfpGenerate']);
 });
 
 

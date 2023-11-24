@@ -12,10 +12,14 @@ export default function PDFViewer({ pdfUrl, closeModal, docs }) {
     const path = new URL(pdfUrl).pathname;
     const pathArray = path.split("/");
     const namaFile = pathArray.pop();
-
-    const doc = docs.find((item) => {
-        if (item.doc_id === namaFile) return item;
-    });
+    let doc;
+    if (Array.isArray(docs)) {
+        doc = docs.find((item) => {
+            if (item.doc_id === namaFile) return item;
+        });
+    } else {
+        doc = docs;
+    }
 
     const { data, setData, post, processing } = useForm({
         doc_id: namaFile || "",
