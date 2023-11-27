@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Vendor;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $vendorData = $request->user()->vendor()->get();
         return Inertia::render('Profile/Edit', [
+            'vendorData' => $vendorData,
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
@@ -59,5 +62,17 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function updateVendorPayment(Request $request)
+    {
+        $inputArray = $request->all();
+        foreach($inputArray as $input) {
+            if ($input['payment_time'] == null || $input['payment_time'] == '') {
+                continue;
+            }
+            Vendor::find($input['id'])->update(['payment_time' => $input['payment_time']]);
+        }
+        return Redirect::back();
     }
 }

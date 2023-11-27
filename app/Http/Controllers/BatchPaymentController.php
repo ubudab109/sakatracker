@@ -277,6 +277,7 @@ class BatchPaymentController extends Controller
 
         foreach ($batch_payment_invoices as $invoice) {
             $exchange_invoice = ExchangeInvoice::find($invoice->exchange_invoice_id);
+            if ($exchange_invoice->status === 'disetujui') $data['batch_payment']->status = 'disetujui';
             array_push($data['batch_payment_invoices'], $exchange_invoice);
         }
 
