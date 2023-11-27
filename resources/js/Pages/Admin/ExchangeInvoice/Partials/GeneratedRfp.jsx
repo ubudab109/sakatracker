@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import '../../../../../css/app.css';
 
 export default function GeneratedRfp(props) {
 
@@ -36,42 +37,42 @@ export default function GeneratedRfp(props) {
                                     <p>Invoice Type</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_type : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_type: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Supplier Number</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_code : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_code: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Supplier Name</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_name : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_name: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Supplier NPWP</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_npwp : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_npwp: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Supplier Site</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_site : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_site: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Pay Group</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].pay_group : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].pay_group: ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -96,35 +97,35 @@ export default function GeneratedRfp(props) {
                                     <p>User Created</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].user_created : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].user_created: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>PO TYPE</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].po_type : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].po_type: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Due Date</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_due_date : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_due_date: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Currency</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_currency : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_currency: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Total Amount</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? formatter.format(parseInt(props.data.outstanding_invoice.rfp_views[0].invoice_total_amount)).replace("€", "").trim() : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  formatter.format(parseInt(props.data.total_debit) - parseInt(props.data.total_credit)).replace("€", "").trim(): ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -137,35 +138,35 @@ export default function GeneratedRfp(props) {
                                     <p>RFP Number</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ? props.data.outstanding_invoice[0].rfp_number : ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Voucher Number</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].voucher_number : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].voucher_number: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Batch Name</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_batch_name : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_batch_name: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Number</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_number : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_number: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Date</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_date : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_date: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
@@ -238,7 +239,7 @@ export default function GeneratedRfp(props) {
                                     <p>Description</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_description : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_description: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
@@ -252,7 +253,7 @@ export default function GeneratedRfp(props) {
                                     <p>Status</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].invoice_status : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].invoice_status: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
@@ -284,21 +285,21 @@ export default function GeneratedRfp(props) {
                                     <p>GL Date</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? formatDate(props.data.outstanding_invoice.rfp_views[0].gl_date) : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  formatDate(props.data.outstanding_invoice[0].gl_date): ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Invoice Receipt Date</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? formatDate(props.data.outstanding_invoice.rfp_views[0].invoice_receipt_date) : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  formatDate(props.data.outstanding_invoice[0].invoice_receipt_date): ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Supplier Tax Invoice Num</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_tax_invoice_num : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_tax_invoice_num: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
@@ -312,28 +313,28 @@ export default function GeneratedRfp(props) {
                                     <p>Rate Type</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].rate_type : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].rate_type: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Rate Date</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? formatDate(props.data.outstanding_invoice.rfp_views[0].rate_date) : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  formatDate(props.data.outstanding_invoice[0].rate_date): ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Tax Name</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].supp_name : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].supp_name: ''}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2'>
                                     <p>Tax NPWP</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ? props.data.outstanding_invoice.rfp_views[0].tax_npwp : '' : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ?  props.data.outstanding_invoice[0].tax_npwp: ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -346,7 +347,7 @@ export default function GeneratedRfp(props) {
                                         <th className='border-2' rowSpan={2}>GL Date <br></br>Distribution</th>
                                         <th className='border-2' rowSpan={2}>Account</th>
                                         <th className='border-2' rowSpan={2}>Description</th>
-                                        <th className='border-2' colSpan={2}>Entered Amount ({props.data.outstanding_invoice ? props.data.outstanding_invoice.invoice_currency_code : ''})</th>
+                                        <th className='border-2' colSpan={2}>Entered Amount ({props.data.outstanding_invoice.length > 0 ? props.data.outstanding_invoice[0].invoice_currency : ''})</th>
                                         <th className='border-2' colSpan={2}>Accounted Amount (IDR)</th>
                                     </tr>
                                     <tr>
@@ -357,20 +358,20 @@ export default function GeneratedRfp(props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ?
+                                    {props.data.outstanding_invoice.length > 0 ? 
                                         <tr>
-                                            <td className='border-2'>{formatDate(props.data.outstanding_invoice.rfp_views[0].gl_date_dist)}</td>
-                                            <td className='border-2 text-start'>{props.data.outstanding_invoice.rfp_views[0].tax_account}</td>
-                                            <td className='border-2 text-start'>{props.data.outstanding_invoice.rfp_views[0].tax_code}</td>
-                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice.tax_amount)).replace("€", "").trim()}</td>
+                                            <td className='border-2'>{formatDate(props.data.outstanding_invoice[0].gl_date_dist)}</td>
+                                            <td className='border-2 text-start'>{props.data.outstanding_invoice[0].tax_account}</td>
+                                            <td className='border-2 text-start'>{props.data.outstanding_invoice[0].tax_code}</td>
+                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice[0].tax_amount)).replace("€", "").trim()}</td>
                                             <td className='border-2'></td>
-                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice.tax_amount)).replace("€", "").trim()}</td>
+                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice[0].tax_amount)).replace("€", "").trim()}</td>
                                             <td className='border-2'></td>
                                         </tr>
-                                        : '' : ''}
-                                    {props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ?
+                                       : ''}
+                                    {props.data.outstanding_invoice.length > 0 ? 
                                         <>
-                                            {props.data.outstanding_invoice.rfp_views.map((data, index) => (
+                                            {props.data.outstanding_invoice.map((data, index) => (
                                                 <tr>
                                                     <td className='border-2'>{formatDate(data.gl_date_dist)}</td>
                                                     <td className='border-2 text-start'>{data.account_dist}</td>
@@ -390,18 +391,18 @@ export default function GeneratedRfp(props) {
                                                 </tr>
                                             ))}
                                         </>
-                                        : '' : ''}
-                                    {props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ?
+                                       : ''}
+                                    {props.data.outstanding_invoice.length > 0 ? 
                                         <tr>
-                                            <td className='border-2'>{formatDate(props.data.outstanding_invoice.rfp_views[0].gl_date_dist)}</td>
-                                            <td className='border-2 text-start'>{props.data.outstanding_invoice.rfp_views[0].ap_account}</td>
-                                            <td className='border-2 text-start'>{props.data.outstanding_invoice.rfp_views[0].description_dist}</td>
+                                            <td className='border-2'>{formatDate(props.data.outstanding_invoice[0].gl_date_dist)}</td>
+                                            <td className='border-2 text-start'>{props.data.outstanding_invoice[0].ap_account}</td>
+                                            <td className='border-2 text-start'>{props.data.outstanding_invoice[0].description_dist}</td>
                                             <td className='border-2'></td>
-                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice.total_amount)).replace("€", "").trim()}</td>
+                                            <td className='border-2'>{formatter.format(parseInt(props.data.total_debit)).replace("€", "").trim()}</td>
                                             <td className='border-2'></td>
-                                            <td className='border-2'>{formatter.format(parseInt(props.data.outstanding_invoice.total_amount)).replace("€", "").trim()}</td>
+                                            <td className='border-2'>{formatter.format(parseInt(props.data.total_debit)).replace("€", "").trim()}</td>
                                         </tr>
-                                        : '' : ''}
+                                       : ''}
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -436,9 +437,9 @@ export default function GeneratedRfp(props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {props.data.outstanding_invoice ? props.data.outstanding_invoice.rfp_views.length > 0 ?
+                                    {props.data.outstanding_invoice.length > 0 ? 
                                         <>
-                                            {props.data.outstanding_invoice.rfp_views.map((data, index) => (
+                                            {props.data.outstanding_invoice.map((data, index) => (
                                                 <>
                                                     {data.po_number ?
                                                         <tr>
@@ -454,7 +455,7 @@ export default function GeneratedRfp(props) {
                                                 </>
                                             ))}
                                         </>
-                                        : '' : ''}
+                                       : ''}
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -473,7 +474,7 @@ export default function GeneratedRfp(props) {
                                     <p>Grand Total Amount Remaining IDR</p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? formatter.format(parseInt(props.data.outstanding_invoice.total_amount)).replace("€", "").trim() : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ? formatter.format(parseInt(props.data.total_debit)).replace("€", "").trim() : ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -484,7 +485,7 @@ export default function GeneratedRfp(props) {
                                     <p></p>
                                     <div className='flex'>
                                         <p style={{ width: '24px' }}>:</p>
-                                        <p>{props.data.outstanding_invoice ? formatter.format(parseInt(props.data.outstanding_invoice.total_amount)).replace("€", "").trim() : ''}</p>
+                                        <p>{props.data.outstanding_invoice.length > 0 ? formatter.format(parseInt(props.data.total_debit)).replace("€", "").trim() : ''}</p>
                                     </div>
                                 </div>
                             </div>
