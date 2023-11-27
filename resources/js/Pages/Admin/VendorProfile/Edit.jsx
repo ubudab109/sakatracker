@@ -17,7 +17,7 @@ import Modal from '@/Components/Modal';
 
 export default function Index(props) {
     console.log(props);
-    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
         status: '',
         note: props.data.revision_vendor.note,
         document: '',
@@ -1749,7 +1749,14 @@ export default function Index(props) {
                                                 <InputLabel value="Lampiran" className="font-bold"/>
                                                 <div className='flex items-center align-middle'>
                                                     <input name="document" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => setData('document', e.target.files[0])}
+                                                        onChange={(e) => {
+                                                            if (convertMb(e.target.files[0].size) > 5) {
+                                                                setError('document', 'Max file size should not be greater than 5mb')
+                                                            } else {
+                                                                clearErrors('document');
+                                                                setData('document', e.target.files[0])
+                                                            }
+                                                        }}
                                                     />
                                                     {props.data.revision_vendor.document != '' ? <a href={props.data.revision_vendor.document} target='_blank'>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -2108,7 +2115,7 @@ export default function Index(props) {
                         </div>
                     <div className="mt-6 flex justify-end gap-3">
                         <SecondaryButton onClick={closeModalSS}>Tutup</SecondaryButton>
-                        <PrimaryButton onClick={addEntry}>Simpan</PrimaryButton>
+                        <PrimaryButton disabled={hasErrors} onClick={addEntry}>Simpan</PrimaryButton>
                     </div>
                 </div>
             </Modal>

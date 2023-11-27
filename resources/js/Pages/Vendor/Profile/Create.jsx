@@ -9,11 +9,12 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { Transition } from '@headlessui/react';
 import PDFPopup from '@/Components/PDFPopup';
+import { convertMb } from '@/Utils/helper';
 
 
 export default function Create(props) {
     console.log(props);
-    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+    const { data, hasErrors, clearErrors, setData, post, processing, errors, recentlySuccessful, setError, reset } = useForm({
         name: props.data.vendor.name != null ? props.data.vendor.name : '',
         email: props.data.vendor.email != null ? props.data.vendor.email : '',
         npwp: props.data.vendor.npwp != null ? props.data.vendor.npwp : '',
@@ -173,7 +174,7 @@ export default function Create(props) {
 
     const [dataApi, setDataApi] = useState(true);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError1] = useState(null);
 
     useEffect(() => {
         
@@ -189,7 +190,7 @@ export default function Create(props) {
             setLoading(false);
         })
         .catch((error) => {
-            setError(error);
+            setError1(error);
             setLoading(false);
         });
 
@@ -212,6 +213,15 @@ export default function Create(props) {
         });
 
     }, []);
+
+    const handleFile = (e) => {
+        if (convertMb(e.target.files[0].size) > 5) {
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
+        } else {
+            clearErrors(e.target.name);
+            setData(e.target.name, e.target.files[0]);
+        }
+    }
 
     const handleCountryChange = (event) => {
         data.country_id = event.target.value;
@@ -1033,7 +1043,7 @@ export default function Create(props) {
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1050,7 +1060,7 @@ export default function Create(props) {
                                             <InputLabel value="SPPKP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_sppkp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1067,7 +1077,7 @@ export default function Create(props) {
                                             <InputLabel value="SIUP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_siup', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1084,7 +1094,7 @@ export default function Create(props) {
                                             <InputLabel value="TDP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_tdp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1101,7 +1111,7 @@ export default function Create(props) {
                                             <InputLabel value="NIB" className="font-bold" required={true}/>
                                                 <div className="flex items-center align-middle">
                                                     <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => setData('file_nib', e.target.files[0])}
+                                                        onChange={(e) => handleFile(e)}
                                                     />
                                                     {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1118,7 +1128,7 @@ export default function Create(props) {
                                             <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_board_of_directors_composition', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1131,40 +1141,7 @@ export default function Create(props) {
                                                 className="mt-2"
                                             />
                                         </div>
-                                        {/* <div className="mb-3">
-                                            <InputLabel value="Halaman Depan Rekening" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_front_page_bank" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_front_page_bank', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_front_page_bank}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Rekening Bank (Bila Berbeda)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_bank_account_statement_letter" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_bank_account_statement_letter', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_bank_account_statement_letter}
-                                                className="mt-2"
-                                            />
-                                        </div> */}
+                                        
                                     </div>
                                     <div>
                                         <div className="md:mb-24">
@@ -1680,12 +1657,12 @@ export default function Create(props) {
                                 </SecondaryButton>
                             </Link>
                             <div className="ml-3" onClick={submitDraft}>
-                                <PrimaryButton disabled={processing}>
+                                <PrimaryButton disabled={processing || hasErrors}>
                                     Simpan Draft
                                 </PrimaryButton>
                             </div>
                             <div className="ml-3" onClick={submitNonDraft}>
-                                <PrimaryButton disabled={processing}>
+                                <PrimaryButton disabled={processing || hasErrors}>
                                     Submit
                                 </PrimaryButton>
                             </div>

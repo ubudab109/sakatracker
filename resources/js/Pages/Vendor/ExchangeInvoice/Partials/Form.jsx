@@ -17,7 +17,7 @@ import PDFPopup from "@/Components/PDFPopup";
 import { convertMb } from "@/Utils/helper";
 
 export default function Form(props) {
-    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
         // category: props.data.invoice == null ? '' : props.data.invoice.category,
         location: props.data.invoice == null ? '' : props.data.invoice.location,
         date: props.data.invoice == null ? '' : props.data.invoice.date,
@@ -52,6 +52,15 @@ export default function Form(props) {
             post(route('exchange-invoice.update', props.data.invoice.id));
         }
     };
+
+    const handleFile = (e) => {
+        if (convertMb(e.target.files[0].size) > 5) {
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
+        } else {
+            clearErrors(e.target.name);
+            setData(e.target.name, e.target.files[0]);
+        }
+    }
 
     const withOptionChangeHandler = (selectedOptionHandler) => {
         return (event) => {
@@ -401,7 +410,7 @@ export default function Form(props) {
 
                             <div className="flex items-center align-middle">
                                 <input name="tax_invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => setData('tax_invoice', e.target.files[0])}
+                                    onChange={(e) => handleFile(e)}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.tax_invoice} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -441,7 +450,7 @@ export default function Form(props) {
 
                             <div className="flex items-center align-middle">
                                 <input name="invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => setData('invoice', e.target.files[0])}
+                                    onChange={(e) => handleFile(e)}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.invoice} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -460,7 +469,7 @@ export default function Form(props) {
 
                             <div className="flex items-center align-middle">
                                 <input name="bast" type="file" className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => setData('bast', e.target.files[0])}
+                                    onChange={(e) => handleFile(e)}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.bast} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -541,7 +550,7 @@ export default function Form(props) {
 
                             <div className="flex items-center align-middle">
                                 <input name="po" type="file" className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => setData('po', e.target.files[0])}
+                                    onChange={(e) => handleFile(e)}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.po} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -560,7 +569,7 @@ export default function Form(props) {
 
                             <div className="flex items-center align-middle">
                                 <input name="quotation" type="file" className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => setData('quotation', e.target.files[0])}
+                                    onChange={(e) => handleFile(e)}
                                 />
                                 {props.data.invoice != null ? <a href={props.data.invoice.quotation} target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">

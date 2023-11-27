@@ -309,7 +309,7 @@ class AdminVendorProfileController extends Controller
         }
 
         if($request->status == 'ditolak') {
-            // $document = 'required|mimes:jpg,png,pdf|max:2048';
+            // $document = 'required|mimes:jpg,png,pdf|max:5000';
             $note = 'required|string|max:1000';
         }
 

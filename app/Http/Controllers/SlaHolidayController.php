@@ -35,7 +35,7 @@ class SlaHolidayController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'excel' => 'required|mimes:xlsx|max:2048'
+            'excel' => 'required|mimes:xlsx|max:5000'
         ]);
 
         $filePath = '';

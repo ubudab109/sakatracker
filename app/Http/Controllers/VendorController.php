@@ -104,48 +104,48 @@ class VendorController extends Controller
 
         if($request->type_of_business == 'Pribadi')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_ektp = $request->file_ektp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            // $file_ektp = $request->file_ektp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_ektp = 'required|date|date_format:Y-m-d';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'Non PKP')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'PKP')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->status_submit == 'pengajuan perubahan') {
@@ -458,76 +458,76 @@ class VendorController extends Controller
 
         if($request->type_of_business == 'Pribadi')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_ektp = 'required|mimes:pdf|max:2048';
+            // $file_ektp = 'required|mimes:pdf|max:5000';
             // $expired_ektp = 'required|date|date_format:Y-m-d';
-            // $file_front_page_bank = 'required|mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';
+            // $file_front_page_bank = 'required|mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'Non PKP')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_sppkp = 'required|mimes:pdf|max:2048';
+            // $file_sppkp = 'required|mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            // $file_siup = 'required|mimes:pdf|max:2048';
+            // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            // $file_tdp = 'required|mimes:pdf|max:2048';
+            // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            // $file_nib = 'required|mimes:pdf|max:2048';
+            // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            // $file_board_of_directors_composition = 'required|mimes:pdf|max:2048';
-            // $file_non_pkp_statement = 'required|mimes:pdf|max:2048';
+            // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
+            // $file_non_pkp_statement = 'required|mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'PKP')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_sppkp = 'required|mimes:pdf|max:2048';
+            // $file_sppkp = 'required|mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            // $file_siup = 'required|mimes:pdf|max:2048';
+            // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            // $file_tdp = 'required|mimes:pdf|max:2048';
+            // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            // $file_nib = 'required|mimes:pdf|max:2048';
+            // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            // $file_board_of_directors_composition = 'required|mimes:pdf|max:2048';
+            // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
         }
 
         if($request->status_submit == 'pengajuan perubahan') {
             if($request->type_of_business == 'PKP' || $request->type_of_business == 'Non PKP')
             {
-                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->file_sppkp == null) {$file_sppkp = 'required|mimes:pdf|max:2048';}
-                if($data->file_siup == null) {$file_siup = 'required|mimes:pdf|max:2048';}
-                if($data->file_tdp == null) {$file_tdp = 'required|mimes:pdf|max:2048';}
-                if($data->file_nib == null) {$file_nib = 'required|mimes:pdf|max:2048';}
-                if($data->file_board_of_directors_composition == null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:2048';}
+                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->file_sppkp == null) {$file_sppkp = 'required|mimes:pdf|max:5000';}
+                if($data->file_siup == null) {$file_siup = 'required|mimes:pdf|max:5000';}
+                if($data->file_tdp == null) {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->file_nib == null) {$file_nib = 'required|mimes:pdf|max:5000';}
+                if($data->file_board_of_directors_composition == null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
 
-                if($data->npwp_note != null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->sppkp_note != null) {$file_sppkp = 'required|mimes:pdf|max:2048';}
-                if($data->siup_note != null) {$file_siup = 'required|mimes:pdf|max:2048';}
-                if($data->tdp_note != null) {$file_tdp = 'required|mimes:pdf|max:2048';}
-                if($data->nib_note != null) {$file_nib = 'required|mimes:pdf|max:2048';}
-                if($data->board_of_directors_composition_note != null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:2048';}
+                if($data->npwp_note != null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->sppkp_note != null) {$file_sppkp = 'required|mimes:pdf|max:5000';}
+                if($data->siup_note != null) {$file_siup = 'required|mimes:pdf|max:5000';}
+                if($data->tdp_note != null) {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->nib_note != null) {$file_nib = 'required|mimes:pdf|max:5000';}
+                if($data->board_of_directors_composition_note != null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
             }
             if($request->type_of_business == 'Non PKP') {
-                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                if($data->non_pkp_statement_note != null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:2048';}
-                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';}
+                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                if($data->non_pkp_statement_note != null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
+                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}
             }
             if($request->type_of_business == 'Pribadi') {
-                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                if($data->npwp_note != null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->non_pkp_statement_note != null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:2048';}
-                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';}
-                // if($data->file_ektp == null) {$file_ektp = 'required|mimes:pdf|max:2048';}
+                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                if($data->npwp_note != null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->non_pkp_statement_note != null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
+                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}
+                // if($data->file_ektp == null) {$file_ektp = 'required|mimes:pdf|max:5000';}
             }
         }
 

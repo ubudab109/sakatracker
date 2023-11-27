@@ -150,14 +150,14 @@ class ExchangeInvoiceController extends Controller
                 'ppn' => 'required|max:255',
                 'total' => 'required|max:255',
                 'note' => 'required',
-                'tax_invoice' => 'required|mimes:pdf|max:2048',
+                'tax_invoice' => 'required|mimes:pdf|max:5000',
                 'invoice_number' => 'required|max:255',
-                'invoice' => 'required|mimes:pdf|max:2048',
+                'invoice' => 'required|mimes:pdf|max:5000',
                 // 'tax_invoice_number' => 'required|max:255',
-                'bast' => 'required|mimes:pdf|max:2048',
-                'po' => 'max:2048' . $poValidate,
-                'quotation' => 'required|mimes:pdf|max:2048',
-                // 'attachment' => 'mimes:pdf|max:2048',
+                'bast' => 'required|mimes:pdf|max:5000',
+                'po' => 'max:5000' . $poValidate,
+                'quotation' => 'required|mimes:pdf|max:5000',
+                // 'attachment' => 'mimes:pdf|max:5000',
             ]);
         }
 
@@ -555,13 +555,13 @@ class ExchangeInvoiceController extends Controller
                 'ppn' => 'required|max:255',
                 'total' => 'required|max:255',
                 'note' => 'required',
-                'tax_invoice' => $data->tax_invoice != null ? '' : 'required|' . 'mimes:pdf|max:2048',
-                'invoice' => $data->invoice != null ? '' : 'required|' . 'mimes:pdf|max:2048',
+                'tax_invoice' => $data->tax_invoice != null ? '' : 'required|' . 'mimes:pdf|max:5000',
+                'invoice' => $data->invoice != null ? '' : 'required|' . 'mimes:pdf|max:5000',
                 'invoice_number' => 'required|max:255',
                 // 'tax_invoice_number' => 'required|max:255',
-                'bast' => 'max:2048' . $bastValidate,
-                'po' => 'max:2048' . $poValidate,
-                'quotation' => 'max:2048' . $quotationValidate,
+                'bast' => 'max:5000' . $bastValidate,
+                'po' => 'max:5000' . $poValidate,
+                'quotation' => 'max:5000' . $quotationValidate,
             ]);
         }
 

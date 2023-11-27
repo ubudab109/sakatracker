@@ -12,7 +12,7 @@ import PDFPopup from '@/Components/PDFPopup';
 
 
 export default function Edit(props) {
-    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
         name: props.data.vendor.name != null ? props.data.vendor.name : '',
         email: props.data.vendor.email != null ? props.data.vendor.email : '',
         npwp: props.data.vendor.npwp != null ? props.data.vendor.npwp : '',
@@ -86,6 +86,15 @@ export default function Edit(props) {
     const [tabPane3, setTabPane3] = useState('hidden');
     const [tabPane4, setTabPane4] = useState('hidden');
     const [tabPane5, setTabPane5] = useState('hidden');
+
+    const handleFile = (e) => {
+        if (convertMb(e.target.files[0].size) > 5) {
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
+        } else {
+            clearErrors(e.target.name);
+            setData(e.target.name, e.target.files[0]);
+        }
+    }
 
     const handleCardClicked = (index) => {
         const tabPaneStates = ['hidden', 'hidden', 'hidden', 'hidden', 'hidden']; // Assuming you have 5 tab panes
@@ -1033,7 +1042,7 @@ export default function Edit(props) {
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1050,7 +1059,7 @@ export default function Edit(props) {
                                             <InputLabel value="SPPKP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_sppkp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1067,7 +1076,7 @@ export default function Edit(props) {
                                             <InputLabel value="SIUP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_siup', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1084,7 +1093,7 @@ export default function Edit(props) {
                                             <InputLabel value="TDP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_tdp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1101,7 +1110,7 @@ export default function Edit(props) {
                                             <InputLabel value="NIB" className="font-bold" required={true}/>
                                                 <div className="flex items-center align-middle">
                                                     <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => setData('file_nib', e.target.files[0])}
+                                                        onChange={(e) => handleFile(e)}
                                                     />
                                                     {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1118,7 +1127,7 @@ export default function Edit(props) {
                                             <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_board_of_directors_composition', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1268,7 +1277,7 @@ export default function Edit(props) {
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1285,7 +1294,7 @@ export default function Edit(props) {
                                             <InputLabel value="SPPKP" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_sppkp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1302,7 +1311,7 @@ export default function Edit(props) {
                                             <InputLabel value="SIUP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_siup', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1319,7 +1328,7 @@ export default function Edit(props) {
                                             <InputLabel value="TDP" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_tdp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1336,7 +1345,7 @@ export default function Edit(props) {
                                             <InputLabel value="NIB" className="font-bold" required={true}/>
                                                 <div className="flex items-center align-middle">
                                                     <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => setData('file_nib', e.target.files[0])}
+                                                        onChange={(e) => handleFile(e)}
                                                     />
                                                     {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1353,7 +1362,7 @@ export default function Edit(props) {
                                             <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_board_of_directors_composition', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1404,7 +1413,7 @@ export default function Edit(props) {
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_non_pkp_statement', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1520,7 +1529,7 @@ export default function Edit(props) {
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className='flex align-middle items-center'>
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
@@ -1537,7 +1546,7 @@ export default function Edit(props) {
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_non_pkp_statement', e.target.files[0])}
+                                                    onChange={(e) => handleFile(e)}
                                                 />
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
