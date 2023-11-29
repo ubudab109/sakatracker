@@ -13,7 +13,7 @@ class CompanyProfileController extends Controller
     public function index()
     {
         $data['auth'] = Auth::user();
-        $data['vendor'] = Vendor::where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->latest('created_at')->first();
+        $data['vendor'] = Vendor::with('coas')->where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         if(!$data['vendor'])
         {

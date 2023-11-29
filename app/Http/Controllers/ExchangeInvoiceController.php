@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\NotifySelfTrait;
 use App\Traits\ExchangeInvoiceTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -37,8 +38,8 @@ use Mail;
 
 class ExchangeInvoiceController extends Controller
 {
+    use NotifySelfTrait;
     use ExchangeInvoiceTrait;
-
     /**
      * Display a listing of the resource.
      */
@@ -101,7 +102,7 @@ class ExchangeInvoiceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $vendor = User::with(['vendor_latest' => function ($q) {
             $q->where('status_account', 'disetujui');
@@ -114,15 +115,16 @@ class ExchangeInvoiceController extends Controller
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = ExchangeInvoiceLocation::get();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_header_id,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_header_id,
+                'label' => $po->po_num,
+            ];
+        });
 
-        // $data['po_array'] = $poArray->toArray();
+        $data['po_array'] = $poArray->toArray();
+        $data['po_number'] = $request->po_number ?? null;
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         return Inertia::render('Vendor/ExchangeInvoice/Create', [
@@ -195,6 +197,7 @@ class ExchangeInvoiceController extends Controller
             $filename = $request->file('quotation')->hashName();
             $quotationPath = url('/') . '/storage/quotation/' . $filename;
         }
+
         $exchangeInvoice = ExchangeInvoice::create([
             'vendor_id' => $vendor->id,
             // 'category' => $request->category,
@@ -216,6 +219,7 @@ class ExchangeInvoiceController extends Controller
             'po' => $poPath,
             'quotation' => $quotationPath,
             'tax_invoice_number' => $this->formatInvoiceNumber($vendor),
+            // 'tax_invoice_number' => $request->tax_invoice_number,
         ]);
 
         $exchangeInvoice->update([
@@ -247,7 +251,7 @@ class ExchangeInvoiceController extends Controller
                         'document_number' => $item1['good_receipt']['receipt_num'],
                         'invoice_number' => $request->invoice_number,
                         'date_gr' => $item1['good_receipt']['receive_date'],
-                        'quantity' => $item1['purchase_order_detail']['quantity_ordered'],
+                        'quantity' => $item1['qty_received'],
                         'unit_price' => $item1['purchase_order_detail']['unit_price'],
                         'total_price' => $item1['purchase_order_detail']['sub_total'],
                     ]);
@@ -339,6 +343,8 @@ class ExchangeInvoiceController extends Controller
                                 $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
                             }
                         }
+
+                        $this->notifySelf(Auth::user()->id, 'Tukar Faktur', 'Berhasil tambah tukar faktur', '/exchange-invoice');
                     } else {
                         $exchangeInvoice->update([
                             'status' => 'tukar faktur tidak valid'
@@ -667,7 +673,7 @@ class ExchangeInvoiceController extends Controller
                         'document_number' => $item1['good_receipt']['receipt_num'],
                         'invoice_number' => $request->invoice_number,
                         'date_gr' => $item1['good_receipt']['receive_date'],
-                        'quantity' => $item1['purchase_order_detail']['quantity_ordered'],
+                        'quantity' => $item1['qty_received'],
                         'unit_price' => $item1['purchase_order_detail']['unit_price'],
                         'total_price' => $item1['purchase_order_detail']['sub_total'],
                     ]);
@@ -757,6 +763,8 @@ class ExchangeInvoiceController extends Controller
                                 $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
                             }
                         }
+
+                        $this->notifySelf(Auth::user()->id, 'Tukar Faktur', 'Berhasil tambah tukar faktur', '/exchange-invoice');
                     } else {
                         $data->update([
                             'status' => 'tukar faktur tidak valid'

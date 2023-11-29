@@ -81,7 +81,7 @@ class VendorReportController extends Controller
         })->pluck('order_id')->toArray();
 		
 		$vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
-		if(!$vendor)
+		if($vendor)
 		{
 			$data['po_amount'] = OraclePurchaseOrder::
 			where('vendor_code', $vendor->id_manual)

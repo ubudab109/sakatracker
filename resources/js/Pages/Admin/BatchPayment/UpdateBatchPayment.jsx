@@ -174,7 +174,7 @@ return (
                     <div class="font-bold">{props.data.batch_payment.no_batch}</div>
                 </div>
             </div>
-            <div class="mb-3 grid grid-cols-8 gap-4 items-center">
+            {/* <div class="mb-3 grid grid-cols-8 gap-4 items-center">
                 <label for="periode" class="block font-medium text-sm text-gray-700 ">Periode<span class="text-red-500">*</span></label>
                 <div class="col-span-3 flex gap-4 items-center">
                     <div>:</div>
@@ -187,7 +187,7 @@ return (
                     <div>:</div>
                     <input type="date" id="due_date" value={due_date} onChange={changeDueDate} placeholder="Pilih due_date.." class="ant-input css-190m0jy mt-1 block w-full"></input>
                 </div>
-            </div>
+            </div> */}
             <div class="mb-3 grid grid-cols-8 gap-4 items-center">
                 <label for="total" class="block font-medium text-sm text-gray-700 ">Total</label>
                 <div class="col-span-3 flex gap-4 items-center">

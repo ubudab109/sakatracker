@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 export default function Modal({
     children,
     show = false,
-    maxWidth = "2xl",
+    maxWidth = "4xl",
     closeable = true,
     onClose = () => {},
 }) {
@@ -20,7 +20,11 @@ export default function Modal({
         lg: "sm:max-w-lg",
         xl: "sm:max-w-xl",
         "2xl": "sm:max-w-2xl",
+        "3xl": "sm:max-w-3xl",
+        "4xl": "sm:max-w-4xl",
     }[maxWidth];
+
+    console.log(maxWidth);
 
     return (
         <Transition show={show} as={Fragment} leave="duration-200">

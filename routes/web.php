@@ -69,6 +69,10 @@ use Inertia\Inertia;
 //     ]);
 // });
 
+Route::get('/welcome1', function () {
+    return view('welcome');
+});
+
 Route::get('/', function () {
     return redirect('/dashboard');
 });
@@ -275,27 +279,29 @@ Route::middleware('auth')->group(function () {
     // Route::get('/demo/exchange-invoice/edit', [DemoController::class, 'edit'])->name('demo.exchange-invoice.edit');
 
     Route::get('/admin/batch-payment', [BatchPaymentController::class, 'index'])->name('admin.batch-payment.index');
-
+    
     Route::get('/admin/batch-payment/outstanding-invoice', [BatchPaymentController::class, 'outstandingInvoicePage'])->name('admin.batch-payment.outstanding-invoice');
-
+    
     Route::get('/admin/batch-payment/create-batch', [BatchPaymentController::class, 'createBatchPayment'])->name('admin.batch-payment.create-batch');
-
+    
     Route::post('/admin/batch-payment/add-invoice', [BatchPaymentController::class, 'addInvoice'])->name('admin.batch-payment.add-invoice');
-
+    
     Route::get('/admin/batch-payment/get-invoices/{id}', [BatchPaymentController::class, 'getInvoices'])->name('admin.batch-payment.get-invoices');
-
+    
     Route::post('/admin/batch-payment/save-draft', [BatchPaymentController::class, 'saveDraft'])->name('admin.batch-payment.save-draft');
-
+    
     Route::post('/admin/batch-payment/save', [BatchPaymentController::class, 'saveBatchPayment'])->name('admin.batch-payment.save');
-
+    
     Route::get('/admin/batch-payment/{id}', [BatchPaymentController::class, 'showBatchPayment'])->name('admin.batch-payment.show');
-
-    Route::get('/admin/batch-payment/{id}/edit', [BatchPaymentController::class, 'updateBatchPayment'])->name('admin.batch-payment.update');
-
+    
+    Route::get('/admin/batch-payment/{id}/edit', [BatchPaymentController::class, 'updateBatchPayment'])->name('admin.batch-payment.edit');
+    
     Route::get('/admin/batch-payment/{id}/delete', [BatchPaymentController::class, 'deleteBatchPayment'])->name('admin.batch-payment.delete');
     
     Route::get('/admin/batch-payment/{id}/process', [BatchPaymentController::class, 'processBatchPayment'])->name('admin.batch-payment.update');
 
+    Route::get('/admin/batch-payment/reject/{id}', [BatchPaymentController::class, 'rejectBatchPayment'])->name('admin.batch-payment-reject');
+    
     Route::get('/admin/siap-bayar', [SiapBayarController::class, 'index'])->name('admin.siap-bayar.index');
 
     Route::post('/admin/siap-bayar/paid', [SiapBayarController::class, 'paidInvoices'])->name('admin.siap-bayar.paid-invoices');

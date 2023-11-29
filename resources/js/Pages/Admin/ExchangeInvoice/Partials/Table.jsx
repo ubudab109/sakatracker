@@ -28,9 +28,24 @@ export default function Table(props) {
         return `${day}-${month}-${year} ${hours}:${minutes}`;
       }
 
+      const filterCompleted = (event) => {
+        if(event.target.checked){
+           window.location.assign('/admin/exchange-invoice?filter=me');
+        } else {
+            window.location.assign('/admin/exchange-invoice');
+        }
+     }
+
     return (
         <div className="pt-6">
             <div className="max-w-7xl mx-auto">
+                <form className='mb-3'>
+                    <input type="checkbox" className='mr-3' id="filter" 
+                        onChange={event => filterCompleted(event)}
+                        checked={props.data.filter}
+                    />
+                    <label for="filter">Lihat data yang harus diverifikasi</label>
+                </form>
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
                     <table ref={tableRef} className="w-full">
                         <thead>
@@ -59,7 +74,7 @@ export default function Table(props) {
                                     <td>{item.invoice_number}</td>
                                     <td>{item.date}</td>
                                     <td>
-                                        {item.is_po == 1 ? 'PO' : item.is_po == 1 ? 'Tanpa PO' : 'MT'}
+                                        {item.is_po != null ? item.is_po == 0 ? 'Tanpa PO' : 'PO' : 'MT'}
                                     </td>
                                     <td>{item.total}</td>
                                     <td>{item.status}</td>

@@ -166,7 +166,15 @@ class AdminVendorController extends Controller
         ->whereHas('vendor_latest', function ($q) {
             $q->where('status_account', 'disetujui');
         })
-        ->where('role', 'vendor')->get();
+        ->where('role', 'vendor')
+        ->get()
+        ->map(function($vendor){
+            $vendor['updated_at'] = $vendor->vendor_latest->updated_at;
+            return $vendor;
+        })
+        ->sortByDesc('updated_at')
+        ->values();
+
 
         return Inertia::render('Admin/Vendor/Index', [
             'data' => $data
@@ -175,7 +183,8 @@ class AdminVendorController extends Controller
 
     public function show($id)
     {
-        $data['vendor'] = Vendor::where('id', $id)->first();
+        $data['permissions'] = $this->checkPermission('index');
+        $data['vendor'] = Vendor::with('coas')->where('id', $id)->first();
 
         $newdocs = [];
         $docs = [];
@@ -194,13 +203,13 @@ class AdminVendorController extends Controller
                     $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
                     $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
                     $exist = Storage::disk('public')->exists($fileedited);
-                    $newdoc = [
-                        'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
-                        'origin'=>Storage::disk('public')->url($fileorigin),
-                        'name'=>$folder[count($folder)-2],
-                        'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
-                    ];
-                    $newdocs[] = $newdoc;
+                    // $newdoc = [
+                        // 'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                        // 'origin'=>Storage::disk('public')->url($fileorigin),
+                        // 'name'=>$folder[count($folder)-2],
+                        // 'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                    // ];
+                    $data['vendor'][$folder[count($folder)-2]] = ($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin));
                 }
             }
         }

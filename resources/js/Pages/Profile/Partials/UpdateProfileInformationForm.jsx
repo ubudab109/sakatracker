@@ -4,19 +4,32 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
+import { useState } from 'react';
+import ModifyButton from '@/Components/ModifyButton';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
+        code: '',
     });
 
     const submit = (e) => {
         e.preventDefault();
 
         patch(route('profile.update'));
+    };
+
+    const [showOtpInput, setShowOtpInput] = useState(true);
+
+    const changeEmail = () => {
+        setShowOtpInput(false);
+    };
+
+    const sendOtp = (e) => {
+        post(route('verification-email.resend-otp'));
     };
 
     return (
@@ -46,20 +59,44 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     <InputError className="mt-2" message={errors.name} />
                 </div>
 
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                <div className=''>
+                    <div>
+                        <InputLabel htmlFor="email" value="Email" />
+
+                        <TextInput
+                            id="email"
+                            type="email"
+                            className="mt-1 block w-full"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            required
+                            autoComplete="username"
+                            disabled={showOtpInput}
+                        />
+
+                        <InputError className="mt-2" message={errors.email} />
+                    </div>
+                    <div className='text-end mt-1'>
+                        <ModifyButton hidden={showOtpInput} onClick={() => sendOtp()} maxTime={10} className="mt-3" type="button">Kirim OTP</ModifyButton>
+                        <PrimaryButton onClick={(e) => changeEmail(e)}>Ganti Email</PrimaryButton>
+                    </div>
+                </div>
+
+                <div hidden={showOtpInput}>
+                    <InputLabel htmlFor="code" value="Kode OTP" />
 
                     <TextInput
-                        id="email"
-                        type="email"
+                        id="code"
+                        type="text"
                         className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        value={data.code}
+                        onChange={(e) => setData('code', e.target.value)}
                         required
-                        autoComplete="username"
+                        placeholder="OTP"
+                        disabled={showOtpInput}
                     />
 
-                    <InputError className="mt-2" message={errors.email} />
+                    <InputError className="mt-2" message={errors.code} />
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

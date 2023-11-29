@@ -6,29 +6,42 @@ import InputLabel from "./InputLabel";
 import DangerButton from "./DangerButton";
 import PrimaryButton from "./PrimaryButton";
 import { useForm } from "@inertiajs/react";
+import { useEffect } from "react";
 
 export default function Modal({
-    files,
+    files = [],
     show = false,
     closeable = true,
     props = null,
     datas = null,
+    indexFile = 0,
     onClose = () => {},
 }) {
+    console.log(indexFile);
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
         status: '',
-        note: props ? props.data.revision_vendor.note : '',
-        document: '',
-        approval_role: '',
+        note: 
+            props ? 
+            props.data.revision_vendor.note ? 
+            props.data.revision_vendor.note : 
+            datas ? 
+            datas.note : 
+            '' : 
+            datas ? 
+            datas.note : 
+            '',
+        document: "",
         top: '',
         ppn: '',
         skb: '',
         pph: '',
-        coa_prepayment: '',
-        coa_liability_account: '',
-        coa_receiving: '',
+        // coa_prepayment: props.data.revision_vendor.vendor.coa_prepayment,
+        // coa_liability_account: props.data.revision_vendor.vendor.coa_liability_account,
+        // coa_receiving: props.data.revision_vendor.vendor.coa_receiving,
         ship_to: '',
         bill_to: '',
+        approval_role: "",
+
         npwp_note: '',
         sppkp_note: '',
         siup_note: '',
@@ -36,6 +49,15 @@ export default function Modal({
         nib_note: '',
         board_of_directors_composition_note: '',
         non_pkp_statement_note: '',
+
+        file_npwp_validate: '',
+        file_sppkp_validate:'',
+        file_siup_validate: '',
+        file_tdp_validate: '',
+        file_nib_validate: '',
+        file_board_of_directors_composition_validate:'',
+        file_non_pkp_statement_validate: '',
+        coa: "",
     });
 
     
@@ -49,9 +71,7 @@ export default function Modal({
             data.ppn = datas.ppn;
             data.skb = datas.skb;
             data.pph = datas.pph;
-            data.coa_prepayment = datas.coa_prepayment;
-            data.coa_liability_account = datas.coa_liability_account;
-            data.coa_receiving = datas.coa_receiving;
+            data.coa = datas.coa;
             data.ship_to = datas.ship_to;
             data.bill_to = datas.bill_to;
             data.approval_role = datas.approval_role;
@@ -62,18 +82,35 @@ export default function Modal({
             data.nib_note = datas.nib_note;
             data.board_of_directors_composition_note = datas.board_of_directors_composition_note;
             data.non_pkp_statement_note = datas.non_pkp_statement_note;
+            data.file_npwp_validate = datas.file_npwp_validate,
+            data.file_sppkp_validate = datas.file_sppkp_validate,
+            data.file_siup_validate = datas.file_siup_validate,
+            data.file_tdp_validate = datas.file_tdp_validate,
+            data.file_nib_validate = datas.file_nib_validate,
+            data.file_board_of_directors_composition_validate = datas.file_board_of_directors_composition_validate,
+            data.file_non_pkp_statement_validate = datas.file_non_pkp_statement_validate,
             post(route('admin.vendor-profile.update', props.data.revision_vendor.id));
-            close();
+            onClose(true);
         }
     };
 
-    const [idxfile, setidxfile] = useState(0);
+      
+    const [idxfile, setidxfile] = useState(indexFile);
+
     const close = () => {
         if (closeable) {
-            setidxfile(0);
+            // setidxfile(0);
             onClose();
         }
     };
+
+    useEffect(() => {
+        // Lakukan sesuatu ketika modal terbuka
+        if (show) {
+          // Misalnya, atur indeks ke nilai tertentu
+          setidxfile(indexFile); // Ganti dengan nilai yang sesuai dari file B
+        }
+      }, [show, setidxfile]);
 
     const prev = () => {
         var total = files.length;
@@ -194,7 +231,15 @@ export default function Modal({
                     </form>
                   </Dialog.Title>
                   <div className="mt-2" style={{height:'92%'}}>
-                    {files.length > 0 && (<iframe width={'100%'} height={'100%'} src={Array.isArray(files) ? (files[idxfile].ispdf ? baseUrl+'/pdfview?file='+files[idxfile].edited : files[idxfile].edited) : files}></iframe>)}
+                    {files.length > 0 
+                    && (
+                        <iframe width={'100%'} height={'100%'} src={
+                            Array.isArray(files) ? 
+                                files[idxfile].file ? files[idxfile].file 
+                                : files[idxfile].ispdf ? baseUrl+'/pdfview?file='+files[idxfile].edited : files[idxfile].edited 
+                            : files
+                    }></iframe>
+                    )}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

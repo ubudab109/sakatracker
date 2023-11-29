@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import '../../../../../css/app.css';
 
 export default function GeneratedRfp(props) {
 

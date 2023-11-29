@@ -33,17 +33,21 @@ export default function Index(props) {
         return `${day}-${month}-${year}`;
     }
 
+    const [pdfUrl, setPdfUrl] = useState('');
+
     const [file, setFile] = useState();
     const handleChangeFile = (file) => {
         setFile(file);
         setData('attachment', file);
     };
 
-    const openPopup = () => {
+    const openPopup = (item) => {
+        setPdfUrl(item);
         setIsPopupOpen(true);
     };
 
     const closePopup = () => {
+        setPdfUrl('');
         setIsPopupOpen(false);
     };
     return (
@@ -54,7 +58,7 @@ export default function Index(props) {
             <Head title="Detail Tukar Faktur" />
 
             <ModalViewer
-                files={props.newdocs}
+                files={pdfUrl}
                 show={isPopupOpen}
                 onClose={closePopup}
             />
@@ -98,6 +102,16 @@ export default function Index(props) {
                                         <p>Nomor Invoice</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.invoice_number}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>No Efaktur</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.tax_invoice_number}</p>
                                     </div>
                                 </div>
                             </div>
@@ -216,7 +230,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.tax_invoice)
                                                 }
                                             >
                                                 <svg
@@ -249,7 +263,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.invoice)
                                                 }
                                             >
                                                 <svg
@@ -282,7 +296,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.bast)
                                                 }
                                             >
                                                 <svg
@@ -315,7 +329,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.quotation)
                                                 }
                                             >
                                                 <svg
@@ -349,7 +363,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.po)
                                                 }
                                             >
                                                 <svg
@@ -386,7 +400,7 @@ export default function Index(props) {
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
-                                                    openPopup()
+                                                    openPopup(props.data.invoice.exchange_invoice_attachments)
                                                 }
                                             >
                                                 <svg

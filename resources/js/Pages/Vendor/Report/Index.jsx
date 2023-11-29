@@ -1,4 +1,3 @@
-import '../../../../css/chart.css';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import React from "react";
@@ -10,7 +9,6 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import ChartOverdue from './Partials/ChartOverdue';
 import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
 import CardDashboardChart from '@/Components/CardDashboardChart';
-
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -72,7 +70,8 @@ export default function Index(props) {
             </div>
 
             <div className="row mt-5">
-                <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} />
+                
+                <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />
                 <CardDashboardChart name="Outstanding Invoice" data={props.data.card_outstanding.invoice_amount} />
                 <CardDashboardChart name="Outstanding Invoice Amount" data={props.data.card_outstanding.formated_invoice_total} />
             </div>
@@ -81,6 +80,7 @@ export default function Index(props) {
             <div className="row">
                 <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
                 <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
+
                 <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
             </div>
             {/* <div className='flex justify-evenly items-center mt-3 gap-3'>

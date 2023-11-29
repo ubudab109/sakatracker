@@ -6,6 +6,7 @@ use App\Models\RequestGoodReceiptAttachment;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\OraclePurchaseOrder;
 use App\Models\RequestGoodReceipt;
+use App\Traits\NotifySelfTrait;
 use Illuminate\Http\Request;
 use App\Models\Vendor;
 use App\Models\User;
@@ -14,6 +15,8 @@ use Auth;
 
 class RequestGoodReceiptController extends Controller
 {
+    use NotifySelfTrait;
+
     /**
      * Display a listing of the resource.
      */
@@ -97,6 +100,8 @@ class RequestGoodReceiptController extends Controller
             }
         }
 
+        $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil tambah request GR', '/request-good-receipt');
+
         return Redirect::route('request-good-receipt.create');
     }
 
@@ -172,6 +177,8 @@ class RequestGoodReceiptController extends Controller
             }
         }
 
+        $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil ubah request GR', '/request-good-receipt');
+
 
         return Redirect::route('request-good-receipt.edit', $data->id);
     }
@@ -182,6 +189,8 @@ class RequestGoodReceiptController extends Controller
     public function destroy($id)
     {
         RequestGoodReceipt::where('id', $id)->delete();
+
+        $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil hapus request GR', '/request-good-receipt');
 
         return Redirect::route('request-good-receipt.index');
     }

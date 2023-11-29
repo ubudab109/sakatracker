@@ -8,8 +8,8 @@ export default function CompanyPaymentTimeForm({ vendorData, className }) {
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm([
         {
             id: '',
-            name: '',
-            payment_time: ''
+            name: vendorData.name,
+            payment_time: vendorData.payment_time
         }
     ]);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\NotifySelfTrait;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\RevisionRegisterVendor;
 use App\Mail\ApproverVendorMail;
@@ -13,6 +14,8 @@ use Illuminate\Support\Str;
 use App\Models\SlaHoliday;
 use App\Models\SlaWeekend;
 use App\Models\Anotation;
+use App\Models\OracleCoa;
+use App\Models\CoaVendor;
 use App\Models\UserRole;
 use App\Models\Vendor;
 use Inertia\Inertia;
@@ -28,6 +31,8 @@ use Mail;
 
 class AdminVendorProfileController extends Controller
 {
+    use NotifySelfTrait;
+
     public function checkPermission($role)
     {
         $permissions = [];
@@ -193,23 +198,35 @@ class AdminVendorProfileController extends Controller
             if (!in_array($item->vendor_id, $vendorIds)) {
                 $vendorIds[] = $item->vendor_id; // Menambahkan vendor_id ke dalam array
 
-                $arrayRegister = RevisionRegisterVendor::where('vendor_id', $item->vendor_id)->get();
+                $arrayRegister = RevisionRegisterVendor::where('vendor_id', $item->vendor_id)
+                ->where('status', 'disetujui')
+                ->orderBy('id', 'desc')
+                ->first();
+				
+				if($arrayRegister)
+				{
+					if($item->id - 1 == $arrayRegister->id)
+					{
+						return true;
+					}
+				} else {
+					$arrayRegisterCheck = RevisionRegisterVendor::
+				    where('vendor_id', $item->vendor_id)
+					->where('status', 'menunggu persetujuan')
+					->orderBy('id', 'asc')
+					->first();
+					if($arrayRegisterCheck->id == $item->id)
+					{
+						return true;
+					}
+				}
                 
-                foreach ($arrayRegister as $key => $item2) {
-                    if (in_array($item2->approval_role, $roleUser)) {
-                        if ($key > 0 && $arrayRegister[$key - 1]->status == 'disetujui') {
-                            return true;
-                        } elseif ($key == 0) {
-                            return true;
-                        }
-                    }
-                }
             }
 
             return false;
         })
-        ->pluck('id'); // Mengambil nilai id dari hasil filter
-
+        ->pluck('id');
+		
         $data['revision_vendors'] = RevisionRegisterVendor::with('vendor')
         ->whereIn('id', $data['revision_vendors'])
         ->orderBy('id', 'desc')
@@ -222,6 +239,62 @@ class AdminVendorProfileController extends Controller
     public function edit($id) {
         $data['permissions'] = $this->checkPermission('verification');
         $data['revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('id', $id)->first();
+        $data['before_revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', '!=', 'menunggu persetujuan')->orderBy('id', 'desc')->first();
+        $data['coa'] = [
+            'entries' => [],
+            // 'currentEntry' => [],
+        ];
+        $coas = CoaVendor::where('vendor_id', $data['revision_vendor']->vendor_id)->get();
+        foreach($coas as $key => $coa)
+        {
+            $data['coa']['entries'][] = [
+                'supplier_site' => [$coa->supplier_site],
+                'coa_prepayment' => [
+                    'coa_prepayment_1' => $coa->coa_prepayment_1,
+                    'coa_prepayment_2' => $coa->coa_prepayment_2,
+                    'coa_prepayment_3' => $coa->coa_prepayment_3,
+                    'coa_prepayment_4' => $coa->coa_prepayment_4,
+                    'coa_prepayment_5' => $coa->coa_prepayment_5,
+                    'coa_prepayment_6' => $coa->coa_prepayment_6,
+                    'coa_prepayment_7' => $coa->coa_prepayment_7,
+                ],
+                'coa_liability_account' => [
+                    'coa_liability_account_1' => $coa->coa_liability_account_1,
+                    'coa_liability_account_2' => $coa->coa_liability_account_2,
+                    'coa_liability_account_3' => $coa->coa_liability_account_3,
+                    'coa_liability_account_4' => $coa->coa_liability_account_4,
+                    'coa_liability_account_5' => $coa->coa_liability_account_5,
+                    'coa_liability_account_6' => $coa->coa_liability_account_6,
+                    'coa_liability_account_7' => $coa->coa_liability_account_7,
+                ],
+                'coa_receiving' => [
+                    'coa_receiving_1' => $coa->coa_receiving_1,
+                    'coa_receiving_2' => $coa->coa_receiving_2,
+                    'coa_receiving_3' => $coa->coa_receiving_3,
+                    'coa_receiving_4' => $coa->coa_receiving_4,
+                    'coa_receiving_5' => $coa->coa_receiving_5,
+                    'coa_receiving_6' => $coa->coa_receiving_6,
+                    'coa_receiving_7' => $coa->coa_receiving_7,
+                ],
+            ];
+        }
+
+        $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
+        $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
+        $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
+        $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
+        $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
+        $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
+        $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
+
+        // $data['coa_1'] = [];
+        // $data['coa_2'] = [];
+        // $data['coa_3'] = [];
+        // $data['coa_4'] = [];
+        // $data['coa_5'] = [];
+        // $data['coa_6'] = [];
+        // $data['coa_7'] = [];
+
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();
         $data['payment_terms'] = PaymentTerm::all();
@@ -234,25 +307,77 @@ class AdminVendorProfileController extends Controller
 
         if ($data['revision_vendor']) {
             foreach ($data['revision_vendor']->vendor->getAttributes() as $key => $value) {
-                if (strpos($key, "file_") === 0 && !empty($value)) {
-                    $doc_path = parse_url($value, PHP_URL_PATH);
-                    $nama_doc = basename($doc_path);
-
-                    $doc = Anotation::where('doc_id', $nama_doc)->first();
-                    if ($doc) array_push($docs, $doc);
-
-                    //have edited file
-                    $folder = explode("/",$doc_path);
-                    $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
-                    $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
-                    $exist = Storage::disk('public')->exists($fileedited);
-                    $newdoc = [
-                        'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
-                        'origin'=>Storage::disk('public')->url($fileorigin),
-                        'name'=>$folder[count($folder)-2],
-                        'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
-                    ];
-                    $newdocs[] = $newdoc;
+                if($key == 'file_npwp')
+                {
+                    if (strpos($key, "file_") === 0 && !empty($value)) {
+                        $doc_path = parse_url($value, PHP_URL_PATH);
+                        $nama_doc = basename($doc_path);
+    
+                        $doc = Anotation::where('doc_id', $nama_doc)->first();
+                        if ($doc) array_push($docs, $doc);
+    
+                        //have edited file
+                        $folder = explode("/",$doc_path);
+                        $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
+                        $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                        $exist = Storage::disk('public')->exists($fileedited);
+                        $newdoc = [
+                            'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                            'origin'=>Storage::disk('public')->url($fileorigin),
+                            'name'=>$folder[count($folder)-2],
+                            'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                        ];
+                        $newdocs[] = $newdoc;
+                    }
+                }
+                if($data['revision_vendor']->vendor->type_of_business != 'PKP')
+                {
+                    if($key == 'file_non_pkp_statement')
+                    {
+                        if (strpos($key, "file_") === 0 && !empty($value)) {
+                            $doc_path = parse_url($value, PHP_URL_PATH);
+                            $nama_doc = basename($doc_path);
+        
+                            $doc = Anotation::where('doc_id', $nama_doc)->first();
+                            if ($doc) array_push($docs, $doc);
+        
+                            //have edited file
+                            $folder = explode("/",$doc_path);
+                            $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
+                            $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                            $exist = Storage::disk('public')->exists($fileedited);
+                            $newdoc = [
+                                'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                                'origin'=>Storage::disk('public')->url($fileorigin),
+                                'name'=>$folder[count($folder)-2],
+                                'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                            ];
+                            $newdocs[] = $newdoc;
+                        }
+                    }
+                } else if($data['revision_vendor']->vendor->type_of_business != 'Pribadi') {
+                    if($key == 'file_sppkp' || $key == 'file_siup' || $key == 'file_tdp' || $key == 'file_nib' || $key == 'file_board_of_directors_composition'){
+                        if (strpos($key, "file_") === 0 && !empty($value)) {
+                            $doc_path = parse_url($value, PHP_URL_PATH);
+                            $nama_doc = basename($doc_path);
+        
+                            $doc = Anotation::where('doc_id', $nama_doc)->first();
+                            if ($doc) array_push($docs, $doc);
+        
+                            //have edited file
+                            $folder = explode("/",$doc_path);
+                            $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
+                            $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                            $exist = Storage::disk('public')->exists($fileedited);
+                            $newdoc = [
+                                'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                                'origin'=>Storage::disk('public')->url($fileorigin),
+                                'name'=>$folder[count($folder)-2],
+                                'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                            ];
+                            $newdocs[] = $newdoc;
+                        }
+                    }
                 }
             }
         }
@@ -266,6 +391,7 @@ class AdminVendorProfileController extends Controller
     }
 
     public function update($id, Request $request) {
+        // dd($request->all());
         $roleUser = [];
         if(Auth::user()->user_role != null) {
             foreach(Auth::user()->user_role as $item) {
@@ -276,6 +402,7 @@ class AdminVendorProfileController extends Controller
             }
         }
         $data = RevisionRegisterVendor::where('id', $id)->first();
+
         $top = '';
         $ppn = '';
         $document = '';
@@ -329,11 +456,13 @@ class AdminVendorProfileController extends Controller
         $validate_file_board_of_directors_composition_validate = '';
         $validate_file_non_pkp_statement_validate = '';
         if($request->status == 'disetujui') {
-            $validate_file_npwp_validate = $request->file_npwp_validate != '1' ? 'required' : '';
+            $validate_file_npwp_validate = $request->file_npwp_validate != 'acc' ? 'required|in:acc' : '';
+            $request->file_npwp_validate = null;
         }
+        
 
         if($request->status == 'ditolak') {
-            if($request->file_npwp_validate != '1')
+            if($request->file_npwp_validate != 'acc')
             {
                 $validate_npwp_note = $request->npwp_note == null ? 'required' : '';
             }
@@ -347,31 +476,31 @@ class AdminVendorProfileController extends Controller
             $validate_file_nib_validate = 'required';
             $validate_file_board_of_directors_composition_validate = 'required';
             if($request->status == 'disetujui') {
-                $validate_file_siup_validate = $request->file_siup_validate != '1' ? 'required' : '';
-                $validate_file_sppkp_validate = $request->file_sppkp_validate != '1' ? 'required' : '';
-                $validate_file_tdp_validate = $request->file_tdp_validate != '1' ? 'required' : '';
-                $validate_file_nib_validate = $request->file_nib_validate != '1' ? 'required' : '';
-                $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != '1' ? 'required' : '';
+                $validate_file_siup_validate = $request->file_siup_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_sppkp_validate = $request->file_sppkp_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_tdp_validate = $request->file_tdp_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_nib_validate = $request->file_nib_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != 'acc' ? 'required|in:acc' : '';
             }
 
             if($request->status == 'ditolak') {
-                if($request->file_sppkp_validate != '1')
+                if($request->file_sppkp_validate != 'acc')
                 {
                     $validate_sppkp_note = $request->sppkp_note == null ? 'required' : '';
                 }
-                if($request->file_siup_validate != '1')
+                if($request->file_siup_validate != 'acc')
                 {
                     $validate_siup_note = $request->siup_note == null ? 'required' : '';
                 }
-                if($request->file_tdp_validate != '1')
+                if($request->file_tdp_validate != 'acc')
                 {
                     $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
                 }
-                if($request->file_nib_validate != '1')
+                if($request->file_nib_validate != 'acc')
                 {
                     $validate_nib_note = $request->nib_note == null ? 'required' : '';
                 }
-                if($request->file_board_of_directors_composition_validate != '1')
+                if($request->file_board_of_directors_composition_validate != 'acc')
                 {
                     $validate_board_of_directors_composition_note = $request->board_of_directors_composition_note == null ? 'required' : '';
                 }
@@ -382,11 +511,11 @@ class AdminVendorProfileController extends Controller
         {
             $validate_file_non_pkp_statement_validate = 'required';
             if($request->status == 'disetujui') {
-                $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != '1' ? 'required' : '';
+                $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != 'acc' ? 'required|in:acc' : '';
             }
 
             if($request->status == 'ditolak') {
-                if($request->file_non_pkp_statement_validate != '1')
+                if($request->file_non_pkp_statement_validate != 'acc')
                 {
                     $validate_non_pkp_note = $request->non_pkp_note == null ? 'required' : '';
                 }
@@ -436,32 +565,131 @@ class AdminVendorProfileController extends Controller
 
         $data->update([
             'user_id' => Auth::user()->id,
+			 'ppn' => $request->ppn ?? $data->vendor->ppn,
+            'top' => $request->top ?? $data->vendor->top,
             'status' => $request->status,
             'note' => $request->note,
             'document' => $documentPath,
-            'ppn' => $request->ppn ?? '',
-            'top' => $request->top ?? '',
-
-            'skb' => $request->skb ?? '',
-            'pph' => $request->pph ?? '',
-            'coa_prepayment' => $request->coa_prepayment ?? '',
-            'coa_liability_account' => $request->coa_liability_account ?? '',
-            'coa_receiving' => $request->coa_receiving ?? '',
-            'ship_to' => $request->ship_to ?? '',
-            'bill_to' => $request->bill_to ?? '',
         ]);
+
+        if($request->status == 'ditolak')
+        {
+            $checkRevisiVendorApprove = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->update([
+                'status' => 'ditolak'
+            ]);
+        }
 
         $data->vendor->update([
             'ppn' => $request->ppn ?? $data->vendor->ppn,
             'top' => $request->top ?? $data->vendor->top,
-            'npwp_note' => $request->npwp_note ?? $data->vendor->npwp_note,
-            'sppkp_note' => $request->sppkp_note ?? $data->vendor->sppkp_note,
-            'siup_note' => $request->siup_note ?? $data->vendor->siup_note,
-            'tdp_note' => $request->tdp_note ?? $data->vendor->tdp_note,
-            'nib_note' => $request->nib_note ?? $data->vendor->nib_note,
-            'board_of_directors_composition_note' => $request->board_of_directors_composition_note ?? $data->vendor->board_of_directors_composition_note,
-            'non_pkp_statement_note' => $request->non_pkp_statement_note ?? $data->vendor->non_pkp_statement_note,
+
+            'skb' => $request->skb ?? $data->vendor->skb,
+            'pph' => $request->pph ?? $data->vendor->pph,
+            'ship_to' => $request->ship_to ?? $data->vendor->ship_to,
+            'bill_to' => $request->bill_to ?? $data->vendor->bill_to,
+            'npwp_note' => $request->file_npwp != 'acc' ? $request->npwp_note ?? $data->vendor->npwp_note : 'acc',
+            'sppkp_note' => $request->file_sppkp != 'acc' ? $request->sppkp_note ?? $data->vendor->sppkp_note : 'acc',
+            'siup_note' => $request->file_siup != 'acc' ? $request->siup_note ?? $data->vendor->siup_note : 'acc',
+            'tdp_note' => $request->file_tdp != 'acc' ? $request->tdp_note ?? $data->vendor->tdp_note : 'acc',
+            'nib_note' => $request->file_nib != 'acc' ? $request->nib_note ?? $data->vendor->nib_note : 'acc',
+            'board_of_directors_composition_note' => $request->file_board_of_directors_composition != 'acc' ? $request->board_of_directors_composition_note ?? $data->vendor->board_of_directors_composition_note : 'acc',
+            'non_pkp_statement_note' => $request->file_non_pkp_statement != 'acc' ? $request->non_pkp_statement_note ?? $data->vendor->non_pkp_statement_note : 'acc',
         ]);
+		
+		if($request->status == 'disetujui')
+		{
+			$data->vendor->update([
+				'ppn' => $request->ppn,
+				'top' => $request->top,
+				'skb' => $request->skb ?? $data->vendor->skb,
+				'pph' => $request->pph ?? $data->vendor->pph,
+				'ship_to' => $request->ship_to ?? $data->vendor->ship_to,
+				'bill_to' => $request->bill_to ?? $data->vendor->bill_to,
+				
+				'npwp_note' => null,
+				'sppkp_note' => null,
+				'siup_note' => null,
+				'tdp_note' => null,
+				'nib_note' => null,
+				'board_of_directors_composition_note' => null,
+				'non_pkp_statement_note' => null,
+			]);
+		}
+
+        if($request->coa)
+        {
+            if(CoaVendor::where('vendor_id', $data->vendor_id)->first())
+            {
+                CoaVendor::where('vendor_id', $data->vendor_id)->delete();
+            }
+            if($request->coa['currentEntry'])
+            {
+                if($request->coa['currentEntry']['supplier_site'])
+                {
+                    CoaVendor::create([
+                        'vendor_id' => $data->vendor_id,
+                        'supplier_site' => $request->coa['currentEntry']['supplier_site'][0],
+                        'coa_prepayment_1' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_1'],
+                        'coa_prepayment_2' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_2'],
+                        'coa_prepayment_3' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_3'],
+                        'coa_prepayment_4' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_4'],
+                        'coa_prepayment_5' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_5'],
+                        'coa_prepayment_6' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_6'],
+                        'coa_prepayment_7' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_7'],
+
+                        'coa_liability_account_1' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_1'],
+                        'coa_liability_account_2' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_2'],
+                        'coa_liability_account_3' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_3'],
+                        'coa_liability_account_4' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_4'],
+                        'coa_liability_account_5' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_5'],
+                        'coa_liability_account_6' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_6'],
+                        'coa_liability_account_7' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_7'],
+
+                        'coa_receiving_1' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_1'],
+                        'coa_receiving_2' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_2'],
+                        'coa_receiving_3' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_3'],
+                        'coa_receiving_4' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_4'],
+                        'coa_receiving_5' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_5'],
+                        'coa_receiving_6' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_6'],
+                        'coa_receiving_7' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_7'],
+                    ]);
+                }
+            }
+            if($request->coa['entries'])
+            {
+                foreach($request->coa['entries'] as $entry)
+                {
+                    // dd($entry['supplier_site'][0]);
+                    CoaVendor::create([
+                        'vendor_id' => $data->vendor_id,
+                        'supplier_site' => $entry['supplier_site'][0],
+                        'coa_prepayment_1' => $entry['coa_prepayment']['coa_prepayment_1'],
+                        'coa_prepayment_2' => $entry['coa_prepayment']['coa_prepayment_2'],
+                        'coa_prepayment_3' => $entry['coa_prepayment']['coa_prepayment_3'],
+                        'coa_prepayment_4' => $entry['coa_prepayment']['coa_prepayment_4'],
+                        'coa_prepayment_5' => $entry['coa_prepayment']['coa_prepayment_5'],
+                        'coa_prepayment_6' => $entry['coa_prepayment']['coa_prepayment_6'],
+                        'coa_prepayment_7' => $entry['coa_prepayment']['coa_prepayment_7'],
+
+                        'coa_liability_account_1' => $entry['coa_liability_account']['coa_liability_account_1'],
+                        'coa_liability_account_2' => $entry['coa_liability_account']['coa_liability_account_2'],
+                        'coa_liability_account_3' => $entry['coa_liability_account']['coa_liability_account_3'],
+                        'coa_liability_account_4' => $entry['coa_liability_account']['coa_liability_account_4'],
+                        'coa_liability_account_5' => $entry['coa_liability_account']['coa_liability_account_5'],
+                        'coa_liability_account_6' => $entry['coa_liability_account']['coa_liability_account_6'],
+                        'coa_liability_account_7' => $entry['coa_liability_account']['coa_liability_account_7'],
+
+                        'coa_receiving_1' => $entry['coa_receiving']['coa_receiving_1'],
+                        'coa_receiving_2' => $entry['coa_receiving']['coa_receiving_2'],
+                        'coa_receiving_3' => $entry['coa_receiving']['coa_receiving_3'],
+                        'coa_receiving_4' => $entry['coa_receiving']['coa_receiving_4'],
+                        'coa_receiving_5' => $entry['coa_receiving']['coa_receiving_5'],
+                        'coa_receiving_6' => $entry['coa_receiving']['coa_receiving_6'],
+                        'coa_receiving_7' => $entry['coa_receiving']['coa_receiving_7'],
+                    ]);
+                }
+            }
+        }
 
         if($request->status == 'ditolak') {        
             $data->vendor->update([
@@ -525,6 +753,8 @@ class AdminVendorProfileController extends Controller
                 }
 
             }
+
+            $this->notifySelf(Auth::user()->id, 'Perubahan Data', 'Berhasil tolak perubahan data', '/admin/vendor/' . $data->vendor_id);
         } else {
             foreach($roleUser as $role) {
                 $checkStatus = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->where('approval_role', $role)->first();
@@ -599,8 +829,10 @@ class AdminVendorProfileController extends Controller
 
                 $this->generateIdManual($data->vendor_id);
             }
+
+            $this->notifySelf(Auth::user()->id, 'Perubahan Data', 'Berhasil setujui perubahan data', '/admin/vendor/' . $data->vendor_id);
         }
 
-        return Redirect::route('admin.vendor-profile.edit', $data->id);
+        return redirect()->route('admin.vendor.show', $data->vendor_id);
     }
 }

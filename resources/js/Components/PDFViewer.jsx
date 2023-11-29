@@ -12,6 +12,8 @@ export default function PDFViewer({ pdfUrl, closeModal, docs }) {
     const path = new URL(pdfUrl).pathname;
     const pathArray = path.split("/");
     const namaFile = pathArray.pop();
+    
+
     let doc;
     if (Array.isArray(docs)) {
         doc = docs.find((item) => {

@@ -18,3 +18,5 @@ use App\Http\Controllers\ApiExchangeInvoiceController;
 
 Route::get('/check-first-login', [ApiDashboardController::class, 'checkFirstLogin']);
 Route::get('/purchase-order-detail', [ApiExchangeInvoiceController::class, 'purchaseOrderDetail']);
+Route::get('/rfp', [ApiExchangeInvoiceController::class, 'rfp']);
+

@@ -1,14 +1,13 @@
-
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import ModifyButton from "@/Components/ModifyButton";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import Select from "react-select";
-import makeAnimated from 'react-select/animated';
+import makeAnimated from "react-select/animated";
 import { FileUploader } from "react-drag-drop-files";
 import SecondaryButton from "@/Components/SecondaryButton";
 import ModalGR from "./ModalGR";
@@ -17,41 +16,36 @@ import PDFPopup from "@/Components/PDFPopup";
 import { convertMb } from "@/Utils/helper";
 
 export default function Form(props) {
+    console.log(props);
     const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
         // category: props.data.invoice == null ? '' : props.data.invoice.category,
-        location: props.data.invoice == null ? '' : props.data.invoice.location,
-        date: props.data.invoice == null ? '' : props.data.invoice.date,
-        dpp: props.data.invoice == null ? '' : props.data.invoice.dpp,
+        location: props.data.invoice == null ? "" : props.data.invoice.location,
+        date: props.data.invoice == null ? "" : props.data.invoice.date,
+        dpp: props.data.invoice == null ? "" : props.data.invoice.dpp,
         tax_invoice: null,
         invoice: null,
         bast: null,
         po: null,
         quotation: null,
-        ppn: props.data.invoice == null ? '' : props.data.invoice.ppn,
-        invoice_number: props.data.invoice == null ? 0 : props.data.invoice.invoice_number,
+        ppn: props.data.invoice == null ? "" : props.data.invoice.ppn,
+        invoice_number:
+            props.data.invoice == null ? 0 : props.data.invoice.invoice_number,
         // tax_invoice_number: props.data.invoice == null ? 0 : props.data.invoice.tax_invoice_number,
         total: props.data.invoice == null ? 0 : props.data.invoice.total,
-        is_materai: props.data.invoice == null ? '' : props.data.invoice.is_materai,
-        note: props.data.invoice == null ? '' : props.data.invoice.note,
-        attachment: '',
-        is_po: props.data.invoice == null ? '' : props.data.invoice.is_po,
-        po_number: props.data.invoice == null ? '' : props.data.invoice.po_number,
-        order_id: props.data.invoice == null ? '' : props.data.invoice.order_id,
-        gr_items: '',
-        status_submit: ''
+        is_materai:
+            props.data.invoice == null ? "" : props.data.invoice.is_materai,
+        note: props.data.invoice == null ? "" : props.data.invoice.note,
+        attachment: "",
+        is_po: props.data.invoice == null ? "" : props.data.invoice.is_po,
+        po_number: props.data.po_number
+            ? props.data.po_number
+            : props.data.invoice == null
+            ? ""
+            : props.data.invoice.po_number,
+        order_id: props.data.invoice == null ? "" : props.data.invoice.order_id,
+        gr_items: "",
+        status_submit: "",
     });
-
-    // console.log(errors);
-
-    const submit = (e) => {
-        e.preventDefault();
-        console.log(errors);
-        if (props.data.invoice == null) {
-            post(route('exchange-invoice.store'));
-        } else {
-            post(route('exchange-invoice.update', props.data.invoice.id));
-        }
-    };
 
     const handleFile = (e) => {
         if (convertMb(e.target.files[0].size) > 5) {
@@ -62,6 +56,18 @@ export default function Form(props) {
         }
     }
 
+    // console.log(errors);
+
+    const submit = (e) => {
+        e.preventDefault();
+        console.log(errors);
+        if (props.data.invoice == null) {
+            post(route("exchange-invoice.store"));
+        } else {
+            post(route("exchange-invoice.update", props.data.invoice.id));
+        }
+    };
+
     const withOptionChangeHandler = (selectedOptionHandler) => {
         return (event) => {
             const dataValue = event.target.value;
@@ -70,21 +76,35 @@ export default function Form(props) {
     };
 
     // const [selectedValue1, setSelectedValue1] = useState(props.data.invoice == null ? '' : props.data.invoice.category);
-    const [selectedValue2, setSelectedValue2] = useState(props.data.invoice == null ? '' : props.data.invoice.location);
-    const [selectedValue3, setSelectedValue3] = useState(props.data.invoice == null ? '' : props.data.invoice.is_materai);
-    const [selectedValue4, setSelectedValue4] = useState(props.data.invoice == null ? '' : props.data.invoice.is_po);
-    const [selectedValue5, setSelectedValue5] = useState('');
+    const [selectedValue2, setSelectedValue2] = useState(
+        props.data.invoice == null ? "" : props.data.invoice.location
+    );
+    const [selectedValue3, setSelectedValue3] = useState(
+        props.data.invoice == null ? "" : props.data.invoice.is_materai
+    );
+    const [selectedValue4, setSelectedValue4] = useState(
+        props.data.invoice == null
+            ? props.data.po_number != null
+                ? 1
+                : ""
+            : props.data.po_number != null
+            ? 1
+            : props.data.invoice.is_po
+    );
+    const [selectedValue5, setSelectedValue5] = useState(props.data.po_number);
 
-    const [selectedLabel5, setSelectedLabel5] = useState('');
+    const [selectedLabel5, setSelectedLabel5] = useState("");
     const [dataGoodReceipt, setDataGoodReceipt] = useState([]);
 
-    const [selectedButtonPO, setSelectedButtonPO] = useState(selectedValue4 == 1 ? false : true);
+    const [selectedButtonPO, setSelectedButtonPO] = useState(
+        props.data.po_number ? false : selectedValue4 == 1 ? false : true
+    );
 
     const handleOptionChange = (dataValue, setSelectedValue) => {
         setSelectedValue(dataValue);
 
         if (setSelectedValue4 === setSelectedValue) {
-            if (dataValue === '1') {
+            if (dataValue === "1") {
                 setSelectedButtonPO(false);
                 setShowTotalPpnTax(true);
             } else {
@@ -95,9 +115,27 @@ export default function Form(props) {
     };
 
     // const enhancedHandleOptionChange1 = withOptionChangeHandler((dataValue) => handleOptionChange(dataValue, setSelectedValue1, data.category = dataValue));
-    const enhancedHandleOptionChange2 = withOptionChangeHandler((dataValue) => handleOptionChange(dataValue, setSelectedValue2, data.location = dataValue));
-    const enhancedHandleOptionChange3 = withOptionChangeHandler((dataValue) => handleOptionChange(dataValue, setSelectedValue3, data.is_materai = dataValue));
-    const enhancedHandleOptionChange4 = withOptionChangeHandler((dataValue) => handleOptionChange(dataValue, setSelectedValue4, data.is_po = dataValue));
+    const enhancedHandleOptionChange2 = withOptionChangeHandler((dataValue) =>
+        handleOptionChange(
+            dataValue,
+            setSelectedValue2,
+            (data.location = dataValue)
+        )
+    );
+    const enhancedHandleOptionChange3 = withOptionChangeHandler((dataValue) =>
+        handleOptionChange(
+            dataValue,
+            setSelectedValue3,
+            (data.is_materai = dataValue)
+        )
+    );
+    const enhancedHandleOptionChange4 = withOptionChangeHandler((dataValue) =>
+        handleOptionChange(
+            dataValue,
+            setSelectedValue4,
+            (data.is_po = dataValue)
+        )
+    );
 
     const handleChange5 = (event) => {
         // console.log(event);
@@ -115,11 +153,15 @@ export default function Form(props) {
                 console.log(res.datas);
             })
             .catch((error) => {
-                console.error('Error fetching data:', error);
+                console.error("Error fetching data:", error);
             });
     };
 
-    const [files, setFiles] = useState(props.data.invoice == null ? '' : props.data.invoice.exchange_invoice_attachments);
+    const [files, setFiles] = useState(
+        props.data.invoice == null
+            ? []
+            : props.data.invoice.exchange_invoice_attachments
+    );
     const [objectFilesUrl, setObjectFilesUrl] = useState([]);
     const [limitedFiles, setLimitedFiles] = useState(0);
     const handleChangeFile = (fileUploaded) => {
@@ -127,7 +169,7 @@ export default function Form(props) {
         const objectUrl = [...objectFilesUrl];
         let currentSize = 0;
         fileUploaded.some((file) => {
-            if (uploaded.findIndex(f => f.name === file.name) === -1) {
+            if (uploaded.findIndex((f) => f.name === file.name) === -1) {
                 uploaded.push(file);
                 const objectFile = Object.assign(file);
                 const url = URL.createObjectURL(objectFile);
@@ -135,7 +177,7 @@ export default function Form(props) {
                 objectUrl.push({
                     url: url,
                     fileName: file.name,
-                    fileSize: sizeFile
+                    fileSize: sizeFile,
                 });
                 currentSize += sizeFile;
                 setLimitedFiles(currentSize);
@@ -143,30 +185,41 @@ export default function Form(props) {
         });
         setFiles(uploaded);
         setObjectFilesUrl(objectUrl);
-        setData('attachment', uploaded);
+        setData("attachment", uploaded);
     };
 
     const removeFiles = (fileName, fileSize) => {
         const fileUploaded = [...files];
         const objectUrl = [...objectFilesUrl];
-        const indexFile = fileUploaded.findIndex(f => f.name === fileName);
-        const indexObjectUrl = objectUrl.findIndex(o => o.fileName === fileName);
+        const indexFile = fileUploaded.findIndex((f) => f.name === fileName);
+        const indexObjectUrl = objectUrl.findIndex(
+            (o) => o.fileName === fileName
+        );
         fileUploaded.splice(indexFile, 1);
         objectUrl.splice(indexObjectUrl, 1);
         setFiles(fileUploaded);
         setObjectFilesUrl(objectUrl);
         setLimitedFiles(limitedFiles - fileSize);
-        setData('attachment', fileUploaded);
-    }
+        setData("attachment", fileUploaded);
+    };
 
     useEffect(() => {
-        return () => objectFilesUrl.map(url => URL.revokeObjectURL(url));
-    })
+        fetch(`/api/purchase-order-detail?order_id=${selectedValue5}`)
+            .then((response) => response.json())
+            .then((res) => {
+                setDataGoodReceipt(res.datas);
+                console.log("test", res.datas);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+        objectFilesUrl.map((url) => URL.revokeObjectURL(url));
+    }, []);
 
     const handleFileEvent = (file) => {
         const choosenFiles = Array.prototype.slice.call(file);
         handleChangeFile(choosenFiles);
-    }
+    };
 
     const [isModalGROpen, setIsModalGROpen] = useState(false);
 
@@ -180,7 +233,7 @@ export default function Form(props) {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-    const [pdfUrl, setPdfUrl] = useState('');
+    const [pdfUrl, setPdfUrl] = useState("");
 
     const openPopup = (item) => {
         // console.log(item);
@@ -193,7 +246,9 @@ export default function Form(props) {
     };
 
     const [selectedItemsGR, setSelectedItemsGR] = useState([]);
-    const [dataItemsGR, setDataItemsGR] = useState(props.data.invoice == null ? [] : props.data.invoice.purchase_orders);
+    const [dataItemsGR, setDataItemsGR] = useState(
+        props.data.invoice == null ? [] : props.data.invoice.purchase_orders
+    );
     const [sumTotalGR, setSumTotalGR] = useState(0);
 
     const [sumTotalTaxGR, setSumTotalTaxGR] = useState(0);
@@ -244,11 +299,11 @@ export default function Form(props) {
 
     function formatDate(timestamp) {
         const date = new Date(timestamp);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
 
         return `${day}-${month}-${year}`;
     }
@@ -256,35 +311,42 @@ export default function Form(props) {
     const fileTypes = ["PDF"];
 
     const colourOptions = [
-        { value: 'ocean', label: 'Ocean', color: '#00B8D9', isFixed: true },
-        { value: 'blue', label: 'Blue', color: '#0052CC', isDisabled: true },
-        { value: 'purple', label: 'Purple', color: '#5243AA' },
-        { value: 'red', label: 'Red', color: '#FF5630', isFixed: true },
-        { value: 'orange', label: 'Orange', color: '#FF8B00' },
-        { value: 'yellow', label: 'Yellow', color: '#FFC400' },
-        { value: 'green', label: 'Green', color: '#36B37E' },
-        { value: 'forest', label: 'Forest', color: '#00875A' },
-        { value: 'slate', label: 'Slate', color: '#253858' },
-        { value: 'silver', label: 'Silver', color: '#666666' },
+        { value: "ocean", label: "Ocean", color: "#00B8D9", isFixed: true },
+        { value: "blue", label: "Blue", color: "#0052CC", isDisabled: true },
+        { value: "purple", label: "Purple", color: "#5243AA" },
+        { value: "red", label: "Red", color: "#FF5630", isFixed: true },
+        { value: "orange", label: "Orange", color: "#FF8B00" },
+        { value: "yellow", label: "Yellow", color: "#FFC400" },
+        { value: "green", label: "Green", color: "#36B37E" },
+        { value: "forest", label: "Forest", color: "#00875A" },
+        { value: "slate", label: "Slate", color: "#253858" },
+        { value: "silver", label: "Silver", color: "#666666" },
     ];
 
     return (
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
-            <PDFPopup
-                pdfUrl={pdfUrl}
-                show={isPopupOpen}
-                onClose={closePopup}
-            />
+            <PDFPopup pdfUrl={pdfUrl} show={isPopupOpen} onClose={closePopup} />
             <form onSubmit={submit}>
-
-                <p className="text-gray-500 mb-3">Anda menggunakan data profil yang disetujui tanggal {formatDate(props.data.user.updated_at)} (< a href={route('vendor.company-profile.index')}>Lihat Detail</a>)</p>
+                <p className="text-gray-500 mb-3">
+                    Anda menggunakan data profil yang disetujui tanggal{" "}
+                    {formatDate(props.data.user.updated_at)} (
+                    <a href={route("vendor.company-profile.index")}>
+                        Lihat Detail
+                    </a>
+                    )
+                </p>
 
                 <div className="grid grid-cols-2">
                     <div className="mb-3 ">
-                        <InputLabel value="PO/Non PO" className="font-bold" required={true} />
+                        <InputLabel
+                            value="PO/Non PO"
+                            className="font-bold"
+                            required={true}
+                        />
 
                         <div className="flex items-center gap-3">
-                            <select className="select select-bordered w-full mt-1"
+                            <select
+                                className="select select-bordered w-full mt-1"
                                 id="is_po"
                                 name="is_po"
                                 value={selectedValue4}
@@ -294,7 +356,11 @@ export default function Form(props) {
                                 <option value="0">Tanpa PO</option>
                                 <option value="1">PO</option>
                             </select>
-                            <PrimaryButton disabled={selectedButtonPO} type="button" onClick={(e) => openModalGR(e)}>
+                            <PrimaryButton
+                                disabled={selectedButtonPO}
+                                type="button"
+                                onClick={(e) => openModalGR(e)}
+                            >
                                 Pilih
                             </PrimaryButton>
                         </div>
@@ -321,9 +387,73 @@ export default function Form(props) {
                             <tbody>
                                 {dataItemsGR.map((item, index) => (
                                     <>
-                                        {item.array.map((item1, index) => (
-                                            <tr className="border-collapse border-1 border-gray-500">
-                                                {/* <td>
+                                        {item.array ? (
+                                            <>
+                                                {item.array.map(
+                                                    (item1, index) => (
+                                                        <tr className="border-collapse border-1 border-gray-500">
+                                                            {/* <td>
+                                                        <label className="inline-flex items-center">
+                                                            <input
+                                                                type="checkbox"
+                                                                name="data_gr[]"
+                                                                className="form-checkbox"
+                                                                checked={selectedItemsGR.includes(data)}
+                                                                onChange={() => handleCheckboxChange(data)}
+                                                            />
+                                                        </label>
+                                                    </td> */}
+                                                            <td>
+                                                                {data.document_number ==
+                                                                null
+                                                                    ? item1
+                                                                          .good_receipt
+                                                                          .receipt_num
+                                                                    : data.document_number}
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    data.invoice_number
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {data.date_gr ==
+                                                                null
+                                                                    ? item1
+                                                                          .good_receipt
+                                                                          .receive_date
+                                                                    : data.date_gr}
+                                                            </td>
+                                                            <td>
+                                                                {data.quantity ==
+                                                                null
+                                                                    ? item1.qty_received
+                                                                    : data.quantity}
+                                                            </td>
+                                                            <td>
+                                                                {data.unit_price ==
+                                                                null
+                                                                    ? item1
+                                                                          .purchase_order_detail
+                                                                          .unit_price
+                                                                    : data.unit_price}
+                                                            </td>
+                                                            <td>
+                                                                {data.total_price ==
+                                                                null
+                                                                    ? item1
+                                                                          .purchase_order_detail
+                                                                          .sub_total
+                                                                    : data.total_price}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <tr className="border-collapse border-1 border-gray-500">
+                                                    {/* <td>
                                                 <label className="inline-flex items-center">
                                                     <input
                                                         type="checkbox"
@@ -334,16 +464,19 @@ export default function Form(props) {
                                                     />
                                                 </label>
                                             </td> */}
-                                                <td>{data.document_number == null ? item1.good_receipt.receipt_num : data.document_number}</td>
-                                                <td>
-                                                    {data.invoice_number}
-                                                </td>
-                                                <td>{formatDate(data.date_gr == null ? item1.good_receipt.receive_date : data.date_gr)}</td>
-                                                <td>{data.quantity == null ? item1.purchase_order_detail.quantity_ordered : data.quantity}</td>
-                                                <td>{data.unit_price == null ? item1.purchase_order_detail.unit_price : data.unit_price}</td>
-                                                <td>{data.total_price == null ? item1.purchase_order_detail.sub_total : data.total_price}</td>
-                                            </tr>
-                                        ))}
+                                                    <td>
+                                                        {item.document_number}
+                                                    </td>
+                                                    <td>
+                                                        {item.invoice_number}
+                                                    </td>
+                                                    <td>{item.date_gr}</td>
+                                                    <td>{item.quantity}</td>
+                                                    <td>{item.unit_price}</td>
+                                                    <td>{item.total_price}</td>
+                                                </tr>
+                                            </>
+                                        )}
                                     </>
                                 ))}
                             </tbody>
@@ -370,20 +503,32 @@ export default function Form(props) {
                             <InputError message={errors.category} className="mt-2" />
                         </div> */}
                         <div className="mb-1">
-                            <InputLabel value="Lokasi" className="font-bold" required={true} />
-                            <select className="select select-bordered w-full mt-1"
+                            <InputLabel
+                                value="Lokasi"
+                                className="font-bold"
+                                required={true}
+                            />
+                            <select
+                                className="select select-bordered w-full mt-1"
                                 id="location"
                                 name="location"
                                 value={selectedValue2}
                                 onChange={enhancedHandleOptionChange2}
                             >
-                                <option value="" hidden>Lokasi</option>
+                                <option value="" hidden>
+                                    Lokasi
+                                </option>
                                 {props.data.locations.map((item, index) => (
-                                    <option value={item.name} label={item.name}>{item.name}</option>
+                                    <option value={item.name} label={item.name}>
+                                        {item.name}
+                                    </option>
                                 ))}
                             </select>
 
-                            <InputError message={errors.location} className="mt-2" />
+                            <InputError
+                                message={errors.location}
+                                className="mt-2"
+                            />
                         </div>
                         {/* <div className="mb-1">
                             <InputLabel htmlFor="tax_invoice_number" value="Faktur Pajak" required={true} />
@@ -406,26 +551,55 @@ export default function Form(props) {
                             />
                         </div> */}
                         <div className="mb-1">
-                            <InputLabel htmlFor="tax_invoice" value="Attach File Faktur Pajak (Max 5mb)" required={true} />
+                            <InputLabel
+                                htmlFor="tax_invoice"
+                                value="Attach File Faktur Pajak"
+                                required={true}
+                            />
 
                             <div className="flex items-center align-middle">
-                                <input name="tax_invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
+                                <input
+                                    name="tax_invoice"
+                                    type="file"
+                                    className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => handleFile(e)}
                                 />
-                                {props.data.invoice != null ? <a href={props.data.invoice.tax_invoice} target="_blank">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                    </svg>
-                                </a> : ''}
+                                {props.data.invoice != null ? (
+                                    <a
+                                        href={props.data.invoice.tax_invoice}
+                                        target="_blank"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-8 h-8 ml-2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : (
+                                    ""
+                                )}
                             </div>
-
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.tax_invoice}
                                 className="mt-2"
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="invoice_number" value="Nomor Invoice" required={true} />
+                            <InputLabel
+                                htmlFor="invoice_number"
+                                value="Nomor Invoice"
+                                required={true}
+                            />
 
                             <TextInput
                                 id="invoice_number"
@@ -436,8 +610,9 @@ export default function Form(props) {
                                 autoComplete="invoice number"
                                 placeholder="invoice number"
                                 isFocused={true}
-                                onChange={(e) => setData('invoice_number', e.target.value)}
-
+                                onChange={(e) =>
+                                    setData("invoice_number", e.target.value)
+                                }
                             />
 
                             <InputError
@@ -446,145 +621,315 @@ export default function Form(props) {
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="invoice" value="Attach File Invoice (Max 5mb)" required={true} />
+                            <InputLabel
+                                htmlFor="invoice"
+                                value="Attach File Invoice"
+                                required={true}
+                            />
 
                             <div className="flex items-center align-middle">
-                                <input name="invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
+                                <input
+                                    name="invoice"
+                                    type="file"
+                                    className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => handleFile(e)}
                                 />
-                                {props.data.invoice != null ? <a href={props.data.invoice.invoice} target="_blank">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                    </svg>
-                                </a> : ''}
+                                {props.data.invoice != null ? (
+                                    <a
+                                        href={props.data.invoice.invoice}
+                                        target="_blank"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-8 h-8 ml-2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : (
+                                    ""
+                                )}
                             </div>
-
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.invoice}
                                 className="mt-2"
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="bast" value="BAST/Surat Jalan (Max 5mb)" required={true} />
+                            <InputLabel
+                                htmlFor="bast"
+                                value="BAST/Surat Jalan"
+                                required={true}
+                            />
 
                             <div className="flex items-center align-middle">
-                                <input name="bast" type="file" className="file-input file-input-bordered w-full max-w-xs"
+                                <input
+                                    name="bast"
+                                    type="file"
+                                    className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => handleFile(e)}
                                 />
-                                {props.data.invoice != null ? <a href={props.data.invoice.bast} target="_blank">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                    </svg>
-                                </a> : ''}
+                                {props.data.invoice != null ? (
+                                    <a
+                                        href={props.data.invoice.bast}
+                                        target="_blank"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-8 h-8 ml-2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : (
+                                    ""
+                                )}
                             </div>
-
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.bast}
                                 className="mt-2"
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Menggunakan Ematerai" className="font-bold" required={true} />
-                            <select className="select select-bordered w-full mt-1"
+                            <InputLabel
+                                value="Menggunakan Ematerai"
+                                className="font-bold"
+                                required={true}
+                            />
+                            <select
+                                className="select select-bordered w-full mt-1"
                                 id="is_materai"
                                 name="is_materai"
                                 value={selectedValue3}
                                 onChange={enhancedHandleOptionChange3}
                             >
-                                <option value="" hidden>Pilih</option>
+                                <option value="" hidden>
+                                    Pilih
+                                </option>
                                 <option value="1">Iya</option>
                                 <option value="0">Tidak</option>
                             </select>
 
-                            <InputError message={errors.is_materai} className="mt-2" />
+                            <InputError
+                                message={errors.is_materai}
+                                className="mt-2"
+                            />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Catatan" className="font-bold" required={true} />
+                            <InputLabel
+                                value="Catatan"
+                                className="font-bold"
+                                required={true}
+                            />
                             <textarea
                                 name="note"
                                 className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
                                 placeholder="Catatan"
-                                onChange={(e) => setData('note', e.target.value)}
+                                onChange={(e) =>
+                                    setData("note", e.target.value)
+                                }
                                 value={data.note}
                             />
 
-                            <InputError message={errors.note} className="mt-2" />
+                            <InputError
+                                message={errors.note}
+                                className="mt-2"
+                            />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Lampiran Lainnya (Max 25mb)" className="font-bold" required={true} />
+                            <InputLabel
+                                value="Lampiran Lainnya"
+                                className="font-bold"
+                                required={true}
+                            />
                             <div className="w-full">
-                                <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
+                                <FileUploader
+                                    handleChange={handleFileEvent}
+                                    name="attachment"
+                                    types={fileTypes}
+                                    multiple={true}
+                                />
                             </div>
                             <div className="row">
-                                {objectFilesUrl.length > 0 ? objectFilesUrl.map(url => (
-                                    <div className="col-12 mr-2">
-                                        <div className="card">
-                                            <div className="card-body">
-                                                <iframe src={url.url} key={url.fileName} style={{width: '100%'}}></iframe>
-                                            </div>
-                                            <div className="card-footer">
-                                                <button type="button" onClick={() => removeFiles(url.fileName, url.fileSize)} className="btn btn-sm" style={{background: 'red', color: "white"}}>Remove</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )) : null}
+                                {objectFilesUrl.length > 0
+                                    ? objectFilesUrl.map((url) => (
+                                          <div className="col-12 mr-2">
+                                              <div className="card">
+                                                  <div className="card-body">
+                                                      <iframe
+                                                          src={url.url}
+                                                          key={url.fileName}
+                                                          style={{
+                                                              width: "100%",
+                                                          }}
+                                                      ></iframe>
+                                                  </div>
+                                                  <div className="card-footer">
+                                                      <button
+                                                          type="button"
+                                                          onClick={() =>
+                                                              removeFiles(
+                                                                  url.fileName,
+                                                                  url.fileSize
+                                                              )
+                                                          }
+                                                          className="btn btn-sm"
+                                                          style={{
+                                                              background: "red",
+                                                              color: "white",
+                                                          }}
+                                                      >
+                                                          Remove
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      ))
+                                    : null}
                             </div>
-                            <p>{files ? `Total File: ${files.length}` : "no files uploaded yet"}</p>
-                            {
-                                limitedFiles > 25 ? <InputError message="Maximum files is 25 MB" className="mt-2" /> : null
-                            }
-                            <InputError message={errors.file} className="mt-2" />
+                            <p>
+                                {files
+                                    ? `Total File: ${files.length}`
+                                    : "no files uploaded yet"}
+                            </p>
+                            <i className='text-muted'>* Max: 25mb</i>
+                            {limitedFiles > 25 ? (
+                                <InputError
+                                    message="Maximum files is 25 MB"
+                                    className="mt-2"
+                                />
+                            ) : null}
+
+                            <InputError
+                                message={errors.file}
+                                className="mt-2"
+                            />
                         </div>
                     </div>
 
                     <div>
                         <div className="mb-1" hidden={selectedButtonPO}>
-                            <InputLabel value="Nomor PO" className="font-bold" required={true} />
+                            <InputLabel
+                                value="Nomor PO"
+                                className="font-bold"
+                                required={true}
+                            />
 
                             <div className="flex items-center gap-3">
-                                <p className="text-gray-500 form-control">{data.po_number ? data.po_number : '-'}</p>
+                                <p className="text-gray-500 form-control">
+                                    {data.po_number ? data.po_number : "-"}
+                                </p>
                             </div>
                         </div>
                         <div className="mb-1" hidden={selectedButtonPO}>
-                            <InputLabel htmlFor="po" value="Attach File PO (Max 5mb)" required={true} />
+                            <InputLabel
+                                htmlFor="po"
+                                value="Attach File PO"
+                                required={true}
+                            />
 
                             <div className="flex items-center align-middle">
-                                <input name="po" type="file" className="file-input file-input-bordered w-full max-w-xs"
+                                <input
+                                    name="po"
+                                    type="file"
+                                    className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => handleFile(e)}
                                 />
-                                {props.data.invoice != null ? <a href={props.data.invoice.po} target="_blank">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                    </svg>
-                                </a> : ''}
+                                {props.data.invoice != null ? (
+                                    <a
+                                        href={props.data.invoice.po}
+                                        target="_blank"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-8 h-8 ml-2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : (
+                                    ""
+                                )}
                             </div>
-
-                            <InputError
-                                message={errors.po}
-                                className="mt-2"
-                            />
+                            <i className='text-muted'>* Max: 5mb</i>
+                            <InputError message={errors.po} className="mt-2" />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="quotation" value="Attach File Quotation (Max 5mb)" required={true} />
+                            <InputLabel
+                                htmlFor="quotation"
+                                value="Attach File Quotation"
+                                required={true}
+                            />
 
                             <div className="flex items-center align-middle">
-                                <input name="quotation" type="file" className="file-input file-input-bordered w-full max-w-xs"
+                                <input
+                                    name="quotation"
+                                    type="file"
+                                    className="file-input file-input-bordered w-full max-w-xs"
                                     onChange={(e) => handleFile(e)}
                                 />
-                                {props.data.invoice != null ? <a href={props.data.invoice.quotation} target="_blank">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                    </svg>
-                                </a> : ''}
+                                {props.data.invoice != null ? (
+                                    <a
+                                        href={props.data.invoice.quotation}
+                                        target="_blank"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-8 h-8 ml-2"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : (
+                                    ""
+                                )}
                             </div>
-
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.quotation}
                                 className="mt-2"
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="date" value="Tanggal Invoice" required={true} />
+                            <InputLabel
+                                htmlFor="date"
+                                value="Tanggal Invoice"
+                                required={true}
+                            />
 
                             <TextInput
                                 id="date"
@@ -594,8 +939,9 @@ export default function Form(props) {
                                 className="mt-1 block w-full"
                                 autoComplete="date"
                                 isFocused={true}
-                                onChange={(e) => setData('date', e.target.value)}
-
+                                onChange={(e) =>
+                                    setData("date", e.target.value)
+                                }
                             />
 
                             <InputError
@@ -603,7 +949,7 @@ export default function Form(props) {
                                 className="mt-2"
                             />
                         </div>
-                        <div className="mb-1" hidden={showTotalPpnTax}>
+                        <div className="mb-1">
                             <InputLabel
                                 htmlFor="dpp"
                                 value="DPP"
@@ -671,9 +1017,9 @@ export default function Form(props) {
                                 className="mt-2"
                             />
                         </div>
-                        <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
+                        {/* <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
                             <b>DPP: {sumTotalTaxGR}</b>
-                        </div>
+                        </div> */}
                         <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
                             <b>PPN: {taxPercentage}</b>
                         </div>
@@ -717,24 +1063,35 @@ export default function Form(props) {
                 </div> */}
 
                 <div className="flex justify-end items-end gap-2 mt-2">
-                    <Link href={route('exchange-invoice.index')}>
-                        <SecondaryButton>
-                            Back
-                        </SecondaryButton>
+                    <Link href={route("exchange-invoice.index")}>
+                        <SecondaryButton>Back</SecondaryButton>
                     </Link>
-                    {props.data.invoice != null
-                        ? props.data.noDraft == 1
-                            ? ''
-                            :
-                            <PrimaryButton onClick={(e) => { setData('status_submit', 'draft') }}>
+                    {props.data.invoice != null ? (
+                        props.data.noDraft == 1 ? (
+                            ""
+                        ) : (
+                            <PrimaryButton
+                                onClick={(e) => {
+                                    setData("status_submit", "draft");
+                                }}
+                            >
                                 Simpan Draft
                             </PrimaryButton>
-                        :
-                        <PrimaryButton onClick={(e) => { setData('status_submit', 'draft') }}>
+                        )
+                    ) : (
+                        <PrimaryButton
+                            onClick={(e) => {
+                                setData("status_submit", "draft");
+                            }}
+                        >
                             Simpan Draft
                         </PrimaryButton>
-                    }
-                    <PrimaryButton onClick={(e) => { setData('status_submit', 'menunggu persetujuan') }}>
+                    )}
+                    <PrimaryButton
+                        onClick={(e) => {
+                            setData("status_submit", "menunggu persetujuan");
+                        }}
+                    >
                         Submit
                     </PrimaryButton>
                     <Transition
@@ -750,12 +1107,16 @@ export default function Form(props) {
             </form>
 
             <Modal show={isModalGROpen} onClose={closeModalGR}>
-                <div className='border-b-2 p-3'>
+                <div className="border-b-2 p-3">
                     <b>Pilih PO dan GR</b>
                 </div>
                 <div className="p-3">
-                    <div className='mb-3'>
-                        <InputLabel value="Nomor PO" className="font-bold" required={true} />
+                    <div className="mb-3">
+                        <InputLabel
+                            value="Nomor PO"
+                            className="font-bold"
+                            required={true}
+                        />
 
                         <div className="flex items-center gap-3">
                             {/* <select className="select select-bordered w-full mt-1"
@@ -783,7 +1144,7 @@ export default function Form(props) {
                             />
                         </div>
                     </div>
-                    <div className='mb-3'>
+                    <div className="mb-3">
                         <b>List GR</b>
                         <table className="table table-xs">
                             <thead>
@@ -803,28 +1164,59 @@ export default function Form(props) {
                                     <>
                                         {item.array.map((item1, index) => (
                                             <tr className="border-collapse border-1 border-gray-500">
-                                                {index == 0 ?
-                                                    <td rowSpan={item.array.length}>
+                                                {index == 0 ? (
+                                                    <td
+                                                        rowSpan={
+                                                            item.array.length
+                                                        }
+                                                    >
                                                         <label className="inline-flex items-center">
                                                             <input
                                                                 type="checkbox"
                                                                 name="data_gr[]"
                                                                 className="form-checkbox"
-                                                                checked={selectedItemsGR.includes(item)}
-                                                                onChange={() => handleCheckboxChange(item)}
+                                                                checked={selectedItemsGR.includes(
+                                                                    item
+                                                                )}
+                                                                onChange={() =>
+                                                                    handleCheckboxChange(
+                                                                        item
+                                                                    )
+                                                                }
                                                             />
                                                         </label>
                                                     </td>
-                                                    : ''
-                                                }
-                                                <td>{item1.good_receipt.receipt_num}</td>
+                                                ) : (
+                                                    ""
+                                                )}
                                                 <td>
-                                                    {data.invoice_number}
+                                                    {
+                                                        item1.good_receipt
+                                                            .receipt_num
+                                                    }
                                                 </td>
-                                                <td>{formatDate(item1.good_receipt.receive_date)}</td>
-                                                <td>{item1.purchase_order_detail.quantity_ordered}</td>
-                                                <td>{item1.purchase_order_detail.unit_price}</td>
-                                                <td>{item1.purchase_order_detail.sub_total}</td>
+                                                <td>{data.invoice_number}</td>
+                                                <td>
+                                                    {
+                                                        item1.good_receipt
+                                                            .receive_date
+                                                    }
+                                                </td>
+                                                <td>{item1.qty_received}</td>
+                                                <td>
+                                                    {
+                                                        item1
+                                                            .purchase_order_detail
+                                                            .unit_price
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {
+                                                        item1
+                                                            .purchase_order_detail
+                                                            .sub_total
+                                                    }
+                                                </td>
                                             </tr>
                                         ))}
                                     </>
@@ -832,19 +1224,30 @@ export default function Form(props) {
                             </tbody>
                         </table>
                     </div>
-                    {selectedValue5 ?
+                    {selectedValue5 ? (
                         <p className="float-left mt-3">
                             Data GR Tidak ditemukan?
-                            <a href={`/request-good-receipt/create?po_number=${selectedLabel5}`} className="text-blue-500"> Request GR</a>
+                            <a
+                                href={`/request-good-receipt/create?po_number=${selectedLabel5}`}
+                                className="text-blue-500"
+                            >
+                                {" "}
+                                Request GR
+                            </a>
                         </p>
-                        : ''}
+                    ) : (
+                        ""
+                    )}
                     <div className="mt-6 flex justify-end gap-3">
-                        <SecondaryButton onClick={closeModalGR}>Tutup</SecondaryButton>
-                        <PrimaryButton onClick={submitModalGR}>Simpan</PrimaryButton>
+                        <SecondaryButton onClick={closeModalGR}>
+                            Tutup
+                        </SecondaryButton>
+                        <PrimaryButton onClick={submitModalGR}>
+                            Simpan
+                        </PrimaryButton>
                     </div>
                 </div>
             </Modal>
-
         </div>
     );
 }

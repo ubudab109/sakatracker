@@ -34,7 +34,7 @@ class SiapBayarController extends Controller
 
     public function index(){
         $data['permissions'] = $this->checkPermission('index');
-        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')->where('status', 'ready to paid')->orderBy('id', 'DESC')->get()->map(function($batch_payment){
+        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')->where('status', 'ready to paid')->orderBy('updated_at', 'DESC')->get()->map(function($batch_payment){
             $status = 'ready to paid';
             $checkUnpaidCount = $batch_payment->batch_payment_invoices->where('status', 'paid')->count();
             if($checkUnpaidCount == $batch_payment->batch_payment_invoices->count())

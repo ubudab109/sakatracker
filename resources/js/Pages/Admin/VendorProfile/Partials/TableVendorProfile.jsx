@@ -41,6 +41,7 @@ export default function TableVendorProfile(props) {
                                 <th>Type</th>
                                 <th>Phone Number</th>
                                 <th>Status</th>
+                                <th>Last Updated</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,6 +64,7 @@ export default function TableVendorProfile(props) {
                                     <td className='border border-slate-600'>{`${item.vendor.type_of_business}`}</td>
                                     <td className='border border-slate-600'>{item.vendor.phone_number}</td>
                                     <td className='border border-slate-600'>{item.status}</td>
+                                    <td className='border border-slate-600'>{formatDate(item.updated_at)}</td>
                                 </tr>
                             ))}
                         </tbody>

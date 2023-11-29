@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { Transition } from '@headlessui/react';
 import PDFPopup from '@/Components/PDFPopup';
+import { typeOfBusiness } from '@/Utils/constant';
 import { convertMb } from '@/Utils/helper';
 
 
@@ -69,11 +70,76 @@ export default function Create(props) {
         status_submit: '',
     });
 
+    const [selectedNameBusiness, setSelectedNameBusiness] = useState(props.data.vendor.name_business != null ? props.data.vendor.name_business : '');
+
+    const handleNameBusiness = (event) => {
+        data.name_business = event.target.value;
+        setSelectedNameBusiness(data.name_business);
+    }  
+
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('vendor.store'));
+        post(route('vendor.store'), {
+            onError: checkErrorValidatorTab(props.errors)
+        });
     };
+
+    const checkErrorValidatorTab = (column) => {
+        if(column.name 
+            || column.email 
+            || column.name_business 
+            || column.npwp 
+            || column.npwp_address 
+            || column.postal_code 
+            || column.province_id 
+            || column.phone_number
+            || column.mobile_phone_number
+            || column.type_of_business
+        )
+        {
+            openCard1Clicked(0);
+        } else if(column.director_name 
+            || column.director_phone_number 
+            || column.director_email 
+            || column.fa_name 
+            || column.fa_phone_number 
+            || column.fa_email 
+            || column.marketing_email 
+            || column.marketing_phone_number
+            || column.marketing_key_account
+        )
+        {
+            openCard2Clicked(1);
+        } else if(column.bank_name 
+            || column.bank_account_number 
+            || column.bank_account_name 
+            || column.branch_of_bank 
+            || column.bank_swift_code 
+        )
+        {
+            openCard3Clicked(2);
+        } else if(column.file_nib 
+            || column.file_npwp 
+            || column.file_siup 
+            || column.file_sppkp 
+            || column.file_tdp 
+            || column.file_board_of_directors_composition 
+            || column.file_non_pkp_statement 
+            || column.expired_nib
+            || column.expired_siup
+            || column.expired_sppkp
+            || column.expired_tdp
+        )
+        {
+            openCard4Clicked(3);
+        } else if(column.term_condition 
+        )
+        {
+            openCard5Clicked(4);
+        } else {
+            openCard5Clicked(4);
+        }
+    }
 
     const [selectedOptionCountry, setSelectedOptionCountry] = useState(props.data.vendor.country_id);
     const [selectedOptionProvince, setSelectedOptionProvince] = useState(props.data.vendor.province_id);
@@ -214,12 +280,21 @@ export default function Create(props) {
 
     }, []);
 
-    const handleFile = (e) => {
+    const [npwpFile, setNpwpFile] = useState(props.data.vendor.file_npwp == null ? "No file chosen" : 'file_npwp.pdf'.substring(0, 35));
+    const [sppkpFile, setSppkpFile] = useState(props.data.vendor.file_sppkp == null ? "No file chosen" : 'file_sppkp.pdf'.substring(0, 35));
+    const [siupFile, setSiupFile] = useState(props.data.vendor.file_siup == null ? "No file chosen" : 'file_siup.pdf'.substring(0, 35));
+    const [tdpFile, setTdpFile] = useState(props.data.vendor.file_tdp == null ? "No file chosen" : 'file_tdp.pdf'.substring(0, 35));
+    const [nibFile, setNibFile] = useState(props.data.vendor.file_nib == null ? "No file chosen" : 'file_nib.pdf'.substring(0, 35));
+    const [bodcFile, setBodcFile] = useState(props.data.vendor.file_board_of_directors_composition == null ? "No file chosen" : 'file_board_of_directors_composition.pdf'.substring(0, 35) + '...');
+    const [nonPkpFile, setNonPkpFile] = useState(props.data.vendor.file_non_pkp_statement == null ? "No file chosen" : 'file_non_pkp_statement.pdf'.substring(0, 35));
+
+    const handleFile = (e, setter) => {
         if (convertMb(e.target.files[0].size) > 5) {
             setError(e.target.name, 'Max file size should not be greater than 5mb')
         } else {
             clearErrors(e.target.name);
             setData(e.target.name, e.target.files[0]);
+            setter(e.target.files[0].name.substring(0, 35) + '...');
         }
     }
 
@@ -361,19 +436,19 @@ export default function Create(props) {
                 <div className="border-b border-gray-200 dark:border-gray-700">
                     <nav className="flex space-x-2" aria-label="Tabs" role="tablist">
                         <div onClick={openCard1Clicked}>
-                            <TabButton title="Company" class={`${tabPane1 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Company" class={`${tabPane1 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard2Clicked}>
-                            <TabButton title="Contact Person" class={`${tabPane2 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Contact Person" class={`${tabPane2 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard3Clicked}>
-                            <TabButton title="Financial" class={`${tabPane3 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Financial" class={`${tabPane3 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard4Clicked}>
-                            <TabButton title="Business Information" class={`${tabPane4 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Business Information" class={`${tabPane4 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard5Clicked}>
-                            <TabButton title="Term & Condition" class={`${tabPane5 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Term & Condition" class={`${tabPane5 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                     </nav>
                 </div>
@@ -458,38 +533,45 @@ export default function Create(props) {
                                         />
                                     </div>
 
-                                    <div className="mb-3">
-                                        <InputLabel value="Jenis Usaha" className="font-bold" required={true}/>
-                                        <TextInput 
-                                            id="name_business"
-                                            name="name_business"
-                                            value={data.name_business}
-                                            className="mt-1 block w-full"
-                                            autoComplete="name_business"
-                                            placeholder="jenis usaha.."
-                                            isFocused={true}
-                                            onChange={(e) => setData('name_business', e.target.value)}
-                                            
-                                        />
-                                        <InputError 
-                                            message={errors.name_business}
-                                            className="mt-2"
-                                        />
+                                    <div className="mt-3 mb-3">
+                                        <InputLabel htmlFor="name_business" value="Jenis Usaha" required={true} />
+                                        <select className="select select-bordered w-full mt-1"
+                                            id="type_of_business"
+                                            name="type_of_business"
+                                            required
+                                            value={selectedNameBusiness}
+                                            onChange={handleNameBusiness}
+                                        >
+                                            <option value={''} defaultValue={''} disabled>Jenis Usaha</option>
+                                            {typeOfBusiness.map((item, index) => (
+                                                <option key={index} value={item.value}>
+                                                    {item.title}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.name_business} className="mt-2" />
                                     </div>
 
                                     <div className="mb-3">
                                         <InputLabel value="NPWP" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <input 
+                                            className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                                            maxLength={16}
+                                            minLength={16}
+                                            onKeyPress={(event) => {
+                                                if (!/[0-9]/.test(event.key)) {
+                                                    event.preventDefault();
+                                                }
+                                            }}
                                             id="npwp"
                                             name="npwp"
-                                            type='number'
                                             value={data.npwp}
-                                            className="mt-1 block w-full"
+                                            type='text'
+                                            placeholder="NPWP *"
                                             autoComplete="npwp"
-                                            placeholder="npwp.."
                                             isFocused={true}
                                             onChange={(e) => setData('npwp', e.target.value)}
-                                            
+                                            required
                                         />
                                         <InputError 
                                             message={errors.npwp}
@@ -1038,19 +1120,29 @@ export default function Create(props) {
                             <div className={`${tabPkp}`}>
                                 <p className="font-bold mb-3">Type of Business: Wajib Pajak Badan Usaha - PKP</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2">
-                                <div >
+                                    <div>
                                         <div className="mb-3">
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => handleFile(e)}
-                                                />
+                                            <div className="flex">
+                                                <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-npwp"
+                                                    className="hidden-input"
+                                                    name="file_npwp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNpwpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_npwp}
                                                 className="mt-2"
@@ -1058,16 +1150,26 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel value="SPPKP" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => handleFile(e)}
-                                                />
+                                            <div className="flex">
+                                                <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-sppkp"
+                                                    className="hidden-input"
+                                                    name="file_sppkp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setSppkpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_sppkp}
                                                 className="mt-2"
@@ -1075,16 +1177,26 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel value="SIUP" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => handleFile(e)}
-                                                />
+                                            <div className="flex">
+                                                <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-siup"
+                                                    className="hidden-input"
+                                                    name="file_siup"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setSiupFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_siup}
                                                 className="mt-2"
@@ -1092,16 +1204,26 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel value="TDP" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => handleFile(e)}
-                                                />
+                                            <div className="flex">
+                                                <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-tdp"
+                                                    className="hidden-input"
+                                                    name="file_tdp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setTdpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_tdp}
                                                 className="mt-2"
@@ -1109,16 +1231,26 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel value="NIB" className="font-bold" required={true}/>
-                                                <div className="flex items-center align-middle">
-                                                    <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => handleFile(e)}
-                                                    />
-                                                    {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                        </svg>
-                                                    </a> : '' }
-                                                </div>
+                                            <div className="flex">
+                                                <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                                    </svg>
+                                                </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-nib"
+                                                    className="hidden-input"
+                                                    name="file_nib"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNibFile)}
+                                                />
+                                            </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_nib}
                                                 className="mt-2"
@@ -1126,22 +1258,31 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => handleFile(e)}
-                                                />
+                                            <div className="flex">
+                                                <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-bodc"
+                                                    className="hidden-input"
+                                                    name="file_board_of_directors_composition"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setBodcFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_board_of_directors_composition}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        
                                     </div>
                                     <div>
                                         <div className="md:mb-24">
@@ -1242,153 +1383,189 @@ export default function Create(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
-                                                />
+                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-npwp"
+                                                    className="hidden-input"
+                                                    name="file_npwp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNpwpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_npwp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SPPKP (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_sppkp', e.target.files[0])}
-                                                />
+                                            <InputLabel value="SPPKP" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-sppkp"
+                                                    className="hidden-input"
+                                                    name="file_sppkp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setSppkpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_sppkp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SIUP (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_siup', e.target.files[0])}
-                                                />
+                                            <InputLabel value="SIUP" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-siup"
+                                                    className="hidden-input"
+                                                    name="file_siup"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setSiupFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_siup}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="TDP (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_tdp', e.target.files[0])}
-                                                />
+                                            <InputLabel value="TDP" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-tdp"
+                                                    className="hidden-input"
+                                                    name="file_tdp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setTdpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_tdp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="NIB (Max 5mb)" className="font-bold" required={true}/>
-                                                <div className="flex items-center align-middle">
-                                                    <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                        onChange={(e) => setData('file_nib', e.target.files[0])}
-                                                    />
-                                                    {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                        </svg>
-                                                    </a> : '' }
-                                                </div>
+                                            <InputLabel value="NIB" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                                    </svg>
+                                                </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-nib"
+                                                    className="hidden-input"
+                                                    name="file_nib"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNibFile)}
+                                                />
+                                            </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_nib}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Akta Susunan Direksi (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_board_of_directors_composition', e.target.files[0])}
-                                                />
+                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-bodc"
+                                                    className="hidden-input"
+                                                    name="file_board_of_directors_composition"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setBodcFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_board_of_directors_composition}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        {/* <div className="mb-3">
-                                            <InputLabel value="Halaman Depan Rekening" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_front_page_bank" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_front_page_bank', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_front_page_bank}
-                                                className="mt-2"
-                                            />
-                                        </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Rekening Bank (Bila Berbeda)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_bank_account_statement_letter" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_bank_account_statement_letter', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_bank_account_statement_letter}
-                                                className="mt-2"
-                                            />
-                                        </div> */}
-                                        <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai) (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_non_pkp_statement', e.target.files[0])}
-                                                />
+                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-non-kpk"
+                                                    className="hidden-input"
+                                                    name="file_non_pkp_statement"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNonPkpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
@@ -1494,85 +1671,54 @@ export default function Create(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex align-middle items-center'>
-                                                <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_npwp', e.target.files[0])}
-                                                />
+                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-npwp"
+                                                    className="hidden-input"
+                                                    name="file_npwp"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNpwpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_npwp}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        {/* <div className="mb-3">
-                                            <InputLabel value="E-KTP" className="font-bold" required={true}/>
-                                            <div className="flex items-center align-middle">
-                                                <input name="file_ektp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_ektp', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_ektp != '' ? <a href={props.data.vendor.file_ektp} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_ektp}
-                                                className="mt-2"
-                                            />
-                                        </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Halaman Depan Rekening" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_front_page_bank" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_front_page_bank', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_front_page_bank}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Rekening Bank (Bila Berbeda)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_bank_account_statement_letter" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_bank_account_statement_letter', e.target.files[0])}
-                                                />
-                                                {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' }
-                                            </div>
-                                            <InputError 
-                                                message={errors.file_bank_account_statement_letter}
-                                                className="mt-2"
-                                            />
-                                        </div> */}
-                                        <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai) (Max 5mb)" className="font-bold" required={true}/>
-                                            <div className='flex items-center align-middle'>
-                                                <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
-                                                    onChange={(e) => setData('file_non_pkp_statement', e.target.files[0])}
-                                                />
+                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
+                                            <div className="flex">
+                                                <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
+                                                <input
+                                                    type="file"
+                                                    id="file-non-kpk"
+                                                    className="hidden-input"
+                                                    name="file_non_pkp_statement"
+                                                    hidden={true}
+                                                    onChange={(e) => handleFile(e, setNonPkpFile)}
+                                                />
                                             </div>
+                                            <i className='text-muted'>* Max: 5mb</i>
                                             <InputError 
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
@@ -1657,12 +1803,12 @@ export default function Create(props) {
                                 </SecondaryButton>
                             </Link>
                             <div className="ml-3" onClick={submitDraft}>
-                                <PrimaryButton disabled={processing || hasErrors}>
+                                <PrimaryButton disabled={processing}>
                                     Simpan Draft
                                 </PrimaryButton>
                             </div>
                             <div className="ml-3" onClick={submitNonDraft}>
-                                <PrimaryButton disabled={processing || hasErrors}>
+                                <PrimaryButton disabled={processing}>
                                     Submit
                                 </PrimaryButton>
                             </div>

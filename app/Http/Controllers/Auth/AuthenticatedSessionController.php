@@ -58,42 +58,74 @@ class AuthenticatedSessionController extends Controller
         if($user->role == 'vendor')
         {
             $vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
+            $submitVendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', '!=', 'disetujui')->latest('created_at')->first();
             if($vendor)
             {
-                if($vendor->created_at->format('Y') != date('Y'))
+                if(!$submitVendor)
                 {
-                    if($vendor->expired_npwp < date('Y-m-d'))
+                    if($vendor->created_at->format('Y') != date('Y'))
                     {
-                        $this->notifExpired(Auth::user()->id, 'NPWP Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
-                    }
+                        // if($vendor->expired_npwp < date('Y-m-d'))
+                        // {
+                        //     $this->notifExpired(Auth::user()->id, 'NPWP Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
+                        // }
     
-                    if($vendor->expired_sppkp < date('Y-m-d'))
-                    {
-                        $this->notifExpired(Auth::user()->id, 'SPPKP Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
+                        if($vendor->type_of_business != 'Pribadi')
+                        {
+                            if($vendor->expired_sppkp < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'SPPKP Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_siup < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'SIUP Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_tdp < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'TDP Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_nib < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'NIB Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+                        }
+        
+        
+                        return Redirect::route('vendor.report.index');
+                    } else {
+                        // if($vendor->expired_npwp < date('Y-m-d'))
+                        // {
+                        //     $this->notifExpired(Auth::user()->id, 'NPWP Expired Daily', 'Silahkan Membuat pengajuan baru', '/vendor');
+                        // }
+                        if($vendor->type_of_business != 'Pribadi')
+                        {
+                            if($vendor->expired_sppkp < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'SPPKP Expired Daily', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_siup < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'SIUP Expired Daily', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_tdp < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'TDP Expired Daily', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+            
+                            if($vendor->expired_nib < date('Y-m-d'))
+                            {
+                                $this->notifExpired(Auth::user()->id, 'NIB Expired Daily', 'Silahkan Membuat pengajuan baru', '/vendor');
+                            }
+                        }
+                        return Redirect::route('vendor.report.index');
                     }
-    
-                    if($vendor->expired_siup < date('Y-m-d'))
-                    {
-                        $this->notifExpired(Auth::user()->id, 'SIUP Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
-                    }
-    
-                    if($vendor->expired_tdp < date('Y-m-d'))
-                    {
-                        $this->notifExpired(Auth::user()->id, 'TDP Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
-                    }
-    
-                    if($vendor->expired_nib < date('Y-m-d'))
-                    {
-                        $this->notifExpired(Auth::user()->id, 'NIB Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
-                    }
-    
-                    if($vendor->expired_ektp < date('Y-m-d'))
-                    {
-                        $this->notifExpired(Auth::user()->id, 'E-KTP Expired', 'Silahkan Membuat pengajuan baru', '/vendor');
-                    }
-                    return Redirect::route('vendor.report.index');
                 } else {
-                    return Redirect::route('dashboard');
+                    return Redirect::route('dashboard');    
                 }
             } else {
                 return Redirect::route('dashboard');    
@@ -127,3 +159,4 @@ class AuthenticatedSessionController extends Controller
         return redirect('/login');
     }
 }
+

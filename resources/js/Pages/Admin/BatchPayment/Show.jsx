@@ -6,17 +6,25 @@ import InvoiceItemTable from './Partials/InvoiceItemTable';
 import ShowBatchTable from './Partials/ShowBatchTable';
 import ModifyButton from '@/Components/ModifyButton';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { Tabs } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import Axios from 'axios';
+import InputError from '@/Components/InputError';
+import TextInput from '@/Components/TextInput';
+import InputLabel from '@/Components/InputLabel';
 
 export default function Show(props) {
 
 console.log(props);
 
+const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+    note: props.data.batch_payment.note != 'null' ? props.data.batch_payment.note : '',
+});
+
 const editUrl    = '/admin/batch-payment/' + props.data.batch_payment.id + '/edit';
 const processUrl = '/admin/batch-payment/' + props.data.batch_payment.id + '/process';
+const rejectUrl = '/admin/batch-payment/reject/' + props.data.batch_payment.id + '?note=' + data.note;
 
 return (
 
@@ -98,24 +106,56 @@ return (
                 </div>
                 <div></div>
             </div>
+            <dic className="grid grid-cols-2 justify-center">
+                <div className='text-start'>
+                    {props.data.user_role.role_id == props.data.batch_payment.role_id && props.data.batch_payment.status == 'on progress' && props.data.batch_payment.level > 1 ? (
+                        <>
+                            <TextInput 
+                                id="note"
+                                name="note"
+                                value={data.note}
+                                className="mt-1 block w-full"
+                                autoComplete="note"
+                                placeholder="note.."
+                                isFocused={true}
+                                onChange={(e) => setData('note', e.target.value)}
+                                required
+                            />
 
-            <div class="mt-3 text-end">
-                {props.data.batch_payment.status == 'draft' ? (
-                    <a href={editUrl}>
-                        <button class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
-                            Ubah
-                        </button>
-                    </a>
-                ) : ''};
-                
-                {props.data.user_role.role_id == props.data.batch_payment.role_id && props.data.batch_payment.status == 'on progress' ? (
-                    <a href={processUrl}>
-                        <button class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
-                            Process
-                        </button>
-                    </a>
-                ) : ''};
-            </div>
+                            <InputError 
+                                message={errors.note}
+                                className="mt-2"
+                            />
+                        </>
+                    ) : ''}
+                </div>
+                <div class="mt-3 text-end">
+                    {props.data.user_role.role_id == props.data.batch_payment.role_id && props.data.batch_payment.status == 'draft' ? (
+                        <a href={editUrl}>
+                            <button class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
+                                Ubah
+                            </button>
+                        </a>
+                    ) : ''}
+
+                    {props.data.user_role.role_id == props.data.batch_payment.role_id && props.data.batch_payment.status == 'on progress' && props.data.batch_payment.level > 1 ? (
+                        <a href={rejectUrl}>
+                            <button class="inline-flex items-center px-4 py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
+                                Reject
+                            </button>
+                        </a>
+                    ) : ''}
+                    
+                    {props.data.user_role.role_id == props.data.batch_payment.role_id && props.data.batch_payment.status == 'on progress' ? (
+                        <a href={processUrl}>
+                            <button class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
+                                Approve
+                            </button>
+                        </a>
+                    ) : ''}
+                    
+                </div>
+            </dic>
 
             <ShowBatchTable data={props.data.batch_payment_invoices}/>
 

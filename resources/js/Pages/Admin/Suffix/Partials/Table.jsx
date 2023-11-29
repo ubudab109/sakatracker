@@ -53,6 +53,7 @@ export default function Table(props) {
                     show={showModal}
                     onClose={() => setShowModal(false)}
                     item={itemToDelete}
+                    maxWidth={'3xl'}
                 />
             )}
         </div>

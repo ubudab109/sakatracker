@@ -85,7 +85,7 @@ export default function Register(props) {
             .then((res) => {
                 setDataApi(res);
                 setLoading(false);
-                fetch(`/get-state?country_id=102}`)
+                fetch(`/get-state?country_id=102`)
                     .then((response) => response.json())
                     .then((res) => {
                         setProvinces(res);
@@ -192,12 +192,19 @@ export default function Register(props) {
                 <div className="mt-4">
                     <InputLabel htmlFor="npwp" value="NPWP" required={true} />
 
-                    <TextInput
+                    <input 
+                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                        maxLength={16}
+                        minLength={16}
+                        onKeyPress={(event) => {
+                            if (!/[0-9]/.test(event.key)) {
+                                event.preventDefault();
+                            }
+                        }}
                         id="npwp"
                         name="npwp"
                         value={data.npwp}
-                        type='number'
-                        className="mt-1 block w-full"
+                        type='text'
                         placeholder="NPWP *"
                         autoComplete="npwp"
                         isFocused={true}
@@ -381,6 +388,7 @@ export default function Register(props) {
                                 </option>
                             ))}
                         </select>
+                        <i className='text-sm text-gray-500'>* Silahkan pilih province untuk memunculkan option city</i>
 
                         <InputError message={errors.city_id} className="mt-2" />
                     </div>

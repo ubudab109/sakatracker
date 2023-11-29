@@ -22,4 +22,8 @@ class Vendor extends Model
     public function revision_register_vendors() {
         return $this->hasMany('App\Models\RevisionRegisterVendor');
     }
+
+    public function coas() {
+        return $this->hasMany('App\Models\CoaVendor', 'vendor_id', 'id');
+    }
 }
