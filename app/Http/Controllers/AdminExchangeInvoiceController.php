@@ -15,15 +15,15 @@ use App\Models\OracleRfpView;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\SlaWeekend;
 use App\Models\SlaHoliday;
 use App\Models\Vendor;
 use Inertia\Inertia;
 use Carbon\Carbon;
-use Storage;
 use Auth;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Storage;
 use Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminExchangeInvoiceController extends Controller
 {
@@ -257,11 +257,11 @@ class AdminExchangeInvoiceController extends Controller
             $rfpDocPath = parse_url($data['invoice']->pdf_rfp, PHP_URL_PATH);
             $rfpNameDoc = basename($rfpDocPath);
             $folderRfp = explode('/', $rfpDocPath);
-            if (count($folderRfp) == 4) { 
-                $originRfp = $folderRfp[count($folderRfp) - 2]. '/'. $folderRfp[count( $folderRfp) - 1];
-                $editedRfp = $folderRfp[count($folderRfp) - 2]. '/edited_' . $folderRfp[count($folderRfp) - 1];
+            if (count($folderRfp) == 4) {
+                $originRfp = $folderRfp[count($folderRfp) - 2] . '/' . $folderRfp[count($folderRfp) - 1];
+                $editedRfp = $folderRfp[count($folderRfp) - 2] . '/edited_' . $folderRfp[count($folderRfp) - 1];
                 $rfpExists = Storage::disk('public')->exists($editedRfp);
-                $newRfpDoc =[ 
+                $newRfpDoc = [
                     'edited' => ($rfpExists ? Storage::disk('public')->url($editedRfp) : Storage::disk('public')->url($originRfp)),
                     'origin' => Storage::disk('public')->url($originRfp),
                     'name' => $folderRfp[count($folderRfp) - 2],
@@ -306,20 +306,28 @@ class AdminExchangeInvoiceController extends Controller
         $response = $this->generateRfp($id);
         return Inertia::render('Admin/ExchangeInvoice/ShowRfp', $response);
     }
-
-    public function rfpGenerate(Request $request, $id)
+    public function rfpGenerate($id)
     {
-        $response = $this->generateRfp($id);
-        if ($request->rfp != null) {
-            $invoice = ExchangeInvoice::find($id);
-            if ($invoice) {
-                $rfpAttachment = '';
-                $rfpFile = $request->file('rfp');
-                $rfpFile->store('public/pdf_rfp');
-                $rfpFileName = $rfpFile->hashName();
-                $rfpAttachment = url('/') . '/storage/pdf_rfp/' . $rfpFileName;
-                $invoice->update(['pdf_rfp' => $rfpAttachment]);
+        $exchangeInvoice = ExchangeInvoice::find($id);
+        $outstandingInvoice = $this->outstandingInvoiceRequest($exchangeInvoice->invoice_number);
+        $vendor = Vendor::find($exchangeInvoice->vendor_id);
+        if ($outstandingInvoice) {
+            $response = $this->generateRfp($id);
+
+            $totalDebit = 0;
+            $totalCredit = 0;
+            foreach ($outstandingInvoice['rfp_views'] as $rfp_view) {
+                if ((int)$rfp_view['amount_dist'] > 0) {
+                    $totalDebit += $rfp_view['amount_dist'];
+                } else {
+                    $totalCredit += $rfp_view['amount_dist'];
+                }
             }
+            $data = ['outstanding_invoice' => $outstandingInvoice, 'vendor' => $vendor, 'total_debit' => $totalDebit, 'total_credit' => $totalCredit];
+            $pdf = PDF::loadView('generated-pdf', $data)->setPaper('a4', 'landscape');
+            $fileName =  Str::random(15) . '.pdf';
+            Storage::put('public/pdf_rfp/' . $fileName, $pdf->output());
+            $rfpAttachment = url('/') . '/storage/pdf_rfp/' . $fileName;
             $doc_path = parse_url($rfpAttachment, PHP_URL_PATH);
             $nama_doc = basename($doc_path);
             $folder = explode('/', $doc_path);
@@ -338,11 +346,10 @@ class AdminExchangeInvoiceController extends Controller
             }
             $filename = ['rfp' => $rfpAttachment, 'rfp_docs' => $rfpDocs];
             $data = array_merge($filename, $response);
+            return response()->json($data);
         } else {
-            $data = $response;
+            return response()->json(null, 404);
         }
-
-        return response()->json($data);
     }
 
     public function update(Request $request, $id)
@@ -611,7 +618,7 @@ class AdminExchangeInvoiceController extends Controller
     {
         $client = new Client();
         $response = $client->get('https://sakainvtrack.issbox.com/api/rfp?invoice_number=' . $invoiceNumber);
-        
+
         $json = json_decode($response->getBody(), true);
         if (!is_null($json['outstanding_invoice'])) {
             $data = collect($json['outstanding_invoice']);

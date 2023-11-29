@@ -1746,7 +1746,7 @@ export default function Index(props) {
                                                 <InputError message={errors.note} className="mt-2" />
                                             </div>
                                             <div className="mb-3" hidden={submitSuccess}>
-                                                <InputLabel value="Lampiran" className="font-bold"/>
+                                                <InputLabel value="Lampiran (Max 5mb)" className="font-bold"/>
                                                 <div className='flex items-center align-middle'>
                                                     <input name="document" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                         onChange={(e) => {

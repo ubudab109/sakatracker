@@ -406,7 +406,7 @@ export default function Form(props) {
                             />
                         </div> */}
                         <div className="mb-1">
-                            <InputLabel htmlFor="tax_invoice" value="Attach File Faktur Pajak" required={true} />
+                            <InputLabel htmlFor="tax_invoice" value="Attach File Faktur Pajak (Max 5mb)" required={true} />
 
                             <div className="flex items-center align-middle">
                                 <input name="tax_invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
@@ -446,7 +446,7 @@ export default function Form(props) {
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="invoice" value="Attach File Invoice" required={true} />
+                            <InputLabel htmlFor="invoice" value="Attach File Invoice (Max 5mb)" required={true} />
 
                             <div className="flex items-center align-middle">
                                 <input name="invoice" type="file" className="file-input file-input-bordered w-full max-w-xs"
@@ -465,7 +465,7 @@ export default function Form(props) {
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="bast" value="BAST/Surat Jalan" required={true} />
+                            <InputLabel htmlFor="bast" value="BAST/Surat Jalan (Max 5mb)" required={true} />
 
                             <div className="flex items-center align-middle">
                                 <input name="bast" type="file" className="file-input file-input-bordered w-full max-w-xs"
@@ -511,7 +511,7 @@ export default function Form(props) {
                             <InputError message={errors.note} className="mt-2" />
                         </div>
                         <div className="mb-1">
-                            <InputLabel value="Lampiran Lainnya" className="font-bold" required={true} />
+                            <InputLabel value="Lampiran Lainnya (Max 25mb)" className="font-bold" required={true} />
                             <div className="w-full">
                                 <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
                             </div>
@@ -546,7 +546,7 @@ export default function Form(props) {
                             </div>
                         </div>
                         <div className="mb-1" hidden={selectedButtonPO}>
-                            <InputLabel htmlFor="po" value="Attach File PO" required={true} />
+                            <InputLabel htmlFor="po" value="Attach File PO (Max 5mb)" required={true} />
 
                             <div className="flex items-center align-middle">
                                 <input name="po" type="file" className="file-input file-input-bordered w-full max-w-xs"
@@ -565,7 +565,7 @@ export default function Form(props) {
                             />
                         </div>
                         <div className="mb-1">
-                            <InputLabel htmlFor="quotation" value="Attach File Quotation" required={true} />
+                            <InputLabel htmlFor="quotation" value="Attach File Quotation (Max 5mb)" required={true} />
 
                             <div className="flex items-center align-middle">
                                 <input name="quotation" type="file" className="file-input file-input-bordered w-full max-w-xs"

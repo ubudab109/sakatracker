@@ -1039,7 +1039,7 @@ export default function Edit(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                 <div className="">
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1056,7 +1056,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SPPKP" className="font-bold" required={true}/>
+                                            <InputLabel value="SPPKP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1073,7 +1073,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SIUP" className="font-bold" required={true}/>
+                                            <InputLabel value="SIUP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1090,7 +1090,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="TDP" className="font-bold" required={true}/>
+                                            <InputLabel value="TDP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1107,7 +1107,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="NIB" className="font-bold" required={true}/>
+                                            <InputLabel value="NIB (Max 5mb)" className="font-bold" required={true}/>
                                                 <div className="flex items-center align-middle">
                                                     <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                         onChange={(e) => handleFile(e)}
@@ -1124,7 +1124,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
+                                            <InputLabel value="Akta Susunan Direksi (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1274,7 +1274,7 @@ export default function Edit(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1291,7 +1291,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SPPKP" className="font-bold" required={true}/>
+                                            <InputLabel value="SPPKP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className="flex items-center align-middle">
                                                 <input name="file_sppkp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1308,7 +1308,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SIUP" className="font-bold" required={true}/>
+                                            <InputLabel value="SIUP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_siup" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1325,7 +1325,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="TDP" className="font-bold" required={true}/>
+                                            <InputLabel value="TDP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_tdp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1342,7 +1342,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="NIB" className="font-bold" required={true}/>
+                                            <InputLabel value="NIB (Max 5mb)" className="font-bold" required={true}/>
                                                 <div className="flex items-center align-middle">
                                                     <input name="file_nib" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                         onChange={(e) => handleFile(e)}
@@ -1359,7 +1359,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
+                                            <InputLabel value="Akta Susunan Direksi (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_board_of_directors_composition" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1410,7 +1410,7 @@ export default function Edit(props) {
                                             />
                                         </div> */}
                                         <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
+                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai) (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1526,7 +1526,7 @@ export default function Edit(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex align-middle items-center'>
                                                 <input name="file_npwp" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}
@@ -1543,7 +1543,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
+                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai) (Max 5mb)" className="font-bold" required={true}/>
                                             <div className='flex items-center align-middle'>
                                                 <input name="file_non_pkp_statement" type="file" className="file-input file-input-bordered w-full max-w-xs" 
                                                     onChange={(e) => handleFile(e)}

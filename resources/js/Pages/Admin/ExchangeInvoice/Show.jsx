@@ -72,31 +72,8 @@ export default function Index(props) {
 
 	const generateRfp = async (invoiceId) => {
 		setIsGeneratingRfp(true);
-		const content = pdfRref.current;
-		// Set explicit dimensions for the hidden content
-		content.style.display = 'block';
-		content.style.position = 'absolute';
-		content.style.left = '-9999px';
-		content.style.top = '-9999px';
-		const canvas = await html2canvas(content, { allowTaint: true, useCORS: true });
-		const pdf = new jsPDF();
-		const imgData = canvas.toDataURL('image/png');
-		pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-
-		const formData = new FormData();
-		const url = pdf.output('blob');
-		formData.append('rfp', url, 'test.pdf');
-		await axios.post(`/generate-rfp/${invoiceId}`, formData, {
-			headers: {
-				'Content-Type': 'multipart/form-data'
-			}
-		})
+		await axios.post(`/generate-rfp/${invoiceId}`)
 			.then(res => {
-				// Reset the styles after capturing
-				content.style.display = 'none';
-				content.style.position = '';
-				content.style.left = '';
-				content.style.top = '';
 				setRfpFile(res.data.rfp_docs);
 				setIsRfpViewerOpen(true);
 				setIsGeneratingRfp(false);
@@ -758,7 +735,7 @@ export default function Index(props) {
 												<div className="flex justify-around font-bold">
 													<div className="grid grid-cols-1 w-full">
 														<InputLabel
-															value="Lampiran Lainnya"
+															value="Lampiran Lainnya (Max 5mb)"
 															className="font-bold"
 															required={true}
 														/>
