@@ -38,7 +38,7 @@ trait ExchangeInvoiceTrait
         $latestExchangeInvoice = ExchangeInvoice::latest()->first();
         $runningNumber = ($latestExchangeInvoice) ? $latestExchangeInvoice->id + 1 : 1;
         $formattedRunningNumber = sprintf('%06d', $runningNumber);
-        $format = $vendor->name . '/' . $formatMonth . '/' . $year . '/' . $formattedRunningNumber;
+        $format = $vendor->id_manual . '/' . $formatMonth . '/' . $year . '/' . $formattedRunningNumber;
         return $format;
     }
 
