@@ -194,8 +194,8 @@ export default function Register(props) {
 
                     <input 
                         className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                        maxLength={16}
-                        minLength={16}
+                        maxLength={15}
+                        minLength={15}
                         onKeyPress={(event) => {
                             if (!/[0-9]/.test(event.key)) {
                                 event.preventDefault();

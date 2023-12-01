@@ -10,8 +10,8 @@
     <!-- Styles -->
     <style>
         body {
-            font-family: serif;
-            font-size: 12px;
+            font-family: sans-serif;
+            font-size: 10px;
         }
 
         .text-center {
@@ -92,7 +92,7 @@
         }
 
         .table-xs {
-            font-size: 0.75rem;
+            font-size: 10px;
             /* Adjust font size for 'table-xs' */
         }
 
@@ -262,7 +262,7 @@
                         <td width="20%">Rate Date</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">
-                            {{ date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['rate_date'] ?? '')) }}</td>
+                            {{$outstanding_invoice['rfp_views'][0]['rate_date'] ? date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['rate_date'] ?? '-')) : '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Activity Code</td>

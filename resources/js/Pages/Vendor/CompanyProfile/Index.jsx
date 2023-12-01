@@ -470,7 +470,7 @@ export default function Show(props) {
                                     </div>
                                 </div>
                             </div> : ''}
-                            <div className='grid lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 border-dashed border-b-2 border-gray-300 p-1'>
+                            {/* <div className='grid lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 border-dashed border-b-2 border-gray-300 p-1'>
                                 <div className='border-l-0'>
                                     <p className="font-bold text-black mb-3">Additional Information</p>
                                     <p className='mb-3 text-gray-500'>TOP: {props.data.vendor.top ?? '-'} Hari</p>
@@ -490,7 +490,7 @@ export default function Show(props) {
                                         </>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <p className="font-bold mb-3 p-6">

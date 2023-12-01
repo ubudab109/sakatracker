@@ -47,6 +47,7 @@ use App\Http\Controllers\SummaryPaymentSLAController;
 use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\SiapBayarController;
 use App\Http\Controllers\ReportController;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -101,7 +102,7 @@ Route::get('/sign-up', [SignUpController::class, 'index'])->name('sign-up');
 
 Route::get('/verification-email', [OtpCodeController::class, 'index'])->name('verification-email');
 
-Route::post('/verification-email', [OtpCodeController::class, 'store'])->name('verification-email.store');
+Route::any('/verification-email', [OtpCodeController::class, 'store'])->name('verification-email.store');
 
 Route::post('/verification-email/resend-otp', [OtpCodeController::class, 'resendOtp'])->name('verification-email.resend-otp');
 

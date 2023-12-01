@@ -649,40 +649,43 @@ export default function Create(props) {
                                             </label>
                                         </div>
                                         <InputError message={errors.type_of_business} className="mt-2" />
+                                        {
+                                            props.auth.user.role === 'approver' ? (
+                                                <div className='mt-3 font-bold grid grid-cols-3'>
+                                                    <p>TOP </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.top ? props.data.vendor.top : '-'} Hari </p>
 
-                                        <div className='mt-3 font-bold grid grid-cols-3'>
-                                            <p>TOP </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.top ? props.data.vendor.top : '-'} Hari </p>
+                                                    <p>PPN </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.ppn  ? props.data.vendor.ppn : '-'} % </p>
 
-                                            <p>PPN </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.ppn  ? props.data.vendor.ppn : '-'} % </p>
+                                                    <p>PPH </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p>
 
-                                            <p>PPH </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p>
+                                                    <p>COA Prepayment </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.coa_prepayment  ? props.data.vendor.coa_prepayment : '-'}</p>
 
-                                            <p>COA Prepayment </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.coa_prepayment  ? props.data.vendor.coa_prepayment : '-'}</p>
+                                                    <p>COA Liability Account </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.coa_liability_account  ? props.data.vendor.coa_liability_account : '-'}</p>
+                                                    
+                                                    <p>COA Receiving </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.coa_receiving  ? props.data.vendor.coa_receiving : '-'}</p>
 
-                                            <p>COA Liability Account </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.coa_liability_account  ? props.data.vendor.coa_liability_account : '-'}</p>
-                                            
-                                            <p>COA Receiving </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.coa_receiving  ? props.data.vendor.coa_receiving : '-'}</p>
+                                                    <p>Ship To </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.ship_to  ? props.data.vendor.ship_to : '-'}</p>
 
-                                            <p>Ship To </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.ship_to  ? props.data.vendor.ship_to : '-'}</p>
-
-                                            <p>Bill To </p>
-                                            <p>: </p>
-                                            <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p>
-                                        </div>
+                                                    <p>Bill To </p>
+                                                    <p>: </p>
+                                                    <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p>
+                                                </div>
+                                            ) : null
+                                        }
                                     </div>
                                 </div>
                             </div>

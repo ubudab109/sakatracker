@@ -41,7 +41,7 @@ export default function VerificationEmail(props) {
                         className="mt-1 block w-full"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
-                        disabled={props.user != '' ? true : false}
+                        // disabled={props.user != '' ? true : false}
                     />
 
                     <InputError message={errors.email} className="mt-2" />

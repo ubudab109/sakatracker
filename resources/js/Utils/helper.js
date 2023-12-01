@@ -35,4 +35,17 @@ export const convertMb = (totalSizeBytes) => {
  */
 export const sliceArray = (array, index) => {
     return array.splice(index);
-}
+};
+
+export const userHasRoles = (userRoles, roles) => {
+    let array = Array.isArray(userRoles);
+    if (array) {
+        for (let i = 0; i < userRoles.length; i++) {
+            if (userRoles[i].role.name !== roles) {
+                continue;
+            } else {
+                return true;
+            }
+        }
+    }
+};

@@ -38,44 +38,56 @@ class OtpCodeController extends Controller
      */
     public function store(Request $request)
     {
-        $data['user'] = User::where('email', $request->email)->first();
-        $request->validate([
-            'email' => [
-                'required',
-                function ($attribute, $value, $fail) use($data) {
-                    if (!$data['user']) {
-                        $fail('Email tidak ditemukan.');
-                    }
-                },
-            ],
-            'otp_code' => [
-                'required',
-                function ($attribute, $value, $fail) use($data) {
-                    if($data['user'] != null)
-                    {
-                        $exists = OtpCode::where('code', $value)->where('user_id', $data['user']->id)->first();
-                    } else {
-                        $exists = null;
-                    }
+        if ($request->isMethod('post')) {
+            $data['user'] = User::where('email', $request->email)->first();
+            $request->validate([
+                'email' => [
+                    'required',
+                    function ($attribute, $value, $fail) use($data) {
+                        if (!$data['user']) {
+                            $fail('Email tidak ditemukan.');
+                        }
+                    },
+                ],
+                'otp_code' => [
+                    'required',
+                    function ($attribute, $value, $fail) use($data) {
+                        if($data['user'] != null)
+                        {
+                            $exists = OtpCode::where('code', $value)->where('user_id', $data['user']->id)->first();
+                        } else {
+                            $exists = null;
+                        }
+    
+                        if ($exists == null) {
+                            $fail('Kode OTP tidak valid.');
+                        }
+                    },
+                ],
+            ]);
+            User::where('email', $request->email)->update([
+                'email_verified_at' => date('Y-m-d H:i:s')
+            ]);
+    
+            $checkOtpCode = OtpCode::where('user_id', $data['user']->id)->first();
+        } else if ($request->isMethod('get')) {
+            $data['user'] = User::where('email', $request->get('email'))->first();
+            if ($data['user']) {
+                $checkOtpCode = OtpCode::where('code', $request->get('code'))->where('user_id', $data['user']->id)->first();
+            } else {
+                $checkOtpCode = null;
+            }
+        }
 
-                    if ($exists == null) {
-                        $fail('Kode OTP tidak valid.');
-                    }
-                },
-            ],
-        ]);
-
-        User::where('email', $request->email)->update([
-            'email_verified_at' => date('Y-m-d H:i:s')
-        ]);
-
-        $checkOtpCode = OtpCode::where('user_id', $data['user']->id)->first();
         if($checkOtpCode != null)
         {
             $checkOtpCode->delete();
         }
 
-        Auth::login($data['user']);
+        if (Auth::check()) {
+            Auth::login($data['user']);
+        }
+
 
         return redirect(RouteServiceProvider::HOME);
     }

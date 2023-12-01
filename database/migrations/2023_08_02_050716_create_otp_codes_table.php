@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('code')->nullable();
+            $table->string('code')->nullable()->unique();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

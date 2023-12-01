@@ -13,7 +13,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import ModalViewer from "@/Components/ModalViewer";
 import DangerButton from '@/Components/DangerButton';
 import { useEffect } from 'react';
-import { convertMb } from "@/Utils/helper";
+import { convertMb, userHasRoles } from "@/Utils/helper";
 import GeneratedRfp from './Partials/GeneratedRfp';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -21,42 +21,42 @@ import { useRef } from 'react';
 
 export default function Index(props) {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-	const [isRfpViewerOpen, setIsRfpViewerOpen] = useState(false);
-	const [isRfpExistingOpen, setIsRfpExistingOpen] = useState(false);
-	const [rfpFile, setRfpFile] = useState(props.rfp_docs.length < 1 ? [] : props.rfp_docs);
-	const [isGeneratingRfp, setIsGeneratingRfp] = useState(false);
-	// const [urlRfpViewer]
-	const pdfRref = useRef();
-	const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
-		status: '',
-		note: '',
-		approver_invoice: '',
-		attachment: '',
-		reject_user_id: '',
-	});
-	const [fileOpen, setFileOpen] = useState('');
-	const submit = (e) => {
-		e.preventDefault();
+    const [isRfpViewerOpen, setIsRfpViewerOpen] = useState(false);
+    const [isRfpExistingOpen, setIsRfpExistingOpen] = useState(false);
+    const [rfpFile, setRfpFile] = useState(props.rfp_docs.length < 1 ? [] : props.rfp_docs);
+    const [isGeneratingRfp, setIsGeneratingRfp] = useState(false);
+    const [errorRfp, setErrorRfp] = useState('');
+    // const [urlRfpViewer]
+    const pdfRref = useRef();
+    const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
+        status: '',
+        note: '',
+        approver_invoice: '',
+        attachment: '',
+        reject_user_id: '',
+    });
+    const [fileOpen, setFileOpen] = useState('');
+    const submit = (e) => {
+        e.preventDefault();
 
-		post(route('admin.exchange-invoice.update', props.data.revision_id));
-	};
+        post(route('admin.exchange-invoice.update', props.data.revision_id));
+    };
 
     const [selectedOptionStatus, setSelectedOptionStatus] = useState();
-	const [showOptionApproverInvoice, setShowOptionApproverInvoice] = useState(props.data.im_pic == false ? true : false);
-	const [selectedOptionApprover, setSelectedOptionApprover] = useState(true);
-	const [selectedOptionApproverVendor, setSelectedOptionApproverVendor] = useState();
-	const [submitSuccess, setSubmitSuccess] = useState(false);
-	const handleStatusChange = (event) => {
-		data.status = event;
-		setSelectedOptionStatus(event.target.value);
-		if (event == 'disetujui' && props.data.invoice.status == 'menunggu persetujuan') {
-			setShowOptionApproverInvoice(false);
-		} else {
-			setShowOptionApproverInvoice(true);
-		}
+    const [showOptionApproverInvoice, setShowOptionApproverInvoice] = useState(props.data.im_pic == false ? true : false);
+    const [selectedOptionApprover, setSelectedOptionApprover] = useState(true);
+    const [selectedOptionApproverVendor, setSelectedOptionApproverVendor] = useState();
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const handleStatusChange = (event) => {
+        data.status = event;
+        setSelectedOptionStatus(event.target.value);
+        if (event == 'disetujui' && props.data.invoice.status == 'menunggu persetujuan') {
+            setShowOptionApproverInvoice(false);
+        } else {
+            setShowOptionApproverInvoice(true);
+        }
 
-        if(event == 'ditolak')
-        {
+        if (event == 'ditolak') {
             setSelectedOptionApprover(false)
         } else {
             setSelectedOptionApprover(true)
@@ -69,29 +69,30 @@ export default function Index(props) {
     }
 
     const generateRfp = async (invoiceId) => {
-		setIsGeneratingRfp(true);
-		await axios.post(`/generate-rfp/${invoiceId}`)
-			.then(res => {
-                console.log(res.data);
-				setRfpFile(res.data.rfp_docs);
-				setIsRfpViewerOpen(true);
-				setIsGeneratingRfp(false);
-			}).catch(err => {
-				setIsGeneratingRfp(false);
-			});
-	}
+        setIsGeneratingRfp(true);
+        await axios.post(`/generate-rfp/${invoiceId}`)
+            .then(res => {
+                console.log(res);
+                setRfpFile(res.data.rfp_docs);
+                setIsRfpViewerOpen(true);
+                setIsGeneratingRfp(false);
+            }).catch(err => {
+                setIsGeneratingRfp(false);
+                setErrorRfp('Data Invoice RFP Tidak Ditemukan Pada Oracle');
+            });
+    }
 
     const openExistingRfp = () => {
-		setIsRfpExistingOpen(true);
-	}
+        setIsRfpExistingOpen(true);
+    }
 
     const closeRfpPopup = () => {
-		setIsRfpViewerOpen(false);
-	}
+        setIsRfpViewerOpen(false);
+    }
 
     const closeRfpExisting = () => {
-		setIsRfpExistingOpen(false);
-	}
+        setIsRfpExistingOpen(false);
+    }
 
     const [selectedApproverInvoice, setSelectedApproverInvoice] = useState();
     const handleApproverInvoiceChange = (event) => {
@@ -100,7 +101,7 @@ export default function Index(props) {
     }
 
     const [filePDF, setFilePDF] = useState(null);
-    
+
     const fileTypes = ["PDF"];
 
     const openPopup = () => {
@@ -161,7 +162,7 @@ export default function Index(props) {
         const choosenFiles = Array.prototype.slice.call(file);
         handleChangeFile(choosenFiles);
     }
-    
+
     return (
         <AuthenticatedLayout
             user={props.auth.user}
@@ -176,16 +177,16 @@ export default function Index(props) {
             />
 
             <ModalViewer
-				files={rfpFile}
-				show={isRfpViewerOpen}
-				onClose={closeRfpPopup}
-			/>
+                files={rfpFile}
+                show={isRfpViewerOpen}
+                onClose={closeRfpPopup}
+            />
 
-			<ModalViewer
-				files={rfpFile}
-				show={isRfpExistingOpen}
-				onClose={closeRfpExisting}
-			/>
+            <ModalViewer
+                files={rfpFile}
+                show={isRfpExistingOpen}
+                onClose={closeRfpExisting}
+            />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 className="mb-sm-0 font-size-18">Tukar Faktur</h4>
@@ -279,10 +280,10 @@ export default function Index(props) {
                                         </div>
                                     </div>
                                 </div>
-                            : ''}
+                                : ''}
                             {props.data.invoice.is_po == 1 ?
-                            <div></div>
-                            : ''}
+                                <div></div>
+                                : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -476,42 +477,42 @@ export default function Index(props) {
                             </div>
                             <div></div>
                             {props.data.invoice.is_po == 1 ?
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File PO</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.po != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup()
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>File PO</p>
+                                            <p className='text-center'>:</p>
+                                            <p className='flex'>
+                                                {props.data.invoice.po != null ? 1 : 0} Berkas
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup()
+                                                    }
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            : '' }
+                                : ''}
                             {props.data.invoice.is_po == 1 ?
-                            <div></div>
-                            : '' }
+                                <div></div>
+                                : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -520,58 +521,73 @@ export default function Index(props) {
                                         <p className='flex'>
                                             {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
                                             {props.data.invoice.exchange_invoice_attachments.length > 0 && (
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup(props.data.invoice.exchange_invoice_attachments)
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(props.data.invoice.exchange_invoice_attachments)
+                                                    }
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>)}
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>)}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div></div>
-                            <div className='mb-3'>
-								<div className='flex justify-around font-bold'>
-									<div className='grid grid-cols-3 w-full'>
-										<p>RFP</p>
-										<p className='text-center'>:</p>
-										<div className="flex justify-center font-bold">
-												<button style={{ fontSize: '10px' }} disabled={isGeneratingRfp} onClick={() => generateRfp(props.data.invoice.id)} className="btn btn-success btn-sm mr-3 text-white">
-													{props.data.invoice.pdf_rfp !== null ? (isGeneratingRfp ? 'Generating...' : 'Re-Generate RFP') : (isGeneratingRfp ? 'Generating...' : 'Generate RFP')}
-												</button>
-												{
-													rfpFile?.length > 0 ?
-														<button style={{ fontSize: '10px' }} onClick={() => openExistingRfp()} className="btn btn-primary btn-sm text-white" disabled={isGeneratingRfp}>
-															View Generated RFP
-														</button>
-														: null
-												}
-										</div>
-									</div>
-								</div>
-							</div>
+                            {
+                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') ? null : (
+                                    <div className='mb-3'>
+                                        <div className='flex justify-around font-bold'>
+                                            <div className='grid grid-cols-3 w-full'>
+                                                <p>RFP {
+                                                    errorRfp !== '' ? (
+                                                        <p style={{color: 'red'}}>{errorRfp}</p>
+                                                    ) : null
+                                                }</p>
+                                                <p className='text-center'>:</p>
+                                                
+                                                <div className="flex justify-left font-bold">
+                                                    {
+                                                        props.auth.user.user_role[0].role.name === 'Preparer' ? (
+                                                            <button style={{ fontSize: '10px' }} disabled={isGeneratingRfp} onClick={() => generateRfp(props.data.invoice.id)} className="btn btn-success btn-sm mr-3 text-white">
+                                                                {props.data.invoice.pdf_rfp !== null ? (isGeneratingRfp ? 'Generating...' : 'Re-Generate RFP') : (isGeneratingRfp ? 'Generating...' : 'Generate RFP')}
+                                                            </button>
+                                                        ) : (
+                                                            null
+                                                        )
+                                                    }
+                                                    {
+                                                        rfpFile?.length > 0 ?
+                                                            <button style={{ fontSize: '10px' }} onClick={() => openExistingRfp()} className="btn btn-primary btn-sm text-white" disabled={isGeneratingRfp}>
+                                                                View Generated RFP
+                                                            </button>
+                                                            : null
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
                         </div>
                         <div id="pdf-content" ref={pdfRref} style={{ display: 'none' }}>
-							<GeneratedRfp newdocs={props.data.rfp.newdocs} data={props.data.rfp.data} auth={props.auth} />
-						</div>
-                        {props.data.invoice.purchase_orders.length > 0 
-                        ? 
+                            <GeneratedRfp newdocs={props.data.rfp.newdocs} data={props.data.rfp.data} auth={props.auth} />
+                        </div>
+                        {props.data.invoice.purchase_orders.length > 0
+                            ?
                             <div className='mt-3'>
                                 <b>List GR</b>
                                 <table className="table table-xs">
@@ -589,7 +605,7 @@ export default function Index(props) {
                                     </thead>
                                     <tbody>
                                         {props.data.invoice.purchase_orders.map((data, index) => (
-                                            <tr className="border-collapse border-1 border-gray-500">        
+                                            <tr className="border-collapse border-1 border-gray-500">
                                                 {/* <td>
                                                     <label className="inline-flex items-center">
                                                         <input
@@ -614,8 +630,8 @@ export default function Index(props) {
                                     </tbody>
                                 </table>
                             </div>
-                        : '' }
-                        {props.data.invoice.status != 'disetujui' ? 
+                            : ''}
+                        {props.data.invoice.status != 'disetujui' ?
                             <>
                                 {props.data.revision_id != null ? (
                                     <>
@@ -792,7 +808,7 @@ export default function Index(props) {
                                                     </div>
                                                     <div></div>
                                                     <div className="mb-3">
-                                                        <InputLabel value="Lampiran Lainnya" className="font-bold" required={true}/>
+                                                        <InputLabel value="Lampiran Lainnya" className="font-bold" required={true} />
                                                         <div className="w-full">
                                                             <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
                                                         </div>
@@ -801,10 +817,10 @@ export default function Index(props) {
                                                                 <div className="col-12 mr-2">
                                                                     <div className="card">
                                                                         <div className="card-body">
-                                                                            <iframe src={url.url} key={url.fileName} style={{width: '100%'}}></iframe>
+                                                                            <iframe src={url.url} key={url.fileName} style={{ width: '100%' }}></iframe>
                                                                         </div>
                                                                         <div className="card-footer">
-                                                                            <button type="button" onClick={() => removeFiles(url.fileName, url.fileSize)} className="btn btn-sm" style={{background: 'red', color: "white"}}>Remove</button>
+                                                                            <button type="button" onClick={() => removeFiles(url.fileName, url.fileSize)} className="btn btn-sm" style={{ background: 'red', color: "white" }}>Remove</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -815,7 +831,7 @@ export default function Index(props) {
                                                             limitedFiles > 25 ? <InputError message="Maximum files is 25 MB" className="mt-2" /> : null
                                                         }
 
-                                                            <InputError message={errors.file} className="mt-2" />
+                                                        <InputError message={errors.file} className="mt-2" />
                                                     </div>
                                                     <div></div>
                                                     <div className="mb-3">

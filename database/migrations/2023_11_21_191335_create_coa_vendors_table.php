@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('coa_vendors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vendor_id')->nullable();
+            $table->foreignId('vendor_id')->constrained('vendors', 'id', 'coa_vendor_foreign_key')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('supplier_site')->nullable();
             $table->string('coa_prepayment_1')->nullable();
             $table->string('coa_prepayment_2')->nullable();
@@ -40,7 +40,6 @@ return new class extends Migration
             $table->string('coa_receiving_7')->nullable();
             $table->timestamps();
 
-            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
         });
     }
 

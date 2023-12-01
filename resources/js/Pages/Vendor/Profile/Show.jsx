@@ -60,7 +60,7 @@ export default function Show(props) {
                 </div>
             </div>
 
-            
+
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
@@ -87,40 +87,26 @@ export default function Show(props) {
                                     <div className='lg:ml-5 block'>
                                         <p className='mb-3'>Phone Number</p>
                                         <p className='mb-3'>Mobile Number</p>
-                                        {/* <p className='mb-3'>TOP</p>
+                                        <p className='mb-3'>TOP</p>
                                         <p className='mb-3'>PPN</p>
                                         <p className='mb-3'>PPH</p>
-                                        <hr></hr>
-                                        {props.data.vendor.coas.map((item, index) => (
-                                            <>
-                                                <p className='mb-3'>Supplier Site</p>
-                                                <p className='mb-3'>COA Prepayment</p>
-                                                <p className='mb-3'>COA Liability Account</p>
-                                                <p className='mb-3'>COA Receiving</p>
-                                                <hr></hr>
-                                            </>
-                                        ))}
+                                        <p className='mb-3'>COA Prepayment</p>
+                                        <p className='mb-3'>COA Liability Account</p>
+                                        <p className='mb-3'>COA Receiving</p>
                                         <p className='mb-3'>Ship To</p>
-                                        <p className='mb-3'>Bill To</p> */}
+                                        <p className='mb-3'>Bill To</p>
                                     </div>
                                     <div className='lg:ml-5'>
                                         <p className='mb-3'>: {props.data.vendor.phone_number}</p>
                                         <p className='mb-3'>: {props.data.vendor.mobile_phone_number}</p>
-                                        {/* <p className='mb-3'>: {props.data.vendor.top  ? props.data.vendor.top : '-'}</p>
-                                        <p className='mb-3'>: {props.data.vendor.ppn  ? props.data.vendor.ppn : '-'}</p> */}
-                                        {/* <p className='mb-3'>: {props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p>
-                                        <hr></hr>
-                                        {props.data.vendor.coas.map((item, index) => (
-                                            <>
-                                                <p className='mb-3'>: {item.supplier_site}</p>
-                                                <p className='mb-3'>: {item.coa_prepayment_1} | {item.coa_prepayment_2} | {item.coa_prepayment_3} | {item.coa_prepayment_4} | {item.coa_prepayment_5} | {item.coa_prepayment_6} | {item.coa_prepayment_7}</p>
-                                                <p className='mb-3'>: {item.coa_liability_account_1} | {item.coa_liability_account_2} | {item.coa_liability_account_3} | {item.coa_liability_account_4} | {item.coa_liability_account_5} | {item.coa_liability_account_6} | {item.coa_liability_account_7}</p>
-                                                <p className='mb-3'>: {item.coa_receiving_1} | {item.coa_receiving_2} | {item.coa_receiving_3} | {item.coa_receiving_4} | {item.coa_receiving_5} | {item.coa_receiving_6} | {item.coa_receiving_7}</p>
-                                                <hr></hr>
-                                            </>
-                                        ))}
-                                        <p className='mb-3'>: {props.data.vendor.ship_to  ? props.data.vendor.ship_to : '-'}</p>
-                                        <p className='mb-3'>: {props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p> */}
+                                        <p className='mb-3'>: {props.data.vendor.top ? props.data.vendor.top : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ppn ? props.data.vendor.ppn : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.pph ? props.data.vendor.pph : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.coa_prepayment ? props.data.vendor.coa_prepayment : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.coa_liability_account ? props.data.vendor.coa_liability_account : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.coa_receiving ? props.data.vendor.coa_receiving : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ship_to ? props.data.vendor.ship_to : '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.bill_to ? props.data.vendor.bill_to : '-'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -194,83 +180,72 @@ export default function Show(props) {
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Business Information</p>
                                         <p className='text-sm text-gray-500 mb-3'>Type</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>NIB</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Akta Susunan Direksi</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>TDP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NIB</p>
                                     </div>
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha PKP</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : '' }
-                                            / <p>&nbsp;</p>
+                                            </a> : ''}
+                                            <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_siup}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_tdp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_nib}
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            / <p>&nbsp;</p>
                                         </p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className="font-bold text-black mb-3">&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
-                                        {/* <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Akta Susunan Direksi</p> */}
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Akta Susunan Direksi</p>
                                         {/* <p className='text-sm text-gray-500 mb-3'>Halaman Depan Rekening</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Rekening Bank</p> */}
                                     </div>
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             <p>&nbsp;</p>
-                                        </p> */}
+                                        </p>
                                         {/* <p className='mb-3 flex justify-between'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
@@ -296,93 +271,73 @@ export default function Show(props) {
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Business Information</p>
                                         <p className='text-sm text-gray-500 mb-3'>Type</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>NIB</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Akta Susunan Direksi</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Surat Pernyataan Non PKP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>TDP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NIB</p>
                                     </div>
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha Non PKP</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : '' }
-                                            / <p>&nbsp;</p>
+                                            </a> : ''}
+                                            <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_siup}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_tdp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             / {props.data.vendor.expired_nib}
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            / <p>&nbsp;</p>
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            / <p>&nbsp;</p>
                                         </p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className="font-bold text-black mb-3">&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
-                                        {/* <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Akta Susunan Direksi</p> */}
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Akta Susunan Direksi</p>
                                         {/* <p className='text-sm text-gray-500 mb-3'>Halaman Depan Rekening</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Rekening Bank</p> */}
-                                        {/* <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Surat Pernyataan Non PKP</p> */}
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Surat Pernyataan Non PKP</p>
                                     </div>
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             <p>&nbsp;</p>
-                                        </p> */}
+                                        </p>
                                         {/* <p className='mb-3 flex justify-between'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
@@ -399,14 +354,14 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             <p>&nbsp;</p>
-                                        </p> */}
+                                        </p>
                                     </div>
                                 </div>
                             </div> : ''}
@@ -416,27 +371,18 @@ export default function Show(props) {
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Business Information</p>
                                         <p className='text-sm text-gray-500 mb-3'>Type</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
-                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Surat Pernyataan Non PKP</p>
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
                                         {/* <p className='text-sm text-gray-500 mb-3'>E-KTP</p> */}
                                     </div>
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Orang Pribadi</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : '' }
-                                            <p>&nbsp;</p>
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : ''}
                                             <p>&nbsp;</p>
                                         </p>
                                         {/* <p className='mb-3 flex justify-between'>: 
@@ -450,14 +396,12 @@ export default function Show(props) {
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className="font-bold text-black mb-3">&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
                                         {/* <p className='text-sm text-gray-500 mb-3'>Halaman Depan Rekening</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Rekening Bank</p> */}
-                                        {/* <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Surat Pernyataan Non PKP</p> */}
+                                        <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note ? 'red' : '' : ''}-500 mb-3`}>Surat Pernyataan Non PKP</p>
                                     </div>
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className="mb-3">&nbsp;</p>
                                         {/* <p className='mb-3 flex justify-between'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
@@ -474,116 +418,84 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 flex justify-between'>:
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
-                                            </a> : <p>-</p> }
+                                            </a> : <p>-</p>}
                                             <p>&nbsp;</p>
-                                        </p> */}
+                                        </p>
                                     </div>
                                 </div>
                             </div> : ''}
-                            
-                            <div className='grid lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1 border-dashed border-b-2 border-gray-300 p-1'>
-                                <div className='border-l-0'>
-                                    <p className="font-bold text-black mb-3">Additional Information</p>
-                                    <p className='mb-3 text-gray-500'>TOP: {props.data.vendor.top ?? '-'} Hari</p>
-                                    <p className='mb-3 text-gray-500'>PPN: {props.data.vendor.ppn ?? '-'}%</p>
-                                    <p className='mb-3 text-gray-500'>SKB: {props.data.vendor.skb ?? '-'}</p>
-                                    <p className='mb-3 text-gray-500'>PPH: {props.data.vendor.pph ?? '-'}</p>
-                                    <p className='mb-3 text-gray-500'>Ship To: {props.data.vendor.ship_to ?? '-'}</p>
-                                    <p className='mb-3 text-gray-500'>Bill To: {props.data.vendor.bill_to ?? '-'}</p>
-                                    <hr></hr>
-                                    {props.data.vendor.coas.map((item, index) => (
-                                        <>
-                                            <hr></hr>
-                                            <p className='mb-3 text-gray-500'>Supplier Site: {item.supplier_site ?? '-'}</p>
-                                            <p className='mb-3 text-gray-500'>COA Prepayment: {item.coa_prepayment_1 ?? '-'} | {item.coa_prepayment_2 ?? '-'} | {item.coa_prepayment_3 ?? '-'} | {item.coa_prepayment_4 ?? '-'} | {item.coa_prepayment_5 ?? '-'} | {item.coa_prepayment_6 ?? '-'} | {item.coa_prepayment_7 ?? '-'}</p>
-                                            <p className='mb-3 text-gray-500'>COA Liability Account: {item.coa_liability_account_1 ?? '-'} | {item.coa_liability_account_2 ?? '-'} | {item.coa_liability_account_3 ?? '-'} | {item.coa_liability_account_4 ?? '-'} | {item.coa_liability_account_5 ?? '-'} | {item.coa_liability_account_6 ?? '-'} | {item.coa_liability_account_7 ?? '-'}</p>
-                                            <p className='mb-3 text-gray-500'>COA Receiving: {item.coa_receiving_1 ?? '-'} | {item.coa_receiving_2 ?? '-'} | {item.coa_receiving_3 ?? '-'} | {item.coa_receiving_4 ?? '-'} | {item.coa_receiving_5 ?? '-'} | {item.coa_receiving_6 ?? '-'} | {item.coa_receiving_7 ?? '-'}</p>
-                                        </>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
-                        
-                        {props.data.vendor.status_account == 'ditolak' ?
-                        <div className='p-6'>
-                            {props.data.vendor.npwp_note && props.data.vendor.npwp_note != 'acc' ? 
-                                <>
-                                    <p className="font-bold">Catatan File NPWP :</p>
-                                    <p>{props.data.vendor.npwp_note}</p>
-                                    <hr className='mb-3'></hr>
-                                </>
-                            : ''
-                            }
-                            {props.data.vendor.type_of_business != 'Pribadi'
-                            ?
-                                <>
-                                    {props.data.vendor.sppkp_note && props.data.vendor.sppkp_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File SPPKP :</p>
-                                            <p>{props.data.vendor.sppkp_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                    {props.data.vendor.siup_note && props.data.vendor.siup_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File SIUP :</p>
-                                            <p>{props.data.vendor.siup_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                    {props.data.vendor.tdp_note && props.data.vendor.tdp_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File TDP :</p>
-                                            <p>{props.data.vendor.tdp_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                    {props.data.vendor.nib_note && props.data.vendor.nib_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File NIB :</p>
-                                            <p>{props.data.vendor.nib_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                    {props.data.vendor.board_of_directors_composition_note && props.data.vendor.board_of_directors_composition_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File Akta Susunan Direksi :</p>
-                                            <p>{props.data.vendor.board_of_directors_composition_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                </>
-                            : '' }
-                            {props.data.vendor.type_of_business != 'PKP'
-                            ?
-                                <>
-                                    {props.data.vendor.non_pkp_statement_note && props.data.vendor.non_pkp_statement_note != 'acc' ? 
-                                        <>
-                                            <p className="font-bold">Catatan File Surat Pernyataan Non PKP :</p>
-                                            <p>{props.data.vendor.non_pkp_statement_note}</p>
-                                            <hr className='mb-3'></hr>
-                                        </>
-                                    : ''
-                                    }
-                                </>
-                            :'' }
-                        </div> 
-                        : ''}
 
-                        {props.data.timeline != '' ? 
+                        {props.data.vendor.status_account == 'ditolak' ?
                             <div className='p-6'>
-                                {/* <p className="font-bold mb-3">Timeline Pengajuan</p> */}
-                                {/* <ul className="steps mb-12">
+                                {props.data.vendor.npwp_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File NPWP :</p>
+                                        <p>{props.data.vendor.npwp_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.sppkp_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File SPPKP :</p>
+                                        <p>{props.data.vendor.sppkp_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.siup_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File SIUP :</p>
+                                        <p>{props.data.vendor.siup_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.tdp_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File TDP :</p>
+                                        <p>{props.data.vendor.tdp_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.nib_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File NIB :</p>
+                                        <p>{props.data.vendor.nib_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.board_of_directors_composition_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File Akta Susunan Direksi :</p>
+                                        <p>{props.data.vendor.board_of_directors_composition_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                                {props.data.vendor.non_pkp_statement_note ?
+                                    <>
+                                        <p className="font-bold">Catatan File Surat Pernyataan Non PKP :</p>
+                                        <p>{props.data.vendor.non_pkp_statement_note}</p>
+                                        <hr className='mb-3'></hr>
+                                    </>
+                                    : ''
+                                }
+                            </div>
+                            : ''}
+
+                        {props.data.timeline != '' ?
+                            <div className='p-6'>
+                                <p className="font-bold mb-3">Timeline Pengajuan</p>
+                                <ul className="steps mb-12">
                                     {props.data.timeline.map((item) => (
                                         <li className={`step 
                                                 ${item.status == `disetujui` ? `step-success` : ``}
@@ -593,26 +505,31 @@ export default function Show(props) {
                                             {item.status} {item.approval_role}
                                         </li>
                                     ))}
-                                </ul> */}
+                                </ul>
                                 {props.data.timeline.map((item) => (
                                     <div className={`${item.note != null ? `` : `hidden`}`}>
                                         <p className="font-bold mb-3">Catatan ({item.approval_role})</p>
                                         <div className='text-sm text-gray-500 p-1'>
                                             <div className='flex items-center align-middle'>
-                                                {item.document ? 
-                                                    <a href="javascrip:;" onClick={() => openPopup(item.document)}>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                        </svg>
-                                                    </a>
-                                                : ''}
-                                                <p className='mb-3 ml-3'>: {item.note}</p>
+                                                {
+                                                    item.document !== null
+
+                                                        ? <>
+                                                            <a href={item.document} target='_blank'>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                                                </svg>
+                                                            </a>
+                                                            <p className='mb-3 ml-3'>{item.note}</p>
+                                                        </> : null
+                                                }
+
                                             </div>
                                         </div>
                                     </div>
                                 ))}
-                            </div> 
-                        : ''}
+                            </div>
+                            : ''}
 
                         <p className="font-bold mb-3 p-6">
                             <Link href={route('vendor.index')}>
@@ -621,11 +538,11 @@ export default function Show(props) {
                                 </SecondaryButton>
                             </Link>
                             <Link href={route('vendor.edit', props.data.vendor.id)}>
-                                {props.data.checkRejectedData != null ? 
+                                {props.data.checkRejectedData != null ?
                                     <PrimaryButton className='ml-3'>
                                         Revisi Pengajuan
                                     </PrimaryButton>
-                                : ''}
+                                    : ''}
                             </Link>
                         </p>
                     </div>
