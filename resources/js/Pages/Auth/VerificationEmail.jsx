@@ -11,8 +11,10 @@ export default function VerificationEmail(props) {
 
     const { data, setData, post, processing, errors } = useForm({
         email: props.user != '' ? props.user.email : '',
-        otp_code: '',
+        otp_code: props.otp_code ?? '',
     });
+
+    const [isDisabledEmail, setIsDisabledEmail] = useState(true);
 
     const submit = (e) => {
         e.preventDefault();
@@ -38,13 +40,17 @@ export default function VerificationEmail(props) {
                         name="email"
                         value={data.email}
                         placeholder="Email address"
-                        className="mt-1 block w-full"
+                        className={`mt-1 block w-full ${isDisabledEmail ? 'bg-gray-100' : ''}`}
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
-                        // disabled={props.user != '' ? true : false}
+                        readOnly={isDisabledEmail}
                     />
 
                     <InputError message={errors.email} className="mt-2" />
+                    <PrimaryButton type="button" onClick={() => {
+                        if (isDisabledEmail) setIsDisabledEmail(false);
+                        else setIsDisabledEmail(true);
+                    }} className="mt-2">{isDisabledEmail ? 'Edit Email' : 'Cancel'}</PrimaryButton>
                 </div>
                 <div className="mt-3">
                     <TextInput

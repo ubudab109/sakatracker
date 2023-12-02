@@ -19,9 +19,20 @@ class OtpCodeController extends Controller
      */
     public function index(Request $request)
     {
-        $user = User::where('id', $request->user)->first() ?? '';
+        if ($request->has('email') && $request->email != '') {
+            $user = User::where('email', $request->email)->first() ?? null;
+            if ($user && $request->has('code') && $request->code != '') {
+                $otp = OtpCode::where('user_id', $user->id)->first();
+            } else {
+                $otp = null;
+            }
+        } else {
+            $user = User::where('id', $request->user)->first() ?? '';
+            $otp = null;
+        }
         return Inertia::render('Auth/VerificationEmail', [
-            'user' => $user
+            'user' => $user,
+            'otp_code' => $otp->code ?? '',
         ]);
     }
 

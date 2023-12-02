@@ -47,6 +47,7 @@ use App\Http\Controllers\SummaryPaymentSLAController;
 use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\SiapBayarController;
 use App\Http\Controllers\ReportController;
+use App\Models\OtpCode;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -62,7 +63,6 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 // Route::get('/', function () {
 //     return Inertia::render('HomePage', [
 //         'title' => 'Home',
@@ -100,7 +100,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::get('/sign-up', [SignUpController::class, 'index'])->name('sign-up');
 
-Route::get('/verification-email', [OtpCodeController::class, 'index'])->name('verification-email');
 
 Route::any('/verification-email', [OtpCodeController::class, 'store'])->name('verification-email.store');
 

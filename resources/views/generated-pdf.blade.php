@@ -153,7 +153,7 @@
                     <tr>
                         <td width="20%">Invoice Type</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ count($outstanding_invoice['rfp_views']) > 0 ? $outstanding_invoice['rfp_views'][0]['invoice_type'] : '-' }}</td>
+                        <td width="28%">{{ count($outstanding_invoice['outstanding_invoice']) > 0 ? $outstanding_invoice['outstanding_invoice'][0]['invoice_type'] : '-' }}</td>
                         <td width="20%">Page</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">1 of 1</td>
@@ -161,7 +161,7 @@
                     <tr>
                         <td width="20%">Supplier Number</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ count($outstanding_invoice['rfp_views']) > 0 ? $outstanding_invoice['rfp_views'][0]['supp_code'] : '-' }}</td>
+                        <td width="28%">{{ count($outstanding_invoice['outstanding_invoice']) > 0 ? $outstanding_invoice['outstanding_invoice'][0]['supp_code'] : '-' }}</td>
                         <td width="20%">Printed Date</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">{{ date('d-m-Y H:i:s') }}</td>
@@ -169,34 +169,34 @@
                     <tr>
                         <td width="20%">Supplier Name</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ count($outstanding_invoice['rfp_views']) > 0 ? $outstanding_invoice['rfp_views'][0]['supp_name'] : '-' }}</td>
+                        <td width="28%">{{ count($outstanding_invoice['outstanding_invoice']) > 0 ? $outstanding_invoice['outstanding_invoice'][0]['supp_name'] : '-' }}</td>
                         <td width="20%">User Created</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ count($outstanding_invoice['rfp_views']) > 0 ? $outstanding_invoice['rfp_views'][0]['user_created'] : '-' }}</td>
+                        <td width="28%">{{ count($outstanding_invoice['outstanding_invoice']) > 0 ? $outstanding_invoice['outstanding_invoice'][0]['user_created'] : '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Supplier NPWP</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ count($outstanding_invoice['rfp_views']) > 0 ? $outstanding_invoice['rfp_views'][0]['supp_npwp'] : '-' }}</td>
+                        <td width="28%">{{ count($outstanding_invoice['outstanding_invoice']) > 0 ? $outstanding_invoice['outstanding_invoice'][0]['supp_npwp'] : '-' }}</td>
                         <td width="20%">PO TYPE</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['po_type'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['po_type'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Supplier Site</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['supp_site'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['supp_site'] ?? '-' }}</td>
                         <td width="20%">Invoice Due Date</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_due_date'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_due_date'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Pay Group</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['pay_group'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['pay_group'] ?? '-' }}</td>
                         <td width="20%">Invoice Currency</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_currency'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_currency'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%"></td>
@@ -205,7 +205,7 @@
                         <td width="20%">Invoice Total Amount</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">
-                            {{ number_format(count($outstanding_invoice['rfp_views']) > 0 ? (float) $outstanding_invoice['rfp_views'][0]['invoice_total_amount'] : 0, 2) }}
+                            {{ number_format(count($outstanding_invoice['outstanding_invoice']) > 0 ? (float) $outstanding_invoice['outstanding_invoice'][0]['invoice_total_amount'] : 0, 2) }}
                         </td>
                     </tr>
                 </table>
@@ -219,30 +219,30 @@
                         <td width="28%">{{ $outstanding_invoice['rfp'] ?? '-' }}</td>
                         <td width="20%">GL Date</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['gl_date'] ?? ''))}}</td>
+                        <td width="28%">{{date('d-M-Y', strtotime($outstanding_invoice['outstanding_invoice'][0]['gl_date'] ?? ''))}}</td>
                     </tr>
                     <tr>
                         <td width="20%">Voucher Number</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['voucher_number'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['voucher_number'] ?? '-' }}</td>
                         <td width="20%">Invoice Receipt Date</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">
-                            {{ date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['invoice_receipt_date'] ?? '')) }}
+                            {{ date('d-M-Y', strtotime($outstanding_invoice['outstanding_invoice'][0]['invoice_receipt_date'] ?? '')) }}
                         </td>
                     </tr>
                     <tr>
                         <td width="20%">Invoice Batch Name</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_batch_name'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_batch_name'] ?? '-' }}</td>
                         <td width="20%">Supplier Tax Invoice Num</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['supp_tax_invoice_num'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['supp_tax_invoice_num'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Invoice Number</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_number'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_number'] ?? '-' }}</td>
                         <td width="20%">Due Date Determination Reason</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%"></td>
@@ -250,19 +250,19 @@
                     <tr>
                         <td width="20%">Invoice Date</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_date'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_date'] ?? '-' }}</td>
                         <td width="20%">Rate Type</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['rate_type'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['rate_type'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Description</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_description'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_description'] ?? '-' }}</td>
                         <td width="20%">Rate Date</td>
                         <td width="2%" style="text-align: right;">:</td>
                         <td width="28%">
-                            {{$outstanding_invoice['rfp_views'][0]['rate_date'] ? date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['rate_date'] ?? '-')) : '-' }}</td>
+                            {{$outstanding_invoice['outstanding_invoice'][0]['rate_date'] ? date('d-M-Y', strtotime($outstanding_invoice['outstanding_invoice'][0]['rate_date'] ?? '-')) : '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Activity Code</td>
@@ -270,15 +270,15 @@
                         <td width="28%"></td>
                         <td width="20%">Tax Name</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['supp_name'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['supp_name'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Status</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['invoice_status'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['invoice_status'] ?? '-' }}</td>
                         <td width="20%">Tax NPWP</td>
                         <td width="2%" style="text-align: right;">:</td>
-                        <td width="28%">{{ $outstanding_invoice['rfp_views'][0]['tax_npwp'] ?? '-' }}</td>
+                        <td width="28%">{{ $outstanding_invoice['outstanding_invoice'][0]['tax_npwp'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td width="20%">Bank Name</td>
@@ -324,21 +324,21 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class='border-2'>{{ date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['gl_date_dist'] ?? '')) }}</td>
+                                <td class='border-2'>{{ date('d-M-Y', strtotime($outstanding_invoice['outstanding_invoice'][0]['gl_date_dist'] ?? '')) }}</td>
                                 <td class='border-2 text-start'>
-                                    {{ $outstanding_invoice['rfp_views'][0]['tax_account'] ?? '-' }}</td>
-                                <td class='border-2 text-start'>{{ $outstanding_invoice['rfp_views'][0]['tax_code'] ?? '-' }}
+                                    {{ $outstanding_invoice['outstanding_invoice'][0]['tax_account'] ?? '-' }}</td>
+                                <td class='border-2 text-start'>{{ $outstanding_invoice['outstanding_invoice'][0]['tax_code'] ?? '-' }}
                                 </td>
                                 <td class='border-2'>
-                                    {{ number_format((float) $outstanding_invoice['tax_amount'], 2) }}
+                                    {{ number_format((float) $outstanding_invoice['outstanding_invoice'][0]['tax_amount'], 2) }}
                                 </td>
                                 <td class='border-2'></td>
                                 <td class='border-2'>
-                                    {{ number_format((float) $outstanding_invoice['tax_amount'], 2) }}
+                                    {{ number_format((float) $outstanding_invoice['outstanding_invoice'][0]['tax_amount'], 2) }}
                                 </td>
                                 <td class='border-2'></td>
                             </tr>
-                            @foreach ($outstanding_invoice['rfp_views'] as $data)
+                            @foreach ($outstanding_invoice['outstanding_invoice'] as $data)
                                 <tr>
                                     <td class='border-2'>{{ date('d-M-Y', strtotime($data['gl_date_dist'])) }}</td>
                                     <td class='border-2 text-start'>{{ $data['account_dist'] }}</td>
@@ -358,17 +358,17 @@
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class='border-2'>{{ date('d-M-Y', strtotime($outstanding_invoice['rfp_views'][0]['gl_date_dist'] ?? '')) }}</td>
+                                <td class='border-2'>{{ date('d-M-Y', strtotime($outstanding_invoice['outstanding_invoice'][0]['gl_date_dist'] ?? '')) }}</td>
                                 <td class='border-2 text-start'>
-                                    {{ $outstanding_invoice['rfp_views'][0]['ap_account'] ?? '-' }}</td>
+                                    {{ $outstanding_invoice['outstanding_invoice'][0]['ap_account'] ?? '-' }}</td>
                                 <td class='border-2 text-start'>
-                                    {{ $outstanding_invoice['rfp_views'][0]['description_dist'] ?? '-' }}</td>
+                                    {{ $outstanding_invoice['outstanding_invoice'][0]['description_dist'] ?? '-' }}</td>
                                 <td class='border-2'></td>
                                 <td class='border-2'>
-                                    {{ number_format((float) $outstanding_invoice['total_amount'], 2) }}</td>
+                                    {{ number_format((float) $outstanding_invoice['outstanding_invoice'][0]['total_amount'], 2) }}</td>
                                 <td class='border-2'></td>
                                 <td class='border-2'>
-                                    {{ number_format((float) $outstanding_invoice['total_amount'], 2) }}</td>
+                                    {{ number_format((float) $outstanding_invoice['outstanding_invoice'][0]['total_amount'], 2) }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -404,7 +404,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($outstanding_invoice['rfp_views'] as $data)
+                            @foreach ($outstanding_invoice['outstanding_invoice'] as $data)
                                 <tr>
                                     <td class='border-2'>{{ $data['po_number'] }}</td>
                                     <td class='border-2'>{{ $data['receipt_num_line'] }}</td>

@@ -300,14 +300,13 @@ class AdminExchangeInvoiceController extends Controller
         $data['approver_revision_done'] = RevisionExchangeInvoice::with('user')->where('approval_permission', null)->where('exchange_invoice_id', $id)->where('status', 'disetujui')->get();
 
         $data['outstanding_invoice'] = $this->outstandingInvoiceRequest($data['invoice']->invoice_number);
-        // $data['outstanding_invoice'] = OracleOutstandingInvoice::with('rfp_views')->where('invoice_num', $data['invoice']->invoice_number)->first();
         $data['rfp'] = $this->generateRfp($id);
 
         $data['total_debit'] = 0;
         $data['total_credit'] = 0;
 
         if (count($data['outstanding_invoice']) > 0) {
-            foreach ($data['outstanding_invoice']['rfp_views'] as $rfp_view) {
+            foreach ($data['outstanding_invoice']['outstanding_invoice'] as $rfp_view) {
                 if ((int)$rfp_view['amount_dist'] > 0) {
                     $data['total_debit'] += $rfp_view['amount_dist'];
                 } else {
@@ -348,7 +347,7 @@ class AdminExchangeInvoiceController extends Controller
 
             $totalDebit = 0;
             $totalCredit = 0;
-            foreach ($outstandingInvoice['rfp_views'] as $rfp_view) {
+            foreach ($outstandingInvoice['outstanding_invoice'] as $rfp_view) {
                 if ((int)$rfp_view['amount_dist'] > 0) {
                     $totalDebit += $rfp_view['amount_dist'];
                 } else {
@@ -783,7 +782,7 @@ class AdminExchangeInvoiceController extends Controller
         $data['total_credit'] = $data['outstanding_invoice']['total_amount'] ?? 0;
 
         if ($data['outstanding_invoice']) {
-            foreach ($data['outstanding_invoice']['rfp_views'] as $rfp_view) {
+            foreach ($data['outstanding_invoice']['outstanding_invoice'] as $rfp_view) {
                 if ((int)$rfp_view['amount_dist'] > 0) {
                     $data['total_debit'] += $rfp_view['amount_dist'];
                 } else {
@@ -805,8 +804,8 @@ class AdminExchangeInvoiceController extends Controller
         $response = $client->get('https://sakainvtrack.issbox.com/api/rfp?invoice_number=' . urlencode($invoiceNumber));
         
         $json = json_decode($response->getBody(), true);
-        if (!is_null($json['outstanding_invoice'])) {
-            $data = collect($json['outstanding_invoice']);
+        if (!is_null($json)) {
+            $data = collect($json);
         } else {
             $data = [];
         }
