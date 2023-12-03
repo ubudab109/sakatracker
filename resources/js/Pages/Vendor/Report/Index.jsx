@@ -9,6 +9,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import ChartOverdue from './Partials/ChartOverdue';
 import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
 import CardDashboardChart from '@/Components/CardDashboardChart';
+import ChartRevisionVendor from './Partials/ChartRevisionVendor';
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -68,9 +69,11 @@ export default function Index(props) {
                     </div>
                 </div>
             </div>
-
             <div className="row mt-5">
-                
+                <ChartRevisionVendor data={props.data.revision_vendor} />
+            </div>
+            <div className="row mt-5">
+
                 <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />
                 <CardDashboardChart name="Outstanding Invoice" data={props.data.card_outstanding.invoice_amount} />
                 <CardDashboardChart name="Outstanding Invoice Amount" data={props.data.card_outstanding.formated_invoice_total} />

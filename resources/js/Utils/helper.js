@@ -21,7 +21,7 @@ export const npwpFormat = (value) => {
  * power of 2.
  */
 export const convertMb = (totalSizeBytes) => {
-    return totalSizeBytes / Math.pow(1024,2);
+    return totalSizeBytes / Math.pow(1024, 2);
 }
 
 /**
@@ -49,3 +49,19 @@ export const userHasRoles = (userRoles, roles) => {
         }
     }
 };
+
+/**
+ * The function `formatDateToDDMMYYYY` takes a date as input and returns it formatted as a string in
+ * the format "DD/MM/YYYY".
+ * @param date - The `date` parameter is the input date that you want to format. It can be a string
+ * representing a date or a Date object.
+ * @returns The function `formatDateToDDMMYYYY` returns a formatted date string in the format
+ * "DD/MM/YYYY".
+ */
+export const formatDateToDDMMYYYY = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}

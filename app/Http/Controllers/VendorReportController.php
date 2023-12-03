@@ -7,6 +7,7 @@ use App\Models\OraclePurchaseOrder;
 use App\Models\BatchPaymentInvoice;
 use App\Models\ExchangeInvoice;
 use App\Models\PurchaseOrder;
+use App\Models\RevisionRegisterVendor;
 use Illuminate\Http\Request;
 use App\Models\Vendor;
 use Inertia\Inertia;
@@ -25,6 +26,7 @@ class VendorReportController extends Controller
         $data['card_outstanding'] = $this->cardOutstanding($data['month']);
 
         $data['chart_outstanding_percentage'] = $this->chartOutstandingPercentage($data['month']);
+        $data['revision_vendor'] = $this->revisionVendor();
 
         $data['chart_overdue'] = $this->chartOverdue($data['month']);
 
@@ -69,6 +71,14 @@ class VendorReportController extends Controller
         ]);
     }
 
+    private function revisionVendor()
+    {
+        $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
+        $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
+        $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+        return $data;
+    } 
+
     public function cardOutstanding($month)
     {
         $arrayPo = PurchaseOrder::whereHas('exchange_invoice', function($q) use($month){
@@ -81,18 +91,18 @@ class VendorReportController extends Controller
         })->pluck('order_id')->toArray();
 		
 		$vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
-		if($vendor)
-		{
-			$data['po_amount'] = OraclePurchaseOrder::
-			where('vendor_code', $vendor->id_manual)
-			->whereDate('po_date', '>=', $month . '-01')
-			->whereDate('po_date', '<=', $month . '-30')
-			->whereNotIn('po_header_id', $arrayPo)
-			->count();
-		} else {
-			$data['po_amount'] = 0;
-		}
-
+		// if($vendor)
+		// {
+		// 	$data['po_amount'] = OraclePurchaseOrder::
+		// 	where('vendor_code', $vendor->id_manual)
+		// 	->whereDate('po_date', '>=', $month . '-01')
+		// 	->whereDate('po_date', '<=', $month . '-30')
+		// 	->whereNotIn('po_header_id', $arrayPo)
+		// 	->count();
+		// } else {
+		// 	$data['po_amount'] = 0;
+		// }
+        $data['po_amount'] = 0;
         // dd($data);
 
         $data['invoice_amount'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')

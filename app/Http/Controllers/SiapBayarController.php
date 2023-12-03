@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PaymentRequestJob;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\BatchPayment;
@@ -91,6 +92,10 @@ class SiapBayarController extends Controller
     }
 
     public function paidInvoices(Request $request){
+        $request->validate([
+            'payment_date' => 'required',
+        ]);
+
         $batch_payment = BatchPayment::find($request->batch_payment['id']);
         
         foreach ($request->invoices as $invoice_id) {
@@ -108,9 +113,14 @@ class SiapBayarController extends Controller
         $unpaid_invoices = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['status', 'unpaid']])->first();
         if ($unpaid_invoices == null) {
             $batch_payment->update([
-                'status' => 'paid'
+                'status' => 'paid',
+                'payment_date' => $request->payment_date,
             ]);
+            if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
+                PaymentRequestJob::dispatch($batch_payment);
+            }
         }
+
 
         return response()->json([
             'status' => 'OK',

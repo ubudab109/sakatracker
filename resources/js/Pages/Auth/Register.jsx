@@ -6,11 +6,14 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { typeOfBusiness } from '@/Utils/constant';
+import { npwpFormat } from '@/Utils/helper';
 
 export default function Register(props) {
-    console.log(props);
     const { data, setData, post, processing, errors, reset } = useForm({
+        document_type: 'npwp',
         npwp: '',
+        ktp: '',
+        ktp_address: '',
         name: '',
         legality: '',
         name_business: '',
@@ -32,6 +35,7 @@ export default function Register(props) {
         password_confirmation: '',
         suffix: '',
     });
+    const [formattedNpwp, setFormattedNpwp] = useState('');
 
     useEffect(() => {
         return () => {
@@ -60,10 +64,11 @@ export default function Register(props) {
     const handleNameBusiness = (event) => {
         data.name_business = event.target.value;
         setSelectedNameBusiness(data.name_business);
-    }  
+    }
 
     const handleLegalityChange = (event) => {
         data.legality = event.target.value;
+        setData('document_type', '');
         setSelectedOptionLegality(data.legality);
     }
 
@@ -71,6 +76,23 @@ export default function Register(props) {
     const handleSuffixChange = (event) => {
         data.suffix = event.target.value;
         setSelectedOptionSuffix(data.suffix);
+    }
+
+    const handleFormattedNpwp = (e) => {
+        let value = e.target.value
+        value = value.replace(/[A-Za-z\W\s_]+/g, '');
+        let split = 6;
+        const dots = [];
+
+        for (let i = 0, len = value.length; i < len; i += split) {
+            split = i >= 2 && i <= 6 ? 3 : i >= 8 && i <= 12 ? 4 : 2;
+            dots.push(value.substr(i, split));
+        }
+
+        const temp = dots.join('.');
+        const formattedNPWP = temp.length > 12 ? `${temp.substr(0, 12)}-${temp.substr(12, 7)}` : temp;
+
+        setData('npwp', formattedNPWP);
     }
 
     useEffect(() => {
@@ -189,32 +211,6 @@ export default function Register(props) {
                 </Link>
             </p>
             <form onSubmit={submit}>
-                <div className="mt-4">
-                    <InputLabel htmlFor="npwp" value="NPWP" required={true} />
-
-                    <input 
-                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                        maxLength={15}
-                        minLength={15}
-                        onKeyPress={(event) => {
-                            if (!/[0-9]/.test(event.key)) {
-                                event.preventDefault();
-                            }
-                        }}
-                        id="npwp"
-                        name="npwp"
-                        value={data.npwp}
-                        type='text'
-                        placeholder="NPWP *"
-                        autoComplete="npwp"
-                        isFocused={true}
-                        onChange={(e) => setData('npwp', e.target.value)}
-                        required
-                    />
-
-                    <InputError message={errors.npwp} className="mt-2" />
-                </div>
-
                 <div className="mt-3">
                     <div className='grid grid-cols-3 gap-3'>
                         <div>
@@ -235,7 +231,7 @@ export default function Register(props) {
 
                             <InputError message={errors.legality} className="mt-2" />
                         </div>
-                        <div>
+                        <div className='mt-2'>
                             <InputLabel htmlFor="name" value="Nama Perusahaan" required={true} />
 
                             <TextInput
@@ -271,6 +267,135 @@ export default function Register(props) {
                             <InputError message={errors.suffix} className="mt-2" />
                         </div>
                     </div>
+                </div>
+
+                <div className='mt-3'>
+                    <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
+
+                    <div class="flex items-center mb-2 mt-3" hidden={selectedOptionLegality ? false : true}>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="PKP"
+                                checked={radioOptionType === 'PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center mb-2" hidden={selectedOptionLegality ? false : true}>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Non PKP"
+                                checked={radioOptionType === 'Non PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Pribadi"
+                                checked={radioOptionType === 'Pribadi'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Orang Pribadi</span>
+                        </label>
+                    </div>
+                    <InputError message={errors.type_of_business} className="mt-2" />
+                </div>
+                {
+                    radioOptionType === 'Pribadi' ? (
+                        <div className="mt-2">
+                            <InputLabel value="Tipe Dokumen" className="font-bold" required={true} />
+                            <select className="select select-bordered w-full mt-1"
+                                id="document_type"
+                                name="document_type"
+                                value={data.document_type}
+                                onChange={(e) => setData({ ...data, document_type: e.target.value })}
+                            >
+                                <option value="npwp">NPWP</option>
+                                <option value="ktp">NIK</option>
+                            </select>
+
+                            <InputError message={errors.document_type} className="mt-2" />
+                        </div>
+                    ) : null
+                }
+                <div className="mt-4">
+                    <InputLabel htmlFor={data.document_type === 'nwpwp' ? 'npwp' : (data.document_type === 'ktp' ? 'ktp' : 'npwp')} value={data.document_type === 'nwpwp' ? 'NPWP' : (data.document_type === 'ktp' ? 'KTP' : 'NPWP')} required={true} />
+                    {
+                        data.document_type === 'nwpwp' ? (
+                            <>
+                                <input
+                                    className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                                    maxLength={20}
+                                    minLength={19}
+                                    id="npwp"
+                                    name="npwp"
+                                    value={data.npwp}
+                                    type='text'
+                                    placeholder="NPWP *"
+                                    autoComplete="npwp"
+                                    isFocused={true}
+                                    onChange={(e) => handleFormattedNpwp(e)}
+
+                                    required
+                                />
+
+                                <InputError message={errors.npwp} className="mt-2" />
+                            </>
+                        ) : (
+                            data.document_type === 'ktp' ? (
+                                <>
+                                    <input
+                                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                                        maxLength={15}
+                                        id="ktp"
+                                        name="ktp"
+                                        value={data.ktp}
+                                        type='text'
+                                        placeholder="NIK *"
+                                        autoComplete="ktp"
+                                        isFocused={true}
+                                        onChange={(e) => setData('ktp', e.target.value)}
+                                        required
+                                    />
+
+                                    <InputError message={errors.ktp} className="mt-2" />
+                                </>
+                            ) : (
+                                <>
+                                    <input
+                                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                                        maxLength={20}
+                                        minLength={19}
+                                        id="npwp"
+                                        name="npwp"
+                                        value={data.npwp}
+                                        type='text'
+                                        placeholder="NPWP *"
+                                        autoComplete="npwp"
+                                        isFocused={true}
+                                        onChange={(e) => handleFormattedNpwp(e)}
+
+                                        required
+                                    />
+
+                                    <InputError message={errors.npwp} className="mt-2" />
+                                </>
+                            )
+                        )
+                    }
                 </div>
 
                 <div className="mt-3">
@@ -322,16 +447,16 @@ export default function Register(props) {
                 </div>
 
                 <div className="mt-3">
-                    <InputLabel htmlFor="npwp_address" value="NPWP Address" required={true} />
+                    <InputLabel htmlFor="npwp_address" value={data.document_type === 'nwpwp' ? 'NPWP Address' : (data.document_type === 'ktp' ? 'NIK Address' : 'NPWP Address *')} required={true} />
                     <textarea
-                        name="npwp_address"
+                        name={data.document_type === 'nwpwp' ? 'npwp_address' : (data.document_type === 'ktp' ? 'ktp_address' : 'npwp_address')}
                         className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                        placeholder="NPWP Address *"
-                        onChange={(e) => setData('npwp_address', e.target.value)}
-                        value={data.npwp_address}
+                        placeholder={data.document_type === 'nwpwp' ? 'NPWP Address *' : (data.document_type === 'ktp' ? 'NIK Address *' : 'NPWP Address *')}
+                        onChange={(e) => setData(e.target.name, e.target.value)}
+                        value={data.document_type === 'nwpwp' ? data.npwp_address : (data.document_type === 'ktp' ? data.ktp_address : data.npwp_address)}
                     />
 
-                    <InputError message={errors.npwp_address} className="mt-2" />
+                    <InputError message={data.document_type === 'nwpwp' ? errors.npwp_address : (data.document_type === 'ktp' ? errors.ktp_address : errors.npwp_address)} className="mt-2" />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
@@ -406,51 +531,6 @@ export default function Register(props) {
 
                         <InputError message={errors.postal_code} className="mt-2" />
                     </div>
-                </div>
-
-                <div className='mt-3'>
-                    <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
-
-                    <div class="flex items-center mb-2 mt-3" hidden={selectedOptionLegality ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="PKP"
-                                checked={radioOptionType === 'PKP'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center mb-2" hidden={selectedOptionLegality ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="Non PKP"
-                                checked={radioOptionType === 'Non PKP'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="Pribadi"
-                                checked={radioOptionType === 'Pribadi'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Orang Pribadi</span>
-                        </label>
-                    </div>
-                    <InputError message={errors.type_of_business} className="mt-2" />
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">

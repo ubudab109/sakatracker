@@ -414,7 +414,7 @@ class BatchPaymentController extends Controller
         foreach ($batch_payment_invoices as $invoice) {
             $exchange_invoice = ExchangeInvoice::find($invoice->exchange_invoice_id);
             $approver_payment_now = ApproverPayment::where('role_id', $data['user_role']->role_id)->first();
-            if ($approver_payment_now->level < $data['batch_payment']->level) $data['batch_payment']->status = 'disetujui';
+            if ($approver_payment_now && ($approver_payment_now->level < $data['batch_payment']->level)) $data['batch_payment']->status = 'disetujui';
             array_push($data['batch_payment_invoices'], $exchange_invoice);
         }
 

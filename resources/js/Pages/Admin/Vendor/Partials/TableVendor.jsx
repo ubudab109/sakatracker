@@ -30,8 +30,8 @@ export default function TableVendor(props) {
 
     return (
         <div className="pt-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
+            <div className="max-w-7xl mx-auto table-responsive">
+                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto table-responsive">
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
@@ -39,6 +39,7 @@ export default function TableVendor(props) {
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>NPWP</th>
+                                <th>KTP</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
                                 <th>Last Update</th>
@@ -59,9 +60,16 @@ export default function TableVendor(props) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className='border border-slate-600'>{`${item.vendor_latest.id_manual}`}</td>
+                                    <td className='border border-slate-600'>{`${item.vendor_latest.id_manual ?? ''}`}</td>
                                     <td className='border border-slate-600'>{item.vendor_latest.name}, {item.vendor_latest.legality}</td>
-                                    <td className='border border-slate-600'>{npwpFormat(item.vendor_latest.npwp.toString())}</td>
+                                    <td className='border border-slate-600'>
+                                        {
+                                            item.vendor_latest.npwp ? npwpFormat(item.vendor_latest.npwp.toString()) : ''
+                                        }
+                                    </td>
+                                    <td className='border border-slate-600'>
+                                        { item.vendor_latest.ktp ? item.vendor_latest.ktp.toString() : ''}
+                                    </td>
                                     <td className='border border-slate-600'>{item.vendor_latest.email}</td>
                                     <td className='border border-slate-600'>{item.vendor_latest.phone_number}</td>
                                     <td className='border border-slate-600'>{formatDate(item.vendor_latest.updated_at)}</td>

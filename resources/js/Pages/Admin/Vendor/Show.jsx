@@ -95,7 +95,9 @@ export default function Show(props) {
                                         <p className="mb-3">Nama</p>
                                         <p className="mb-3">Email Address</p>
                                         <p className="mb-3">NPWP</p>
+                                        <p className="mb-3">KTP</p>
                                         <p className="mb-3">Alamat NPWP</p>
+                                        <p className="mb-3">Alamat KTP</p>
                                     </div>
                                     <div className="">
                                         <p className="mb-3">
@@ -108,7 +110,13 @@ export default function Show(props) {
                                             : {props.data.vendor.npwp}
                                         </p>
                                         <p className="mb-3">
+                                            : {props.data.vendor.ktp}
+                                        </p>
+                                        <p className="mb-3">
                                             : {props.data.vendor.npwp_address}
+                                        </p>
+                                        <p className="mb-3">
+                                            : {props.data.vendor.ktp_address}
                                         </p>
                                     </div>
                                     <div className="lg:ml-5 block">
