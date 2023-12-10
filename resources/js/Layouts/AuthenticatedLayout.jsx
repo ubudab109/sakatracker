@@ -306,6 +306,7 @@ return (
                             </a>
                         </li>
                         : ''}
+                        
                          {permissions.includes('index_user') ?
                             <li>
                                 <a href={route("master-user.index")}>
@@ -314,6 +315,15 @@ return (
                                 </a>
                             </li>
                         : ''}
+                        {
+                            user?.role != "vendor" ?
+                            <li>
+                                <a href={route("approver-vendor.index")}>
+                                    <Shuffle />
+                                    <span>Master Locations</span>
+                                </a>
+                            </li> : null
+                        }
                         {permissions.includes('index_approver_vendor') ?
                             <li>
                                 <a href={route("approver-vendor.index")}>

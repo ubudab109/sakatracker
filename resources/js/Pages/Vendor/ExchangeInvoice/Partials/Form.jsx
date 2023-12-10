@@ -16,8 +16,17 @@ import PDFPopup from "@/Components/PDFPopup";
 import { convertMb } from "@/Utils/helper";
 
 export default function Form(props) {
-    console.log(props);
-    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
+    const {
+        data,
+        setData,
+        post,
+        clearErrors,
+        hasErrors,
+        processing,
+        errors,
+        recentlySuccessful,
+        reset,
+    } = useForm({
         // category: props.data.invoice == null ? '' : props.data.invoice.category,
         location: props.data.invoice == null ? "" : props.data.invoice.location,
         date: props.data.invoice == null ? "" : props.data.invoice.date,
@@ -49,12 +58,15 @@ export default function Form(props) {
 
     const handleFile = (e) => {
         if (convertMb(e.target.files[0].size) > 5) {
-            setError(e.target.name, 'Max file size should not be greater than 5mb')
+            setError(
+                e.target.name,
+                "Max file size should not be greater than 5mb"
+            );
         } else {
             clearErrors(e.target.name);
             setData(e.target.name, e.target.files[0]);
         }
-    }
+    };
 
     // console.log(errors);
 
@@ -588,7 +600,7 @@ export default function Form(props) {
                                     ""
                                 )}
                             </div>
-                            <i className='text-muted'>* Max: 5mb</i>
+                            <i className="text-muted">* Max: 5mb</i>
                             <InputError
                                 message={errors.tax_invoice}
                                 className="mt-2"
@@ -658,7 +670,7 @@ export default function Form(props) {
                                     ""
                                 )}
                             </div>
-                            <i className='text-muted'>* Max: 5mb</i>
+                            <i className="text-muted">* Max: 5mb</i>
                             <InputError
                                 message={errors.invoice}
                                 className="mt-2"
@@ -702,7 +714,7 @@ export default function Form(props) {
                                     ""
                                 )}
                             </div>
-                            <i className='text-muted'>* Max: 5mb</i>
+                            <i className="text-muted">* Max: 5mb</i>
                             <InputError
                                 message={errors.bast}
                                 className="mt-2"
@@ -769,48 +781,45 @@ export default function Form(props) {
                                 />
                             </div>
                             <div className="row">
-                                {objectFilesUrl.length > 0
-                                    ? objectFilesUrl.map((url) => (
-                                          <div className="col-12 mr-2">
-                                              <div className="card">
-                                                  <div className="card-body">
-                                                      <iframe
-                                                          src={url.url}
-                                                          key={url.fileName}
-                                                          style={{
-                                                              width: "100%",
-                                                          }}
-                                                      ></iframe>
-                                                  </div>
-                                                  <div className="card-footer">
-                                                      <button
-                                                          type="button"
-                                                          onClick={() =>
-                                                              removeFiles(
-                                                                  url.fileName,
-                                                                  url.fileSize
-                                                              )
-                                                          }
-                                                          className="btn btn-sm"
-                                                          style={{
-                                                              background: "red",
-                                                              color: "white",
-                                                          }}
-                                                      >
-                                                          Remove
-                                                      </button>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      ))
-                                    : null}
+                                <ul className="list-group p-2">
+                                    {objectFilesUrl.length > 0
+                                        ? objectFilesUrl.map((url) => (
+                                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                  <a
+                                                      style={{ color: "blue" }}
+                                                      href={url.url}
+                                                      target="_blank"
+                                                      rel="no-referrer"
+                                                  >
+                                                      {url.fileName}
+                                                  </a>
+                                                  <span
+                                                      onClick={() =>
+                                                          removeFiles(
+                                                              url.fileName,
+                                                              url.fileSize
+                                                          )
+                                                      }
+                                                      style={{
+                                                          cursor: "pointer",
+                                                          background: "red",
+                                                          color: "white",
+                                                      }}
+                                                      class="badge badge-danger badge-pill"
+                                                  >
+                                                      X
+                                                  </span>
+                                              </li>
+                                          ))
+                                        : null}
+                                </ul>
                             </div>
                             <p>
                                 {files
                                     ? `Total File: ${files.length}`
                                     : "no files uploaded yet"}
                             </p>
-                            <i className='text-muted'>* Max: 25mb</i>
+                            <i className="text-muted">* Max: 25mb</i>
                             {limitedFiles > 25 ? (
                                 <InputError
                                     message="Maximum files is 25 MB"
@@ -877,7 +886,7 @@ export default function Form(props) {
                                     ""
                                 )}
                             </div>
-                            <i className='text-muted'>* Max: 5mb</i>
+                            <i className="text-muted">* Max: 5mb</i>
                             <InputError message={errors.po} className="mt-2" />
                         </div>
                         <div className="mb-1">
@@ -918,7 +927,7 @@ export default function Form(props) {
                                     ""
                                 )}
                             </div>
-                            <i className='text-muted'>* Max: 5mb</i>
+                            <i className="text-muted">* Max: 5mb</i>
                             <InputError
                                 message={errors.quotation}
                                 className="mt-2"

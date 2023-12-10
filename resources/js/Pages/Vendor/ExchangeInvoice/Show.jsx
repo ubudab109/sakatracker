@@ -223,7 +223,7 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>File Tukar Faktur</p>
+                                        <p>File Faktur Pajak</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
