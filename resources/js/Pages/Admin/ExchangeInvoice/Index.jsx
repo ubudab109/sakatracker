@@ -2,10 +2,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Table from './Partials/Table';
 import { Head, Link } from '@inertiajs/react';
 import React from "react";
-import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function Index(props) {
-    console.log(props);
     return (
         <AuthenticatedLayout
             user={props.auth.user}

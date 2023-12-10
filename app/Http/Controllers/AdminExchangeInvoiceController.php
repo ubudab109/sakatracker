@@ -101,65 +101,64 @@ class AdminExchangeInvoiceController extends Controller
             }
         }
 		
-
-        $data['invoices'] = ExchangeInvoice::with('purchase_orders')
-        ->whereHas('revision_exchange_invoices', function($q) use($permissions, $revisionId, $request){
-            if(in_array('is_pic_exchange_invoice', $permissions))
-            {
-                if($request->filter != 'me')
+        if ($request->ajax()) {
+            $invoices = ExchangeInvoice::with('purchase_orders')
+            ->whereHas('revision_exchange_invoices', function($q) use($permissions, $revisionId, $request){
+                if(in_array('is_pic_exchange_invoice', $permissions))
                 {
-                       $q->where('approval_permission', 'is_pic_exchange_invoice');
-                } else {
-                        $q->where('approval_permission', 'is_pic_exchange_invoice');
-                     $q->where('status', 'menunggu persetujuan');
-                }
-             } else {
-                $q->whereIn('id', $revisionId);
-             }
-        })
-        ->orderBy('updated_at', 'desc')
-        ->get()
-        ->map(function ($data) {
-            if($data['status'] != 'draft')
-            {
-                $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $data->id)->where('status', '!=', 'disetujui')->first();
-                if($checkRevision) {
-					if($checkRevision->user) {
-						$name = $checkRevision->user->name;
-					} else {
-						$name = 'PIC Tukar Faktur';
-					}
-                    $data['status'] = $checkRevision->status . ' ' . $name;
-                } else {
-                    $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $data->id)->latest()->first();
-					if($checkRevision->user) {
-						$name = $checkRevision->user->name;
-					} else {
-						$name = 'PIC Tukar Faktur';
-					}
-                    if($checkRevision->status == 'disetujui')
+                    if($request->filter != 'me')
                     {
-                        $data['status'] = $checkRevision->status;
+                           $q->where('approval_permission', 'is_pic_exchange_invoice');
                     } else {
-                        $data['status'] = $checkRevision->status . ' ' . $name;
+                            $q->where('approval_permission', 'is_pic_exchange_invoice');
+                         $q->where('status', 'menunggu persetujuan');
                     }
+                 } else {
+                    $q->whereIn('id', $revisionId);
+                 }
+            })
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(function ($data) {
+                if($data['status'] != 'draft')
+                {
+                    $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $data->id)->where('status', '!=', 'disetujui')->first();
+                    if($checkRevision) {
+                        if($checkRevision->user) {
+                            $name = $checkRevision->user->name;
+                        } else {
+                            $name = 'PIC Tukar Faktur';
+                        }
+                        $data['status'] = $checkRevision->status . ' ' . $name;
+                    } else {
+                        $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $data->id)->latest()->first();
+                        if($checkRevision->user) {
+                            $name = $checkRevision->user->name;
+                        } else {
+                            $name = 'PIC Tukar Faktur';
+                        }
+                        if($checkRevision->status == 'disetujui')
+                        {
+                            $data['status'] = $checkRevision->status;
+                        } else {
+                            $data['status'] = $checkRevision->status . ' ' . $name;
+                        }
+                    }
+                } else {
+                    $data['status'] = 'draft';
                 }
-            } else {
-                $data['status'] = 'draft';
+                return $data;
+            });
+            $exchangeInvoiceOracle = ExchangeInvoice::where('vendor_id', null)->where('is_po', null)->get();
+    
+            if(isset($request->filter) && $request->filter != 'me')
+            {
+                $invoices = $invoices->merge($exchangeInvoiceOracle);
             }
-            return $data;
-        });
-
-        $exchangeInvoiceOracle = ExchangeInvoice::where('vendor_id', null)->where('is_po', null)->get();
-
-        if($request->filter != 'me')
-        {
-            $data['invoices'] = $data['invoices']->merge($exchangeInvoiceOracle);
+    
+            $invoices = $invoices->sortByDesc('updated_at')->values();
+            return response()->json($invoices);
         }
-
-        $data['invoices'] = $data['invoices']->sortByDesc('updated_at')->values();
-
-
         return Inertia::render('Admin/ExchangeInvoice/Index', [
             'data' => $data
         ]);

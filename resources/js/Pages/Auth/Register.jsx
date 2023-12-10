@@ -6,7 +6,6 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { typeOfBusiness } from '@/Utils/constant';
-import { npwpFormat } from '@/Utils/helper';
 
 export default function Register(props) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,7 +14,7 @@ export default function Register(props) {
         ktp: '',
         ktp_address: '',
         name: '',
-        legality: '',
+        legality: 'PT',
         name_business: '',
         email: '',
         office_address: '',
@@ -35,7 +34,6 @@ export default function Register(props) {
         password_confirmation: '',
         suffix: '',
     });
-    const [formattedNpwp, setFormattedNpwp] = useState('');
 
     useEffect(() => {
         return () => {
@@ -59,7 +57,7 @@ export default function Register(props) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const [selectedOptionLegality, setSelectedOptionLegality] = useState('');
+    const [selectedOptionLegality, setSelectedOptionLegality] = useState('PT');
 
     const handleNameBusiness = (event) => {
         data.name_business = event.target.value;
@@ -68,8 +66,17 @@ export default function Register(props) {
 
     const handleLegalityChange = (event) => {
         data.legality = event.target.value;
-        setData('document_type', '');
         setSelectedOptionLegality(data.legality);
+        setData({
+            ...data,
+            ktp: '',
+            npwp: '',
+            ktp_address: '',
+            npwp_address: ''
+        });
+        if (event.target.value === 'PT') {
+            setData('document_type', 'npwp');
+        }
     }
 
     const [selectedOptionSuffix, setSelectedOptionSuffix] = useState('');
@@ -78,22 +85,25 @@ export default function Register(props) {
         setSelectedOptionSuffix(data.suffix);
     }
 
-    const handleFormattedNpwp = (e) => {
-        let value = e.target.value
-        value = value.replace(/[A-Za-z\W\s_]+/g, '');
-        let split = 6;
-        const dots = [];
+    /**
+     * JANGAN DIHAPUS. TAKUT DIPAKAI NANTI
+     */
+    // const handleFormattedNpwp = (e) => {
+    //     let value = e.target.value
+    //     value = value.replace(/[A-Za-z\W\s_]+/g, '');
+    //     let split = 6;
+    //     const dots = [];
 
-        for (let i = 0, len = value.length; i < len; i += split) {
-            split = i >= 2 && i <= 6 ? 3 : i >= 8 && i <= 12 ? 4 : 2;
-            dots.push(value.substr(i, split));
-        }
+    //     for (let i = 0, len = value.length; i < len; i += split) {
+    //         split = i >= 2 && i <= 6 ? 3 : i >= 8 && i <= 12 ? 4 : 2;
+    //         dots.push(value.substr(i, split));
+    //     }
 
-        const temp = dots.join('.');
-        const formattedNPWP = temp.length > 12 ? `${temp.substr(0, 12)}-${temp.substr(12, 7)}` : temp;
+    //     const temp = dots.join('.');
+    //     const formattedNPWP = temp.length > 12 ? `${temp.substr(0, 12)}-${temp.substr(12, 7)}` : temp;
 
-        setData('npwp', formattedNPWP);
-    }
+    //     setData('npwp', formattedNPWP);
+    // }
 
     useEffect(() => {
 
@@ -170,26 +180,14 @@ export default function Register(props) {
     const [radioOptionType, setSelectedOption] = useState('Pribadi');
 
     const handleRadioChange = (event) => {
+        const value = event.target.value;
         setSelectedOption(event.target.value);
         data.type_of_business = event.target.value;
-    };
-
-    const [npwp, setNPWP] = useState('');
-
-    const handleNPWPChange = (e) => {
-        const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
-        const formattedNPWP = formatNPWP(value);
-        data.npwp = formattedNPWP;
-        setNPWP(formattedNPWP);
-    };
-
-    const formatNPWP = (npwpValue) => {
-        const npwpWithoutDots = npwpValue.replace(/\./g, ''); // Remove existing dots
-        const formattedNPWP = npwpWithoutDots
-            .slice(0, 15) // Limit to 15 characters
-            .replace(/(\d{2})(\d{2})(\d{3})(\d{3})(\d{3})/, '$1.$2.$3.$4.$5');
-
-        return formattedNPWP;
+        if (value === 'Pribadi' || value === 'Pribadi Non PKP') {
+            setData('document_type', 'ktp');
+        } else {
+            setData('document_type', 'npwp');
+        }
     };
 
     if (loading) {
@@ -311,10 +309,23 @@ export default function Register(props) {
                             <span className="ml-2">Wajib Pajak Orang Pribadi</span>
                         </label>
                     </div>
+                    <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Pribadi Non PKP"
+                                checked={radioOptionType === 'Pribadi Non PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
+                        </label>
+                    </div>
                     <InputError message={errors.type_of_business} className="mt-2" />
                 </div>
                 {
-                    radioOptionType === 'Pribadi' ? (
+                    radioOptionType !== 'Pribadi' && radioOptionType !== 'Pribadi Non PKP' ? (
                         <div className="mt-2">
                             <InputLabel value="Tipe Dokumen" className="font-bold" required={true} />
                             <select className="select select-bordered w-full mt-1"
@@ -334,12 +345,14 @@ export default function Register(props) {
                 <div className="mt-4">
                     <InputLabel htmlFor={data.document_type === 'nwpwp' ? 'npwp' : (data.document_type === 'ktp' ? 'ktp' : 'npwp')} value={data.document_type === 'nwpwp' ? 'NPWP' : (data.document_type === 'ktp' ? 'KTP' : 'NPWP')} required={true} />
                     {
-                        data.document_type === 'nwpwp' ? (
+                        data.document_type === 'npwp' && data.type_of_business !== 'Pribadi' && data.type_of_business !== 'Pribadi Non PKP' ? (
                             <>
                                 <input
-                                    className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                                    maxLength={20}
-                                    minLength={19}
+                                    className={
+                                        `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                    }
+                                    maxLength={16}
+                                    minLength={15}
                                     id="npwp"
                                     name="npwp"
                                     value={data.npwp}
@@ -347,8 +360,8 @@ export default function Register(props) {
                                     placeholder="NPWP *"
                                     autoComplete="npwp"
                                     isFocused={true}
-                                    onChange={(e) => handleFormattedNpwp(e)}
-
+                                    onChange={(e) => setData('npwp', e.target.value)}
+                                    disabled={data.type_of_business === ""}
                                     required
                                 />
 
@@ -358,7 +371,9 @@ export default function Register(props) {
                             data.document_type === 'ktp' ? (
                                 <>
                                     <input
-                                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
+                                        className={
+                                            `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                        }
                                         maxLength={15}
                                         id="ktp"
                                         name="ktp"
@@ -366,6 +381,7 @@ export default function Register(props) {
                                         type='text'
                                         placeholder="NIK *"
                                         autoComplete="ktp"
+                                        disabled={data.type_of_business === ""}
                                         isFocused={true}
                                         onChange={(e) => setData('ktp', e.target.value)}
                                         required
@@ -376,17 +392,20 @@ export default function Register(props) {
                             ) : (
                                 <>
                                     <input
-                                        className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                                        maxLength={20}
-                                        minLength={19}
+                                        className={
+                                            `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                        }
+                                        maxLength={16}
+                                        minLength={15}
                                         id="npwp"
                                         name="npwp"
                                         value={data.npwp}
                                         type='text'
+                                        disabled={data.type_of_business === ""}
                                         placeholder="NPWP *"
                                         autoComplete="npwp"
                                         isFocused={true}
-                                        onChange={(e) => handleFormattedNpwp(e)}
+                                        onChange={(e) => setData('npwp', e.target.value)}
 
                                         required
                                     />
