@@ -16,6 +16,7 @@ use App\Models\RevisionExchangeInvoice;
 use App\Models\OraclePurchaseOrder;
 use App\Mail\ApproverInvoiceMail;
 use App\Models\ExchangeInvoice;
+use App\Models\Location;
 use App\Models\RolePermission;
 use App\Models\PurchaseOrder;
 use App\Models\OracleRfpView;
@@ -114,16 +115,16 @@ class ExchangeInvoiceController extends Controller
         ->where('id', Auth::user()->id)
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
-        $data['locations'] = ExchangeInvoiceLocation::get();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_header_id,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+        $data['locations'] = Location::all();
+        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_header_id,
+                'label' => $po->po_num,
+            ];
+        });
 
-        $data['po_array'] = [];
+        $data['po_array'] = $poArray;
         $data['po_number'] = $request->po_number ?? null;
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 

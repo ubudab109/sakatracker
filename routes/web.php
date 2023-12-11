@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminExchangeInvoiceController;
 use App\Http\Controllers\ApproverInvoiceItemController;
 use App\Http\Controllers\AdminVendorProfileController;
 use App\Http\Controllers\CheckStatusAccountController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\RequestGoodReceiptController;
 use App\Http\Controllers\RegisterAccountController;
 use App\Http\Controllers\ApproverInvoiceController;
@@ -327,6 +328,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/request-good-receipt/{id}/edit', [AdminRequestGoodReceiptController::class, 'edit'])->name('admin.request-good-receipt.edit');
     Route::post('/admin/request-good-receipt/{id}', [AdminRequestGoodReceiptController::class, 'update'])->name('admin.request-good-receipt.update');
     Route::post('/generate-rfp/{id}', [AdminExchangeInvoiceController::class, 'rfpGenerate']);
+    Route::resource('/admin/locations', LocationController::class, [
+        'names' => [
+            'index' => 'admin.location.index',
+            'edit' => 'admin.location.edit',
+            'create' => 'admin.location.create',
+            'store' => 'admin.location.store',
+            'update' => 'admin.location.update',
+            'destroy' => 'admin.location.destroy',
+        ]
+    ]);
 });
 
 

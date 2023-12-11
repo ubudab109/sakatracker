@@ -318,7 +318,7 @@ return (
                         {
                             user?.role != "vendor" ?
                             <li>
-                                <a href={route("approver-vendor.index")}>
+                                <a href={route("admin.location.index")}>
                                     <Shuffle />
                                     <span>Master Locations</span>
                                 </a>
