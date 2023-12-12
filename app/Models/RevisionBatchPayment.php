@@ -14,4 +14,9 @@ class RevisionBatchPayment extends Model
     public function batch_payment() {
         return $this->belongsTo('App\Models\BatchPayment', 'batch_payment_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
+    }
 }

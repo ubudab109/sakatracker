@@ -14,6 +14,7 @@ use App\Http\Controllers\ExchangeInvoiceController;
 use App\Http\Controllers\ApproverVendorController;
 use App\Http\Controllers\CompanyProfileController;
 use App\Http\Controllers\AdminMatchingController;
+use App\Http\Controllers\SupplierSiteController;
 use App\Http\Controllers\VendorReportController;
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\PaymentTermController;
@@ -336,6 +337,16 @@ Route::middleware('auth')->group(function () {
             'store' => 'admin.location.store',
             'update' => 'admin.location.update',
             'destroy' => 'admin.location.destroy',
+        ]
+    ]);
+    Route::resource('/admin/supplier-site', SupplierSiteController::class, [
+        'names' => [
+            'index' => 'admin.supplier-site.index',
+            'edit' => 'admin.supplier-site.edit',
+            'create' => 'admin.supplier-site.create',
+            'store' => 'admin.supplier-site.store',
+            'update' => 'admin.supplier-site.update',
+            'destroy' => 'admin.supplier-site.destroy',
         ]
     ]);
 });

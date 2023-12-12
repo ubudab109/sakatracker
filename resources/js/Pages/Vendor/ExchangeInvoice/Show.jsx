@@ -16,7 +16,7 @@ export default function Index(props) {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
-    
+
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
         //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
@@ -29,7 +29,7 @@ export default function Index(props) {
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-      
+
         return `${day}-${month}-${year}`;
     }
 
@@ -85,7 +85,7 @@ export default function Index(props) {
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                    <div className='grid grid-cols-1 md:grid-cols-2'>
+                        <div className='grid grid-cols-1 md:grid-cols-2'>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -156,10 +156,10 @@ export default function Index(props) {
                                         </div>
                                     </div>
                                 </div>
-                            : ''}
+                                : ''}
                             {props.data.invoice.is_po == 1 ?
-                            <div></div>
-                            : ''}
+                                <div></div>
+                                : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -353,42 +353,42 @@ export default function Index(props) {
                             </div>
                             <div></div>
                             {props.data.invoice.is_po == 1 ?
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File PO</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.po != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup(props.data.invoice.po)
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>File PO</p>
+                                            <p className='text-center'>:</p>
+                                            <p className='flex'>
+                                                {props.data.invoice.po != null ? 1 : 0} Berkas
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(props.data.invoice.po)
+                                                    }
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            : '' }
+                                : ''}
                             {props.data.invoice.is_po == 1 ?
-                            <div></div>
-                            : '' }
+                                <div></div>
+                                : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -397,34 +397,92 @@ export default function Index(props) {
                                         <p className='flex'>
                                             {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
                                             {props.data.invoice.exchange_invoice_attachments.length > 0 && (
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup(props.data.invoice.exchange_invoice_attachments)
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(props.data.invoice.exchange_invoice_attachments)
+                                                    }
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>)}
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>)}
                                         </p>
                                     </div>
                                 </div>
                             </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>Timeline Status</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            <div class="flex items-center">
+                                                {
+                                                    props.data.invoice.status !== 'ditolak' ? (
+                                                        <>
+                                                            {
+                                                                props.data.invoice.status === 'menunggu persetujuan' ? (
+                                                                    <span className="">Menunggu Persetujuan</span>
+                                                                ) : (
+                                                                    props.data.invoice.status === 'sedang berlangsung' ? (
+                                                                        <>
+                                                                            <span className="">Menunggu Persetujuan</span>
+                                                                            <span className="mx-2">&#8594;</span>
+                                                                            <span className="mx-2">Sedang Berlangsung</span>
+                                                                        </>
+                                                                    ) : (
+                                                                        props.data.invoice.status === 'disetujui' ? (
+                                                                            <>
+                                                                                <span className="">Menunggu Persetujuan</span>
+                                                                                <span className="mx-2">&#8594;</span>
+                                                                                <span className="mx-2">Sedang Berlangsung</span>
+                                                                                <span className="mx-2">&#8594;</span>
+                                                                                <span className="mx-2">Disetujui</span>
+                                                                            </>
+                                                                        ) : (
+                                                                            props.data.invoice.status === 'paid' ? (
+                                                                                <>
+                                                                                    <span className="">Menunggu Persetujuan</span>
+                                                                                    <span className="mx-2">&#8594;</span>
+                                                                                    <span className="mx-2">Sedang Berlangsung</span>
+                                                                                    <span className="mx-2">&#8594;</span>
+                                                                                    <span className="mx-2">Disetujui</span>
+                                                                                    <span className="mx-2">&#8594;</span>
+                                                                                    <span className="mx-2">Paid</span>
+                                                                                </>
+                                                                            ) : null
+                                                                        )
+                                                                    )
+                                                                )
+                                                            }
+                                                        </>
+                                                    ) : (
+                                                        <span className="">Ditolak</span>
+                                                    )
+                                                }
+                                            </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
                         </div>
-                        {props.data.invoice.purchase_orders.length > 0 
-                        ? 
+
+                        {props.data.invoice.purchase_orders.length > 0
+                            ?
                             <div className='mt-3'>
                                 <b>List GR</b>
                                 <table className="table table-xs">
@@ -442,7 +500,7 @@ export default function Index(props) {
                                     </thead>
                                     <tbody>
                                         {props.data.invoice.purchase_orders.map((data, index) => (
-                                            <tr className="border-collapse border-1 border-gray-500">        
+                                            <tr className="border-collapse border-1 border-gray-500">
                                                 {/* <td>
                                                     <label className="inline-flex items-center">
                                                         <input
@@ -467,21 +525,21 @@ export default function Index(props) {
                                     </tbody>
                                 </table>
                             </div>
-                        : ''}
+                            : ''}
                         <div className='mt-3'>
                             <b>History</b>
                             <br />
                             <History data={props.data.timeline} />
                         </div>
                         <div className="flex justify-end items-end gap-2 mt-2">
-                            {props.data.invoice.status == 'ditolak' 
-                            ? 
+                            {props.data.invoice.status == 'ditolak'
+                                ?
                                 <Link href={route('exchange-invoice.edit', props.data.invoice.id)}>
                                     <PrimaryButton>
                                         Revisi
                                     </PrimaryButton>
                                 </Link>
-                            : ''}
+                                : ''}
                             <Link href={route('exchange-invoice.index')}>
                                 <SecondaryButton>
                                     Back

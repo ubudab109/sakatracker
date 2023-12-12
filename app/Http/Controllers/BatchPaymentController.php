@@ -405,9 +405,29 @@ class BatchPaymentController extends Controller
 
     public function showBatchPayment($id){
         $data['batch_payment'] = BatchPayment::find($id);
-
         $data['user_role'] = UserRole::where('user_id', Auth::user()->id)->first();
-
+        $listRevisions = RevisionBatchPayment::where('batch_payment_id', $id)->orderBy('id', 'asc')->get();
+        $data['timeline'] = [];
+        foreach($listRevisions as $revision) {
+            $item = [
+                'date' => '',
+                'title' => '',
+                'color' => 'gray',
+                'status' => '',
+                'body' => '',
+            ];
+            $item['date'] = $revision->updated_at->format('d-m-Y H:i');
+            $item['title'] = $revision->role != null ? 'PIC Tukar Faktur' : $revision->user->name;
+            if($revision->status == 'disetujui') {
+                $item['color'] = 'green';
+            } else if($revision->status == 'ditolak') {
+                $item['color'] = 'red';
+            }
+            $item['status'] = $data['batch_payment']->status;
+            $item['body'] = $revision->sla_at;
+            $item['attachments'] = [];
+            $data['timeline'][] = $item;
+        }
         $data['batch_payment_invoices'] = [];
         $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get();
 

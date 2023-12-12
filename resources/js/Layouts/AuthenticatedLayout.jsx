@@ -324,6 +324,15 @@ return (
                                 </a>
                             </li> : null
                         }
+                        {
+                            user?.role != "vendor" ?
+                            <li>
+                                <a href={route("admin.supplier-site.index")}>
+                                    <Shuffle />
+                                    <span>Master Supplier Site</span>
+                                </a>
+                            </li> : null
+                        }
                         {permissions.includes('index_approver_vendor') ?
                             <li>
                                 <a href={route("approver-vendor.index")}>

@@ -18,8 +18,10 @@ import GeneratedRfp from './Partials/GeneratedRfp';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useRef } from 'react';
+import { CheckCircle, XCircle } from 'react-feather';
 
 export default function Index(props) {
+    console.log(props);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [isRfpViewerOpen, setIsRfpViewerOpen] = useState(false);
     const [isRfpExistingOpen, setIsRfpExistingOpen] = useState(false);
@@ -34,6 +36,19 @@ export default function Index(props) {
         approver_invoice: '',
         attachment: '',
         reject_user_id: '',
+        tax_invoice_note: props.data.invoice.tax_invoice_note == null ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.npwp_note,
+        invoice_note: props.data.invoice.invoice_note == null ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note,
+        bast_note: props.data.invoice.bast_note == null ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note,
+        quotation_note: props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note,
+        po_note: props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note,
+        attachment_note: props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note,
+
+        file_tax_invoice_validate: props.data.invoice.tax_invoice_note == null ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note,
+        file_invoice_validate: props.data.invoice.invoice_note == null ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note,
+        file_bast_validate: props.data.invoice.bast_note == null ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note,
+        file_quotation_validate: props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note,
+        file_po_validate: props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note,
+        file_attachment_validate: props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note,
     });
     const [fileOpen, setFileOpen] = useState('');
     const submit = (e) => {
@@ -72,13 +87,12 @@ export default function Index(props) {
         setIsGeneratingRfp(true);
         await axios.post(`/generate-rfp/${invoiceId}`)
             .then(res => {
-                console.log(res);
+                console.log(res.data);
                 setRfpFile(res.data.rfp_docs);
                 setIsRfpViewerOpen(true);
                 setIsGeneratingRfp(false);
             }).catch(err => {
                 setIsGeneratingRfp(false);
-                setErrorRfp('Data Invoice RFP Tidak Ditemukan Pada Oracle');
             });
     }
 
@@ -104,7 +118,10 @@ export default function Index(props) {
 
     const fileTypes = ["PDF"];
 
-    const openPopup = () => {
+    const [indexFile, setIndexFile] = useState(0);
+
+    const openPopup = (file) => {
+        setIndexFile(file);
         setFileOpen(filePDF);
         setIsPopupOpen(true);
     };
@@ -163,6 +180,127 @@ export default function Index(props) {
         handleChangeFile(choosenFiles);
     }
 
+    const initialState = {
+		fileTaxInvoiceStatus: props.data.invoice.tax_invoice_note
+            ? props.data.invoice.tax_invoice_note != "acc"
+                ? false
+                : true
+            : null,
+        fileInvoiceStatus: props.data.invoice.invoice_note
+            ? props.data.invoice.invoice_note != "acc"
+                ? false
+                : true
+            : null,
+        fileBastStatus: props.data.invoice.bast_note
+            ? props.data.invoice.bast_note != "acc"
+                ? false
+                : true
+            : null,
+        fileQuotationStatus: props.data.invoice.quotation_note
+            ? props.data.invoice.quotation_note != "acc"
+                ? false
+                : true
+            : null,
+        filePoStatus: props.data.invoice.po_note
+            ? props.data.invoice.po_note != "acc"
+                ? false
+                : true
+            : null,
+        fileAttachmentStatus: props.data.invoice.attachment_note
+            ? props.data.invoice.attachment_note != "acc"
+                ? false
+                : true
+            : null,
+	};
+
+	const [fileStatus, setFileStatus] = useState(initialState);
+	const [taxInvoiceNote, setTaxInvoiceNote] = useState(props.data.invoice.tax_invoice_note == null ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note == 'done revisi' ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note);
+	const [invoiceNote, setInvoiceNote] = useState(props.data.invoice.invoice_note == null ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note == 'done revisi' ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note);
+	const [bastNote, setBastNote] = useState(props.data.invoice.bast_note == null ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note == 'done revisi' ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note);
+	const [quotationNote, setQuotationNote] = useState(props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note == 'done revisi' ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note);
+	const [poNote, setPoNote] = useState(props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note == 'done revisi' ? 'PO terdapat kesalahan' : props.data.invoice.po_note);
+	const [attachmentNote, setAttachmentNote] = useState(props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note == 'done revisi' ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note);
+    const [statusHideNote, setStatusHideNote] = useState(props.data.invoice.status == 'menunggu persetujuan' || props.data.invoice.status == 'sedang berlangsung' ? props.data.revision_id != null ? false : true : true);
+	const clickStatusFile = (name, stat) => {
+		const setDataAndStatus = (fileName, statusKey) => {
+			if (name === fileName && stat === 1) {
+				setFileStatus((prevStatus) => ({
+					...prevStatus,
+					[statusKey]: false,
+				}));
+				if (fileName == 'file_tax_invoice') {
+					setTaxInvoiceNote("Tukar Faktur Terdapat Kesalahan");
+					data[fileName] = "Tukar Faktur Terdapat Kesalahan";
+					data.tax_invoice_note = "Tukar Faktur Terdapat Kesalahan";
+				}
+                if (fileName == 'file_invoice') {
+					setInvoiceNote("Invoice Terdapat Kesalahan");
+					data[fileName] = "Invoice Terdapat Kesalahan";
+					data.invoice_note = "Invoice Terdapat Kesalahan";
+				}
+                if (fileName == 'file_bast') {
+					setBastNote("BAST Terdapat Kesalahan");
+					data[fileName] = "BAST Terdapat Kesalahan";
+					data.bast_note = "BAST Terdapat Kesalahan";
+				}
+                if (fileName == 'file_quotation') {
+					setQuotationNote("Quotation Terdapat Kesalahan");
+					data[fileName] = "Quotation Terdapat Kesalahan";
+					data.quotation_note = "Quotation Terdapat Kesalahan";
+				}
+                if (fileName == 'file_po') {
+					setPoNote("PO Terdapat Kesalahan");
+					data[fileName] = "PO Terdapat Kesalahan";
+					data.po_note = "PO Terdapat Kesalahan";
+				}
+                if (fileName == 'file_attachment') {
+					setAttachmentNote("Lampiran Terdapat Kesalahan");
+					data[fileName] = "Lampiran Terdapat Kesalahan";
+					data.attachment_note = "Lampiran Terdapat Kesalahan";
+				}
+			}
+			if (name === fileName && stat === 0) {
+				setFileStatus((prevStatus) => ({
+					...prevStatus,
+					[statusKey]: true,
+				}));
+				data[fileName] = "acc";
+			}
+			if (statusKey == "validate" && `${name}_validate` === fileName) {
+				if(stat === 0)
+				{
+					data[fileName] = "acc";
+				} else {
+					data[fileName] = "Terdapat Kesalahan";
+				}
+			}
+		};
+
+		setDataAndStatus("file_tax_invoice", "fileTaxInvoiceStatus");
+		setDataAndStatus("file_invoice", "fileInvoiceStatus");
+		setDataAndStatus("file_bast", "fileBastStatus");
+		setDataAndStatus("file_quotation", "fileQuotationStatus");
+		setDataAndStatus("file_po", "filePoStatus");
+		setDataAndStatus("file_attachment", "fileAttachmentStatus");
+		setDataAndStatus("file_tax_invoice_validate", "validate");
+		setDataAndStatus("file_invoice_validate", "validate");
+		setDataAndStatus("file_bast_validate", "validate");
+		setDataAndStatus("file_quotation_validate", "validate");
+		setDataAndStatus("file_po_validate", "validate");
+		setDataAndStatus("file_attachment_validate", "validate");
+		// Add more conditions as needed for other files
+	};
+
+    // Create our number formatterCurrency.
+    const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
     return (
         <AuthenticatedLayout
             user={props.auth.user}
@@ -172,6 +310,7 @@ export default function Index(props) {
 
             <ModalViewer
                 files={props.newdocs}
+                indexFile={indexFile}
                 show={isPopupOpen}
                 onClose={closePopup}
             />
@@ -213,9 +352,9 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Nomor Dokumen</p>
+                                        <p>ID Tukar Faktur</p>
                                         <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.document_number}</p>
+                                        <p>{props.data.invoice.tax_invoice_number}</p>
                                     </div>
                                 </div>
                             </div>
@@ -243,6 +382,26 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
+                                        <p>Jatuh Tempo</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.jatuh_tempo}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>Nomor Rekening</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.bank_account_number}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
                                         <p>Lokasi</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.location}</p>
@@ -253,7 +412,7 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Mengggunakan Ematerai</p>
+                                        <p>Menggunakan Ematerai</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.is_materai == 1 ? 'Iya' : 'Tidak'}</p>
                                     </div>
@@ -287,7 +446,7 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Periode</p>
+                                        <p>Tanggal Invoice</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.date}</p>
                                     </div>
@@ -309,7 +468,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>DPP</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.dpp}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -319,7 +478,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>PPN</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.ppn}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -329,7 +488,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>Total</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.total}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -340,209 +499,6 @@ export default function Index(props) {
                                         <p>Catatan</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.note}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File Tukar Faktur</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup()
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File Invoice</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.invoice != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup()
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File BAST</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.bast != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup()
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>File Quotation</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.quotation != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup()
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            {props.data.invoice.is_po == 1 ?
-                                <div className='mb-3'>
-                                    <div className='flex justify-around font-bold'>
-                                        <div className='grid grid-cols-3 w-full'>
-                                            <p>File PO</p>
-                                            <p className='text-center'>:</p>
-                                            <p className='flex'>
-                                                {props.data.invoice.po != null ? 1 : 0} Berkas
-                                                <a
-                                                    href="javascript:;"
-                                                    onClick={(e) =>
-                                                        openPopup()
-                                                    }
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="w-6 h-6 ml-2"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                        />
-                                                    </svg>
-                                                </a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                : ''}
-                            {props.data.invoice.is_po == 1 ?
-                                <div></div>
-                                : ''}
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Lampiran</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
-                                            {props.data.invoice.exchange_invoice_attachments.length > 0 && (
-                                                <a
-                                                    href="javascript:;"
-                                                    onClick={(e) =>
-                                                        openPopup(props.data.invoice.exchange_invoice_attachments)
-                                                    }
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="w-6 h-6 ml-2"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                        />
-                                                    </svg>
-                                                </a>)}
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -571,7 +527,7 @@ export default function Index(props) {
                                                     }
                                                     {
                                                         rfpFile?.length > 0 ?
-                                                            <button style={{ fontSize: '10px' }} onClick={() => openExistingRfp()} className="btn btn-primary btn-sm text-white" disabled={isGeneratingRfp}>
+                                                            <button style={{ fontSize: '10px' }} onClick={() => openPopup(0)} className="btn btn-primary btn-sm text-white" disabled={isGeneratingRfp}>
                                                                 View Generated RFP
                                                             </button>
                                                             : null
@@ -582,6 +538,730 @@ export default function Index(props) {
                                     </div>
                                 )
                             }
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Faktur Pajak</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                className='mr-3'
+                                                onClick={(e) =>
+                                                    openPopup(1)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            {
+                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ?
+                                                (
+                                                    <>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        className='mr-3'
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
+                                                            <CheckCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileTaxInvoiceStatus ==
+                                                                        true
+                                                                        ? "green"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
+                                                            <XCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileTaxInvoiceStatus ==
+                                                                        false
+                                                                        ? "red"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                    </>
+                                                ) : null
+                                            }
+                                            <InputError
+                                                message={
+                                                    errors.file_tax_invoice_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileTaxInvoiceStatus !=
+                                                null
+                                                ? fileStatus.fileTaxInvoiceStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Catatan File Faktur Pajak"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="tax_invoice_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="catatan file tax_invoice *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "tax_invoice_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.tax_invoice_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.tax_invoice_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Faktur Pajak"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.tax_invoice_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Invoice</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.invoice != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(2)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_invoice",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileInvoiceStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_invoice",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileInvoiceStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <InputError
+                                                message={
+                                                    errors.file_invoice_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileInvoiceStatus !=
+                                                null
+                                                ? fileStatus.fileInvoiceStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Catatan File Invoice"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="invoice_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="catatan file invoice *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "invoice_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.invoice_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.invoice_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Invoice"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.invoice_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File BAST</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.bast != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(3)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            {
+                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
+                                                    <>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        className='mr-3'
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
+                                                            <CheckCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileBastStatus ==
+                                                                        true
+                                                                        ? "green"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
+                                                            <XCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileBastStatus ==
+                                                                        false
+                                                                        ? "red"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                    </>
+                                                ) : null
+                                            }
+                                            <InputError
+                                                message={
+                                                    errors.file_bast_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileBastStatus !=
+                                                null
+                                                ? fileStatus.fileBastStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Catatan File BAST"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="bast_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="catatan file bast *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "bast_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.bast_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.bast_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File BAST"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.bast_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Quotation</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.quotation != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(4)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            {
+                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
+                                                    <>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        className='mr-3'
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",0)}>
+                                                            <CheckCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileQuotationStatus ==
+                                                                        true
+                                                                        ? "green"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                        <a 
+                                                        hidden={statusHideNote}
+                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",1)}>
+                                                            <XCircle
+                                                                className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
+                                                                    null
+                                                                    ? "gray"
+                                                                    : fileStatus.fileQuotationStatus ==
+                                                                        false
+                                                                        ? "red"
+                                                                        : "gray"
+                                                                    }-500`}
+                                                            />
+                                                        </a>
+                                                    </>
+                                                ) : null
+                                            }
+                                            <InputError
+                                                message={
+                                                    errors.file_quotation_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileQuotationStatus !=
+                                                null
+                                                ? fileStatus.fileQuotationStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Catatan File Quotation"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="quotation_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="catatan file quotation *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "quotation_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.quotation_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.quotation_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Quotation"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.quotation_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            {props.data.invoice.is_po == 1 ?
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File PO</p>
+                                            <p className='text-center'>:</p>
+                                            <p className='flex'>
+                                                {props.data.invoice.po != null ? 1 : 0} Berkas
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(5)
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>
+                                                {
+                                                    userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
+                                                        <>
+                                                            <a 
+                                                            hidden={statusHideNote}
+                                                            className='mr-3'
+                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_po",0)}>
+                                                                <CheckCircle
+                                                                    className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
+                                                                        null
+                                                                        ? "gray"
+                                                                        : fileStatus.filePoStatus ==
+                                                                            true
+                                                                            ? "green"
+                                                                            : "gray"
+                                                                        }-500`}
+                                                                />
+                                                            </a>
+                                                            <a 
+                                                            hidden={statusHideNote}
+                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_po",1)}>
+                                                                <XCircle
+                                                                    className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
+                                                                        null
+                                                                        ? "gray"
+                                                                        : fileStatus.filePoStatus ==
+                                                                            false
+                                                                            ? "red"
+                                                                            : "gray"
+                                                                        }-500`}
+                                                                />
+                                                            </a>
+                                                        </>
+                                                    ) : null
+                                                }
+                                                <InputError
+                                                    message={
+                                                        errors.file_po_validate
+                                                    }
+                                                />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                : ''}
+                            {props.data.invoice.is_po == 1 ?
+                                <div>
+                                    <div hidden={statusHideNote}>
+                                        <div
+                                            className="mb-3 w-full"
+                                            hidden={
+                                                fileStatus.filePoStatus !=
+                                                    null
+                                                    ? fileStatus.filePoStatus
+                                                    : true
+                                            }
+                                        >
+                                            <InputLabel
+                                                value="Catatan File PO"
+                                                className="font-bold"
+                                            />
+                                            <textarea
+                                                name="po_note"
+                                                className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                                placeholder="catatan file po *"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "po_note",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                value={data.po_note}
+                                            />
+
+                                            <InputError
+                                                message={
+                                                    errors.po_note
+                                                }
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                    </div>
+                                    {props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File PO"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.po_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                                </div>
+                                : ''}
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>Lampiran</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
+                                            <>
+                                                <a
+                                                    href="javascript:;"
+                                                    onClick={(e) =>
+                                                        openPopup(6)
+                                                    }
+                                                >
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        strokeWidth={1.5}
+                                                        stroke="currentColor"
+                                                        className="w-6 h-6 ml-2"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                        />
+                                                    </svg>
+                                                </a>
+
+                                                {
+                                                    userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
+                                                        <>
+                                                            <a 
+                                                            hidden={statusHideNote}
+                                                            className='mr-3'
+                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",0)}>
+                                                                <CheckCircle
+                                                                    className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
+                                                                        null
+                                                                        ? "gray"
+                                                                        : fileStatus.fileAttachmentStatus ==
+                                                                            true
+                                                                            ? "green"
+                                                                            : "gray"
+                                                                        }-500`}
+                                                                />
+                                                            </a>
+                                                            <a 
+                                                            hidden={statusHideNote}
+                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",1)}>
+                                                                <XCircle
+                                                                    className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
+                                                                        null
+                                                                        ? "gray"
+                                                                        : fileStatus.fileAttachmentStatus ==
+                                                                            false
+                                                                            ? "red"
+                                                                            : "gray"
+                                                                        }-500`}
+                                                                />
+                                                            </a>
+                                                        </>
+                                                    ) : null
+                                                }
+                                                <InputError
+                                                    message={
+                                                        errors.file_attachment_validate
+                                                    }
+                                                />
+                                            </>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileAttachmentStatus !=
+                                                null
+                                                ? fileStatus.fileAttachmentStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Catatan File Lampiran"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="attachment_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="catatan file attachment *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "attachment_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.attachment_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.attachment_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Lampiran"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.attachment_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
                         </div>
                         <div id="pdf-content" ref={pdfRref} style={{ display: 'none' }}>
                             <GeneratedRfp newdocs={props.data.rfp.newdocs} data={props.data.rfp.data} auth={props.auth} />
@@ -595,6 +1275,7 @@ export default function Index(props) {
                                         <tr className="border-t bg-gray-100">
                                             {/* <th>Aksi</th> */}
                                             <th>No. Dokumen</th>
+                                            <th>Nama Barang</th>
                                             <th>Invoice No</th>
                                             <th>Tanggal GR</th>
                                             <th>Qty</th>
@@ -618,20 +1299,21 @@ export default function Index(props) {
                                                     </label>
                                                 </td> */}
                                                 <td>{data.document_number}</td>
+                                                <td>{data.item_description}</td>
                                                 <td>
                                                     invoice 123
                                                 </td>
                                                 <td>{data.date_gr}</td>
                                                 <td>{data.quantity}</td>
-                                                <td>{data.unit_price}</td>
-                                                <td>{data.total_price}</td>
+                                                <td>{formatterCurrency.format(parseInt(data.unit_price)).replace("€", "").trim()}</td>
+                                                <td>{formatterCurrency.format(parseInt(data.total_price)).replace("€", "").trim()}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
                             : ''}
-                        {props.data.invoice.status != 'disetujui' ?
+                        {props.data.invoice.status == 'menunggu persetujuan' || props.data.invoice.status == 'sedang berlangsung' ?
                             <>
                                 {props.data.revision_id != null ? (
                                     <>
@@ -830,7 +1512,7 @@ export default function Index(props) {
                                                         {
                                                             limitedFiles > 25 ? <InputError message="Maximum files is 25 MB" className="mt-2" /> : null
                                                         }
-
+                                                        <p className='text-muted'>* Max 25mb</p>
                                                         <InputError message={errors.file} className="mt-2" />
                                                     </div>
                                                     <div></div>

@@ -24,6 +24,7 @@ use App\Models\Role;
 use App\Models\Tax;
 use App\Models\ShipTo;
 use App\Models\BillTo;
+use App\Models\SupplierSite;
 use Carbon\Carbon;
 use Storage;
 use Auth;
@@ -239,6 +240,7 @@ class AdminVendorProfileController extends Controller
     public function edit($id) {
         $data['permissions'] = $this->checkPermission('verification');
         $data['revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('id', $id)->first();
+        $data['supplier_sites'] = SupplierSite::all();
         $data['before_revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', '!=', 'menunggu persetujuan')->orderBy('id', 'desc')->first();
         $data['coa'] = [
             'entries' => [],

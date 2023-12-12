@@ -4553,10 +4553,12 @@ export default function Index(props) {
 								<option value="" hidden>
 									Pilih
 								</option>
-								<option value="trade asset">Trade Asset</option>
-								<option value="non trade asset">
-									Non Trade Asset
-								</option>
+								{
+									props.data.supplier_sites.map((item, key) => (
+										<option value={item.name}>{item.name}</option>
+									))
+								}
+								
 							</select>
 						</div>
 						{[
