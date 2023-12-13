@@ -54,9 +54,9 @@ export default function Table(props) {
     
     const requestData = async (filter) => {
         if (filter !== "" || filter !== null || filter !== undefined) {
-            return await axios.get(`/admin/exchange-invoice?filter=${filter}`);
+            return await axios.get(`/admin-invoice-datatables?filter=${filter}`);
         } else {
-            return await axios.get(`/admin/exchange-invoice`);
+            return await axios.get(`/admin-invoice-datatables`);
         }
     };
 
