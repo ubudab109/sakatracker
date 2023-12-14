@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AdminRequestGoodReceiptController;
 use App\Http\Controllers\AdminExchangeInvoiceController;
-use App\Http\Controllers\ApproverDashboardReportController;
 use App\Http\Controllers\ApproverInvoiceItemController;
+use App\Http\Controllers\ApproverDashboardReportController;
+use App\Http\Controllers\AdminDashboardReportController;
 use App\Http\Controllers\AdminVendorProfileController;
 use App\Http\Controllers\CheckStatusAccountController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SupplierSiteController;
 use App\Http\Controllers\RequestGoodReceiptController;
 use App\Http\Controllers\RegisterAccountController;
 use App\Http\Controllers\ApproverInvoiceController;
@@ -15,7 +17,6 @@ use App\Http\Controllers\ExchangeInvoiceController;
 use App\Http\Controllers\ApproverVendorController;
 use App\Http\Controllers\CompanyProfileController;
 use App\Http\Controllers\AdminMatchingController;
-use App\Http\Controllers\SupplierSiteController;
 use App\Http\Controllers\VendorReportController;
 use App\Http\Controllers\AdminVendorController;
 use App\Http\Controllers\PaymentTermController;
@@ -49,13 +50,13 @@ use App\Http\Controllers\SummaryInvoiceSLAController;
 use App\Http\Controllers\SummaryPaymentSLAController;
 use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\SiapBayarController;
-use App\Http\Controllers\AdminDashboardReportController;
 use App\Http\Controllers\ReportController;
-use App\Models\OtpCode;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+use App\Http\Controllers\ApprovalHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 // Route::get('/', function () {
 //     return Inertia::render('HomePage', [
 //         'title' => 'Home',
@@ -104,6 +106,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::get('/sign-up', [SignUpController::class, 'index'])->name('sign-up');
 
+Route::get('/verification-email', [OtpCodeController::class, 'index'])->name('verification-email');
 
 Route::any('/verification-email', [OtpCodeController::class, 'store'])->name('verification-email.store');
 
@@ -228,11 +231,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/vendor', [AdminVendorController::class, 'index'])->name('admin.vendor.index');
     Route::get('/admin/vendor/{id}', [AdminVendorController::class, 'show'])->name('admin.vendor.show');
+    Route::post('/admin/vendor/{id}', [AdminVendorController::class, 'update'])->name('admin.vendor.update');
     Route::post('/admin/vendor/{id}/anotation/save', [AdminVendorController::class, 'saveAnotation'])->name('admin.vendor.anotation.save');
 
     Route::get('/admin/vendor-profile/', [AdminVendorProfileController::class, 'index'])->name('admin.vendor-profile.index');
     Route::get('/admin/vendor-profile/{id}', [AdminVendorProfileController::class, 'edit'])->name('admin.vendor-profile.edit');
     Route::post('/admin/vendor-profile/{id}', [AdminVendorProfileController::class, 'update'])->name('admin.vendor-profile.update');
+
+    Route::get('/admin/approval-history/', [ApprovalHistoryController::class, 'index'])->name('admin.approval-history.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -333,6 +339,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/generate-rfp/{id}', [AdminExchangeInvoiceController::class, 'rfpGenerate']);
     Route::get('/admin/dashboard-report', [AdminDashboardReportController::class, 'index'])->name('admin.dashboard-report');
     Route::get('/admin/approval-dashboard-report', [ApproverDashboardReportController::class, 'index'])->name('approver.dashboard-report');
+    Route::get('/admin-invoice-datatables', [AdminExchangeInvoiceController::class, 'invoiceDatatables'])->name('admin.invoices-datatable');
     Route::resource('/admin/locations', LocationController::class, [
         'names' => [
             'index' => 'admin.location.index',

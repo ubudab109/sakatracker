@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Redirect;
+use App\Models\SupplierSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Anotation;
 use App\Models\Vendor;
 use App\Models\User;
+use App\Models\Tax;
+use App\Models\CoaVendor;
+use App\Models\PaymentTerm;
+use App\Models\OracleCoa;
 use Inertia\Inertia;
 use Storage;
 use Auth;
@@ -162,6 +167,7 @@ class AdminVendorController extends Controller
         // $this->generateIdManual();
         $data['vendors'] = User::with(['vendor_latest' => function ($q) {
             $q->where('status_account', 'disetujui');
+            $q->with('user');
         }])
         ->whereHas('vendor_latest', function ($q) {
             $q->where('status_account', 'disetujui');
@@ -185,6 +191,9 @@ class AdminVendorController extends Controller
     {
         $data['permissions'] = $this->checkPermission('index');
         $data['vendor'] = Vendor::with('coas')->where('id', $id)->first();
+        $data['taxes'] = Tax::all();
+        $data['payment_terms'] = PaymentTerm::all();
+        $data['supplier_sites'] = SupplierSite::all();
 
         $newdocs = [];
         $docs = [];
@@ -214,11 +223,162 @@ class AdminVendorController extends Controller
             }
         }
 
+        $data['coa'] = [
+            'entries' => [],
+            // 'currentEntry' => [],
+        ];
+        $coas = CoaVendor::where('vendor_id', $data['vendor']->id)->get();
+        foreach($coas as $key => $coa)
+        {
+            $data['coa']['entries'][] = [
+                'supplier_site' => [$coa->supplier_site],
+                'coa_prepayment' => [
+                    'coa_prepayment_1' => $coa->coa_prepayment_1,
+                    'coa_prepayment_2' => $coa->coa_prepayment_2,
+                    'coa_prepayment_3' => $coa->coa_prepayment_3,
+                    'coa_prepayment_4' => $coa->coa_prepayment_4,
+                    'coa_prepayment_5' => $coa->coa_prepayment_5,
+                    'coa_prepayment_6' => $coa->coa_prepayment_6,
+                    'coa_prepayment_7' => $coa->coa_prepayment_7,
+                ],
+                'coa_liability_account' => [
+                    'coa_liability_account_1' => $coa->coa_liability_account_1,
+                    'coa_liability_account_2' => $coa->coa_liability_account_2,
+                    'coa_liability_account_3' => $coa->coa_liability_account_3,
+                    'coa_liability_account_4' => $coa->coa_liability_account_4,
+                    'coa_liability_account_5' => $coa->coa_liability_account_5,
+                    'coa_liability_account_6' => $coa->coa_liability_account_6,
+                    'coa_liability_account_7' => $coa->coa_liability_account_7,
+                ],
+                'coa_receiving' => [
+                    'coa_receiving_1' => $coa->coa_receiving_1,
+                    'coa_receiving_2' => $coa->coa_receiving_2,
+                    'coa_receiving_3' => $coa->coa_receiving_3,
+                    'coa_receiving_4' => $coa->coa_receiving_4,
+                    'coa_receiving_5' => $coa->coa_receiving_5,
+                    'coa_receiving_6' => $coa->coa_receiving_6,
+                    'coa_receiving_7' => $coa->coa_receiving_7,
+                ],
+            ];
+        }
+
+        $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
+        $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
+        $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
+        $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
+        $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
+        $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
+        $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
+
+        // $data['coa_1'] = [];
+        // $data['coa_2'] = [];
+        // $data['coa_3'] = [];
+        // $data['coa_4'] = [];
+        // $data['coa_5'] = [];
+        // $data['coa_6'] = [];
+        // $data['coa_7'] = [];
+
         return Inertia::render('Admin/Vendor/Show', [
             'data' => $data,
             'docs' => $docs,
             'newdocs' => $newdocs
         ]);
+    }
+
+    public function update($id, Request $request)
+    {
+        $vendor = Vendor::findOrFail($id);
+        if($request->can_edit_top_ppn)
+        {
+            $vendor->update([
+                'top' => $request->top,
+                'ppn' => $request->ppn,
+            ]);
+        }
+
+        if($request->can_edit_pph_coa)
+        {
+            $vendor->update([
+                'pph' => $request->pph,
+            ]);
+
+            if($request->coa)
+            {
+                if(CoaVendor::where('vendor_id', $vendor->id)->first())
+                {
+                    CoaVendor::where('vendor_id', $vendor->id)->delete();
+                }
+                if($request->coa['currentEntry'])
+                {
+                    if($request->coa['currentEntry']['supplier_site'])
+                    {
+                        CoaVendor::create([
+                            'vendor_id' => $vendor->id,
+                            'supplier_site' => $request->coa['currentEntry']['supplier_site'][0],
+                            'coa_prepayment_1' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_1'],
+                            'coa_prepayment_2' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_2'],
+                            'coa_prepayment_3' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_3'],
+                            'coa_prepayment_4' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_4'],
+                            'coa_prepayment_5' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_5'],
+                            'coa_prepayment_6' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_6'],
+                            'coa_prepayment_7' => $request->coa['currentEntry']['coa_prepayment']['coa_prepayment_7'],
+
+                            'coa_liability_account_1' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_1'],
+                            'coa_liability_account_2' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_2'],
+                            'coa_liability_account_3' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_3'],
+                            'coa_liability_account_4' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_4'],
+                            'coa_liability_account_5' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_5'],
+                            'coa_liability_account_6' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_6'],
+                            'coa_liability_account_7' => $request->coa['currentEntry']['coa_liability_account']['coa_liability_account_7'],
+
+                            'coa_receiving_1' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_1'],
+                            'coa_receiving_2' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_2'],
+                            'coa_receiving_3' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_3'],
+                            'coa_receiving_4' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_4'],
+                            'coa_receiving_5' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_5'],
+                            'coa_receiving_6' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_6'],
+                            'coa_receiving_7' => $request->coa['currentEntry']['coa_receiving']['coa_receiving_7'],
+                        ]);
+                    }
+                }
+                if($request->coa['entries'])
+                {
+                    foreach($request->coa['entries'] as $entry)
+                    {
+                        // dd($entry['supplier_site'][0]);
+                        CoaVendor::create([
+                            'vendor_id' => $vendor->id,
+                            'supplier_site' => $entry['supplier_site'][0],
+                            'coa_prepayment_1' => $entry['coa_prepayment']['coa_prepayment_1'],
+                            'coa_prepayment_2' => $entry['coa_prepayment']['coa_prepayment_2'],
+                            'coa_prepayment_3' => $entry['coa_prepayment']['coa_prepayment_3'],
+                            'coa_prepayment_4' => $entry['coa_prepayment']['coa_prepayment_4'],
+                            'coa_prepayment_5' => $entry['coa_prepayment']['coa_prepayment_5'],
+                            'coa_prepayment_6' => $entry['coa_prepayment']['coa_prepayment_6'],
+                            'coa_prepayment_7' => $entry['coa_prepayment']['coa_prepayment_7'],
+
+                            'coa_liability_account_1' => $entry['coa_liability_account']['coa_liability_account_1'],
+                            'coa_liability_account_2' => $entry['coa_liability_account']['coa_liability_account_2'],
+                            'coa_liability_account_3' => $entry['coa_liability_account']['coa_liability_account_3'],
+                            'coa_liability_account_4' => $entry['coa_liability_account']['coa_liability_account_4'],
+                            'coa_liability_account_5' => $entry['coa_liability_account']['coa_liability_account_5'],
+                            'coa_liability_account_6' => $entry['coa_liability_account']['coa_liability_account_6'],
+                            'coa_liability_account_7' => $entry['coa_liability_account']['coa_liability_account_7'],
+
+                            'coa_receiving_1' => $entry['coa_receiving']['coa_receiving_1'],
+                            'coa_receiving_2' => $entry['coa_receiving']['coa_receiving_2'],
+                            'coa_receiving_3' => $entry['coa_receiving']['coa_receiving_3'],
+                            'coa_receiving_4' => $entry['coa_receiving']['coa_receiving_4'],
+                            'coa_receiving_5' => $entry['coa_receiving']['coa_receiving_5'],
+                            'coa_receiving_6' => $entry['coa_receiving']['coa_receiving_6'],
+                            'coa_receiving_7' => $entry['coa_receiving']['coa_receiving_7'],
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('admin.vendor.index');
     }
 
     public function saveAnotation(Request $request, $id)

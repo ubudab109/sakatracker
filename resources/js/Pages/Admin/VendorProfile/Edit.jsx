@@ -7,22 +7,24 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import InputLabel from "@/Components/InputLabel";
 import InputError from "@/Components/InputError";
 import TextInput from "@/Components/TextInput";
-import { Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import PDFPopup from "@/Components/PDFPopup";
 import ModalViewer from "@/Components/ModalViewer";
+import { Fragment } from "react";
 import {
 	ArrowLeft,
-	Check,
-	CheckSquare,
+	CheckCircle,
 	Edit,
 	Plus,
 	Trash,
 	X,
+	XCircle,
 } from "react-feather";
 import DangerButton from "@/Components/DangerButton";
 import ModifyButton from "@/Components/ModifyButton";
 import Modal from "@/Components/Modal";
 import { useEffect } from "react";
+import { convertMb } from "@/Utils/helper";
 
 export default function Index(props) {
 	console.log(props);
@@ -33,10 +35,12 @@ export default function Index(props) {
 		processing,
 		errors,
 		recentlySuccessful,
+		setError,
+		clearErrors,
 		reset,
 	} = useForm({
 		status: "",
-		note: props.data.revision_vendor.note != null ? props.data.revision_vendor.note : props.data.before_revision_vendor ? props.data.before_revision_vendor.note : '',
+		note: props.data.revision_vendor.note != null ? props.data.revision_vendor.note : '',
 		document: "",
 		top: props.data.revision_vendor.vendor.top,
 		ppn: props.data.revision_vendor.vendor.ppn,
@@ -60,16 +64,17 @@ export default function Index(props) {
 				.board_of_directors_composition_note,
 		non_pkp_statement_note: props.data.revision_vendor.vendor.non_pkp_statement_note == null ? 'Surat Pernyataan Non PKP terdapat kesalahan' : props.data.revision_vendor.vendor.non_pkp_statement_note,
 
-		file_npwp_validate: props.data.revision_vendor.vendor.npwp_note,
-		file_sppkp_validate: props.data.revision_vendor.vendor.sppkp_note,
-		file_siup_validate: props.data.revision_vendor.vendor.siup_note,
-		file_tdp_validate: props.data.revision_vendor.vendor.tdp_note,
-		file_nib_validate: props.data.revision_vendor.vendor.nib_note,
+		file_npwp_validate: props.data.revision_vendor.vendor.npwp_note == null ? 'NPWP terdapat kesalahan' : props.data.revision_vendor.vendor.npwp_note,
+		file_sppkp_validate: props.data.revision_vendor.vendor.sppkp_note == null ? 'SPPKP terdapat kesalahan' : props.data.revision_vendor.vendor.sppkp_note,
+		file_siup_validate: props.data.revision_vendor.vendor.siup_note == null ? 'SIUP terdapat kesalahan' : props.data.revision_vendor.vendor.siup_note,
+		file_tdp_validate: props.data.revision_vendor.vendor.tdp_note == null ? 'TDP terdapat kesalahan' : props.data.revision_vendor.vendor.tdp_note,
+		file_nib_validate: props.data.revision_vendor.vendor.nib_note == null ? 'NIB terdapat kesalahan' : props.data.revision_vendor.vendor.nib_note,
 		file_board_of_directors_composition_validate:
-			props.data.revision_vendor.vendor
-				.board_of_directors_composition_note,
+		props.data.revision_vendor.vendor
+		.board_of_directors_composition_note == null ? 'Akta Susunan Direksi terdapat kesalahan' : props.data.revision_vendor.vendor
+		.board_of_directors_composition_note,
 		file_non_pkp_statement_validate:
-			props.data.revision_vendor.vendor.non_pkp_statement_note,
+		props.data.revision_vendor.vendor.non_pkp_statement_note == null ? 'Surat Pernyataan Non PKP terdapat kesalahan' : props.data.revision_vendor.vendor.non_pkp_statement_note,
 		coa: "",
 	});
 
@@ -176,8 +181,10 @@ export default function Index(props) {
 
 	const openPopup1 = (file) => {
 		// setPdfUrl(file);
+		setidxfile(file);
 		setIndexFile(file);
 		setIsPopupOpen1(true);
+		setIsModalFileOpen(true);
 	};
 
 	const closePopup1 = (tes = false) => {
@@ -289,7 +296,12 @@ export default function Index(props) {
 				data[fileName] = "acc";
 			}
 			if (statusKey == "validate" && `${name}_validate` === fileName) {
-				data[fileName] = "acc";
+				if(stat === 0)
+				{
+					data[fileName] = "acc";
+				} else {
+					data[fileName] = "Terdapat Kesalahan";
+				}
 			}
 		};
 
@@ -545,6 +557,69 @@ export default function Index(props) {
 		console.log(formDataSS);
 	};
 
+	const [expandedIndex, setExpandedIndex] = useState(-1);
+
+    const toggleExpand = (index) => {
+        if (expandedIndex === index) {
+        setExpandedIndex(-1);
+        } else {
+        setExpandedIndex(index);
+        }
+    };
+
+	const [idxfile, setidxfile] = useState(indexFile);
+
+	const [isModalFileOpen, setIsModalFileOpen] = useState(false);
+	const openModalFile = () => {
+		setIsModalFileOpen(true);
+	};
+
+	const closeModalFile = () => {
+        setIsModalFileOpen(false);
+    };
+
+    const prev = () => {
+        var total = props.newdocs.length;
+        if(idxfile == 0){
+            setidxfile(total - 1);
+        }else{
+            setidxfile(idxfile-1);
+        }
+    };
+
+    const next = () => {
+        var total = props.newdocs.length;
+        if(idxfile == (total - 1)){
+            setidxfile(0);
+        }else{
+            setidxfile(idxfile+1);
+        }
+    };
+
+	const [selectSupplierSite, setSelectSupplierSite] = useState();
+    const handleSupplierSiteChange = (event) => {
+		setSelectSupplierSite(event.target.value);
+	};
+
+	const [colapse, setColapse] = useState(true);
+	const handleMenuCollapse = (e) => {
+		e.preventDefault();
+		setColapse(!colapse);
+	};
+
+	const [fileAttachment, setFileAttachment] = useState("No File Chosen");
+
+	const handleFile = (e, setter) => {
+		console.log(e.target.files[0]);
+        if (convertMb(e.target.files[0].size) > 5) {
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
+        } else {
+            clearErrors(e.target.name);
+            setData(e.target.name, e.target.files[0]);
+			setter(e.target.files[0].name.substring(0, 35) + '...');
+        }
+    }
+
 	return (
 		<AuthenticatedLayout
 			user={props.auth.user}
@@ -556,21 +631,18 @@ export default function Index(props) {
 		>
 			<Head title="Verifikasi Perubahan Data" />
 
-			<PDFPopup
+			{/* <PDFPopup
 				pdfUrl={pdfUrl}
 				show={isPopupOpen}
 				onClose={closePopup}
 				docs={props.docs}
-			/>
+			/> */}
 
 			<ModalViewer
-				files={props.newdocs}
-				indexFile={indexFile}
-				show={isPopupOpen1}
-				onClose={closePopup1}
-				props={props}
-				datas={data}
-			/>
+                files={pdfUrl}
+                show={isPopupOpen}
+                onClose={closePopup}
+            />
 
 			<div className="page-title-box d-sm-flex align-items-center justify-content-between">
 				<h4 className="mb-sm-0 font-size-18">Perubahan Data</h4>
@@ -767,6 +839,37 @@ export default function Index(props) {
 											</p>
 										</div>
 										<div className="flex">
+											<p className="mb-3">KTP</p>
+											<p className="mb-3 ml-24">
+												:
+												{props.data.latest_vendor !=
+													null ? (
+													props.data.latest_vendor
+														.ktp !=
+														props.data.revision_vendor
+															.vendor.ktp ? (
+														<span
+															className={`line-through text-red-600 mr-1`}
+														>
+															{
+																props.data
+																	.latest_vendor
+																	.ktp
+															}
+														</span>
+													) : (
+														""
+													)
+												) : (
+													""
+												)}
+												{
+													props.data.revision_vendor
+														.vendor.ktp
+												}
+											</p>
+										</div>
+										<div className="flex">
 											<p className="mb-3">
 												Alamat Kantor
 											</p>
@@ -828,6 +931,37 @@ export default function Index(props) {
 												{
 													props.data.revision_vendor
 														.vendor.npwp_address
+												}
+											</p>
+										</div>
+										<div className="flex">
+											<p className="mb-3">Alamat KTP</p>
+											<p className="mb-3 ml-12">
+												:
+												{props.data.latest_vendor !=
+													null ? (
+													props.data.latest_vendor
+														.ktp_address !=
+														props.data.revision_vendor
+															.vendor.ktp_address ? (
+														<span
+															className={`line-through text-red-600 mr-1`}
+														>
+															{
+																props.data
+																	.latest_vendor
+																	.ktp_address
+															}
+														</span>
+													) : (
+														""
+													)
+												) : (
+													""
+												)}
+												{
+													props.data.revision_vendor
+														.vendor.ktp_address
 												}
 											</p>
 										</div>
@@ -903,7 +1037,7 @@ export default function Index(props) {
 								</div>
 							</div>
 
-							<div className="mb-3">
+							<div className="">
 								<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 border-dashed border-y-2 border-gray-300 p-1">
 									<div className="border-l-0">
 										<p className="font-bold text-black mb-3">
@@ -1415,34 +1549,8 @@ export default function Index(props) {
 											<p className="mb-3">
 												: Wajib Pajak Badan Usaha PKP
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_npwp !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_npwp ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
 												{props.data.revision_vendor
 													.vendor.file_npwp != "" ? (
 													<>
@@ -1483,8 +1591,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -1506,8 +1614,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -1526,9 +1634,9 @@ export default function Index(props) {
 												) : (
 													""
 												)}
-												/ <p>&nbsp;</p>
+												<p></p>
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -1596,8 +1704,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileSppkpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSppkpStatus ==
@@ -1619,8 +1727,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileSppkpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSppkpStatus ==
@@ -1667,7 +1775,7 @@ export default function Index(props) {
 														.vendor.expired_sppkp
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -1735,8 +1843,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileSiupStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSiupStatus ==
@@ -1758,8 +1866,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileSiupStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSiupStatus ==
@@ -1805,7 +1913,7 @@ export default function Index(props) {
 														.vendor.expired_siup
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -1873,8 +1981,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileTdpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileTdpStatus ==
@@ -1896,8 +2004,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileTdpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileTdpStatus ==
@@ -1943,7 +2051,7 @@ export default function Index(props) {
 														.vendor.expired_tdp
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2011,8 +2119,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNibStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNibStatus ==
@@ -2034,8 +2142,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNibStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNibStatus ==
@@ -2081,7 +2189,7 @@ export default function Index(props) {
 														.vendor.expired_nib
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2152,8 +2260,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileBodcStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileBodcStatus ==
@@ -2175,8 +2283,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileBodcStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileBodcStatus ==
@@ -2198,36 +2306,289 @@ export default function Index(props) {
 												/ <p>&nbsp;</p>
 											</p>
 										</div>
-										<div className="lg:ml-5 block">
+										<div className="lg:ml-5 text-sm text-gray-500">
 											<p className="font-bold text-black mb-3">
 												&nbsp;
 											</p>
 											<p className="mb-3">&nbsp;</p>
+											<p className="mb-6" hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}>Catatan File NPWP </p>
+											<p className="mb-6" hidden={
+														fileStatus.fileSppkpStatus !=
+															null
+															? fileStatus.fileSppkpStatus
+															: true
+													}>Catatan File SPPKP</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileSiupStatus !=
+															null
+															? fileStatus.fileSiupStatus
+															: true
+													}>Catatan File SIUP</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileTdpStatus !=
+															null
+															? fileStatus.fileTdpStatus
+															: true
+													}>Catatan File TDP</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileNibStatus !=
+															null
+															? fileStatus.fileNibStatus
+															: true
+													}>Catatan File NIB</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileBodcStatus !=
+															null
+															? fileStatus.fileBodcStatus
+															: true
+													}>Catatan File Akta Susunan Direksi</p>
+										</div>
+										<div className="lg:ml-5 block">
+											<p className="font-bold text-black mb-3">
+												&nbsp;
+											</p>
+											<p className="mb-1">&nbsp;</p>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1 w-full"
+													hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File NPWP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="npwp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file npwp *"
+														onChange={(e) =>
+															setData(
+																"npwp_note",
+																e.target.value
+															)
+														}
+														value={data.npwp_note}
+													/>
+
+													<InputError
+														message={
+															errors.npwp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileSppkpStatus !=
+															null
+															? fileStatus.fileSppkpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File SPPKP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="sppkp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file sppkp *"
+														onChange={(e) =>
+															setData(
+																"sppkp_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.sppkp_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.sppkp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileSiupStatus !=
+															null
+															? fileStatus.fileSiupStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File SIUP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="siup_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file siup *"
+														onChange={(e) =>
+															setData(
+																"siup_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.siup_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.siup_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileTdpStatus !=
+															null
+															? fileStatus.fileTdpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File TDP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="tdp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file tdp *"
+														onChange={(e) =>
+															setData(
+																"tdp_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.tdp_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.tdp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileNibStatus !=
+															null
+															? fileStatus.fileNibStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File NIB"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="nib_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file nib *"
+														onChange={(e) =>
+															setData(
+																"nib_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.nib_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.nib_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-3"
+													hidden={
+														fileStatus.fileBodcStatus !=
+															null
+															? fileStatus.fileBodcStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File Akta Susunan Direksi"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="board_of_directors_composition_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file akta susunan direksi *"
+														onChange={(e) =>
+															setData(
+																"board_of_directors_composition_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.board_of_directors_composition_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.board_of_directors_composition_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
 											{/* <p className="text-sm text-gray-500 mb-3">
                                                 Akta Susunan Direksi
                                             </p> */}
 											{/* <p className='text-sm text-gray-500 mb-3'>Halaman Depan Rekening</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Rekening Bank</p> */}
-										</div>
-										<div className="lg:ml-5 text-sm text-gray-500">
-											<p className="mb-3">&nbsp;</p>
-											<p className="mb-3">&nbsp;</p>
-											{/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_front_page_bank != '' ? <a href={props.data.revision_vendor.vendor.file_front_page_bank} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.revision_vendor.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p> */}
 										</div>
 									</div>
 								</div>
@@ -2274,7 +2635,7 @@ export default function Index(props) {
 												: Wajib Pajak Badan Usaha Non
 												PKP
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2342,8 +2703,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -2365,8 +2726,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -2387,7 +2748,7 @@ export default function Index(props) {
 												)}
 												/ <p>&nbsp;</p>
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2455,8 +2816,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileSppkpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSppkpStatus ==
@@ -2478,8 +2839,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileSppkpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSppkpStatus ==
@@ -2526,7 +2887,7 @@ export default function Index(props) {
 														.vendor.expired_sppkp
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2594,8 +2955,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileSiupStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSiupStatus ==
@@ -2617,8 +2978,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileSiupStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileSiupStatus ==
@@ -2664,7 +3025,7 @@ export default function Index(props) {
 														.vendor.expired_siup
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2733,8 +3094,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileTdpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileTdpStatus ==
@@ -2756,8 +3117,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileTdpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileTdpStatus ==
@@ -2803,7 +3164,7 @@ export default function Index(props) {
 														.vendor.expired_tdp
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -2871,8 +3232,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNibStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNibStatus ==
@@ -2894,8 +3255,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNibStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNibStatus ==
@@ -2941,7 +3302,7 @@ export default function Index(props) {
 														.vendor.expired_nib
 												}
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -3012,8 +3373,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileBodcStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileBodcStatus ==
@@ -3035,8 +3396,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileBodcStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileBodcStatus ==
@@ -3057,7 +3418,7 @@ export default function Index(props) {
 												)}
 												/ <p>&nbsp;</p>
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -3128,8 +3489,8 @@ export default function Index(props) {
 																)
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNonPkpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNonPkpStatus ==
@@ -3151,8 +3512,8 @@ export default function Index(props) {
 																)
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNonPkpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNonPkpStatus ==
@@ -3174,11 +3535,329 @@ export default function Index(props) {
 												/ <p>&nbsp;</p>
 											</p>
 										</div>
-										<div className="lg:ml-5 block">
+										<div className="lg:ml-5 text-sm text-gray-500">
 											<p className="font-bold text-black mb-3">
 												&nbsp;
 											</p>
 											<p className="mb-3">&nbsp;</p>
+											<p className="mb-6" hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}>Catatan File NPWP </p>
+											<p className="mb-6" hidden={
+														fileStatus.fileSppkpStatus !=
+															null
+															? fileStatus.fileSppkpStatus
+															: true
+													}>Catatan File SPPKP</p>
+											<p className="mb-6" hidden={
+														fileStatus.fileSiupStatus !=
+															null
+															? fileStatus.fileSiupStatus
+															: true
+													}>Catatan File SIUP</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileTdpStatus !=
+															null
+															? fileStatus.fileTdpStatus
+															: true
+													}>Catatan File TDP</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileNibStatus !=
+															null
+															? fileStatus.fileNibStatus
+															: true
+													}>Catatan File NIB</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileBodcStatus !=
+															null
+															? fileStatus.fileBodcStatus
+															: true
+													}>Catatan File Akta Susunan Direksi</p>
+											<p className="mb-7" hidden={
+														fileStatus.fileNonPkpStatus !=
+															null
+															? fileStatus.fileNonPkpStatus
+															: true
+													}>Catatan File Surat Pernyataan Non PKP</p>
+										</div>
+										<div className="lg:ml-5 block">
+											<p className="font-bold text-black mb-3">
+												&nbsp;
+											</p>
+											<p className="mb-2">&nbsp;</p>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1 w-full"
+													hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File NPWP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="npwp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file npwp *"
+														onChange={(e) =>
+															setData(
+																"npwp_note",
+																e.target.value
+															)
+														}
+														value={data.npwp_note}
+													/>
+
+													<InputError
+														message={
+															errors.npwp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileSppkpStatus !=
+															null
+															? fileStatus.fileSppkpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File SPPKP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="sppkp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file sppkp *"
+														onChange={(e) =>
+															setData(
+																"sppkp_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.sppkp_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.sppkp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileSiupStatus !=
+															null
+															? fileStatus.fileSiupStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File SIUP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="siup_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file siup *"
+														onChange={(e) =>
+															setData(
+																"siup_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.siup_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.siup_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileTdpStatus !=
+															null
+															? fileStatus.fileTdpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File TDP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="tdp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file tdp *"
+														onChange={(e) =>
+															setData(
+																"tdp_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.tdp_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.tdp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileNibStatus !=
+															null
+															? fileStatus.fileNibStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File NIB"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="nib_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file nib *"
+														onChange={(e) =>
+															setData(
+																"nib_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.nib_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.nib_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileBodcStatus !=
+															null
+															? fileStatus.fileBodcStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File Akta Susunan Direksi"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="board_of_directors_composition_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file akta susunan direksi *"
+														onChange={(e) =>
+															setData(
+																"board_of_directors_composition_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.board_of_directors_composition_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.board_of_directors_composition_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1"
+													hidden={
+														fileStatus.fileNonPkpStatus !=
+															null
+															? fileStatus.fileNonPkpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File Surat pernyataan non pkp"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="non_pkp_statement_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file Surat pernyataan non pkp *"
+														onChange={(e) =>
+															setData(
+																"non_pkp_statement_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.non_pkp_statement_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.non_pkp_statement_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
 											{/* <p className="text-sm text-gray-500 mb-3">
                                                 Akta Susunan Direksi
                                             </p> */}
@@ -3187,26 +3866,6 @@ export default function Index(props) {
 											{/* <p className="text-sm text-gray-500 mb-3">
                                                 Surat Pernyataan Non PKP
                                             </p> */}
-										</div>
-										<div className="lg:ml-5 text-sm text-gray-500">
-											<p className="mb-3">&nbsp;</p>
-											<p className="mb-3">&nbsp;</p>
-											{/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_front_page_bank != '' ? <a href={props.data.revision_vendor.vendor.file_front_page_bank} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.revision_vendor.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p> */}
 										</div>
 									</div>
 								</div>
@@ -3238,7 +3897,7 @@ export default function Index(props) {
 											<p className="mb-3">
 												: Wajib Pajak Orang Pribadi
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -3306,8 +3965,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -3329,8 +3988,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNpwpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNpwpStatus ==
@@ -3351,7 +4010,7 @@ export default function Index(props) {
 												)}
 												<p>&nbsp;</p>
 											</p>
-											<p className="mb-3 flex justify-between">
+											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
                                                 null ? (
@@ -3422,8 +4081,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<Check
-																className={`text-${fileStatus.fileNonPkpStatus ==
+															<CheckCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNonPkpStatus ==
@@ -3445,8 +4104,8 @@ export default function Index(props) {
 																submitSuccess
 															}
 														>
-															<X
-																className={`text-${fileStatus.fileNonPkpStatus ==
+															<XCircle
+																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
 																	null
 																	? "gray"
 																	: fileStatus.fileNonPkpStatus ==
@@ -3476,36 +4135,109 @@ export default function Index(props) {
                                                 / {props.data.revision_vendor.vendor.expired_ektp}
                                             </p> */}
 										</div>
-										<div className="lg:ml-5 block">
+										<div className="lg:ml-5 text-sm text-gray-500">
 											<p className="font-bold text-black mb-3">
 												&nbsp;
 											</p>
 											<p className="mb-3">&nbsp;</p>
+											<p className="mb-6" hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}>Catatan File NPWP </p>
+											<p className="mb-6" hidden={
+														fileStatus.fileNonPkpStatus !=
+															null
+															? fileStatus.fileNonPkpStatus
+															: true
+													}>Catatan File Surat Pernyataan Non PKP</p>
+										</div>
+										<div className="lg:ml-5 block">
+											<p className="font-bold text-black mb-3">
+												&nbsp;
+											</p>
+											<p className="mb-2">&nbsp;</p>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-1 w-full"
+													hidden={
+														fileStatus.fileNpwpStatus !=
+															null
+															? fileStatus.fileNpwpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File NPWP"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="npwp_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file npwp *"
+														onChange={(e) =>
+															setData(
+																"npwp_note",
+																e.target.value
+															)
+														}
+														value={data.npwp_note}
+													/>
+
+													<InputError
+														message={
+															errors.npwp_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
+											<div hidden={submitSuccess}>
+												<div
+													className="mb-3"
+													hidden={
+														fileStatus.fileNonPkpStatus !=
+															null
+															? fileStatus.fileNonPkpStatus
+															: true
+													}
+												>
+													{/* <InputLabel
+														value="Catatan File Surat pernyataan non pkp"
+														className="font-bold"
+													/> */}
+													<input
+														type="text"
+														name="non_pkp_statement_note"
+														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+														placeholder="catatan file Surat pernyataan non pkp *"
+														onChange={(e) =>
+															setData(
+																"non_pkp_statement_note",
+																e.target
+																	.value
+															)
+														}
+														value={
+															data.non_pkp_statement_note
+														}
+													/>
+
+													<InputError
+														message={
+															errors.non_pkp_statement_note
+														}
+														className="mt-2"
+													/>
+												</div>
+											</div>
 											{/* <p className='text-sm text-gray-500 mb-3'>Halaman Depan Rekening</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Rekening Bank</p> */}
 											{/* <p className="text-sm text-gray-500 mb-3">
                                                 Surat Pernyataan Non PKP
                                             </p> */}
-										</div>
-										<div className="lg:ml-5 text-sm text-gray-500">
-											<p className="mb-3">&nbsp;</p>
-											<p className="mb-3">&nbsp;</p>
-											{/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_front_page_bank != '' ? <a href={props.data.revision_vendor.vendor.file_front_page_bank} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p>
-                                        <p className='mb-3 flex justify-between'>: 
-                                            {props.data.revision_vendor.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.revision_vendor.vendor.file_bank_account_statement_letter} target='_blank'>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                </svg>
-                                            </a> : <p>-</p> }
-                                            <p>&nbsp;</p>
-                                        </p> */}
 										</div>
 									</div>
 								</div>
@@ -3523,7 +4255,7 @@ export default function Index(props) {
 									</p>
 									<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
 										<div className="">
-											<div hidden={submitSuccess}>
+											{/* <div hidden={submitSuccess}>
 												<div
 													className="mb-3"
 													hidden={
@@ -3809,7 +4541,7 @@ export default function Index(props) {
 												) : (
 													""
 												)}
-											</div>
+											</div> */}
 											{/* {props.data.approver_revision_done
                                                 .length > 0 ? (
                                                 <div
@@ -3883,27 +4615,17 @@ export default function Index(props) {
 													className="mt-2"
 												/>
 											</div>
-											<div
-												className="mb-3"
-												hidden={submitSuccess}
-											>
+											<div className="mb-3">
 												<InputLabel
+													htmlFor="lampiran"
 													value="Lampiran"
-													className="font-bold"
+													required={true}
 												/>
-												<div className="flex items-center align-middle">
-													<input
-														name="document"
-														type="file"
-														className="file-input file-input-bordered w-full max-w-xs"
-														onChange={(e) =>
-															setData(
-																"document",
-																e.target
-																	.files[0]
-															)
-														}
-													/>
+												<div className="flex">
+													<label htmlFor={'file-attachment'} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+														CHOOSE FILE
+													</label>
+													<div className="border-1 p-3 rounded-e-lg w-50 break-all">{fileAttachment ? fileAttachment : 'No File Chosen'}</div>
 													{props.data.revision_vendor
 														.document != "" ? (
 														<a
@@ -3934,12 +4656,20 @@ export default function Index(props) {
 													) : (
 														""
 													)}
+													<input
+														type="file"
+														id="file-attachment"
+														className="hidden-input"
+														name="document"
+														hidden={true}
+														onChange={(e) => handleFile(e, setFileAttachment)}
+													/>
 												</div>
+												<i className='text-muted'>* Max: 5mb</i>
 												<InputError
 													message={errors.document}
 													className="mt-2"
 												/>
-
 											</div>
 											<div className="mb-3">
 												<div hidden={submitSuccess}>
@@ -3947,100 +4677,106 @@ export default function Index(props) {
 														"update_ppn_top_vendor_profile"
 													) ? (
 														<div className={`ml-0`}>
-															<div className="mb-3">
-																<InputLabel
-																	value="Top"
-																	className="font-bold"
-																	required={true}
-																/>
-																<select
-																	className="select select-bordered w-full mt-1"
-																	id="top"
-																	name="top"
-																	value={
-																		selectedOptionTop
-																	}
-																	onChange={
-																		handleTopChange
-																	}
-																>
-																	<option
-																		value=""
-																		hidden
+															<div className="mb-3 grid grid-cols-3 items-center justify-between">
+																<p className="font-bold">
+																	TOP
+																</p>
+																<p className="font-bold">
+																	:
+																</p>
+																<div>
+																	<select
+																		className="select select-bordered w-full mt-1"
+																		id="top"
+																		name="top"
+																		value={
+																			selectedOptionTop
+																		}
+																		onChange={
+																			handleTopChange
+																		}
 																	>
-																		Top
-																	</option>
-																	{props.data.payment_terms.map(
-																		(item) => (
-																			<option
-																				key={
-																					item.id
-																				}
-																				value={
-																					item.day
-																				}
-																			>
-																				{
-																					item.name
-																				}
-																			</option>
-																		)
-																	)}
-																</select>
-																<InputError
-																	message={errors.top}
-																	className="mt-2"
-																/>
+																		<option
+																			value=""
+																			hidden
+																		>
+																			Top
+																		</option>
+																		{props.data.payment_terms.map(
+																			(item) => (
+																				<option
+																					key={
+																						item.id
+																					}
+																					value={
+																						item.day
+																					}
+																				>
+																					{
+																						item.name
+																					}
+																				</option>
+																			)
+																		)}
+																	</select>
+																	<InputError
+																		message={errors.top}
+																		className="mt-2"
+																	/>
+																</div>
 															</div>
-															<div className="mb-3">
-																<InputLabel
-																	value="PPN"
-																	className="font-bold"
-																	required={true}
-																/>
-																<select
-																	className="select select-bordered w-full mt-1"
-																	id="ppn"
-																	name="ppn"
-																	value={
-																		selectedOptionPpn
-																	}
-																	onChange={
-																		handlePpnChange
-																	}
-																>
-																	<option
-																		value=""
-																		hidden
+															<div className="mb-3 grid grid-cols-3 items-center justify-between">
+																<p className="font-bold">
+																	PPN
+																</p>
+																<p className="font-bold">
+																	:
+																</p>
+																<div>
+																	<select
+																		className="select select-bordered w-full mt-1"
+																		id="ppn"
+																		name="ppn"
+																		value={
+																			selectedOptionPpn
+																		}
+																		onChange={
+																			handlePpnChange
+																		}
 																	>
-																		Ppn
-																	</option>
-																	{props.data.taxes.map(
-																		(item) => (
-																			<option
-																				key={
-																					item.id
-																				}
-																				value={
-																					item.tax
-																				}
-																			>
-																				{
-																					item.name
-																				}
-																			</option>
-																		)
-																	)}
-																</select>
-																<InputError
-																	message={errors.ppn}
-																	className="mt-2"
-																/>
+																		<option
+																			value=""
+																			hidden
+																		>
+																			Ppn
+																		</option>
+																		{props.data.taxes.map(
+																			(item) => (
+																				<option
+																					key={
+																						item.id
+																					}
+																					value={
+																						item.tax
+																					}
+																				>
+																					{
+																						item.name
+																					}
+																				</option>
+																			)
+																		)}
+																	</select>
+																	<InputError
+																		message={errors.ppn}
+																		className="mt-2"
+																	/>
+																</div>
 															</div>
 														</div>
 													) : (
 														<div className={`ml-0`}>
-															<div className="gap-2 justify-between grid grid-cols-">
+															<div className="gap-2 justify-between grid grid-cols-3">
 																<p className="font-bold">
 																	TOP
 																</p>
@@ -4066,7 +4802,7 @@ export default function Index(props) {
 														"update_skb_accounting_vendor_profile"
 													) ? (
 														<div className={`ml-0`}>
-															<div className="mb-3">
+															{/* <div className="mb-3">
 																<InputLabel
 																	value="SKB"
 																	className="font-bold"
@@ -4097,42 +4833,45 @@ export default function Index(props) {
 																	message={errors.skb}
 																	className="mt-2"
 																/>
+															</div> */}
+
+															<div className="mb-3 grid grid-cols-3 items-center justify-between">
+																<p className="font-bold">
+																	TOP
+																</p>
+																<p className="font-bold">
+																	:
+																</p>
+																<div>
+																	<select
+																		className="select select-bordered w-full mt-1"
+																		id="pph"
+																		name="pph"
+																		value={
+																			selectedOptionPph
+																		}
+																		onChange={
+																			handlePphChange
+																		}
+																	>
+																		<option value="" hidden>
+																			Pilih
+																		</option>
+																		<option value="ada">
+																			Ada
+																		</option>
+																		<option value="tidak ada">
+																			Tidak Ada
+																		</option>
+																	</select>
+																	<InputError
+																		message={errors.pph}
+																		className="mt-2"
+																	/>
+																</div>
 															</div>
 
-															<div className="mb-3">
-																<InputLabel
-																	value="PPH"
-																	className="font-bold"
-																	required={true}
-																/>
-																<select
-																	className="select select-bordered w-full mt-1"
-																	id="pph"
-																	name="pph"
-																	value={
-																		selectedOptionPph
-																	}
-																	onChange={
-																		handlePphChange
-																	}
-																>
-																	<option value="" hidden>
-																		Pilih
-																	</option>
-																	<option value="ada">
-																		Ada
-																	</option>
-																	<option value="tidak ada">
-																		Tidak Ada
-																	</option>
-																</select>
-																<InputError
-																	message={errors.pph}
-																	className="mt-2"
-																/>
-															</div>
-
-															<div className="mb-3">
+															{/* <div className="mb-3">
 																<InputLabel
 																	value="Ship To"
 																	className="font-bold"
@@ -4226,23 +4965,62 @@ export default function Index(props) {
 																	}
 																	className="mt-2"
 																/>
+															</div> */}
+															<div className="mb-3">
+																<InputLabel
+																	value="Supplier Site"
+																	className="font-bold"
+																	required={true}
+																/>
+																<select
+																	className="select select-bordered w-full mt-1"
+																	id="supplier_site"
+																	name="supplier_site"
+																	value={
+																		selectSupplierSite
+																	}
+																	onChange={
+																		handleSupplierSiteChange
+																	}
+																>
+																	<option value="">Pilih</option>
+																	{
+																		props.data.supplier_sites.map((item, key) => (
+																			<option value={item.name}>{item.name}</option>
+																		))
+																	}
+																</select>
 															</div>
-
-															<InputLabel
-																value="Supplier Site"
-																className="font-bold"
-															/>
-															<div>
+															{props.data.permissions.includes(
+																"update_skb_accounting_vendor_profile"
+															) ? (
+																<div className="mt-3 mb-3">
+																	<ModifyButton
+																		type="button"
+																		onClick={(e) =>
+																			openModalSS(
+																				e
+																			)
+																		}
+																	>
+																		<Plus />
+																	</ModifyButton>
+																</div>
+															) : (
+																""
+															)}
+															{/* <div>
 																{formDataSS.entries.map(
 																	(entry, index) => (
 																		<div
 																			key={index}
-																			className="border-2 p-4"
+																			className="border-2 p-4 text-center mb-3"
 																		>
 																			<InputLabel
-																				value={`Supplier Site: ${entry.supplier_site}`}
-																				className="font-bold"
+																				value={`Supplier Site:`}
+																				className="font-bold text-center"
 																			/>
+																			<p>{entry.supplier_site}</p>
 																			{[
 																				"coa_prepayment",
 																				"coa_liability_account",
@@ -4256,42 +5034,43 @@ export default function Index(props) {
 																							coaType
 																						}
 																					>
-																						<div className="grid grid-cols-1 mb-1">
-																							<table className="table table-xs">
+																						<div className="grid grid-cols-1 mb-1 text-center">
+																							<table className="table table-xs text-center">
 																								<thead>
-																									<tr className="border-t bg-gray-100">
+																									<tr className="border-t bg-gray-100 text-center">
 																										<th colSpan="7">{`COA ${coaType.toUpperCase()}`}</th>
 																									</tr>
 																									<tr></tr>
 																								</thead>
 																								<tbody>
-																									<tr className="border-collapse border-1 border-gray-500">
-																										{Array.from(
-																											{
-																												length: 7,
-																											},
-																											(
-																												_,
-																												coaNumber
-																											) => (
-																												<td
-																													className="border-collapse border-1 border-gray-500"
-																													key={
-																														coaNumber
-																													}
-																												>
-																													{
-																														entry[
-																														coaType
-																														][
-																														`${coaType}_${coaNumber +
-																														1
-																														}`
-																														]
-																													}
-																												</td>
-																											)
-																										)}
+																									<tr className="border-collapse border-1 border-gray-500 text-center">
+																										<td
+																											colSpan="7"
+																											className="border-collapse border-gray-500 justify-evenly"
+																										>
+																											{Array.from(
+																												{
+																													length: 7,
+																												},
+																												(
+																													_,
+																													coaNumber
+																												) => (
+																													<>
+																														{
+																															entry[
+																															coaType
+																															][
+																															`${coaType}_${coaNumber +
+																															1
+																															}`
+																															]
+																														}
+																														{coaNumber + 1 != 7 ? '-' : ''}
+																													</>
+																												)
+																											)}
+																										</td>
 																									</tr>
 																								</tbody>
 																							</table>
@@ -4320,25 +5099,101 @@ export default function Index(props) {
 																		</div>
 																	)
 																)}
+															</div> */}
+															<div>
+																{formDataSS.entries.map((entry, index) => (
+																	<div key={index} className="border-2 p-4 text-center mb-3" hidden={entry.supplier_site == selectSupplierSite ? false : true}>
+																		<div className="cursor-pointer" onClick={() => toggleExpand(index)}>
+																			{/* Card Title */}
+																			<InputLabel
+																			value={`Supplier Site: `}
+																			className="font-bold text-center"
+																			/>
+																			<p>{entry.supplier_site}</p>
+																		</div>
+																		{expandedIndex === index && (
+																			<>
+																				{[
+																					"coa_prepayment",
+																					"coa_liability_account",
+																					"coa_receiving",
+																				].map(
+																					(
+																						coaType
+																					) => (
+																						<div
+																							key={
+																								coaType
+																							}
+																						>
+																							<div className="grid grid-cols-1 mb-1 text-center">
+																								<table className="table table-xs text-center">
+																									<thead>
+																										<tr className="border-t bg-gray-100 text-center">
+																											<th colSpan="7">{`COA ${coaType.toUpperCase()}`}</th>
+																										</tr>
+																										<tr></tr>
+																									</thead>
+																									<tbody>
+																										<tr className="border-collapse border-1 border-gray-500 text-center">
+																											<td
+																												colSpan="7"
+																												className="border-collapse border-gray-500 justify-evenly"
+																											>
+																												{Array.from(
+																													{
+																														length: 7,
+																													},
+																													(
+																														_,
+																														coaNumber
+																													) => (
+																														<>
+																															{
+																																entry[
+																																coaType
+																																][
+																																`${coaType}_${coaNumber +
+																																1
+																																}`
+																																]
+																															}
+																															{coaNumber + 1 != 7 ? '-' : ''}
+																														</>
+																													)
+																												)}
+																											</td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</div>
+																						</div>
+																					)
+																				
+																				)}
+																				{props.data.permissions.includes(
+																					"update_skb_accounting_vendor_profile"
+																				) ? (
+																					<div className="text-end">
+																						<DangerButton
+																							type="button"
+																							onClick={() =>
+																								handleDeleteEntry(
+																									index
+																								)
+																							}
+																						>
+																							<Trash />
+																						</DangerButton>
+																					</div>
+																				) : (
+																					""
+																				)}
+																			</>
+																		)}
+																	</div>
+																))}
 															</div>
-															{props.data.permissions.includes(
-																"update_skb_accounting_vendor_profile"
-															) ? (
-																<div className="mt-3">
-																	<ModifyButton
-																		type="button"
-																		onClick={(e) =>
-																			openModalSS(
-																				e
-																			)
-																		}
-																	>
-																		<Plus />
-																	</ModifyButton>
-																</div>
-															) : (
-																""
-															)}
 														</div>
 													) : (
 														// <div className={`ml-5`}>
@@ -4436,7 +5291,7 @@ export default function Index(props) {
                                                         <p className='font-bold'>:</p>
                                                         <p className='font-bold'>{data.coa_receiving}</p> */}
 
-																<p className="font-bold">
+																{/* <p className="font-bold">
 																	SHIP TO
 																</p>
 																<p className="font-bold">
@@ -4454,13 +5309,49 @@ export default function Index(props) {
 																</p>
 																<p className="font-bold">
 																	{data.bill_to}
-																</p>
+																</p> */}
 															</>
 														) : (
 															""
 														)}
 													</div>
 												</div>
+												{props.data.timeline != '' ?
+													<div className={`mt-3 border-2 border-dashed p-6 max-h-64 overflow-auto ${colapse ? `right-0` : `right-24`} cursor-pointer`} onClick={handleMenuCollapse}>
+														<p className="font-bold mb-1">History Log</p>
+														{/* <ul className="steps mb-12">
+															{props.data.timeline.map((item) => (
+																<li className={`step 
+																		${item.status == `disetujui` ? `step-success` : ``}
+																		${item.status == `ditolak` ? `step-error` : ``}
+																	`}
+																>
+																	{item.status} {item.approval_role}
+																</li>
+															))}
+														</ul> */}
+														<div className="grid grid-cols-3">
+															{props.data.timeline.map((item) => (
+																<div className={`${item.note != null ? `` : `hidden`}`}>
+																	<p className="font-bold mb-2">Catatan ({item.approval_role}) <br></br> {item.timestamp}</p>
+																	<div className='text-sm text-gray-500 p-1'>
+																		<div className='flex items-center align-middle'>
+																			{item.document ? 
+																				<a href="javascrip:;" className="mr-3" onClick={() => openPopup(item.document)}>
+																					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
+																						<path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+																					</svg>
+																				</a>
+																			: null}
+																			<p className='mb-3 break-all'>{item.note}</p>
+																		</div>
+																	</div>
+																</div>
+															))}
+															
+														</div>
+													</div>
+													: ''}
 											</div>
 											<p className="font-bold mt-12">
 												<div className="flex item-end">
@@ -4717,7 +5608,7 @@ export default function Index(props) {
 													<option value="" hidden>
 														Pilih
 													</option>
-													{props.data.coa_3 ? props.data.coa_3.map(
+													{props.data.coa_4 ? props.data.coa_4.map(
 														(item, index) => (
 															<option
 																value={
@@ -4757,7 +5648,7 @@ export default function Index(props) {
 													<option value="" hidden>
 														Pilih
 													</option>
-													{props.data.coa_4 ? props.data.coa_4.map(
+													{props.data.coa_5 ? props.data.coa_5.map(
 														(item, index) => (
 															<option
 																value={
@@ -4867,6 +5758,603 @@ export default function Index(props) {
 					</div>
 				</div>
 			</Modal>
+
+			<Transition show={isModalFileOpen} as={Fragment} leave="duration-200">
+				<Dialog
+					as="div"
+					id="modal"
+					className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center z-[999999] transform transition-all"
+					onClose={closeModalFile}
+				>
+				<Transition.Child
+					as={Fragment}
+					enter="ease-out duration-300"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="ease-in duration-200"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<div className="absolute inset-0 bg-gray-500/75" />
+				</Transition.Child>
+
+				<div className="fixed inset-0 overflow-y-auto">
+					<div className="flex h-full items-center justify-center p-4 text-center">
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0 scale-95"
+						enterTo="opacity-100 scale-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100 scale-100"
+						leaveTo="opacity-0 scale-95"
+					>
+						<Dialog.Panel className="w-full h-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+						<Dialog.Title
+							as="h3"
+							className="text-lg font-medium leading-6 text-gray-900"
+						>
+							<form onSubmit={submit}>
+								<div class="grid grid-cols-2 gap-4">
+								{Array.isArray(props.newdocs) && props.newdocs.length > 0 && (<>
+									<div class="flex justify-start gap-3">
+									{props.newdocs[idxfile].name} ({idxfile+1}/{props.newdocs.length})
+										{props.newdocs[idxfile].name == 'file_npwp' ? 
+											<textarea
+												name="npwp_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file npwp *"
+												hidden={
+													fileStatus.fileNpwpStatus !=
+														null
+														? fileStatus.fileNpwpStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"npwp_note",
+														e.target.value
+													)
+												}
+												value={data.npwp_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_sppkp' ? 
+											<textarea
+												name="sppkp_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file sppkp *"
+												hidden={
+													fileStatus.fileSppkpStatus !=
+														null
+														? fileStatus.fileSppkpStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"sppkp_note",
+														e.target.value
+													)
+												}
+												value={data.sppkp_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_siup' ? 
+											<textarea
+												name="siup_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file siup *"
+												hidden={
+													fileStatus.fileSiupStatus !=
+														null
+														? fileStatus.fileSiupStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"siup_note",
+														e.target.value
+													)
+												}
+												value={data.siup_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_tdp' ? 
+											<textarea
+												name="tdp_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file tdp *"
+												hidden={
+													fileStatus.fileTdpStatus !=
+														null
+														? fileStatus.fileTdpStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"tdp_note",
+														e.target.value
+													)
+												}
+												value={data.tdp_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_nib' ? 
+											<textarea
+												name="nib_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file nib *"
+												hidden={
+													fileStatus.fileNibStatus !=
+														null
+														? fileStatus.fileNibStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"nib_note",
+														e.target.value
+													)
+												}
+												value={data.nib_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ? 
+											<textarea
+												name="board_of_directors_composition_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file akta susunan direksi *"
+												hidden={
+													fileStatus.fileBodcStatus !=
+														null
+														? fileStatus.fileBodcStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"board_of_directors_composition_note",
+														e.target.value
+													)
+												}
+												value={data.board_of_directors_composition_note}
+											/>
+										: ''}
+
+										{props.newdocs[idxfile].name == 'file_non_pkp_statement' ? 
+											<textarea
+												name="non_pkp_statement_note"
+												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+												placeholder="catatan file pernyataan non pkp *"
+												hidden={
+													fileStatus.fileNonPkpStatus !=
+														null
+														? fileStatus.fileNonPkpStatus
+														: true
+												}
+												onChange={(e) =>
+													setData(
+														"non_pkp_statement_note",
+														e.target.value
+													)
+												}
+												value={data.non_pkp_statement_note}
+											/>
+										: ''}
+										</div>
+									<div class="flex justify-end gap-3 ...">
+									{props.newdocs[idxfile].name == 'file_npwp' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_npwp",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNpwpStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_npwp",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNpwpStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}
+									{props.newdocs[idxfile].name == 'file_sppkp' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_sppkp",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileSppkpStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_sppkp",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileSppkpStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}
+
+									{props.newdocs[idxfile].name == 'file_siup' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_siup",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+													null
+													? "gray"
+													: fileStatus.fileSiupStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_siup",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+													null
+													? "gray"
+													: fileStatus.fileSiupStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}
+
+									{props.newdocs[idxfile].name == 'file_tdp' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_tdp",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileTdpStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_tdp",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileTdpStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}
+
+									{props.newdocs[idxfile].name == 'file_nib' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_nib",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNibStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_nib",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNibStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}
+
+									{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_board_of_directors_composition",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
+													null
+													? "gray"
+													: fileStatus.fileBodcStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_board_of_directors_composition",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
+													null
+													? "gray"
+													: fileStatus.fileBodcStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}	
+
+									{props.newdocs[idxfile].name == 'file_non_pkp_statement' ? 
+									<>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_non_pkp_statement",
+													0
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<CheckCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNonPkpStatus ==
+														true
+														? "green"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												clickStatusFile(
+													"file_non_pkp_statement",
+													1
+												)
+											}
+											hidden={
+												submitSuccess
+											}
+										>
+											<XCircle
+												className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
+													null
+													? "gray"
+													: fileStatus.fileNonPkpStatus ==
+														false
+														? "red"
+														: "gray"
+													}-500`}
+											/>
+										</a>
+									</>
+									: ''}							
+									<a href={props.newdocs[idxfile].origin} target="_blank" className="text-blue-500 mr-1">View Original File</a>
+									<a
+											href="javascript:;"
+											onClick={(e) =>
+												prev()
+											}
+										>
+											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
+												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"/>
+											</svg>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												next()
+											}
+										>
+											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
+												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 13 5.7-5.326a.909.909 0 0 0 0-1.348L1 1"/>
+											</svg>
+										</a>
+										<a
+											href="javascript:;"
+											onClick={(e) =>
+												closeModalFile()
+											}
+										>
+											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+											</svg>
+										</a>
+									</div>
+								</>)}
+								</div>
+							</form>
+						</Dialog.Title>
+						<div className="mt-2" style={{height:'92%'}}>
+							{props.newdocs.length > 0 
+							&& (
+								<iframe width={'100%'} height={'100%'} src={
+									Array.isArray(props.newdocs) ? 
+									props.newdocs[idxfile].file ? props.newdocs[idxfile].file 
+										: props.newdocs[idxfile].ispdf ? baseUrl+'/pdfview?file='+props.newdocs[idxfile].edited : props.newdocs[idxfile].edited 
+									: props.newdocs
+							}></iframe>
+							)}
+						</div>
+						</Dialog.Panel>
+					</Transition.Child>
+					</div>
+				</div>
+				</Dialog>
+			</Transition>
 		</AuthenticatedLayout>
 	);
 }

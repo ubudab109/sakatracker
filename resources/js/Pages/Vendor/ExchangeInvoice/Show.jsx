@@ -8,19 +8,11 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import { ArrowLeft } from 'react-feather';
 import ModalViewer from "@/Components/ModalViewer";
 import { useState } from 'react';
+import InputLabel from '@/Components/InputLabel';
 
 export default function Index(props) {
     console.log(props);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    // Create our number formatter.
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'EUR',
-
-        // These options are needed to round to whole numbers if that's what you want.
-        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-    });
 
     function formatDate(timestamp) {
         const date = new Date(timestamp);
@@ -29,7 +21,7 @@ export default function Index(props) {
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-
+      
         return `${day}-${month}-${year}`;
     }
 
@@ -50,6 +42,16 @@ export default function Index(props) {
         setPdfUrl('');
         setIsPopupOpen(false);
     };
+
+     // Create our number formatterCurrency.
+     const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
     return (
         <AuthenticatedLayout
             user={props.auth.user}
@@ -85,13 +87,13 @@ export default function Index(props) {
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <div className='grid grid-cols-1 md:grid-cols-2'>
+                    <div className='grid grid-cols-1 md:grid-cols-2'>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Nomor Dokumen</p>
+                                        <p>ID Tukar Faktur</p>
                                         <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.document_number}</p>
+                                        <p>{props.data.invoice.tax_invoice_number}</p>
                                     </div>
                                 </div>
                             </div>
@@ -119,6 +121,26 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
+                                        <p>Jatuh Tempo</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.jatuh_tempo}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p>Nomor Rekening</p>
+                                        <p className='text-center'>:</p>
+                                        <p>{props.data.invoice.bank_account_number}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
                                         <p>Lokasi</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.location}</p>
@@ -129,7 +151,7 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Mengggunakan Ematerai</p>
+                                        <p>Menggunakan Ematerai</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.is_materai == 1 ? 'Iya' : 'Tidak'}</p>
                                     </div>
@@ -156,14 +178,14 @@ export default function Index(props) {
                                         </div>
                                     </div>
                                 </div>
-                                : ''}
+                            : ''}
                             {props.data.invoice.is_po == 1 ?
-                                <div></div>
-                                : ''}
+                            <div></div>
+                            : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Periode</p>
+                                        <p>Tanggal Invoice</p>
                                         <p className='text-center'>:</p>
                                         <p>{props.data.invoice.date}</p>
                                     </div>
@@ -175,7 +197,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>Status Approval</p>
                                         <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.status_approval}</p>
+                                        <p>{props.data.invoice.status}</p>
                                     </div>
                                 </div>
                             </div>
@@ -185,7 +207,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>DPP</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.dpp}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +217,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>PPN</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.ppn}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +227,7 @@ export default function Index(props) {
                                     <div className='grid grid-cols-3 w-full'>
                                         <p>Total</p>
                                         <p className='text-center'>:</p>
-                                        <p>Rp. {props.data.invoice.total}</p>
+                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -223,7 +245,7 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>File Faktur Pajak</p>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Faktur Pajak</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
@@ -252,11 +274,23 @@ export default function Index(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div></div>
+                            <div>
+                            {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 
+                                <div>
+                                    <InputLabel
+                                        value="Catatan File Tukar Faktur"
+                                        className="font-bold"
+                                    />
+                                    <p className='mb-3 mt-0'>
+                                        {props.data.invoice.tax_invoice_note}
+                                    </p>
+                                </div>
+                            : '' : ''}
+                            </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>File Invoice</p>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Invoice</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.invoice != null ? 1 : 0} Berkas
@@ -285,11 +319,23 @@ export default function Index(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div></div>
+                            <div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Invoice"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.invoice_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>File BAST</p>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File BAST</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.bast != null ? 1 : 0} Berkas
@@ -318,11 +364,23 @@ export default function Index(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div></div>
+                            <div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File BAST"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.bast_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>File Quotation</p>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Quotation</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.quotation != null ? 1 : 0} Berkas
@@ -351,73 +409,97 @@ export default function Index(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div></div>
-                            {props.data.invoice.is_po == 1 ?
-                                <div className='mb-3'>
-                                    <div className='flex justify-around font-bold'>
-                                        <div className='grid grid-cols-3 w-full'>
-                                            <p>File PO</p>
-                                            <p className='text-center'>:</p>
-                                            <p className='flex'>
-                                                {props.data.invoice.po != null ? 1 : 0} Berkas
-                                                <a
-                                                    href="javascript:;"
-                                                    onClick={(e) =>
-                                                        openPopup(props.data.invoice.po)
-                                                    }
-                                                >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="w-6 h-6 ml-2"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                        />
-                                                    </svg>
-                                                </a>
-                                            </p>
-                                        </div>
+                            <div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File Quotation"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.quotation_note}
+                                        </p>
                                     </div>
-                                </div>
-                                : ''}
+                                : '' : ''}
+                            </div>
                             {props.data.invoice.is_po == 1 ?
-                                <div></div>
-                                : ''}
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p>Lampiran</p>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File PO</p>
+                                        <p className='text-center'>:</p>
+                                        <p className='flex'>
+                                            {props.data.invoice.po != null ? 1 : 0} Berkas
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(props.data.invoice.po)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            : '' }
+                            {props.data.invoice.is_po == 1 ?
+                            <div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Catatan File PO"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.po_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            : '' }
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>Lampiran</p>
                                         <p className='text-center'>:</p>
                                         <p className='flex'>
                                             {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
                                             {props.data.invoice.exchange_invoice_attachments.length > 0 && (
-                                                <a
-                                                    href="javascript:;"
-                                                    onClick={(e) =>
-                                                        openPopup(props.data.invoice.exchange_invoice_attachments)
-                                                    }
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(props.data.invoice.exchange_invoice_attachments)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        strokeWidth={1.5}
-                                                        stroke="currentColor"
-                                                        className="w-6 h-6 ml-2"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                        />
-                                                    </svg>
-                                                </a>)}
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>)}
                                         </p>
                                     </div>
                                 </div>
@@ -480,9 +562,8 @@ export default function Index(props) {
                             </div>
                             <div></div>
                         </div>
-
-                        {props.data.invoice.purchase_orders.length > 0
-                            ?
+                        {props.data.invoice.purchase_orders.length > 0 
+                        ? 
                             <div className='mt-3'>
                                 <b>List GR</b>
                                 <table className="table table-xs">
@@ -490,6 +571,7 @@ export default function Index(props) {
                                         <tr className="border-t bg-gray-100">
                                             {/* <th>Aksi</th> */}
                                             <th>No. Dokumen</th>
+                                            <th>Nama Barang</th>
                                             <th>Invoice No</th>
                                             <th>Tanggal GR</th>
                                             <th>Qty</th>
@@ -500,7 +582,7 @@ export default function Index(props) {
                                     </thead>
                                     <tbody>
                                         {props.data.invoice.purchase_orders.map((data, index) => (
-                                            <tr className="border-collapse border-1 border-gray-500">
+                                            <tr className="border-collapse border-1 border-gray-500">        
                                                 {/* <td>
                                                     <label className="inline-flex items-center">
                                                         <input
@@ -513,33 +595,32 @@ export default function Index(props) {
                                                     </label>
                                                 </td> */}
                                                 <td>{data.document_number}</td>
-                                                <td>
-                                                    invoice 123
-                                                </td>
+                                                <td>{data.item_description}</td>
+                                                <td>{data.invoice_number}</td>
                                                 <td>{data.date_gr}</td>
                                                 <td>{data.quantity}</td>
-                                                <td>{data.unit_price}</td>
-                                                <td>{data.total_price}</td>
+                                                <td>{formatterCurrency.format(parseInt(data.unit_price)).replace("€", "").trim()}</td>
+                                                <td>{formatterCurrency.format(parseInt(data.total_price)).replace("€", "").trim()}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
-                            : ''}
+                        : ''}
                         <div className='mt-3'>
                             <b>History</b>
                             <br />
                             <History data={props.data.timeline} />
                         </div>
                         <div className="flex justify-end items-end gap-2 mt-2">
-                            {props.data.invoice.status == 'ditolak'
-                                ?
+                            {props.data.invoice.status == 'ditolak' || props.data.invoice.status == 'tukar faktur tidak valid'
+                            ? 
                                 <Link href={route('exchange-invoice.edit', props.data.invoice.id)}>
                                     <PrimaryButton>
                                         Revisi
                                     </PrimaryButton>
                                 </Link>
-                                : ''}
+                            : ''}
                             <Link href={route('exchange-invoice.index')}>
                                 <SecondaryButton>
                                     Back

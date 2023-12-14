@@ -67,7 +67,7 @@ export default function VerificationEmail(props) {
                     <InputError message={errors.otp_code} className="mt-2" />
                 </div>
 
-                <ResendOTP onResendClick={() => post(route('verification-email.resend-otp'))} maxTime={10} className="mt-3" />
+                <ResendOTP onResendClick={() => post(`/verification-email/resend-otp?user=${props.user.id}&email=${data.email}`)} maxTime={10} className="mt-3" />
 
                 <div className="flex items-center justify-between mt-4">
                     <Link href={route('login')} className='underline text-blue-800'>

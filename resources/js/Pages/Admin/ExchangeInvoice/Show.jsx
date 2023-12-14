@@ -5,6 +5,7 @@ import React from "react";
 import axios from 'axios';
 import PrimaryButton from '@/Components/PrimaryButton';
 import History from './Partials/History';
+import HistoryPayment from './Partials/HistoryPayment';
 import { useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
@@ -220,7 +221,7 @@ export default function Index(props) {
 	const [quotationNote, setQuotationNote] = useState(props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note == 'done revisi' ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note);
 	const [poNote, setPoNote] = useState(props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note == 'done revisi' ? 'PO terdapat kesalahan' : props.data.invoice.po_note);
 	const [attachmentNote, setAttachmentNote] = useState(props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note == 'done revisi' ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note);
-    const [statusHideNote, setStatusHideNote] = useState(props.data.invoice.status == 'menunggu persetujuan' || props.data.invoice.status == 'sedang berlangsung' ? props.data.revision_id != null ? false : true : true);
+    const [statusHideNote, setStatusHideNote] = useState(props.auth.user.user_role[0].role.name == 'Preparer' || props.auth.user.user_role[0].role.name == 'PIC TUKAR FAKTUR' ? props.data.invoice.status == 'menunggu persetujuan' || props.data.invoice.status == 'sedang berlangsung' ? props.data.revision_id != null ? false : true : true : true);
 	const clickStatusFile = (name, stat) => {
 		const setDataAndStatus = (fileName, statusKey) => {
 			if (name === fileName && stat === 1) {
@@ -538,7 +539,11 @@ export default function Index(props) {
                                     </div>
                                 )
                             }
-                            <div></div>
+                            {
+                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') ? null : (
+                                    <div></div>
+                                )
+                            }
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
@@ -548,7 +553,7 @@ export default function Index(props) {
                                             {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
                                             <a
                                                 href="javascript:;"
-                                                className='mr-3'
+                                                className=''
                                                 onClick={(e) =>
                                                     openPopup(1)
                                                 }
@@ -568,42 +573,35 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            {
-                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ?
-                                                (
-                                                    <>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        className='mr-3'
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
-                                                            <CheckCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileTaxInvoiceStatus ==
-                                                                        true
-                                                                        ? "green"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
-                                                            <XCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileTaxInvoiceStatus ==
-                                                                        false
-                                                                        ? "red"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                    </>
-                                                ) : null
-                                            }
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileTaxInvoiceStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileTaxInvoiceStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
                                             <InputError
                                                 message={
                                                     errors.file_tax_invoice_validate
@@ -803,41 +801,35 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            {
-                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
-                                                    <>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        className='mr-3'
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
-                                                            <CheckCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileBastStatus ==
-                                                                        true
-                                                                        ? "green"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
-                                                            <XCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileBastStatus ==
-                                                                        false
-                                                                        ? "red"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                    </>
-                                                ) : null
-                                            }
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileBastStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileBastStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
                                             <InputError
                                                 message={
                                                     errors.file_bast_validate
@@ -923,41 +915,35 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            {
-                                                userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
-                                                    <>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        className='mr-3'
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",0)}>
-                                                            <CheckCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileQuotationStatus ==
-                                                                        true
-                                                                        ? "green"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                        <a 
-                                                        hidden={statusHideNote}
-                                                        href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",1)}>
-                                                            <XCircle
-                                                                className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
-                                                                    null
-                                                                    ? "gray"
-                                                                    : fileStatus.fileQuotationStatus ==
-                                                                        false
-                                                                        ? "red"
-                                                                        : "gray"
-                                                                    }-500`}
-                                                            />
-                                                        </a>
-                                                    </>
-                                                ) : null
-                                            }
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileQuotationStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileQuotationStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
                                             <InputError
                                                 message={
                                                     errors.file_quotation_validate
@@ -1044,41 +1030,35 @@ export default function Index(props) {
                                                         />
                                                     </svg>
                                                 </a>
-                                                {
-                                                    userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
-                                                        <>
-                                                            <a 
-                                                            hidden={statusHideNote}
-                                                            className='mr-3'
-                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_po",0)}>
-                                                                <CheckCircle
-                                                                    className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
-                                                                        null
-                                                                        ? "gray"
-                                                                        : fileStatus.filePoStatus ==
-                                                                            true
-                                                                            ? "green"
-                                                                            : "gray"
-                                                                        }-500`}
-                                                                />
-                                                            </a>
-                                                            <a 
-                                                            hidden={statusHideNote}
-                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_po",1)}>
-                                                                <XCircle
-                                                                    className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
-                                                                        null
-                                                                        ? "gray"
-                                                                        : fileStatus.filePoStatus ==
-                                                                            false
-                                                                            ? "red"
-                                                                            : "gray"
-                                                                        }-500`}
-                                                                />
-                                                            </a>
-                                                        </>
-                                                    ) : null
-                                                }
+                                                <a 
+                                                hidden={statusHideNote}
+                                                className='mr-3'
+                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_po",0)}>
+                                                    <CheckCircle
+                                                        className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
+                                                            null
+                                                            ? "gray"
+                                                            : fileStatus.filePoStatus ==
+                                                                true
+                                                                ? "green"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
+                                                </a>
+                                                <a 
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_po",1)}>
+                                                    <XCircle
+                                                        className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
+                                                            null
+                                                            ? "gray"
+                                                            : fileStatus.filePoStatus ==
+                                                                false
+                                                                ? "red"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
+                                                </a>
                                                 <InputError
                                                     message={
                                                         errors.file_po_validate
@@ -1168,42 +1148,35 @@ export default function Index(props) {
                                                         />
                                                     </svg>
                                                 </a>
-
-                                                {
-                                                    userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') || userHasRoles(props.auth.user.user_role, 'Preparer') ? (
-                                                        <>
-                                                            <a 
-                                                            hidden={statusHideNote}
-                                                            className='mr-3'
-                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",0)}>
-                                                                <CheckCircle
-                                                                    className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
-                                                                        null
-                                                                        ? "gray"
-                                                                        : fileStatus.fileAttachmentStatus ==
-                                                                            true
-                                                                            ? "green"
-                                                                            : "gray"
-                                                                        }-500`}
-                                                                />
-                                                            </a>
-                                                            <a 
-                                                            hidden={statusHideNote}
-                                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",1)}>
-                                                                <XCircle
-                                                                    className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
-                                                                        null
-                                                                        ? "gray"
-                                                                        : fileStatus.fileAttachmentStatus ==
-                                                                            false
-                                                                            ? "red"
-                                                                            : "gray"
-                                                                        }-500`}
-                                                                />
-                                                            </a>
-                                                        </>
-                                                    ) : null
-                                                }
+                                                <a 
+                                                hidden={statusHideNote}
+                                                className='mr-3'
+                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",0)}>
+                                                    <CheckCircle
+                                                        className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
+                                                            null
+                                                            ? "gray"
+                                                            : fileStatus.fileAttachmentStatus ==
+                                                                true
+                                                                ? "green"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
+                                                </a>
+                                                <a 
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",1)}>
+                                                    <XCircle
+                                                        className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
+                                                            null
+                                                            ? "gray"
+                                                            : fileStatus.fileAttachmentStatus ==
+                                                                false
+                                                                ? "red"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
+                                                </a>
                                                 <InputError
                                                     message={
                                                         errors.file_attachment_validate
@@ -1495,18 +1468,38 @@ export default function Index(props) {
                                                             <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
                                                         </div>
                                                         <div className="row">
-                                                            {objectFilesUrl.length > 0 ? objectFilesUrl.map(url => (
-                                                                <div className="col-12 mr-2">
-                                                                    <div className="card">
-                                                                        <div className="card-body">
-                                                                            <iframe src={url.url} key={url.fileName} style={{ width: '100%' }}></iframe>
-                                                                        </div>
-                                                                        <div className="card-footer">
-                                                                            <button type="button" onClick={() => removeFiles(url.fileName, url.fileSize)} className="btn btn-sm" style={{ background: 'red', color: "white" }}>Remove</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            )) : null}
+                                                            <ul className="list-group p-2">
+                                                                {objectFilesUrl.length > 0
+                                                                    ? objectFilesUrl.map((url) => (
+                                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                            <a
+                                                                                style={{ color: "blue" }}
+                                                                                href={url.url}
+                                                                                target="_blank"
+                                                                                rel="no-referrer"
+                                                                            >
+                                                                                {url.fileName}
+                                                                            </a>
+                                                                            <span
+                                                                                onClick={() =>
+                                                                                    removeFiles(
+                                                                                        url.fileName,
+                                                                                        url.fileSize
+                                                                                    )
+                                                                                }
+                                                                                style={{
+                                                                                    cursor: "pointer",
+                                                                                    background: "red",
+                                                                                    color: "white",
+                                                                                }}
+                                                                                class="badge badge-danger badge-pill"
+                                                                            >
+                                                                                X
+                                                                            </span>
+                                                                        </li>
+                                                                    ))
+                                                                    : null}
+                                                            </ul>
                                                         </div>
                                                         <p>{files ? `Total File: ${files?.length}` : "no files uploaded yet"}</p>
                                                         {
@@ -1580,6 +1573,16 @@ export default function Index(props) {
                                 <b>History</b>
                                 <br />
                                 <History data={props.data.timeline} />
+                            </div>
+                        ) : (
+                            ""
+                        )}
+
+                        {props.data.timeline_payment != '' ? (
+                            <div className="mt-3">
+                                <b>History Payment</b>
+                                <br />
+                                <HistoryPayment data={props.data.timeline_payment} />
                             </div>
                         ) : (
                             ""

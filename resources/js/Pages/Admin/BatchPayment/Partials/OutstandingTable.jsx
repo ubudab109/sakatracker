@@ -52,6 +52,16 @@ export default function OutstandingTable(props) {
         setIsModalOpen(false);
     };
 
+    // Create our number formatterCurrency.
+    const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
     return (
         <>
             <div className="mt-3 text-end">
@@ -78,6 +88,7 @@ export default function OutstandingTable(props) {
                                             <th>Total</th>
                                             <th>Nama Bank</th>
                                             <th>Detail Rekening</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -142,9 +153,7 @@ export default function OutstandingTable(props) {
                                                                     item.invoice_number
                                                                 }
                                                             </td>
-                                                            <td>
-                                                                {item.total}
-                                                            </td>
+                                                            <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
                                                             <td>
                                                                 {item.vendor
                                                                     ? item
@@ -164,6 +173,11 @@ export default function OutstandingTable(props) {
                                                                           .vendor
                                                                           .bank_account_number
                                                                     : "-"}
+                                                            </td>
+                                                            <td>
+                                                                {
+                                                                    item.status
+                                                                }
                                                             </td>
                                                         </tr>
                                                     ) : (

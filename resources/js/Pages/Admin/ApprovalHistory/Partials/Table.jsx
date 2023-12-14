@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import 'datatables.net-dt/css/jquery.dataTables.min.css';
-import Dropdown from '@/Components/Dropdown';
-import { Link, useForm } from '@inertiajs/react';
-import { format } from 'date-fns';
 import $ from 'jquery';
 import 'datatables.net';
 import { npwpFormat } from '@/Utils/helper';
 
+export default function Table(props) {
+    console.log(props);
+    const [showModal, setShowModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
-export default function TableVendorProfile(props) {
+
     const tableRef = useRef(null);
 
     useEffect(() => {
-        $(tableRef.current).DataTable();
+        $(tableRef.current).DataTable({
+            ordering: false, // Matikan pengurutan otomatis di sini
+        });
     }, []);
 
     function formatDate(timestamp) {
@@ -24,7 +27,7 @@ export default function TableVendorProfile(props) {
         const minutes = String(date.getMinutes()).padStart(2, '0');
       
         return `${day}-${month}-${year} ${hours}:${minutes}`;
-      }
+    }
 
     return (
         <div className="pt-6">
@@ -33,9 +36,6 @@ export default function TableVendorProfile(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                {props.permissions.includes('verification_vendor_profile') ?
-                                    <th>Aksi</th>
-                                :''}
                                 <th>Nama</th>
                                 <th>NPWP</th>
                                 <th>KTP</th>
@@ -49,27 +49,16 @@ export default function TableVendorProfile(props) {
                         <tbody>
                             {props.data.map((item, index) => (
                                 <tr className="border-t bg-gray-100">
-                                    {props.permissions.includes('verification_vendor_profile') ?
-                                        <td className='border border-slate-600'>
-                                            <div className='flex'>
-                                                <div className='mr-1'>
-                                                    <Link href={route('admin.vendor-profile.edit', item.id)}>
-                                                        <div className="badge badge-primary">verifikasi</div>
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    :''}
-                                    <td className='border border-slate-600'>{item.vendor.name}, {item.vendor.legality}</td>
+                                    <td className='border border-slate-600'>{item.vendor.name}</td>
                                     <td className='border border-slate-600'>{npwpFormat(item.vendor.npwp.toString())}</td>
                                     <td className='border border-slate-600'>
                                         { item.vendor.ktp ? item.vendor.ktp.toString() : ''}
                                     </td>
                                     <td className='border border-slate-600'>{item.vendor.user.email}</td>
-                                    <td className='border border-slate-600'>{`${item.vendor.type_of_business}`}</td>
+                                    <td className='border border-slate-600'>{item.vendor.type_of_business}</td>
                                     <td className='border border-slate-600'>{item.vendor.phone_number}</td>
-                                    <td className='border border-slate-600'>{item.status}</td>
-                                    <td className='border border-slate-600'>{formatDate(item.updated_at)}</td>
+                                    <td className='border border-slate-600'>{item.vendor.status_account == 'disetujui' ? 'Complete' : item.status}</td>
+                                    <td className='border border-slate-600'>{formatDate(item.new_updated_at)}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -13,8 +13,8 @@ export default function Table(props) {
             sortable: false,
         },
         {
-            name: "No Dokumen",
-            selector: (row) => row.document_number,
+            name: "ID Tukar Faktur",
+            selector: (row) => row.tax_invoice_number,
             sortable: true,
         },
         {
@@ -24,7 +24,7 @@ export default function Table(props) {
         },
         {
             name: "Tanggal Inv.",
-            selector: (row) => row.invoice_number,
+            selector: (row) => row.date,
             sortable: true,
         },
         {
@@ -44,7 +44,7 @@ export default function Table(props) {
         },
         {
             name: "Last Update",
-            selector: (row) => row.document_number,
+            selector: (row) => row.updated_at,
             sortable: true,
         },
     ]);
@@ -54,9 +54,9 @@ export default function Table(props) {
     
     const requestData = async (filter) => {
         if (filter !== "" || filter !== null || filter !== undefined) {
-            return await axios.get(`/admin/exchange-invoice?filter=${filter}`);
+            return await axios.get(`/admin-invoice-datatables?filter=${filter}`);
         } else {
-            return await axios.get(`/admin/exchange-invoice`);
+            return await axios.get(`/admin-invoice-datatables`);
         }
     };
 
@@ -65,10 +65,21 @@ export default function Table(props) {
         return requestData(filters);
     }, [filter]);
 
+    // Create our number formatterCurrency.
+    const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
     const initData = async () => {
         await callbackRequestData().then((res) => {
             let columnsData = [];
             res.data.forEach((row) => {
+                // console.log(row);
                 let item = {
                     action: (
                         <div className="flex gap-1">
@@ -83,17 +94,18 @@ export default function Table(props) {
                             </a>
                         </div>
                     ),
-                    document_number: row.document_number,
+                    tax_invoice_number: row.tax_invoice_number,
                     invoice_number: row.invoice_number,
+                    date: row.date,
                     type:
                         row.is_po != null
                             ? row.is_po == 0
                                 ? "Tanpa PO"
                                 : "PO"
                             : "MT",
-                    total: row.total,
+                    total: formatterCurrency.format(parseInt(row.total)).replace("€", "").trim(),
                     status: row.status,
-                    last_update: formatDate(row.updated_at),
+                    updated_at: formatDate(row.updated_at),
                 };
                 columnsData.push(item);
             });

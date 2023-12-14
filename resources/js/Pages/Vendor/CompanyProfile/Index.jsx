@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useState } from 'react';
 import PDFPopup from '@/Components/PDFPopup';
+import ModalViewer from '@/Components/ModalViewer';
 
 export default function Show(props) {
     console.log(props);
@@ -14,12 +15,12 @@ export default function Show(props) {
     const [pdfUrl, setPdfUrl] = useState('');
 
     const openPopup = (item) => {
-        // console.log(item);
-        setPdfUrl(item); 
+        setPdfUrl(item);
         setIsPopupOpen(true);
     };
 
     const closePopup = () => {
+        setPdfUrl('');
         setIsPopupOpen(false);
     };
     return (
@@ -29,8 +30,14 @@ export default function Show(props) {
         >
             <Head title="Detail Company Profile" />
 
-            <PDFPopup
+            {/* <PDFPopup
                 pdfUrl={pdfUrl}
+                show={isPopupOpen}
+                onClose={closePopup}
+            /> */}
+
+            <ModalViewer
+                files={pdfUrl}
                 show={isPopupOpen}
                 onClose={closePopup}
             />
@@ -110,7 +117,7 @@ export default function Show(props) {
                                 </div>
                             </div>
 
-                            <div className='mb-3'>
+                            <div className=''>
                                 <div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 border-dashed border-y-2 border-gray-300 p-1'>
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Director Information</p>
@@ -118,7 +125,7 @@ export default function Show(props) {
                                         <p className='text-sm text-gray-500 mb-3'>Email Address</p>
                                         <p className='text-sm text-gray-500 mb-3'>Phone Number</p>
                                     </div>
-                                    <div className='border-dashed border-r-2 border-gray-300 text-sm text-gray-500'>
+                                    <div className=' border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: {props.data.vendor.director_name}</p>
                                         <p className='mb-3'>: {props.data.vendor.director_email}</p>
@@ -147,7 +154,7 @@ export default function Show(props) {
                                         <p className='text-sm text-gray-500 mb-3'>Email Address</p>
                                         <p className='text-sm text-gray-500 mb-3'>Phone Number</p>
                                     </div>
-                                    <div className='border-dashed border-r-2 border-gray-300 text-sm text-gray-500'>
+                                    <div className=' border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: {props.data.vendor.marketing_key_account}</p>
                                         <p className='mb-3'>: {props.data.vendor.marketing_email}</p>
@@ -190,7 +197,7 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha PKP</p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                            {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -198,7 +205,7 @@ export default function Show(props) {
                                             / <p>&nbsp;</p>
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                            {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -206,7 +213,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                            {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -214,7 +221,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_siup}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                            {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -222,7 +229,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_tdp}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                            {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -230,7 +237,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_nib}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -249,7 +256,7 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className="mb-3">&nbsp;</p>
                                         {/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -293,7 +300,7 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha Non PKP</p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                            {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -301,7 +308,7 @@ export default function Show(props) {
                                             / <p>&nbsp;</p>
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                            {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -309,7 +316,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                            {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -317,7 +324,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_siup}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                            {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -325,7 +332,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_tdp}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                            {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -333,7 +340,7 @@ export default function Show(props) {
                                             / {props.data.vendor.expired_nib}
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -341,7 +348,7 @@ export default function Show(props) {
                                             / <p>&nbsp;</p>
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -361,7 +368,7 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className="mb-3">&nbsp;</p>
                                         {/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -385,7 +392,7 @@ export default function Show(props) {
                                             <p>&nbsp;</p>
                                         </p> */}
                                         {/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -409,7 +416,7 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Orang Pribadi</p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                            {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -417,7 +424,7 @@ export default function Show(props) {
                                             <p>&nbsp;</p>
                                         </p>
                                         <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -460,7 +467,7 @@ export default function Show(props) {
                                             <p>&nbsp;</p>
                                         </p> */}
                                         {/* <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                            {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>

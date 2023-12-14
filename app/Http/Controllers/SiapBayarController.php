@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApproverInvoiceMail;
+use App\Models\Notification;
 use App\Jobs\PaymentRequestJob;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,7 +12,11 @@ use App\Models\ExchangeInvoice;
 use App\Models\BatchPaymentInvoice;
 use App\Models\ApproverPayment;
 use App\Models\UserRole;
+use App\Models\RevisionExchangeInvoice;
+use App\Models\Vendor;
+use Carbon\Carbon;
 use Auth;
+use Mail;
 
 class SiapBayarController extends Controller
 {
@@ -35,7 +41,8 @@ class SiapBayarController extends Controller
 
     public function index(){
         $data['permissions'] = $this->checkPermission('index');
-        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')->where('status', 'ready to paid')->orderBy('updated_at', 'DESC')->get()->map(function($batch_payment){
+        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')->where('status', 'ready to paid')
+        ->orderBy('updated_at', 'DESC')->get()->map(function($batch_payment){
             $status = 'ready to paid';
             $checkUnpaidCount = $batch_payment->batch_payment_invoices->where('status', 'paid')->count();
             if($checkUnpaidCount == $batch_payment->batch_payment_invoices->count())
@@ -48,6 +55,42 @@ class SiapBayarController extends Controller
                 }
             }
             $batch_payment['status'] = $status;
+
+            $checkBatchPaymentInvoices = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->get();
+            $batch_payment['jatuh_tempo'] = '-';
+            foreach($checkBatchPaymentInvoices as $checkBatchPaymentInvoice)
+            {
+                $exchangeInvoice = ExchangeInvoice::where('id', $checkBatchPaymentInvoice->exchange_invoice_id)->first();
+                $revisionExchangeInvoice = RevisionExchangeInvoice::where('exchange_invoice_id', $checkBatchPaymentInvoice->exchange_invoice_id)->where('approval_permission', 'is_pic_exchange_invoice')->first();
+                if($revisionExchangeInvoice)
+                {
+                    $vendor = Vendor::where('id', $exchangeInvoice->vendor_id)->first();
+                    if($revisionExchangeInvoice->submit_at)
+                    {
+                        $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->submit_at);
+                        $daysToAdd = $vendor->top ?? 0;
+                        $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                        if($batch_payment['jatuh_tempo'] == '-' || $batch_payment['jatuh_tempo'] < $jatuhTempo)
+                        {
+                            $batch_payment['periode'] = date('M-Y', strtotime($jatuhTempo));
+                            $batch_payment['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                        }
+                    } else {
+                        $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->updated_at);
+                        $daysToAdd = $vendor->top ?? 0;
+                        $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                        if($batch_payment['jatuh_tempo'] == '-' || $batch_payment['jatuh_tempo'] < $jatuhTempo)
+                        {
+                            $batch_payment['periode'] = date('M-Y', strtotime($jatuhTempo));
+                            $batch_payment['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                        }
+                    }
+                } else {
+                    $batch_payment['periode'] = 'MT';
+                    $batch_payment['jatuh_tempo'] = 'MT';			
+                }
+            }
+            
             return $batch_payment;
         });
         return Inertia::render('Admin/SiapBayar/Index', [
@@ -58,11 +101,81 @@ class SiapBayarController extends Controller
     public function showSiapBayar($id){
         $data['batch_payment'] = BatchPayment::find($id);
 
+        if($data['batch_payment']->batch_payment_invoice)
+        {
+            $batch = $data['batch_payment']->id;
+            $checkBatchPaymentInvoices = BatchPaymentInvoice::where('batch_payment_id', $batch)->get();
+            $data['batch_payment']['jatuh_tempo'] = '-';
+            foreach($checkBatchPaymentInvoices as $checkBatchPaymentInvoice)
+            {
+                $exchangeInvoice = ExchangeInvoice::where('id', $checkBatchPaymentInvoice->exchange_invoice_id)->first();
+                $revisionExchangeInvoice = RevisionExchangeInvoice::where('exchange_invoice_id', $checkBatchPaymentInvoice->exchange_invoice_id)->where('approval_permission', 'is_pic_exchange_invoice')->first();
+                if($revisionExchangeInvoice)
+                {
+                    $vendor = Vendor::where('id', $exchangeInvoice->vendor_id)->first();
+                    if($revisionExchangeInvoice->submit_at)
+                    {
+                        $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->submit_at);
+                        $daysToAdd = $vendor->top ?? 0;
+                        $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                        if($data['batch_payment']['jatuh_tempo'] == '-' || $data['batch_payment']['jatuh_tempo'] < $jatuhTempo)
+                        {
+                            $data['batch_payment']['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                        }
+                    } else {
+                        $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->updated_at);
+                        $daysToAdd = $vendor->top ?? 0;
+                        $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                        if($data['batch_payment']['jatuh_tempo'] == '-' || $data['batch_payment']['jatuh_tempo'] < $jatuhTempo)
+                        {
+                            $data['batch_payment']['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                        }
+                    }
+                } else {
+                    $data['batch_payment']['jatuh_tempo'] = 'MT';			
+                }
+            }
+        } else {
+            $data['batch_payment']['jatuh_tempo'] = 'MT';
+        }
+
         $data['batch_payment_invoices'] = [];
-        $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get();
+        $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get()
+        ->map(function($batch_payment){
+            $batch_payment['jatuh_tempo'] = '-';
+            $exchangeInvoice = ExchangeInvoice::where('id', $batch_payment->exchange_invoice_id)->first();
+            $revisionExchangeInvoice = RevisionExchangeInvoice::where('exchange_invoice_id', $batch_payment->exchange_invoice_id)->where('approval_permission', 'is_pic_exchange_invoice')->first();
+            if($revisionExchangeInvoice)
+            {
+                $vendor = Vendor::where('id', $exchangeInvoice->vendor_id)->first();
+                if($revisionExchangeInvoice->submit_at)
+                {
+                    $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->submit_at);
+                    $daysToAdd = $vendor->top ?? 0;
+                    $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                    if($batch_payment['jatuh_tempo'] == '-' || $batch_payment['jatuh_tempo'] < $jatuhTempo)
+                    {
+                        $batch_payment['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                    }
+                } else {
+                    $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchangeInvoice->updated_at);
+                    $daysToAdd = $vendor->top ?? 0;
+                    $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                    if($batch_payment['jatuh_tempo'] == '-' || $batch_payment['jatuh_tempo'] < $jatuhTempo)
+                    {
+                        $batch_payment['jatuh_tempo'] = date('d-M-Y', strtotime($jatuhTempo));						
+                    }
+                }
+            } else {
+                $batch_payment['jatuh_tempo'] = 'MT';			
+            }
+
+            return $batch_payment;
+        });
 
         foreach ($batch_payment_invoices as $invoice) {
             $exchange_invoice = ExchangeInvoice::find($invoice->exchange_invoice_id);
+            $exchange_invoice['jatuh_tempo'] = $invoice->jatuh_tempo;
             array_push($data['batch_payment_invoices'], $exchange_invoice);
         }
 
@@ -74,6 +187,10 @@ class SiapBayarController extends Controller
     }
 
     public function paidSiapBayar($id){
+        $request->validate([
+            'payment_date' => 'required',
+        ]);
+
         $batch_payment = BatchPayment::find($id);
         $batch_payment->update([
             'status' => 'paid'
@@ -92,10 +209,6 @@ class SiapBayarController extends Controller
     }
 
     public function paidInvoices(Request $request){
-        $request->validate([
-            'payment_date' => 'required',
-        ]);
-
         $batch_payment = BatchPayment::find($request->batch_payment['id']);
         
         foreach ($request->invoices as $invoice_id) {
@@ -108,6 +221,18 @@ class SiapBayarController extends Controller
             $batch_payment_invoice->update([
                 'status' => 'paid'
             ]);
+
+            $notif = Notification::create([
+                'user_id' => $invoice->vendor->user_id,
+                'title' => 'E-Faktur telah dibayar',
+                'description' => 'Silahkan login untuk mengecek data',
+                'url' => '/exchange-invoice/' . $invoice_id,
+            ]);
+    
+            $notifMail['title'] = $notif->title;
+            $notifMail['description'] = $notif->description;
+            $notifMail['url'] = $notif->url;
+            Mail::to($invoice->vendor->user->email)->send(new ApproverInvoiceMail($notifMail));
         }
 
         $unpaid_invoices = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['status', 'unpaid']])->first();
@@ -116,11 +241,10 @@ class SiapBayarController extends Controller
                 'status' => 'paid',
                 'payment_date' => $request->payment_date,
             ]);
-            if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
-                PaymentRequestJob::dispatch($batch_payment);
-            }
         }
-
+        if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
+            PaymentRequestJob::dispatch($batch_payment);
+        }
 
         return response()->json([
             'status' => 'OK',

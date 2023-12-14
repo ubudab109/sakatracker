@@ -29,7 +29,7 @@ export default function Register(props) {
         phone_number: '',
         mobile_phone_number: '',
         postal_code: '',
-        type_of_business: '',
+        type_of_business: 'Pribadi',
         password: '',
         password_confirmation: '',
         suffix: '',
@@ -209,6 +209,63 @@ export default function Register(props) {
                 </Link>
             </p>
             <form onSubmit={submit}>
+                <div className='mt-3'>
+                    <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
+
+                    <div class="flex items-center mb-2 mt-3">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="PKP"
+                                checked={radioOptionType === 'PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center mb-2">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Non PKP"
+                                checked={radioOptionType === 'Non PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center mb-2">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Pribadi"
+                                checked={radioOptionType === 'Pribadi'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Orang Pribadi (PKP)</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center">
+                        <label className="inline-flex items-center">
+                            <input
+                                type="radio"
+                                name="type_of_business"
+                                className="form-checkbox"
+                                value="Pribadi Non PKP"
+                                checked={radioOptionType === 'Pribadi Non PKP'}
+                                onChange={handleRadioChange}
+                            />
+                            <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
+                        </label>
+                    </div>
+                    <InputError message={errors.type_of_business} className="mt-2" />
+                </div>
                 <div className="mt-3">
                     <div className='grid grid-cols-3 gap-3'>
                         <div>
@@ -229,14 +286,14 @@ export default function Register(props) {
 
                             <InputError message={errors.legality} className="mt-2" />
                         </div>
-                        <div className='mt-2'>
+                        <div className='mt-1'>
                             <InputLabel htmlFor="name" value="Nama Perusahaan" required={true} />
 
                             <TextInput
                                 id="name"
                                 name="name"
                                 value={data.name}
-                                className="mt-1 block w-full"
+                                className="mt-1 block w-full h-12"
                                 autoComplete="name"
                                 placeholder="Nama Perusahaan *"
                                 onChange={(e) => setData('name', e.target.value)}
@@ -265,64 +322,6 @@ export default function Register(props) {
                             <InputError message={errors.suffix} className="mt-2" />
                         </div>
                     </div>
-                </div>
-
-                <div className='mt-3'>
-                    <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
-
-                    <div class="flex items-center mb-2 mt-3" hidden={selectedOptionLegality ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="PKP"
-                                checked={radioOptionType === 'PKP'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center mb-2" hidden={selectedOptionLegality ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="Non PKP"
-                                checked={radioOptionType === 'Non PKP'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="Pribadi"
-                                checked={radioOptionType === 'Pribadi'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Orang Pribadi</span>
-                        </label>
-                    </div>
-                    <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
-                        <label className="inline-flex items-center">
-                            <input
-                                type="radio"
-                                name="type_of_business"
-                                className="form-checkbox"
-                                value="Pribadi Non PKP"
-                                checked={radioOptionType === 'Pribadi Non PKP'}
-                                onChange={handleRadioChange}
-                            />
-                            <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
-                        </label>
-                    </div>
-                    <InputError message={errors.type_of_business} className="mt-2" />
                 </div>
                 {
                     radioOptionType !== 'Pribadi' && radioOptionType !== 'Pribadi Non PKP' ? (

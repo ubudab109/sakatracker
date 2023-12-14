@@ -32,7 +32,7 @@ class VendorController extends Controller
     public function index()
     {
         $data['vendors'] = Vendor::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->get();
-        $data['latest'] = Vendor::where('user_id', Auth::user()->id)->latest('created_at')->first();
+        $data['latest'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         return Inertia::render('Vendor/Profile/Index', [
             'data' => $data
@@ -47,7 +47,19 @@ class VendorController extends Controller
         $data['auth'] = Auth::user();
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
-        $data['vendor'] = Vendor::where('user_id', $data['auth']->id)->latest('created_at')->first();
+        $data['vendor'] = Vendor::with('user')->where('user_id', $data['auth']->id)->latest('created_at')->first();
+        $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
+        foreach($arrayNameFile as $name)
+        {
+            $nameFile = $name;
+            $name = url('/storage/') . '/' . $name . '/'; 
+            $testExplode = explode($name, $data['vendor'][$nameFile]);
+            $data['vendor'][$nameFile . '_name'] = $nameFile . '.pdf';
+            if(count($testExplode) == 2)
+            {
+                $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+            }
+        }
         return Inertia::render('Vendor/Profile/Create', [
             'data' => $data
         ]);
@@ -109,48 +121,48 @@ class VendorController extends Controller
 
         if($request->type_of_business == 'Pribadi')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_ektp = $request->file_ektp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            // $file_ektp = $request->file_ektp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_ektp = 'required|date|date_format:Y-m-d';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'Non PKP')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'PKP')
         {
-            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:2048';
+            $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->status_submit == 'pengajuan perubahan') {
@@ -201,77 +213,58 @@ class VendorController extends Controller
                 'file_ektp' => $file_ektp,
                 'expired_ektp' => $expired_ektp,
                 'term_condition' => 'required',
+                'suffix' => $request->type_of_business != 'Pribadi' ? $request->legality == null ? 'required' : '' : '',
+                'legality' => $request->type_of_business != 'Pribadi' ? $request->suffix == null ? 'required' : '' : '',
             ]);
         }
 
         $npwpPath = $data->file_npwp ?? '';
         if ($request->hasFile('file_npwp')) {
-            $save = $request->file('file_npwp')->store('public/file_npwp');
-            $filename = $request->file('file_npwp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_npwp')->getClientOriginalName();
+            $save = $request->file('file_npwp')->storeAs('public/file_npwp', $filename);
             $npwpPath = url('/') . '/storage/file_npwp/' . $filename;
         }
 
         $sppkpPath = $data->file_sppkp ?? '';
         if ($request->hasFile('file_sppkp')) {
-            $save = $request->file('file_sppkp')->store('public/file_sppkp');
-            $filename = $request->file('file_sppkp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_sppkp')->getClientOriginalName();
+            $save = $request->file('file_sppkp')->storeAs('public/file_sppkp', $filename);
             $sppkpPath = url('/') . '/storage/file_sppkp/' . $filename;
         }
 
         $siupPath = $data->file_siup ?? '';
         if ($request->hasFile('file_siup')) {
-            $save = $request->file('file_siup')->store('public/file_siup');
-            $filename = $request->file('file_siup')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_siup')->getClientOriginalName();
+            $save = $request->file('file_siup')->storeAs('public/file_siup', $filename);
             $siupPath = url('/') . '/storage/file_siup/' . $filename;
         }
 
         $tdpPath = $data->file_tdp ?? '';
         if ($request->hasFile('file_tdp')) {
-            $save = $request->file('file_tdp')->store('public/file_tdp');
-            $filename = $request->file('file_tdp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_tdp')->getClientOriginalName();
+            $save = $request->file('file_tdp')->storeAs('public/file_tdp', $filename);
             $tdpPath = url('/') . '/storage/file_tdp/' . $filename;
         }
 
         $nibPath = $data->file_nib ?? '';
         if ($request->hasFile('file_nib')) {
-            $save = $request->file('file_nib')->store('public/file_nib');
-            $filename = $request->file('file_nib')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_nib')->getClientOriginalName();
+            $save = $request->file('file_nib')->storeAs('public/file_nib', $filename);
             $nibPath = url('/') . '/storage/file_nib/' . $filename;
         }
 
         $directorsPath = $data->file_board_of_directors_composition ?? '';
         if ($request->hasFile('file_board_of_directors_composition')) {
-            $save = $request->file('file_board_of_directors_composition')->store('public/file_board_of_directors_composition');
-            $filename = $request->file('file_board_of_directors_composition')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_board_of_directors_composition')->getClientOriginalName();
+            $save = $request->file('file_board_of_directors_composition')->storeAs('public/file_board_of_directors_composition', $filename);
             $directorsPath = url('/') . '/storage/file_board_of_directors_composition/' . $filename;
-        }
-
-        $frontBankPath = $data->file_front_page_bank ?? '';
-        if ($request->hasFile('file_front_page_bank')) {
-            $save = $request->file('file_front_page_bank')->store('public/file_front_page_bank');
-            $filename = $request->file('file_front_page_bank')->hashName();
-            $frontBankPath = url('/') . '/storage/file_front_page_bank/' . $filename;
-        }
-
-        $statementBankPath = $data->file_bank_account_statement_letter ?? '';
-        if ($request->hasFile('file_bank_account_statement_letter')) {
-            $save = $request->file('file_bank_account_statement_letter')->store('public/file_bank_account_statement_letter');
-            $filename = $request->file('file_bank_account_statement_letter')->hashName();
-            $statementBankPath = url('/') . '/storage/file_bank_account_statement_letter/' . $filename;
         }
 
         $nonPkpPath = $data->file_non_pkp_statement ?? '';
         if ($request->hasFile('file_non_pkp_statement')) {
-            $save = $request->file('file_non_pkp_statement')->store('public/file_non_pkp_statement');
-            $filename = $request->file('file_non_pkp_statement')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_non_pkp_statement')->getClientOriginalName();
+            $save = $request->file('file_non_pkp_statement')->storeAs('public/file_non_pkp_statement', $filename);
             $nonPkpPath = url('/') . '/storage/file_non_pkp_statement/' . $filename;
-        }
-
-        $ektpPath = $data->file_ektp ?? '';
-        if ($request->hasFile('file_ektp')) {
-            $save = $request->file('file_ektp')->store('public/file_ektp');
-            $filename = $request->file('file_ektp')->hashName();
-            $ektpPath = url('/') . '/storage/file_ektp/' . $filename;
         }
 
         $vendor = Vendor::create([
@@ -325,11 +318,8 @@ class VendorController extends Controller
             'expired_nib' => $request->expired_nib,
 
             'file_board_of_directors_composition' => $directorsPath,
-            'file_front_page_bank' => $frontBankPath,
-            'file_bank_account_statement_letter' => $statementBankPath,
             'file_non_pkp_statement' => $nonPkpPath,
 
-            'file_ektp' => $ektpPath,
             'expired_ektp' => $request->expired_ektp,
 
             'status_account' => $request->status_submit,
@@ -346,13 +336,15 @@ class VendorController extends Controller
             'suffix' => $request->suffix,
         ]);
 
+        $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+
         if($request->status_submit == 'pengajuan perubahan') { 
             $this->createRevisionTimeline($vendor->id);
 
-            $this->notifySelf(Auth::user()->id, 'Perubahan data', 'Berhasil pengajuan perubahan data', '/vendor');
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/vendor');
+        } else {
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/vendor');
         }
-
-        $this->notifySelf(Auth::user()->id, 'Perubahan data', 'Berhasil simpan draft data', '/vendor');
 
         // if($request->status_submit == 'draft')
         // {
@@ -434,9 +426,22 @@ class VendorController extends Controller
         $data['auth'] = Auth::user();
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
-        $data['checkVerifiedData'] = Vendor::where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->first() == null ? 404 : 200;
-        $data['vendor'] = Vendor::where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['checkVerifiedData'] = Vendor::with('user')->where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->first() == null ? 404 : 200;
+        $data['vendor'] = Vendor::with('user')->where('id', $id)->where('user_id', $data['auth']->id)->first();
 
+        $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
+        foreach($arrayNameFile as $name)
+        {
+            $nameFile = $name;
+            $name = url('/storage/') . '/' . $name . '/'; 
+            $testExplode = explode($name, $data['vendor'][$nameFile]);
+            $data['vendor'][$nameFile . '_name'] = 'No File Chosen';
+            if(count($testExplode) == 2)
+            {
+                $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+            }
+        }
+        
         return Inertia::render('Vendor/Profile/Edit', [
             'data' => $data,
         ]);
@@ -498,76 +503,76 @@ class VendorController extends Controller
 
         if($request->type_of_business == 'Pribadi')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_ektp = 'required|mimes:pdf|max:2048';
+            // $file_ektp = 'required|mimes:pdf|max:5000';
             // $expired_ektp = 'required|date|date_format:Y-m-d';
-            // $file_front_page_bank = 'required|mimes:pdf|max:2048';
-            // $file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';
+            // $file_front_page_bank = 'required|mimes:pdf|max:5000';
+            // $file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'Non PKP')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_sppkp = 'required|mimes:pdf|max:2048';
+            // $file_sppkp = 'required|mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            // $file_siup = 'required|mimes:pdf|max:2048';
+            // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            // $file_tdp = 'required|mimes:pdf|max:2048';
+            // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            // $file_nib = 'required|mimes:pdf|max:2048';
+            // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            // $file_board_of_directors_composition = 'required|mimes:pdf|max:2048';
-            // $file_non_pkp_statement = 'required|mimes:pdf|max:2048';
+            // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
+            // $file_non_pkp_statement = 'required|mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'PKP')
         {
-            // $file_npwp = 'required|mimes:pdf|max:2048';
+            // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            // $file_sppkp = 'required|mimes:pdf|max:2048';
+            // $file_sppkp = 'required|mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
-            // $file_siup = 'required|mimes:pdf|max:2048';
+            // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            // $file_tdp = 'required|mimes:pdf|max:2048';
+            // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = 'required|date|date_format:Y-m-d';
-            // $file_nib = 'required|mimes:pdf|max:2048';
+            // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
-            // $file_board_of_directors_composition = 'required|mimes:pdf|max:2048';
+            // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
         }
 
         if($request->status_submit == 'pengajuan perubahan') {
             if($request->type_of_business == 'PKP' || $request->type_of_business == 'Non PKP')
             {
-                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->file_sppkp == null) {$file_sppkp = 'required|mimes:pdf|max:2048';}
-                if($data->file_siup == null) {$file_siup = 'required|mimes:pdf|max:2048';}
-                if($data->file_tdp == null) {$file_tdp = 'required|mimes:pdf|max:2048';}
-                if($data->file_nib == null) {$file_nib = 'required|mimes:pdf|max:2048';}
-                if($data->file_board_of_directors_composition == null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:2048';}
+                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->file_sppkp == null) {$file_sppkp = 'required|mimes:pdf|max:5000';}
+                if($data->file_siup == null) {$file_siup = 'required|mimes:pdf|max:5000';}
+                if($data->file_tdp == null) {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->file_nib == null) {$file_nib = 'required|mimes:pdf|max:5000';}
+                if($data->file_board_of_directors_composition == null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
 
-                if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->sppkp_note != null && $data->sppkp_note != 'acc' && $data->sppkp_note != 'done revisi') {$file_sppkp = 'required|mimes:pdf|max:2048';}
-                if($data->siup_note != null && $data->siup_note != 'acc' && $data->siup_note != 'done revisi') {$file_siup = 'required|mimes:pdf|max:2048';}
-                if($data->tdp_note != null && $data->tdp_note != 'acc' && $data->tdp_note != 'done revisi') {$file_tdp = 'required|mimes:pdf|max:2048';}
-                if($data->nib_note != null && $data->nib_note != 'acc' && $data->nib_note != 'done revisi') {$file_nib = 'required|mimes:pdf|max:2048';}
-                if($data->board_of_directors_composition_note != null && $data->board_of_directors_composition_note != 'acc' && $data->board_of_directors_composition_note != 'done revisi') {$file_board_of_directors_composition = 'required|mimes:pdf|max:2048';}
+                if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->sppkp_note != null && $data->sppkp_note != 'acc' && $data->sppkp_note != 'done revisi') {$file_sppkp = 'required|mimes:pdf|max:5000';}
+                if($data->siup_note != null && $data->siup_note != 'acc' && $data->siup_note != 'done revisi') {$file_siup = 'required|mimes:pdf|max:5000';}
+                if($data->tdp_note != null && $data->tdp_note != 'acc' && $data->tdp_note != 'done revisi') {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->nib_note != null && $data->nib_note != 'acc' && $data->nib_note != 'done revisi') {$file_nib = 'required|mimes:pdf|max:5000';}
+                if($data->board_of_directors_composition_note != null && $data->board_of_directors_composition_note != 'acc' && $data->board_of_directors_composition_note != 'done revisi') {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
             }
             if($request->type_of_business == 'Non PKP') {
-                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                if($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:2048';}
-                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';}
+                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                if($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
+                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}
             }
             if($request->type_of_business == 'Pribadi') {
-                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:2048';}
-                if($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {$file_non_pkp_statement = 'required|mimes:pdf|max:2048';}
-                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:2048';}
-                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:2048';}
-                // if($data->file_ektp == null) {$file_ektp = 'required|mimes:pdf|max:2048';}
+                if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:5000';}
+                if($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
+                // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
+                // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}
+                // if($data->file_ektp == null) {$file_ektp = 'required|mimes:pdf|max:5000';}
             }
         }
 
@@ -619,14 +624,16 @@ class VendorController extends Controller
                 'file_ektp' => $file_ektp,
                 'expired_ektp' => $expired_ektp,
                 'term_condition' => 'required',
+                'suffix' => $request->type_of_business != 'Pribadi' ? $request->legality == null ? 'required' : '' : '',
+                'legality' => $request->type_of_business != 'Pribadi' ? $request->suffix == null ? 'required' : '' : '',
             ]);
         }
 
         $npwpPath = $data->file_npwp ?? '';
         $npwpNote = $data->npwp_note != 'acc' ? $data->npwp_note : 'acc';
         if ($request->hasFile('file_npwp')) {
-            $save = $request->file('file_npwp')->store('public/file_npwp');
-            $filename = $request->file('file_npwp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_npwp')->getClientOriginalName();
+            $save = $request->file('file_npwp')->storeAs('public/file_npwp', $filename);
             $npwpPath = url('/') . '/storage/file_npwp/' . $filename;
             $npwpNote = 'done revisi';
         }
@@ -634,8 +641,8 @@ class VendorController extends Controller
         $sppkpPath = $data->file_sppkp ?? '';
         $sppkpNote = $data->sppkp_note != 'acc' ? $data->sppkp_note : 'acc';
         if ($request->hasFile('file_sppkp')) {
-            $save = $request->file('file_sppkp')->store('public/file_sppkp');
-            $filename = $request->file('file_sppkp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_sppkp')->getClientOriginalName();
+            $save = $request->file('file_sppkp')->storeAs('public/file_sppkp', $filename);
             $sppkpPath = url('/') . '/storage/file_sppkp/' . $filename;
             $sppkpNote = 'done revisi';
         }
@@ -643,8 +650,8 @@ class VendorController extends Controller
         $siupPath = $data->file_siup ?? '';
         $siupNote = $data->siup_note != 'acc' ? $data->siup_note : 'acc';
         if ($request->hasFile('file_siup')) {
-            $save = $request->file('file_siup')->store('public/file_siup');
-            $filename = $request->file('file_siup')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_siup')->getClientOriginalName();
+            $save = $request->file('file_siup')->storeAs('public/file_siup', $filename);
             $siupPath = url('/') . '/storage/file_siup/' . $filename;
             $siupNote = 'done revisi';
         }
@@ -652,8 +659,8 @@ class VendorController extends Controller
         $tdpPath = $data->file_tdp ?? '';
         $tdpNote = $data->tdp_note != 'acc' ? $data->tdp_note : 'acc';
         if ($request->hasFile('file_tdp')) {
-            $save = $request->file('file_tdp')->store('public/file_tdp');
-            $filename = $request->file('file_tdp')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_tdp')->getClientOriginalName();
+            $save = $request->file('file_tdp')->storeAs('public/file_tdp', $filename);
             $tdpPath = url('/') . '/storage/file_tdp/' . $filename;
             $tdpNote = 'done revisi';
         }
@@ -661,8 +668,8 @@ class VendorController extends Controller
         $nibPath = $data->file_nib ?? '';
         $nibNote = $data->nib_note != 'acc' ? $data->nib_note : 'acc';
         if ($request->hasFile('file_nib')) {
-            $save = $request->file('file_nib')->store('public/file_nib');
-            $filename = $request->file('file_nib')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_nib')->getClientOriginalName();
+            $save = $request->file('file_nib')->storeAs('public/file_nib', $filename);
             $nibPath = url('/') . '/storage/file_nib/' . $filename;
             $nibNote = 'done revisi';
         }
@@ -670,42 +677,21 @@ class VendorController extends Controller
         $directorsPath = $data->file_board_of_directors_composition ?? '';
         $bodcNote = $data->board_of_directors_composition_note != 'acc' ? $data->board_of_directors_composition_note : 'acc';
         if ($request->hasFile('file_board_of_directors_composition')) {
-            $save = $request->file('file_board_of_directors_composition')->store('public/file_board_of_directors_composition');
-            $filename = $request->file('file_board_of_directors_composition')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_board_of_directors_composition')->getClientOriginalName();
+            $save = $request->file('file_board_of_directors_composition')->storeAs('public/file_board_of_directors_composition', $filename);
             $directorsPath = url('/') . '/storage/file_board_of_directors_composition/' . $filename;
             $bodcNote = 'done revisi';
-        }
-
-        $frontBankPath = $data->file_front_page_bank ?? '';
-        if ($request->hasFile('file_front_page_bank')) {
-            $save = $request->file('file_front_page_bank')->store('public/file_front_page_bank');
-            $filename = $request->file('file_front_page_bank')->hashName();
-            $frontBankPath = url('/') . '/storage/file_front_page_bank/' . $filename;
-        }
-
-        $statementBankPath = $data->file_bank_account_statement_letter ?? '';
-        if ($request->hasFile('file_bank_account_statement_letter')) {
-            $save = $request->file('file_bank_account_statement_letter')->store('public/file_bank_account_statement_letter');
-            $filename = $request->file('file_bank_account_statement_letter')->hashName();
-            $statementBankPath = url('/') . '/storage/file_bank_account_statement_letter/' . $filename;
         }
 
         $nonPkpPath = $data->file_non_pkp_statement ?? '';
         $nonpkpNote = $data->non_pkp_statement_note != 'acc' ? $data->non_pkp_statement_note : 'acc';
         if ($request->hasFile('file_non_pkp_statement')) {
-            $save = $request->file('file_non_pkp_statement')->store('public/file_non_pkp_statement');
-            $filename = $request->file('file_non_pkp_statement')->hashName();
+            $filename = date('YmdHis') . rand(10, 99) . '_' . $request->file('file_non_pkp_statement')->getClientOriginalName();
+            $save = $request->file('file_non_pkp_statement')->storeAs('public/file_non_pkp_statement', $filename);
             $nonPkpPath = url('/') . '/storage/file_non_pkp_statement/' . $filename;
             $nonpkpNote = 'done revisi';
         }
-
-        $ektpPath = $data->file_ektp ?? '';
-        if ($request->hasFile('file_ektp')) {
-            $save = $request->file('file_ektp')->store('public/file_ektp');
-            $filename = $request->file('file_ektp')->hashName();
-            $ektpPath = url('/') . '/storage/file_ektp/' . $filename;
-        }
-
+        
         $data->update([
             'name' => $request->name,
             'email' => $request->email,
@@ -756,11 +742,8 @@ class VendorController extends Controller
             'expired_nib' => $request->expired_nib,
 
             'file_board_of_directors_composition' => $directorsPath,
-            'file_front_page_bank' => $frontBankPath,
-            'file_bank_account_statement_letter' => $statementBankPath,
             'file_non_pkp_statement' => $nonPkpPath,
 
-            'file_ektp' => $ektpPath,
             'expired_ektp' => $request->expired_ektp,
 
             'status_account' => $request->status_submit,
@@ -809,11 +792,32 @@ class VendorController extends Controller
             {
                 $this->createRevisionTimeline($data->id);
             }
-            $checkRejectedData = RevisionRegisterVendor::where('vendor_id', $data->id)->where('status', 'ditolak')->get();
-            foreach($checkRejectedData as $rejectedData) {
+            $checkRejectedData = RevisionRegisterVendor::where('vendor_id', $data->id)->where('status', 'ditolak')->orderBy('id')->get();
+            foreach($checkRejectedData as $key => $rejectedData) {
                 RevisionRegisterVendor::where('id', $rejectedData->id)->where('status', 'ditolak')->update([
                     'status' => 'menunggu persetujuan'
                 ]);
+
+                if($key == 0)
+                {
+                    $approval_vendor = ApproverVendor::where('level', 1)->first();
+                    $user_roles = UserRole::where('role_id', $approval_vendor->role_id)->get();
+                    $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user->id)->where('status_account', 'disetujui')->latest('created_at')->first();
+                    foreach($user_roles as $user_role)
+                    {
+                        $notif['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
+                        $notif['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $rejectedData->vendor->name : 'Registrasi data dengan Nama: ' . $rejectedData->vendor->name;
+                        $notif['url'] = '/admin/vendor-profile/' . $rejectedData->id;
+    
+                        Notification::create([
+                            'user_id' => $user_role->user_id,
+                            'title' => $notif['title'],
+                            'description' => $notif['description'],
+                            'url' => $notif['url'],
+                        ]);
+                        $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($notif));  
+                    }
+                }
 
                 $sla_holiday = SlaHoliday::whereDate('date', $rejectedData->updated_at)->first();
                 $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $rejectedData->updated_at);
@@ -832,10 +836,13 @@ class VendorController extends Controller
                     ]);
                 }
             }
-            $this->notifySelf(Auth::user()->id, 'Perubahan data', 'Berhasil pengajuan perubahan data', '/vendor');
+            $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/vendor');
             return Redirect::route('vendor.show', $data->id);
         } else {
-            $this->notifySelf(Auth::user()->id, 'Perubahan data', 'Berhasil simpan draft data', '/vendor');
+            $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/vendor');
             
             return Redirect::route('vendor.edit', $data->id);
         }
@@ -846,6 +853,8 @@ class VendorController extends Controller
     public function createRevisionTimeline($vendor_id) {
         $revision = RevisionRegisterVendor::where('vendor_id', $vendor_id)->first();
         $approval_vendors = ApproverVendor::orderBy('level')->get();
+        $vendor = Vendor::where('id', $vendor_id)->first();
+        $checkAvailableApprovalAccount = Vendor::where('user_id', $vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
         foreach($approval_vendors as $key => $approval) {
             $revision_vendor = RevisionRegisterVendor::create([
                 'vendor_id' => $vendor_id,
@@ -859,8 +868,8 @@ class VendorController extends Controller
                 $user_roles = UserRole::where('role_id', $approval->role_id)->get();
                 foreach($user_roles as $user_role)
                 {
-                    $data['title'] = 'Perubahan Data Menunggu Verifikasi';
-                    $data['description'] = 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name;
+                    $data['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
+                    $data['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name : 'Registrasi data dengan Nama: ' . $revision_vendor->vendor->name;
                     $data['url'] = '/admin/vendor-profile/' . $revision_vendor->id;
 
                     Notification::create([

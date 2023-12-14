@@ -28,6 +28,16 @@ export default function ShowBatchTable(props) {
         return `${day}-${month}-${year} ${hours}:${minutes}`;
       }
 
+       // Create our number formatterCurrency.
+    const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
     return (
         <div className="pt-6">
             <div className="max-w-7xl mx-auto">
@@ -36,7 +46,8 @@ export default function ShowBatchTable(props) {
                         <thead>
                             <tr>
                                 <th>Aksi</th>
-                                <th>No. Dokumen</th>
+                                <th>ID Tukar Faktur</th>
+                                <th>Jatuh Tempo</th>
                                 <th>Tanggal Inv.</th>
                                 <th>Total</th>
                                 <th>Type</th>
@@ -53,9 +64,10 @@ export default function ShowBatchTable(props) {
                                             </a>
                                         </div>
                                     </td>
-                                    <td>{item.document_number}</td>
+                                    <td>{item.tax_invoice_number}</td>
+                                    <td>{item.jatuh_tempo}</td>
                                     <td>{item.date}</td>
-                                    <td>{item.total}</td>
+                                    <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
                                     <td>{item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}</td>
                                     <td>{item.status}</td>
                                 </tr>

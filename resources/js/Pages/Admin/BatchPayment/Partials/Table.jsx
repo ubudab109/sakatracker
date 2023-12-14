@@ -40,6 +40,16 @@ export default function Table(props) {
         }
      }
 
+     // Create our number formatterCurrency.
+    const formatterCurrency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
     return (
         <div className="pt-6">
             <div className="max-w-7xl mx-auto">
@@ -78,7 +88,7 @@ export default function Table(props) {
                                             <td>{item.no_batch}</td>
                                             <td>{item.periode}</td>
                                             <td>{item.jatuh_tempo}</td>
-                                            <td>{item.total}</td>
+                                            <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
                                             <td>{item.status}</td>
                                             <td>{formatDate(item.updated_at)}</td>
                                         </tr>

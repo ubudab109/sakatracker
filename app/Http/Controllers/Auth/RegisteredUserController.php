@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
         // dd($request->all());
         $request->validate([
             'document_type' => 'required_if:type_of_business,Pribadi',
-            'npwp' => 'required_if:document_type,npwp|unique:'.Vendor::class,
+            'npwp' => 'required_if:document_type,npwp',
             'ktp' => 'required_if:document_type,ktp',
             'legality' => 'max:255',
             'name' => 'required|string|max:255|unique:'.Vendor::class,
@@ -63,12 +63,14 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|max:255',
             'mobile_phone_number' => 'required|max:255',
             'type_of_business' => 'required|string',
+            'suffix' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->legality == null ? 'required' : '' : '',
+            'legality' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->suffix == null ? 'required' : '' : '',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         try {
             DB::beginTransaction();
-            
+        
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -76,18 +78,19 @@ class RegisteredUserController extends Controller
                 'role' => 'vendor',
                 'is_first_login' => 0
             ]);
-            $vendorData = [
+    
+            Vendor::create([
                 'user_id' => $user->id,
                 'status_account' => 'draft',
                 'type_of_business' => $request->type_of_business,
                 'name_business' => $request->name_business,
                 'legality' => $request->legality,
                 'name' => $request->name,
-                'npwp' => $request->npwp ?? null,
+                'npwp' => $request->npwp,
                 'ktp' => $request->ktp ?? null,
                 'ktp_address' => $request->ktp_address ?? null,
                 'office_address' => $request->office_address,
-                'npwp_address' => $request->npwp_address ?? null,
+                'npwp_address' => $request->npwp_address,
                 'country_id' => $request->country_id,
                 'country' => $request->country,
                 'province_id' => $request->province_id,
@@ -99,7 +102,6 @@ class RegisteredUserController extends Controller
                 'mobile_phone_number' => $request->mobile_phone_number,
                 'email' => $request->email,
                 'suffix' => $request->suffix,
-                'prefix' => $request->prefix,
                 'file_npwp' => '',
                 'file_sppkp' => '',
                 'file_siup' => '',
@@ -110,8 +112,7 @@ class RegisteredUserController extends Controller
                 'file_bank_account_statement_letter' => '',
                 'file_non_pkp_statement' => '',
                 'file_ektp' => '',
-            ];
-            Vendor::create($vendorData);
+            ]);
     
             $randomInt = random_int(100000, 999999);
             OtpCode::create([

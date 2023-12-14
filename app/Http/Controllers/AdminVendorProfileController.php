@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\RevisionRegisterVendor;
 use App\Mail\ApproverVendorMail;
 use App\Models\ApproverVendor;
+use App\Models\SupplierSite;
 use Illuminate\Http\Request;
 use App\Models\Notification;
 use App\Models\PaymentTerm;
@@ -24,7 +25,6 @@ use App\Models\Role;
 use App\Models\Tax;
 use App\Models\ShipTo;
 use App\Models\BillTo;
-use App\Models\SupplierSite;
 use Carbon\Carbon;
 use Storage;
 use Auth;
@@ -189,6 +189,7 @@ class AdminVendorProfileController extends Controller
         ->whereDoesntHave('vendor', function($q){
             $q->where('status_account', 'ditolak');
         })
+        ->whereHas('vendor.user')
         ->whereIn('approval_role', $roleUser)
         ->orderBy('id', 'desc')
         ->get();
@@ -228,7 +229,7 @@ class AdminVendorProfileController extends Controller
         })
         ->pluck('id');
 		
-        $data['revision_vendors'] = RevisionRegisterVendor::with('vendor')
+        $data['revision_vendors'] = RevisionRegisterVendor::with('vendor.user')
         ->whereIn('id', $data['revision_vendors'])
         ->orderBy('id', 'desc')
         ->get();
@@ -242,6 +243,18 @@ class AdminVendorProfileController extends Controller
         $data['revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('id', $id)->first();
         $data['supplier_sites'] = SupplierSite::all();
         $data['before_revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', '!=', 'menunggu persetujuan')->orderBy('id', 'desc')->first();
+        $data['timeline'] = RevisionRegisterVendor::with('user')->where('vendor_id', $data['revision_vendor']->vendor_id)->orderBy('id')
+        ->get()
+        ->map(function($timeline){
+            $timeline['timestamp'] = date('d-m-Y H:i:s', strtotime($timeline->updated_at));
+            return $timeline;
+        });
+
+        
+        if(count($data['timeline']) == 0) {
+            $data['timeline'] = '';
+        }
+
         $data['coa'] = [
             'entries' => [],
             // 'currentEntry' => [],
@@ -281,21 +294,21 @@ class AdminVendorProfileController extends Controller
             ];
         }
 
-        $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
-        $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
-        $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
-        $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
-        $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
-        $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
-        $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
+        // $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
+        // $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
+        // $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
+        // $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
+        // $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
+        // $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
+        // $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
 
-        // $data['coa_1'] = [];
-        // $data['coa_2'] = [];
-        // $data['coa_3'] = [];
-        // $data['coa_4'] = [];
-        // $data['coa_5'] = [];
-        // $data['coa_6'] = [];
-        // $data['coa_7'] = [];
+        $data['coa_1'] = [];
+        $data['coa_2'] = [];
+        $data['coa_3'] = [];
+        $data['coa_4'] = [];
+        $data['coa_5'] = [];
+        $data['coa_6'] = [];
+        $data['coa_7'] = [];
 
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();
@@ -357,7 +370,8 @@ class AdminVendorProfileController extends Controller
                             $newdocs[] = $newdoc;
                         }
                     }
-                } else if($data['revision_vendor']->vendor->type_of_business != 'Pribadi') {
+                }
+                if($data['revision_vendor']->vendor->type_of_business != 'Pribadi') {
                     if($key == 'file_sppkp' || $key == 'file_siup' || $key == 'file_tdp' || $key == 'file_nib' || $key == 'file_board_of_directors_composition'){
                         if (strpos($key, "file_") === 0 && !empty($value)) {
                             $doc_path = parse_url($value, PHP_URL_PATH);
@@ -405,6 +419,8 @@ class AdminVendorProfileController extends Controller
         }
         $data = RevisionRegisterVendor::where('id', $id)->first();
 
+        $checkAvailableApprovalAccount = Vendor::where('user_id', $data->vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+
         $top = '';
         $ppn = '';
         $document = '';
@@ -427,13 +443,13 @@ class AdminVendorProfileController extends Controller
         if(in_array('update_skb_accounting_vendor_profile', $roleUser))
         {
             if($request->status == 'disetujui') {
-                $skb = 'required|string|max:255';
+                $skb = '';
                 $pph = 'required|string|max:255';
                 // $coa_prepayment = 'required|string|max:255';
                 // $coa_liability_account = 'required|string|max:255';
                 // $coa_receiving = 'required|string|max:255';
-                $ship_to = 'required|string|max:255';
-                $bill_to = 'required|string|max:255';
+                $ship_to = 'max:255';
+                $bill_to = 'max:255';
             }
         }
 
@@ -700,7 +716,7 @@ class AdminVendorProfileController extends Controller
 
             $notif_vendor = Notification::create([
                 'user_id' => $data->vendor->user_id,
-                'title' => 'Perubahan Data Ditolak',
+                'title' => $checkAvailableApprovalAccount ? 'Perubahan Data Ditolak' : 'Registrasi Data Ditolak',
                 'description' => $request->note,
                 'url' => '/vendor/' . $data->vendor->id,
             ]);
@@ -719,7 +735,7 @@ class AdminVendorProfileController extends Controller
                     $user_roles = UserRole::where('role_id', $role->id)->get();
                     foreach($user_roles as $user_role)
                     {
-                        $notifApprover['title'] = 'Perubahan Data Ditolak ' . $data->approval_role;
+                        $notifApprover['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Ditolak'  . $data->approval_role : 'Registrasi Data Ditolak' . $data->approval_role;
                         $notifApprover['description'] = $request->note;
                         $notifApprover['url'] = '/admin/vendor-profile/' . $revisionApprover->id;
 
@@ -756,7 +772,7 @@ class AdminVendorProfileController extends Controller
 
             }
 
-            $this->notifySelf(Auth::user()->id, 'Perubahan Data', 'Berhasil tolak perubahan data', '/admin/vendor/' . $data->vendor_id);
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data', 'Berhasil ditolak', '/admin/vendor/' . $data->vendor_id);
         } else {
             foreach($roleUser as $role) {
                 $checkStatus = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->where('approval_role', $role)->first();
@@ -767,46 +783,46 @@ class AdminVendorProfileController extends Controller
                             'user_id' => Auth::user()->id,
                             'submit_at' => date('Y-m-d H:i:s')
                         ]);
+                    }
+                }
+            }
 
-                        $checkNextApproval = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->where('status', 'menunggu persetujuan')->first();
-                        if($checkNextApproval)
-                        {
-                            $role = Role::where('name', $checkNextApproval->approval_role)->first();
-                            if($role)
-                            {
-                                $user_roles = UserRole::where('role_id', $role->id)->get();
-                                foreach($user_roles as $user_role)
-                                {
-                                    $notifApprover['title'] = 'Perubahan Data Menunggu Verifikasi';
-                                    $notifApprover['description'] = 'Perubahan data dengan Kode: ' . $checkNextApproval->vendor->id_manual;
-                                    $notifApprover['url'] = '/admin/vendor-profile/' . $checkNextApproval->id;
-    
-                                    Notification::create([
-                                        'user_id' => $user_role->user_id,
-                                        'title' => $notifApprover['title'],
-                                        'description' => $notifApprover['description'],
-                                        'url' => $notifApprover['url'],
-                                    ]);
-                                    $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($notifApprover));  
-                                }
+            $checkNextApproval = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->where('status', 'menunggu persetujuan')->orderBy('id')->first();
+            if($checkNextApproval)
+            {
+                $role = Role::where('name', $checkNextApproval->approval_role)->first();
+                if($role)
+                {
+                    $user_roles = UserRole::where('role_id', $role->id)->get();
+                    foreach($user_roles as $user_role)
+                    {
+                        $notifApprover['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
+                        $notifApprover['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama:' . $checkNextApproval->vendor->name : 'Registrasi data dengan Nama:' . $checkNextApproval->vendor->name;
+                        $notifApprover['url'] = '/admin/vendor-profile/' . $checkNextApproval->id;
 
-                                $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
-                                $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+                        Notification::create([
+                            'user_id' => $user_role->user_id,
+                            'title' => $notifApprover['title'],
+                            'description' => $notifApprover['description'],
+                            'url' => $notifApprover['url'],
+                        ]);
+                        $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($notifApprover));  
+                    }
 
-                                while ($sla_holiday || $dateCarbon->isWeekend()) {
-                                    $dateCarbon->addDay();
-                                    $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-                                }
-                                
-                                $getApproverVendorSla = ApproverVendor::where('role_id', $role->id)->first();
-                                if($getApproverVendorSla)
-                                {
-                                    $checkNextApproval->update([
-                                        'sla_at' => $dateCarbon->addHours($getApproverVendorSla->sla)
-                                    ]);
-                                }
-                            }
-                        }
+                    $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
+                    $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+
+                    while ($sla_holiday || $dateCarbon->isWeekend()) {
+                        $dateCarbon->addDay();
+                        $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
+                    }
+                    
+                    $getApproverVendorSla = ApproverVendor::where('role_id', $role->id)->first();
+                    if($getApproverVendorSla)
+                    {
+                        $checkNextApproval->update([
+                            'sla_at' => $dateCarbon->addHours($getApproverVendorSla->sla)
+                        ]);
                     }
                 }
             }
@@ -819,7 +835,7 @@ class AdminVendorProfileController extends Controller
 
                 $notif_vendor = Notification::create([
                     'user_id' => $data->vendor->user_id,
-                    'title' => 'Perubahan Data Aktif',
+                    'title' => $checkAvailableApprovalAccount ? 'Perubahan Data Aktif' : 'Registrasi Data Aktif',
                     'description' => 'Silahkan login',
                     'url' => '/login',
                 ]);
@@ -829,10 +845,17 @@ class AdminVendorProfileController extends Controller
                 $notifMailVendor['url'] = $notif_vendor->url;
                 Mail::to($data->vendor->user->email)->send(new ApproverVendorMail($notifMailVendor));
 
-                $this->generateIdManual($data->vendor_id);
+                if($checkAvailableApprovalAccount)
+                {
+                    $data->vendor->update([
+                        'id_manual' => $checkAvailableApprovalAccount->id_manual
+                    ]);
+                } else {
+                    $this->generateIdManual($data->vendor_id);
+                }
             }
 
-            $this->notifySelf(Auth::user()->id, 'Perubahan Data', 'Berhasil setujui perubahan data', '/admin/vendor/' . $data->vendor_id);
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data',  'Berhasil disetujui', '/admin/vendor/' . $data->vendor_id);
         }
 
         return redirect()->route('admin.vendor.show', $data->vendor_id);

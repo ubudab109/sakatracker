@@ -11,13 +11,14 @@ import { Transition } from '@headlessui/react';
 import PDFPopup from '@/Components/PDFPopup';
 import { typeOfBusiness } from '@/Utils/constant';
 import { convertMb } from '@/Utils/helper';
+import ModalViewer from '@/Components/ModalViewer';
 
 
 export default function Create(props) {
     console.log(props);
     const { data, hasErrors, clearErrors, setData, post, processing, errors, recentlySuccessful, setError, reset } = useForm({
         name: props.data.vendor.name != null ? props.data.vendor.name : '',
-        email: props.data.vendor.email != null ? props.data.vendor.email : '',
+        email: props.data.vendor.user.email != null ? props.data.vendor.user.email : '',
         npwp: props.data.vendor.npwp != null ? props.data.vendor.npwp : '',
         name_business: props.data.vendor.name_business != null ? props.data.vendor.name_business : '',
         office_address: props.data.vendor.office_address != null ? props.data.vendor.office_address : '',
@@ -146,8 +147,8 @@ export default function Create(props) {
     const [selectedOptionCity, setSelectedOptionCity] = useState(props.data.vendor.city_id);
     const [provinces, setProvinces] = useState([]);
     const [cities, setCities] = useState([]);
-    const [selectedBankBca, setSelectedBankBca] = useState(props.data.vendor.is_bca);
-    const [selectedVirtualBank, setSelectedVirtualBank] = useState(props.data.vendor.is_virtual_account);
+    const [selectedBankBca, setSelectedBankBca] = useState(props.data.vendor.is_bca != null ? props.data.vendor.is_bca == '1' ? '1' : '0' : '0');
+    const [selectedVirtualBank, setSelectedVirtualBank] = useState(props.data.vendor.is_virtual_account != null ? props.data.vendor.is_virtual_account == '1' ? '1' : '0' : '0');
 
     const [tabPane1, setTabPane1] = useState('');
     const [tabPane2, setTabPane2] = useState('hidden');
@@ -280,13 +281,13 @@ export default function Create(props) {
 
     }, []);
 
-    const [npwpFile, setNpwpFile] = useState(props.data.vendor.file_npwp == null ? "No file chosen" : 'file_npwp.pdf'.substring(0, 35));
-    const [sppkpFile, setSppkpFile] = useState(props.data.vendor.file_sppkp == null ? "No file chosen" : 'file_sppkp.pdf'.substring(0, 35));
-    const [siupFile, setSiupFile] = useState(props.data.vendor.file_siup == null ? "No file chosen" : 'file_siup.pdf'.substring(0, 35));
-    const [tdpFile, setTdpFile] = useState(props.data.vendor.file_tdp == null ? "No file chosen" : 'file_tdp.pdf'.substring(0, 35));
-    const [nibFile, setNibFile] = useState(props.data.vendor.file_nib == null ? "No file chosen" : 'file_nib.pdf'.substring(0, 35));
-    const [bodcFile, setBodcFile] = useState(props.data.vendor.file_board_of_directors_composition == null ? "No file chosen" : 'file_board_of_directors_composition.pdf'.substring(0, 35) + '...');
-    const [nonPkpFile, setNonPkpFile] = useState(props.data.vendor.file_non_pkp_statement == null ? "No file chosen" : 'file_non_pkp_statement.pdf'.substring(0, 35));
+    const [npwpFile, setNpwpFile] = useState(props.data.vendor.file_npwp == null ? "No file chosen" : props.data.vendor.file_npwp_name);
+    const [sppkpFile, setSppkpFile] = useState(props.data.vendor.file_sppkp == null ? "No file chosen" : props.data.vendor.file_sppkp_name);
+    const [siupFile, setSiupFile] = useState(props.data.vendor.file_siup == null ? "No file chosen" : props.data.vendor.file_siup_name);
+    const [tdpFile, setTdpFile] = useState(props.data.vendor.file_tdp == null ? "No file chosen" : props.data.vendor.file_tdp_name);
+    const [nibFile, setNibFile] = useState(props.data.vendor.file_nib == null ? "No file chosen" : props.data.vendor.file_nib_name);
+    const [bodcFile, setBodcFile] = useState(props.data.vendor.file_board_of_directors_composition == null ? "No file chosen" : props.data.vendor.file_board_of_directors_composition_name);
+    const [nonPkpFile, setNonPkpFile] = useState(props.data.vendor.file_non_pkp_statement == null ? "No file chosen" : props.data.vendor.file_non_pkp_statement_name);
 
     const handleFile = (e, setter) => {
         if (convertMb(e.target.files[0].size) > 5) {
@@ -406,8 +407,8 @@ export default function Create(props) {
         >
             <Head title="Pengajuan Ubah Data" />
 
-            <PDFPopup
-                pdfUrl={pdfUrl}
+            <ModalViewer
+                files={pdfUrl}
                 show={isPopupOpen}
                 onClose={closePopup}
             />
@@ -478,7 +479,7 @@ export default function Create(props) {
                                         />
                                     </div>
 
-                                    <div className="mb-3">
+                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
                                         <InputLabel value="Prefix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="legality"
@@ -493,9 +494,13 @@ export default function Create(props) {
                                                 </option>
                                             ))}
                                         </select>
+                                        <InputError 
+                                            message={errors.prefix}
+                                            className="mt-2"
+                                        />
                                     </div>
 
-                                    <div className="mb-3">
+                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
                                         <InputLabel value="Suffix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="suffix"
@@ -510,6 +515,10 @@ export default function Create(props) {
                                                 </option>
                                             ))}
                                         </select>
+                                        <InputError 
+                                            message={errors.suffix}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <div className="mb-3">
@@ -538,7 +547,7 @@ export default function Create(props) {
                                         <select className="select select-bordered w-full mt-1"
                                             id="type_of_business"
                                             name="type_of_business"
-                                            required
+                                            
                                             value={selectedNameBusiness}
                                             onChange={handleNameBusiness}
                                         >
@@ -571,7 +580,7 @@ export default function Create(props) {
                                             autoComplete="npwp"
                                             isFocused={true}
                                             onChange={(e) => setData('npwp', e.target.value)}
-                                            required
+                                            
                                         />
                                         <InputError 
                                             message={errors.npwp}
@@ -609,7 +618,7 @@ export default function Create(props) {
                                     <div className=''>
                                         <InputLabel htmlFor="type_of_business" value="Type of Business" className="font-bold" required={true} />
 
-                                        <div class="flex items-center mb-2 mt-3" hidden={selectedOptionLegality ? false : true}>
+                                        <div class="flex items-center mb-2 mt-3" >
                                             <label className="inline-flex items-center">
                                                 <input
                                                 type="radio"
@@ -622,7 +631,7 @@ export default function Create(props) {
                                                 <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
                                             </label>
                                         </div>
-                                        <div class="flex items-center mb-2" hidden={selectedOptionLegality ? false : true}>
+                                        <div class="flex items-center mb-2" >
                                             <label className="inline-flex items-center">
                                                 <input
                                                 type="radio"
@@ -635,7 +644,7 @@ export default function Create(props) {
                                                 <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
                                             </label>
                                         </div>
-                                        <div class="flex items-center" hidden={selectedOptionLegality != 'PT' ? false : true}>
+                                        <div class="flex items-center" >
                                             <label className="inline-flex items-center">
                                                 <input
                                                 type="radio"
@@ -652,7 +661,7 @@ export default function Create(props) {
                                         {
                                             props.auth.user.role === 'approver' ? (
                                                 <div className='mt-3 font-bold grid grid-cols-3'>
-                                                    <p>TOP </p>
+                                                    {/* <p>TOP </p>
                                                     <p>: </p>
                                                     <p>{props.data.vendor.top ? props.data.vendor.top : '-'} Hari </p>
 
@@ -682,7 +691,7 @@ export default function Create(props) {
 
                                                     <p>Bill To </p>
                                                     <p>: </p>
-                                                    <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p>
+                                                    <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p> */}
                                                 </div>
                                             ) : null
                                         }
@@ -751,7 +760,7 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Phone Number"
                                             onChange={(e) => setData('phone_number', e.target.value)}
-                                            required
+                                            
                                         />
 
                                         <InputError message={errors.phone_number} className="mt-2" />
@@ -766,7 +775,7 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Mobile Number"
                                             onChange={(e) => setData('mobile_phone_number', e.target.value)}
-                                            required
+                                            
                                         />
 
                                         <InputError message={errors.mobile_phone_number} className="mt-2" />
@@ -800,7 +809,7 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Postal Code"
                                             onChange={(e) => setData('postal_code', e.target.value)}
-                                            required
+                                            
                                         />
 
                                         <InputError message={errors.postal_code} className="mt-2" />
@@ -996,7 +1005,7 @@ export default function Create(props) {
                                         onChange={handleBcaChange}
                                         value={selectedBankBca}
                                     >
-                                        <option value="" hidden>Bank</option>
+                                        <option value="" defaultValue={''} disabled>Bank</option>
                                         <option value="1">BCA</option>
                                         <option value="0">Non BCA</option>
                                     </select>
@@ -1011,7 +1020,7 @@ export default function Create(props) {
                                         value={selectedVirtualBank}
                                         onChange={handleVirtualBankChange}
                                     >
-                                        <option value="" hidden>Account Type</option>
+                                        <option value="" defaultValue={''} disabled>Account Type</option>
                                         <option value="1">Virtual Account</option>
                                         <option value="0">Non Vitrual Account</option>
                                     </select>
@@ -1130,8 +1139,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1157,8 +1166,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1184,8 +1193,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{siupFile ? siupFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1211,8 +1220,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{tdpFile ? tdpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1238,8 +1247,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nibFile ? nibFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1265,8 +1274,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{bodcFile ? bodcFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1391,8 +1400,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1418,8 +1427,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1445,8 +1454,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{siupFile ? siupFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1472,8 +1481,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{tdpFile ? tdpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1499,8 +1508,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nibFile ? nibFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1526,8 +1535,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{bodcFile ? bodcFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1553,8 +1562,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1679,8 +1688,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1706,8 +1715,8 @@ export default function Create(props) {
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>

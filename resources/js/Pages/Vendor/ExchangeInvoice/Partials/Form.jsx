@@ -14,19 +14,11 @@ import ModalGR from "./ModalGR";
 import Modal from "@/Components/Modal";
 import PDFPopup from "@/Components/PDFPopup";
 import { convertMb } from "@/Utils/helper";
+import ModalViewer from '@/Components/ModalViewer';
 
 export default function Form(props) {
-    const {
-        data,
-        setData,
-        post,
-        clearErrors,
-        hasErrors,
-        processing,
-        errors,
-        recentlySuccessful,
-        reset,
-    } = useForm({
+    console.log(props.data.invoice);
+    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, setError, reset } = useForm({
         // category: props.data.invoice == null ? '' : props.data.invoice.category,
         location: props.data.invoice == null ? "" : props.data.invoice.location,
         date: props.data.invoice == null ? "" : props.data.invoice.date,
@@ -56,17 +48,21 @@ export default function Form(props) {
         status_submit: "",
     });
 
-    const handleFile = (e) => {
+    const [poFile, setPoFile] = useState(props.data.invoice ? props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 'No File Chosen' : props.data.invoice.po_name : props.data.invoice.po == null && props.data.invoice.po == "" ? "No File Chosen" : props.data.invoice.po_name : "No File Chosen");
+    const [bastFile, setBastFile] = useState(props.data.invoice ? props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 'No File Chosen' : props.data.invoice.bast_name : props.data.invoice.bast == null ? "No File Chosen" : props.data.invoice.bast_name : "No File Chosen");
+    const [quotationFile, setQuotationFile] = useState(props.data.invoice ? props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 'No File Chosen' : props.data.invoice.quotation_name : props.data.invoice.quotation == null ? "No File Chosen" : props.data.invoice.quotation_name : "No File Chosen");
+    const [taxInvoiceFile, setTaxInvoiceFile] = useState(props.data.invoice ? props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 'No File Chosen' : props.data.invoice.tax_invoice_name : props.data.invoice.tax_invoice == null ? "No File Chosen" : props.data.invoice.tax_invoice_name : "No File Chosen");
+    const [invoiceFile, setInvoiceFile] = useState(props.data.invoice ? props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 'No File Chosen' : props.data.invoice.invoice_name : props.data.invoice.invoice == null ? "No File Chosen" : props.data.invoice.invoice_name : "No File Chosen");
+
+    const handleFile = (e, setter) => {
         if (convertMb(e.target.files[0].size) > 5) {
-            setError(
-                e.target.name,
-                "Max file size should not be greater than 5mb"
-            );
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
         } else {
             clearErrors(e.target.name);
             setData(e.target.name, e.target.files[0]);
+            setter(e.target.files[0].name.substring(0, 35) + '...');
         }
-    };
+    }
 
     // console.log(errors);
 
@@ -92,16 +88,10 @@ export default function Form(props) {
         props.data.invoice == null ? "" : props.data.invoice.location
     );
     const [selectedValue3, setSelectedValue3] = useState(
-        props.data.invoice == null ? "" : props.data.invoice.is_materai
+        props.data.invoice == null ? "" : props.data.invoice.is_materai == true ? 1 : 0
     );
     const [selectedValue4, setSelectedValue4] = useState(
-        props.data.invoice == null
-            ? props.data.po_number != null
-                ? 1
-                : ""
-            : props.data.po_number != null
-            ? 1
-            : props.data.invoice.is_po
+        props.data.invoice == null ? "" : props.data.invoice.is_po == true ? 1 : 0
     );
     const [selectedValue5, setSelectedValue5] = useState(props.data.po_number);
 
@@ -254,6 +244,7 @@ export default function Form(props) {
     };
 
     const closePopup = () => {
+        setPdfUrl('');
         setIsPopupOpen(false);
     };
 
@@ -279,32 +270,32 @@ export default function Form(props) {
         if (selectedItemsGR.includes(gr)) {
             console.log("dor", 0);
             gr.array.forEach((item) => {
-                totalGR -= parseInt(item.purchase_order_detail.sub_total);
-                totalTaxGR -= parseInt(item.purchase_order_detail.tax);
+                totalGR -= parseInt(item.sub_total);
+                totalTaxGR -= parseInt(item.tax);
             });
             setSelectedItemsGR(selectedItemsGR.filter((item) => item !== gr));
         } else {
             console.log("dor", 1);
             gr.array.forEach((item) => {
-                totalGR += parseInt(item.purchase_order_detail.sub_total);
-                totalTaxGR += parseInt(item.purchase_order_detail.tax);
+                totalGR += parseInt(item.sub_total);
+                totalTaxGR += parseInt(item.tax);
             });
             setSelectedItemsGR([...selectedItemsGR, gr]);
         }
         console.log(selectedItemsGR);
         setSumTotalGR(totalGR);
         setSumTotalTaxGR(totalTaxGR);
-        calculateTaxPercentage(totalGR, totalGR + totalTaxGR);
+        // calculateTaxPercentage(totalGR, totalGR + totalTaxGR);
     };
 
-    const [showTotalPpnTax, setShowTotalPpnTax] = useState(false);
+    const [showTotalPpnTax, setShowTotalPpnTax] = useState(props.data.po_number ? false : selectedValue4 == 1 ? false : true);
     const submitModalGR = () => {
         data.order_id = selectedValue5;
         data.po_number = selectedLabel5;
         data.gr_items = selectedItemsGR;
         data.total = sumTotalGR;
+        data.ppn = sumTotalTaxGR;
         data.dpp = sumTotalTaxGR;
-        data.ppn = taxPercentage;
         setDataItemsGR(selectedItemsGR);
         setIsModalGROpen(false);
     };
@@ -337,7 +328,11 @@ export default function Form(props) {
 
     return (
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
-            <PDFPopup pdfUrl={pdfUrl} show={isPopupOpen} onClose={closePopup} />
+            <ModalViewer
+                files={pdfUrl}
+                show={isPopupOpen}
+                onClose={closePopup}
+            />
             <form onSubmit={submit}>
                 <p className="text-gray-500 mb-3">
                     Anda menggunakan data profil yang disetujui tanggal{" "}
@@ -364,7 +359,7 @@ export default function Form(props) {
                                 value={selectedValue4}
                                 onChange={enhancedHandleOptionChange4}
                             >
-                                <option value="">Pilih</option>
+                                <option value="" defaultValue={''} disabled>Pilih</option>
                                 <option value="0">Tanpa PO</option>
                                 <option value="1">PO</option>
                             </select>
@@ -388,6 +383,7 @@ export default function Form(props) {
                                 <tr className="border-t bg-gray-100">
                                     {/* <th>Aksi</th> */}
                                     <th>No. Dokumen</th>
+                                    <th>Nama Barang</th>
                                     <th>Invoice No</th>
                                     <th>Tanggal GR</th>
                                     <th>Qty</th>
@@ -425,6 +421,11 @@ export default function Form(props) {
                                                             </td>
                                                             <td>
                                                                 {
+                                                                    item1.item_description
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                {
                                                                     data.invoice_number
                                                                 }
                                                             </td>
@@ -454,7 +455,6 @@ export default function Form(props) {
                                                                 {data.total_price ==
                                                                 null
                                                                     ? item1
-                                                                          .purchase_order_detail
                                                                           .sub_total
                                                                     : data.total_price}
                                                             </td>
@@ -478,6 +478,9 @@ export default function Form(props) {
                                             </td> */}
                                                     <td>
                                                         {item.document_number}
+                                                    </td>
+                                                    <td>
+                                                        {item.item_description}
                                                     </td>
                                                     <td>
                                                         {item.invoice_number}
@@ -527,7 +530,7 @@ export default function Form(props) {
                                 value={selectedValue2}
                                 onChange={enhancedHandleOptionChange2}
                             >
-                                <option value="" hidden>
+                                <option value="" defaultValue={''} disabled>
                                     Lokasi
                                 </option>
                                 {props.data.locations.map((item, index) => (
@@ -568,39 +571,26 @@ export default function Form(props) {
                                 value="Attach File Faktur Pajak"
                                 required={true}
                             />
-
-                            <div className="flex items-center align-middle">
+                            <div className="flex">
+                                <label htmlFor={`${props.data.invoice ? props.data.invoice.status == 'ditolak' ? taxInvoiceFile ? taxInvoiceFile != 'No File Chosen' ? '' : 'file-tax-invoice' : 'file-tax-invoice' : 'file-tax-invoice' : 'file-tax-invoice' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                    {props.data.invoice ? props.data.invoice.status == 'ditolak' ? taxInvoiceFile ? taxInvoiceFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
+                                </label>
+                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{taxInvoiceFile ? taxInvoiceFile : 'No File Chosen'}</div>
+                                {props.data.invoice != null ? <a href="javascript:;" onClick={() => openPopup(props.data.invoice.tax_invoice)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                    </svg>
+                                </a> : '' }
                                 <input
-                                    name="tax_invoice"
                                     type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => handleFile(e)}
+                                    id="file-tax-invoice"
+                                    className="hidden-input"
+                                    name="tax_invoice"
+                                    hidden={true}
+                                    onChange={(e) => handleFile(e, setTaxInvoiceFile)}
                                 />
-                                {props.data.invoice != null ? (
-                                    <a
-                                        href={props.data.invoice.tax_invoice}
-                                        target="_blank"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-8 h-8 ml-2"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                            />
-                                        </svg>
-                                    </a>
-                                ) : (
-                                    ""
-                                )}
                             </div>
-                            <i className="text-muted">* Max: 5mb</i>
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.tax_invoice}
                                 className="mt-2"
@@ -639,38 +629,26 @@ export default function Form(props) {
                                 required={true}
                             />
 
-                            <div className="flex items-center align-middle">
+                            <div className="flex">
+                                <label htmlFor={`${props.data.invoice ? props.data.invoice.status == 'ditolak' ? invoiceFile ? invoiceFile != 'No File Chosen' ? '' : 'file-invoice' : 'file-invoice' : 'file-invoice' : 'file-invoice' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                    {props.data.invoice ? props.data.invoice.status == 'ditolak' ? invoiceFile ? invoiceFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
+                                </label>
+                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{invoiceFile ? invoiceFile : 'No File Chosen'}</div>
+                                {props.data.invoice != null ? <a href="javascript:;" onClick={() => openPopup(props.data.invoice.invoice)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                    </svg>
+                                </a> : '' }
                                 <input
-                                    name="invoice"
                                     type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => handleFile(e)}
+                                    id="file-invoice"
+                                    className="hidden-input"
+                                    name="invoice"
+                                    hidden={true}
+                                    onChange={(e) => handleFile(e, setInvoiceFile)}
                                 />
-                                {props.data.invoice != null ? (
-                                    <a
-                                        href={props.data.invoice.invoice}
-                                        target="_blank"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-8 h-8 ml-2"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                            />
-                                        </svg>
-                                    </a>
-                                ) : (
-                                    ""
-                                )}
                             </div>
-                            <i className="text-muted">* Max: 5mb</i>
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.invoice}
                                 className="mt-2"
@@ -683,38 +661,26 @@ export default function Form(props) {
                                 required={true}
                             />
 
-                            <div className="flex items-center align-middle">
+                            <div className="flex">
+                                <label htmlFor={`${props.data.invoice ? props.data.invoice.status == 'ditolak' ? bastFile ? bastFile != 'No File Chosen' ? '' : 'file-bast' : 'file-bast' : 'file-bast' : 'file-bast' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                    {props.data.invoice ? props.data.invoice.status == 'ditolak' ? bastFile ? bastFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
+                                </label>
+                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{bastFile ? bastFile : 'No File Chosen'}</div>
+                                {props.data.invoice != null ? <a href="javascript:;" onClick={() => openPopup(props.data.invoice.bast)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                    </svg>
+                                </a> : '' }
                                 <input
-                                    name="bast"
                                     type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => handleFile(e)}
+                                    id="file-bast"
+                                    className="hidden-input"
+                                    name="bast"
+                                    hidden={true}
+                                    onChange={(e) => handleFile(e, setBastFile)}
                                 />
-                                {props.data.invoice != null ? (
-                                    <a
-                                        href={props.data.invoice.bast}
-                                        target="_blank"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-8 h-8 ml-2"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                            />
-                                        </svg>
-                                    </a>
-                                ) : (
-                                    ""
-                                )}
                             </div>
-                            <i className="text-muted">* Max: 5mb</i>
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.bast}
                                 className="mt-2"
@@ -733,7 +699,7 @@ export default function Form(props) {
                                 value={selectedValue3}
                                 onChange={enhancedHandleOptionChange3}
                             >
-                                <option value="" hidden>
+                                <option value="" defaultValue={''} disabled>
                                     Pilih
                                 </option>
                                 <option value="1">Iya</option>
@@ -819,7 +785,7 @@ export default function Form(props) {
                                     ? `Total File: ${files.length}`
                                     : "no files uploaded yet"}
                             </p>
-                            <i className="text-muted">* Max: 25mb</i>
+                            <i className='text-muted'>* Max: 25mb</i>
                             {limitedFiles > 25 ? (
                                 <InputError
                                     message="Maximum files is 25 MB"
@@ -855,38 +821,27 @@ export default function Form(props) {
                                 required={true}
                             />
 
-                            <div className="flex items-center align-middle">
+                            <div className="flex">
+                                <label htmlFor={`${props.data.invoice ? props.data.invoice.status == 'ditolak' ? poFile ? poFile != 'No File Chosen' ? '' : 'file-po' : 'file-po' : 'file-po' : 'file-po' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                    {props.data.invoice ? props.data.invoice.status == 'ditolak' ? poFile ? poFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE'}
+                                </label>
+                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{poFile ? poFile : 'No File Chosen'}</div>
+                                {props.data.invoice != null ? <a href="javascript:;" onClick={() => openPopup(props.data.invoice.po)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                    </svg>
+                                </a> : '' }
                                 <input
-                                    name="po"
                                     type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => handleFile(e)}
+                                    id="file-po"
+                                    className="hidden-input"
+                                    name="po"
+                                    hidden={true}
+                                    onChange={(e) => handleFile(e, setPoFile)}
                                 />
-                                {props.data.invoice != null ? (
-                                    <a
-                                        href={props.data.invoice.po}
-                                        target="_blank"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-8 h-8 ml-2"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                            />
-                                        </svg>
-                                    </a>
-                                ) : (
-                                    ""
-                                )}
                             </div>
-                            <i className="text-muted">* Max: 5mb</i>
+
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError message={errors.po} className="mt-2" />
                         </div>
                         <div className="mb-1">
@@ -896,38 +851,27 @@ export default function Form(props) {
                                 required={true}
                             />
 
-                            <div className="flex items-center align-middle">
+                            <div className="flex">
+                                <label htmlFor={`${props.data.invoice ? props.data.invoice.status == 'ditolak' ? quotationFile ? quotationFile != 'No File Chosen' ? '' : 'file-quotation' : 'file-quotation' : 'file-quotation' : 'file-quotation' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                    {props.data.invoice ? props.data.invoice.status == 'ditolak' ? quotationFile ? quotationFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
+                                </label>
+                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{quotationFile ? quotationFile : 'No File Chosen'}</div>
+                                {props.data.invoice != null ? <a href="javascript:;" onClick={() => openPopup(props.data.invoice.quotation)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                    </svg>
+                                </a> : '' }
                                 <input
-                                    name="quotation"
                                     type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={(e) => handleFile(e)}
+                                    id="file-quotation"
+                                    className="hidden-input"
+                                    name="quotation"
+                                    hidden={true}
+                                    onChange={(e) => handleFile(e, setQuotationFile)}
                                 />
-                                {props.data.invoice != null ? (
-                                    <a
-                                        href={props.data.invoice.quotation}
-                                        target="_blank"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={1.5}
-                                            stroke="currentColor"
-                                            className="w-8 h-8 ml-2"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                            />
-                                        </svg>
-                                    </a>
-                                ) : (
-                                    ""
-                                )}
                             </div>
-                            <i className="text-muted">* Max: 5mb</i>
+
+                            <i className='text-muted'>* Max: 5mb</i>
                             <InputError
                                 message={errors.quotation}
                                 className="mt-2"
@@ -979,7 +923,7 @@ export default function Form(props) {
 
                             <InputError message={errors.dpp} className="mt-2" />
                         </div>
-                        <div className="mb-1" hidden={showTotalPpnTax}>
+                        <div className="mb-1" hidden={!selectedButtonPO}>
                             <InputLabel
                                 htmlFor="ppn"
                                 value="PPN"
@@ -1000,7 +944,7 @@ export default function Form(props) {
 
                             <InputError message={errors.ppn} className="mt-2" />
                         </div>
-                        <div className="mb-1" hidden={showTotalPpnTax}>
+                        <div className="mb-1" hidden={!selectedButtonPO}>
                             <InputLabel
                                 htmlFor="total"
                                 value="Total"
@@ -1029,12 +973,12 @@ export default function Form(props) {
                         {/* <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
                             <b>DPP: {sumTotalTaxGR}</b>
                         </div> */}
-                        <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
-                            <b>PPN: {taxPercentage}</b>
+                        {/* <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
+                            <b>PPN: {data.ppn}</b>
                         </div>
                         <div className="mb-1 mt-2" hidden={!showTotalPpnTax}>
                             <b>Total: {sumTotalGR}</b>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -1153,13 +1097,14 @@ export default function Form(props) {
                             />
                         </div>
                     </div>
-                    <div className="mb-3">
+                    <div className="mb-3 overflow-y-auto max-h-96">
                         <b>List GR</b>
                         <table className="table table-xs">
                             <thead>
                                 <tr className="border-t bg-gray-100">
                                     <th>Aksi</th>
                                     <th>No. Dokumen</th>
+                                    <th>Nama Barang</th>
                                     <th>Invoice No</th>
                                     <th>Tanggal GR</th>
                                     <th>Qty</th>
@@ -1204,6 +1149,7 @@ export default function Form(props) {
                                                             .receipt_num
                                                     }
                                                 </td>
+                                                <td>{item1.item_description}</td>
                                                 <td>{data.invoice_number}</td>
                                                 <td>
                                                     {
@@ -1222,7 +1168,6 @@ export default function Form(props) {
                                                 <td>
                                                     {
                                                         item1
-                                                            .purchase_order_detail
                                                             .sub_total
                                                     }
                                                 </td>

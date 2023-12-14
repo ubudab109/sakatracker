@@ -21,7 +21,7 @@ export const npwpFormat = (value) => {
  * power of 2.
  */
 export const convertMb = (totalSizeBytes) => {
-    return totalSizeBytes / Math.pow(1024, 2);
+    return totalSizeBytes / Math.pow(1024,2);
 }
 
 /**

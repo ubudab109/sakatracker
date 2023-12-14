@@ -48,6 +48,17 @@ class RoleController extends Controller
                 'name' => 'user',
                 'permission' => ['index', 'store', 'update', 'delete'],
                 'label' => ['Lihat', 'Tambah', 'Edit', 'Hapus']
+            ],[
+                'title' => 'Master Location',
+                'name' => 'locations',
+                'permission' => ['index'],
+                'label' => ['Lihat']
+            ],
+            [
+                'title' => 'Master Supplier Site',
+                'name' => 'supplier_site',
+                'permission' => ['index'],
+                'label' => ['Lihat']
             ], [
                 'title' => 'Master Approver Vendor',
                 'name' => 'approver_vendor',

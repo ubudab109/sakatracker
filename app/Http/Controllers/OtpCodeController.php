@@ -106,7 +106,6 @@ class OtpCodeController extends Controller
     public function resendOtp(Request $request) {
         $data['user'] = User::where('email', $request->email)->first();
 
-
         if($data['user'] != null)
         {
             $request->validate([
@@ -151,7 +150,7 @@ class OtpCodeController extends Controller
                     'user' => $data['user']
                 ]);
             }
-        } else {
+        } else if(Auth::user()) {
             $data['user'] = User::where('id', Auth::user()->id)->first();
 
             $checkOtpCode = OtpCode::where('user_id', $data['user']->id)->first();
@@ -181,7 +180,55 @@ class OtpCodeController extends Controller
                     'user' => $data['user']
                 ]);
             }
-        }
+        } else {
+	        $data['user'] = User::where('id', $request->user)->first();
+			$request->validate([
+				'email' => [
+					'required',
+					function ($attribute, $value, $fail) use($data) {
+						if (!$data['user']) {
+							$fail('Email tidak ditemukan.');
+						} else {
+							if($data['user']->email_verified_at != null) {
+								$fail('Email telah terverifikasi, silahkan login.');
+							}
+						}
+					},
+				],
+			]);
+			
+			$data['user']->update([
+				'email' => $request->email	
+			]);
+
+			$checkOtpCode = OtpCode::where('user_id', $data['user']->id)->first();
+			if($checkOtpCode != null)
+			{
+				$checkOtpCode->delete();
+			}
+
+			try {
+				$randomInt = random_int(100000, 999999);
+				OtpCode::create([
+					'user_id' => $data['user']->id,
+					'code' => $randomInt
+				]);
+
+				$data['otp_code'] = $randomInt;
+
+				$mail = Mail::to($request->email)->send(new VerificationEmailMail($data));
+
+				return Redirect::route('verification-email', [
+					'status' => 200,
+					'user' => $data['user']
+				]);
+			} catch (\Exception $e) {
+				return Redirect::route('verification-email', [
+					'status' => 404,
+					'user' => $data['user']
+				]);
+			}
+		}
 
         
     }
@@ -218,3 +265,4 @@ class OtpCodeController extends Controller
         //
     }
 }
+

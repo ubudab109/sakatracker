@@ -11,13 +11,14 @@ import { Transition } from '@headlessui/react';
 import PDFPopup from '@/Components/PDFPopup';
 import { typeOfBusiness } from '@/Utils/constant';
 import { convertMb } from '@/Utils/helper';
+import ModalViewer from '@/Components/ModalViewer';
 
 
 export default function Edit(props) {
     console.log(props);
-    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, reset } = useForm({
+    const { data, setData, post, clearErrors, hasErrors, processing, errors, recentlySuccessful, setError, reset } = useForm({
         name: props.data.vendor.name != null ? props.data.vendor.name : '',
-        email: props.data.vendor.email != null ? props.data.vendor.email : '',
+        email: props.data.vendor.user.email != null ? props.data.vendor.user.email : '',
         npwp: props.data.vendor.npwp != null ? props.data.vendor.npwp : '',
         name_business: props.data.vendor.name_business != null ? props.data.vendor.name_business : '',
         office_address: props.data.vendor.office_address != null ? props.data.vendor.office_address : '',
@@ -98,23 +99,6 @@ export default function Edit(props) {
     const [tabPane3, setTabPane3] = useState('hidden');
     const [tabPane4, setTabPane4] = useState('hidden');
     const [tabPane5, setTabPane5] = useState('hidden');
-    const [npwpFile, setNpwpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'No File Chosen' : 'file_npwp.pdf' : props.data.vendor.file_npwp == null ? "No file chosen" : 'file_npwp.pdf');
-    const [sppkpFile, setSppkpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'No File Chosen' : 'file_sppkp.pdf' : props.data.vendor.file_sppkp == null ? "No file chosen" : 'file_sppkp.pdf');
-    const [siupFile, setSiupFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'No File Chosen' : 'file_siup.pdf' : props.data.vendor.file_siup == null ? "No file chosen" : 'file_siup.pdf');
-    const [tdpFile, setTdpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'No File Chosen' : 'file_tdp.pdf' : props.data.vendor.file_tdp == null ? "No file chosen" : 'file_tdp.pdf');
-    const [nibFile, setNibFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'No File Chosen' : 'file_nib.pdf' : props.data.vendor.file_nib == null ? "No file chosen" : 'file_nib.pdf');
-    const [bodcFile, setBodcFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'No File Chosen' : 'file_board_of_directors_composition.pdf'.substring(0, 35) + '...' : props.data.vendor.file_npwp == null ? "No file chosen" : 'file_board_of_directors_composition.pdf'.substring(0, 35) + '...');
-    const [nonPkpFile, setNonPkpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'No File Chosen' : 'file_non_pkp_statement.pdf' : props.data.vendor.file_non_pkp_statement == null ? "No file chosen" : 'file_non_pkp_statement.pdf');
-
-    const handleFile = (e, setter) => {
-        if (convertMb(e.target.files[0].size) > 5) {
-            setError(e.target.name, 'Max file size should not be greater than 5mb')
-        } else {
-            clearErrors(e.target.name);
-            setData(e.target.name, e.target.files[0]);
-            setter(e.target.files[0].name.substring(0, 35) + '...');
-        }
-    }
 
     const checkErrorValidatorTab = (column) => {
         if(column.name 
@@ -258,7 +242,7 @@ export default function Edit(props) {
 
     const [dataApi, setDataApi] = useState(true);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError1] = useState(null);
 
     useEffect(() => {
         
@@ -274,7 +258,7 @@ export default function Edit(props) {
             setLoading(false);
         })
         .catch((error) => {
-            setError(error);
+            setError1(error);
             setLoading(false);
         });
 
@@ -297,6 +281,25 @@ export default function Edit(props) {
         });
 
     }, []);
+
+    const [npwpFile, setNpwpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_npwp_name : props.data.vendor.file_npwp == null ? "No file chosen" : props.data.vendor.file_npwp_name);
+    const [sppkpFile, setSppkpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_sppkp_name : props.data.vendor.file_sppkp == null ? "No file chosen" : props.data.vendor.file_sppkp_name);
+    const [siupFile, setSiupFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_siup_name : props.data.vendor.file_siup == null ? "No file chosen" : props.data.vendor.file_siup_name);
+    const [tdpFile, setTdpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_tdp_name : props.data.vendor.file_tdp == null ? "No file chosen" : props.data.vendor.file_tdp_name);
+    const [nibFile, setNibFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_nib_name : props.data.vendor.file_nib == null ? "No file chosen" : props.data.vendor.file_nib_name);
+    const [bodcFile, setBodcFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_board_of_directors_composition_name : props.data.vendor.file_board_of_directors_composition == null ? "No file chosen" : props.data.vendor.file_board_of_directors_composition_name);
+    const [nonPkpFile, setNonPkpFile] = useState(props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'No File Chosen' : props.data.vendor.file_non_pkp_statement_name : props.data.vendor.file_non_pkp_statement == null ? "No file chosen" : props.data.vendor.file_non_pkp_statement_name);
+
+    const handleFile = (e, setter) => {
+        if (convertMb(e.target.files[0].size) > 5) {
+            console.log(e.target.name);
+            setError(e.target.name, 'Max file size should not be greater than 5mb')
+        } else {
+            clearErrors(e.target.name);
+            setData(e.target.name, e.target.files[0]);
+            setter(e.target.files[0].name.substring(0, 35) + '...');
+        }
+    }
 
     const handleCountryChange = (event) => {
         data.country_id = event.target.value;
@@ -396,7 +399,7 @@ export default function Edit(props) {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <div>Error: {error}</div>;
     }
 
     return (
@@ -406,8 +409,8 @@ export default function Edit(props) {
         >
             <Head title="Edit Perubahan Data" />
 
-            <PDFPopup
-                pdfUrl={pdfUrl}
+            <ModalViewer
+                files={pdfUrl}
                 show={isPopupOpen}
                 onClose={closePopup}
             />
@@ -436,19 +439,19 @@ export default function Edit(props) {
                 <div className="border-b border-gray-200 dark:border-gray-700">
                     <nav className="flex space-x-2" aria-label="Tabs" role="tablist">
                         <div onClick={openCard1Clicked}>
-                            <TabButton title="Company" class={`${tabPane1 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Company" class={`${tabPane1 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard2Clicked}>
-                            <TabButton title="Contact Person" class={`${tabPane2 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Contact Person" class={`${tabPane2 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard3Clicked}>
-                            <TabButton title="Financial" class={`${tabPane3 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Financial" class={`${tabPane3 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard4Clicked}>
-                            <TabButton title="Business Information" class={`${tabPane4 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Business Information" class={`${tabPane4 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                         <div onClick={openCard5Clicked}>
-                            <TabButton title="Term & Condition" class={`${tabPane5 != 'hidden' ? 'bg-white text-black' : ''}`} />
+                            <TabButton title="Term & Condition" class={`${tabPane5 != 'hidden' ? 'bg-red-500 text-white' : ''}`} />
                         </div>
                     </nav>
                 </div>
@@ -478,7 +481,7 @@ export default function Edit(props) {
                                         />
                                     </div>
 
-                                    <div className="mb-3">
+                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
                                         <InputLabel value="Prefix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="legality"
@@ -493,9 +496,13 @@ export default function Edit(props) {
                                                 </option>
                                             ))}
                                         </select>
+                                        <InputError 
+                                            message={errors.legality}
+                                            className="mt-2"
+                                        />
                                     </div>
 
-                                    <div className="mb-3">
+                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
                                         <InputLabel value="Suffix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="suffix"
@@ -510,6 +517,10 @@ export default function Edit(props) {
                                                 </option>
                                             ))}
                                         </select>
+                                        <InputError 
+                                            message={errors.suffix}
+                                            className="mt-2"
+                                        />
                                     </div>
 
                                     <InputError message={errors.legality} className="mt-2" />
@@ -521,6 +532,7 @@ export default function Edit(props) {
                                             name="email"
                                             type="email"
                                             value={data.email}
+                                            readOnly
                                             className="mt-1 block w-full"
                                             autoComplete="email"
                                             placeholder="email.."
@@ -651,7 +663,7 @@ export default function Edit(props) {
                                         <InputError message={errors.type_of_business} className="mt-2" />
 
                                         <div className='mt-3 font-bold grid grid-cols-3'>
-                                            <p>TOP </p>
+                                            {/* <p>TOP </p>
                                             <p>: </p>
                                             <p>{props.data.vendor.top ? props.data.vendor.top : '-'} Hari </p>
 
@@ -661,7 +673,7 @@ export default function Edit(props) {
 
                                             <p>PPH </p>
                                             <p>: </p>
-                                            <p>{props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p>
+                                            <p>{props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p> */}
 
                                             {/* <p>COA Prepayment </p>
                                             <p>: </p>
@@ -675,13 +687,13 @@ export default function Edit(props) {
                                             <p>: </p>
                                             <p>{props.data.vendor.coa_receiving  ? props.data.vendor.coa_receiving : '-'}</p> */}
 
-                                            <p>Ship To </p>
+                                            {/* <p>Ship To </p>
                                             <p>: </p>
                                             <p>{props.data.vendor.ship_to  ? props.data.vendor.ship_to : '-'}</p>
 
                                             <p>Bill To </p>
                                             <p>: </p>
-                                            <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p>
+                                            <p>{props.data.vendor.bill_to  ? props.data.vendor.bill_to : '-'}</p> */}
                                         </div>
                                     </div>
                                 </div>
@@ -1121,11 +1133,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="NPWP" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? '' : 'file-npwp' : 'file-npwp' : 'file-npwp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1148,11 +1160,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="SPPKP" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? sppkpFile ? sppkpFile != 'No File Chosen' ? '' : 'file-sppkp' : 'file-sppkp' : 'file-sppkp'}`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? sppkpFile ? sppkpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1175,11 +1187,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="SIUP" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? siupFile ? siupFile != 'No File Chosen' ? '' : 'file-siup' : 'file-siup' : 'file-siup' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? siupFile ? siupFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{siupFile ? siupFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1202,11 +1214,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="TDP" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? tdpFile ? tdpFile != 'No File Chosen' ? '' : 'file-tdp' : 'file-tdp' : 'file-tdp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? tdpFile ? tdpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{tdpFile ? tdpFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1229,11 +1241,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="NIB" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? nibFile ? nibFile != 'No File Chosen' ? '' : 'file-nib' : 'file-nib' : 'file-nib' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? nibFile ? nibFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nibFile ? nibFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1256,11 +1268,11 @@ export default function Edit(props) {
                                     <div className="mb-3">
                                         <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
                                         <div className="flex">
-                                            <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                CHOOSE FILE
+                                            <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? bodcFile ? bodcFile != 'No File Chosen' ? '' : 'file-bodc' : 'file-bodc' : 'file-bodc' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                {props.data.vendor.status_account == 'ditolak' ? bodcFile ? bodcFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                             </label>
-                                            <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                            <div className="border-1 p-3 rounded-e-lg w-50 break-all">{bodcFile ? bodcFile : 'No file chosen'}</div>
+                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                 </svg>
@@ -1416,11 +1428,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? '' : 'file-npwp' : 'file-npwp' : 'file-npwp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1443,11 +1455,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="SPPKP" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? sppkpFile ? sppkpFile != 'No File Chosen' ? '' : 'file-sppkp' : 'file-sppkp' : 'file-sppkp'}`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? sppkpFile ? sppkpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_sppkp != '' ? <a href={props.data.vendor.file_sppkp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1470,11 +1482,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="SIUP" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? siupFile ? siupFile != 'No File Chosen' ? '' : 'file-siup' : 'file-siup' : 'file-siup' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? siupFile ? siupFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{siupFile ? siupFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_siup != '' ? <a href={props.data.vendor.file_siup} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{siupFile ? siupFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1497,11 +1509,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="TDP" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? tdpFile ? tdpFile != 'No File Chosen' ? '' : 'file-tdp' : 'file-tdp' : 'file-tdp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? tdpFile ? tdpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{tdpFile ? tdpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_tdp != '' ? <a href={props.data.vendor.file_tdp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{tdpFile ? tdpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1524,11 +1536,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="NIB" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? nibFile ? nibFile != 'No File Chosen' ? '' : 'file-nib' : 'file-nib' : 'file-nib' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? nibFile ? nibFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nibFile ? nibFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_nib != '' ? <a href={props.data.vendor.file_nib} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nibFile ? nibFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1551,11 +1563,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? bodcFile ? bodcFile != 'No File Chosen' ? '' : 'file-bodc' : 'file-bodc' : 'file-bodc' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? bodcFile ? bodcFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{bodcFile ? bodcFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href={props.data.vendor.file_board_of_directors_composition} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{bodcFile ? bodcFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1578,11 +1590,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? nonPkpFile ? nonPkpFile != 'No File Chosen' ? '' : 'file-non-kpk' : 'file-non-kpk' : 'file-non-kpk' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? nonPkpFile ? nonPkpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1704,11 +1716,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="NPWP" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? '' : 'file-npwp' : 'file-npwp' : 'file-npwp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{npwpFile ? npwpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_npwp != '' ? <a href={props.data.vendor.file_npwp} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{npwpFile ? npwpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
@@ -1731,11 +1743,11 @@ export default function Edit(props) {
                                         <div className="mb-3">
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
                                             <div className="flex">
-                                                <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
+                                                <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? nonPkpFile ? nonPkpFile != 'No File Chosen' ? '' : 'file-non-kpk' : 'file-non-kpk' : 'file-non-kpk' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                                    {props.data.vendor.status_account == 'ditolak' ? nonPkpFile ? nonPkpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
                                                 </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href={props.data.vendor.file_non_pkp_statement} target="_blank">
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nonPkpFile ? nonPkpFile : 'No file chosen'}</div>
+                                                {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
