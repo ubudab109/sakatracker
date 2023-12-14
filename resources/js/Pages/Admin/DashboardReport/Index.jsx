@@ -10,6 +10,8 @@ import ChartOverdue from './Partials/ChartOverdue';
 import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
 import CardDashboardChart from '@/Components/CardDashboardChart';
 import ChartRevisionVendor from './Partials/ChartRevisionVendor';
+import ChartOutstandingInvDept from './Partials/ChartOutstandingInvDept';
+import ChartOutstandingInvApproval from './Partials/ChartOutstandingInvApproval';
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -71,32 +73,22 @@ export default function Index(props) {
             </div>
             
             <div className="row mt-5">
-
                 <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />
                 <CardDashboardChart name="Outstanding Invoice" data={props.data.card_outstanding.invoice_amount} />
                 <CardDashboardChart name="Outstanding Invoice Amount" data={props.data.card_outstanding.formated_invoice_total} />
             </div>
 
             {/* <CardOutstanding className="pt-6" data={props.data.card_outstanding} month={data.month} /> */}
-            <div className="row">
+            <div className="row mt-5">
                 <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
                 <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
                 <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
             </div>
-            {/* <div className='flex justify-evenly items-center mt-3 gap-3'>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>OTP (%)</p>
-                    <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
-                </div>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>Overdue Invoice</p>
-                    <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
-                </div>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>Invoice Processing Invoice</p>
-                    <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
-                </div>
-            </div> */}
+
+            <div className="row mt-5">
+                <ChartOutstandingInvDept data={props.data.chart_outstanding_percentage} />
+                <ChartOutstandingInvApproval data={props.data.chart_outstanding_processing} />
+            </div>
 
         </AuthenticatedLayout>
     );

@@ -1,11 +1,11 @@
 import Chart from 'react-apexcharts';
 import { useState } from 'react';
 
-export default function ChartRevisionVendor(props) {
+export default function ChartOutstandingPercentage(props) {
   const [chartState] = useState({
     options: {
       chart: {
-        id: 'revision-vendor'
+        id: 'wallet-balance'
       },
       legend: {
         show: false,
@@ -21,18 +21,18 @@ export default function ChartRevisionVendor(props) {
         enabled: false,
         style: {}
       },
-      colors: ['#f5c542', '#42f587', '#e83e1c'],
-      labels: ['Menunggu Persetujuan', 'Disetujui', 'Ditolak']
+      colors: ['#777aca', '#5156be'],
+      labels: ['On Time', 'Late']
     },
-    series: [props.data.revisionProgress, props.data.revisionApproved, props.data.revisionRejected],
+    series: [props.data.on_time, props.data.late],
   });
 
   return (
-    <div className="col-xl-12">
+    <div className="col-12">
       <div className="card card-h-100">
         <div className="card-body">
           <div className="d-flex flex-wrap align-items-center mb-4">
-            <h5 className="card-title me-2">Timeline Pengajuan</h5>
+            <h5 className="card-title me-2">Outstanding Percentage</h5>
             <div className="ms-auto">
               <div>
                 <button type="button" className="btn btn-soft-secondary btn-sm">
@@ -51,16 +51,11 @@ export default function ChartRevisionVendor(props) {
             <div className="col-sm align-self-center">
               <div className="mt-sm-0">
                 <div className="">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#f5c542'}}></i> Menunggu Persetujuan = {props.data.revisionProgress}</p>
+                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2 text-primary"></i> On Time = {props.data.on_time}</p>
                 </div>
 
                 <div className="mt-4 pt-2">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#42f587'}}></i> Disetujui = {props.data.revisionApproved} </p>
-                  {/* <h6>80</h6> */}
-                </div>
-
-                <div className="mt-4 pt-2">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#e83e1c'}}></i> Ditolak = {props.data.revisionRejected} </p>
+                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2 text-info"></i> Late = {props.data.late} </p>
                   {/* <h6>80</h6> */}
                 </div>
               </div>

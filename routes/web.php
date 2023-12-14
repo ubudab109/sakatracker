@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminRequestGoodReceiptController;
 use App\Http\Controllers\AdminExchangeInvoiceController;
+use App\Http\Controllers\ApproverDashboardReportController;
 use App\Http\Controllers\ApproverInvoiceItemController;
 use App\Http\Controllers\AdminVendorProfileController;
 use App\Http\Controllers\CheckStatusAccountController;
@@ -48,6 +49,7 @@ use App\Http\Controllers\SummaryInvoiceSLAController;
 use App\Http\Controllers\SummaryPaymentSLAController;
 use App\Http\Controllers\BatchPaymentController;
 use App\Http\Controllers\SiapBayarController;
+use App\Http\Controllers\AdminDashboardReportController;
 use App\Http\Controllers\ReportController;
 use App\Models\OtpCode;
 use App\Models\User;
@@ -329,6 +331,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/request-good-receipt/{id}/edit', [AdminRequestGoodReceiptController::class, 'edit'])->name('admin.request-good-receipt.edit');
     Route::post('/admin/request-good-receipt/{id}', [AdminRequestGoodReceiptController::class, 'update'])->name('admin.request-good-receipt.update');
     Route::post('/generate-rfp/{id}', [AdminExchangeInvoiceController::class, 'rfpGenerate']);
+    Route::get('/admin/dashboard-report', [AdminDashboardReportController::class, 'index'])->name('admin.dashboard-report');
+    Route::get('/admin/approval-dashboard-report', [ApproverDashboardReportController::class, 'index'])->name('approver.dashboard-report');
     Route::resource('/admin/locations', LocationController::class, [
         'names' => [
             'index' => 'admin.location.index',

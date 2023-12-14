@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Notification;
+use App\Models\RevisionRegisterVendor;
 use App\Models\User;
 use Inertia\Inertia;
 use Storage;
@@ -13,9 +14,42 @@ use Auth;
 
 class DashboardController extends Controller
 {
-    public function index() {
+    public function index() 
+    {
+        if (Auth::user()->role == 'vendor') {
+            $onProgressRevisionVendor = RevisionRegisterVendor::where('user_id', Auth::user()->id)
+            ->where('status', 'menunggu persetujuan')
+            ->orderBy('id', 'desc')->first();
+            if ($onProgressRevisionVendor) {
+
+                $approval = [];
+                $revisionVendors = RevisionRegisterVendor::where('vendor_id', $onProgressRevisionVendor->vendor_id)
+                ->orderBy('id', 'asc')
+                ->get();
+                foreach ($revisionVendors as $revision) {
+                    $approval[] = [
+                        'approval' => $revision->approval_role,
+                        'status' => ucwords($revision->status),
+                        'date' => date('Y-m-d H:i:s', strtotime($revision->updated_at))
+                    ];
+                }
+                $data['revisions'] = $approval;
+            } else {
+                $data['revisions'] = [];
+            }
+            $data['revision_vendor'] = $this->revisionVendor();
+            return Inertia::render('Dashboard', ['data' => $data]);
+        }
         return Inertia::render('Dashboard');
     }
+
+    private function revisionVendor()
+    {
+        $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
+        $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
+        $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+        return $data;
+    } 
 
     public function pdfviewer(Request $request) {
         $file = $request->input('file');

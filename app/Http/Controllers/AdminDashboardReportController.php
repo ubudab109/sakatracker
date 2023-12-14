@@ -14,12 +14,10 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 use Auth;
 
-class VendorReportController extends Controller
+class AdminDashboardReportController extends Controller
 {
     public function index(Request $request)
     {
-        $data['vendors'] = Vendor::where('user_id', Auth::user()->id)->get();
-        $data['latest'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
         $data['month'] = $request->month ?? date('Y-m');
         $data['month_name'] = date('F', strtotime($data['month']));
 
@@ -31,41 +29,7 @@ class VendorReportController extends Controller
 
         $data['chart_outstanding_processing'] = $this->chartOutstandingProcessing($data['month']);
         
-        if($data['latest'])
-        {
-            return Inertia::render('Vendor/Report/Index', [
-                'data' => $data
-            ]);
-        } else {
-            return Inertia::render('Dashboard');
-        }
-    }
-
-    public function showOutstandingPurchaseOrder(Request $request)
-    {
-        $month = $request->month ?? date('Y-m');
-        $arrayPo = PurchaseOrder::whereHas('exchange_invoice', function($q) use($month){
-            $q->whereDate('date', '>=', $month . '-01');
-            $q->whereDate('date', '<=', $month . '-30');
-            $q->where('status', 'unpaid');
-            $q->whereHas('vendor.user', function($q1){
-                $q1->where('user_id', Auth::user()->id);
-            });
-        })->pluck('order_id')->toArray();
-		
-		$vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
-		if($vendor)
-		{
-			$data['purchase_orders'] = OraclePurchaseOrder::where('vendor_code', $vendor->id_manual)
-			->whereDate('po_date', '>=', $month . '-01')
-			->whereDate('po_date', '<=', $month . '-30')
-			->whereNotIn('po_header_id', $arrayPo)
-			->get();
-		} else {
-			$data['purchase_orders'] = [];
-		}
-
-        return Inertia::render('Vendor/OutstandingPurchaseOrder/Index', [
+        return Inertia::render('Admin/DashboardReport/Index', [
             'data' => $data
         ]);
     }
@@ -76,40 +40,19 @@ class VendorReportController extends Controller
             $q->whereDate('date', '>=', $month . '-01');
             $q->whereDate('date', '<=', $month . '-30');
             $q->where('status', 'unpaid');
-            $q->whereHas('vendor.user', function($q1){
-                $q1->where('user_id', Auth::user()->id);
-            });
         })->pluck('order_id')->toArray();
-		
-		$vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
-		// if($vendor)
-		// {
-		// 	$data['po_amount'] = OraclePurchaseOrder::
-		// 	where('vendor_code', $vendor->id_manual)
-		// 	->whereDate('po_date', '>=', $month . '-01')
-		// 	->whereDate('po_date', '<=', $month . '-30')
-		// 	->whereNotIn('po_header_id', $arrayPo)
-		// 	->count();
-		// } else {
-		// 	$data['po_amount'] = 0;
-		// }
+
         $data['po_amount'] = 0;
         // dd($data);
 
         $data['invoice_amount'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
         ->whereDate('date', '<=', $month . '-30')
         ->where('status', 'unpaid')
-        ->whereHas('vendor.user', function($q){
-            $q->where('user_id', Auth::user()->id);
-        })
         ->count();
 		
 		$data['invoice_total'] = 0;
         $invoices = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
         ->whereDate('date', '<=', $month . '-30')
-        ->whereHas('vendor.user', function($q){
-            $q->where('user_id', Auth::user()->id);
-        })
         ->where('status', 'unpaid')->get();
 		
 		foreach($invoices as $invoice)
@@ -129,18 +72,20 @@ class VendorReportController extends Controller
         ->whereHas('exchange_invoice', function($q) use($month){
             $q->whereDate('date', '>=', $month . '-01');
             $q->whereDate('date', '<=', $month . '-30');
-            $q->whereHas('vendor.user', function($q1){
-                $q1->where('user_id', Auth::user()->id);
-            });
         })->get()
         ->map(function($invoice){
             $invoice['is_late'] = 0;
-            $date_expired = Carbon::createFromFormat('Y-m-d', $invoice->batch_payment->jatuh_tempo)->format('Y-m-d');
+            if ($invoice->batch_payment->jatuh_tempo) {
+                $date_expired = Carbon::createFromFormat('Y-m-d', $invoice->batch_payment->jatuh_tempo)->format('Y-m-d');
+            } else {
+                $date_expired = null;
+            }
             $date_batch_payment = Carbon::createFromFormat('Y-m-d H:i:s', $invoice->batch_payment->updated_at)->format('Y-m-d');
 
-            if($date_expired < $date_batch_payment)
-            {
+            if(!is_null($date_expired) && $date_expired < $date_batch_payment) {
                 $invoice['is_late'] = 1;
+            } else {
+                $invoice['is_late'] = 0;
             }
 
             return $invoice;
@@ -172,9 +117,6 @@ class VendorReportController extends Controller
             $q->whereDate('date', '>=', $month . '-01');
             $q->whereDate('date', '<=', $month . '-30');
             $q->where('status', 'unpaid');
-            $q->whereHas('vendor.user', function($q1){
-                $q1->where('user_id', Auth::user()->id);
-            });
         })->get()
         ->map(function($invoice){
             $invoice['expired'] = Carbon::createFromFormat('Y-m-d', $invoice->batch_payment->jatuh_tempo)->format('Y-m-d');
@@ -204,56 +146,22 @@ class VendorReportController extends Controller
 
     public function chartOutstandingProcessing($month)
     {
-        // $invoices = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        // ->whereDate('date', '<=', $month . '-31')
-        // ->whereIn('status', ['unpaid', 'paid', 'ditolak'])
-        // ->get();
 
         $data['rejected'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
         ->whereDate('date', '<=', $month . '-30')
         ->where('status', 'ditolak')
-        ->whereHas('vendor.user', function($q){
-            $q->where('user_id', Auth::user()->id);
-        })
         ->count();
-
-        // $data['rejected'] = 0;
-        // if($invoices->count() > 0)
-        // {
-        //     $data['rejected'] = round($rejected/$invoices->count() * 100, 0);
-        // }
 
         $data['progress'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
         ->whereDate('date', '<=', $month . '-30')
         ->where('status', 'unpaid')
-        ->whereHas('vendor.user', function($q){
-            $q->where('user_id', Auth::user()->id);
-        })
         ->count();
-
-        // $data['progress'] = 0;
-        // if($invoices->count() > 0)
-        // {
-        //     $data['progress'] = round($progress/$invoices->count() * 100, 0);
-        // }
 
         $data['payment'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
         ->whereDate('date', '<=', $month . '-30')
         ->where('status', 'paid')
-        ->whereHas('vendor.user', function($q){
-            $q->where('user_id', Auth::user()->id);
-        })
         ->count();
-
-        // $data['payment'] = 0;
-        // if($invoices->count() > 0)
-        // {
-        //     $data['payment'] = round($payment/$invoices->count() * 100, 0);
-        // }
 
         return $data;
     }
 }
-
-
-

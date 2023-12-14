@@ -1,15 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import React from "react";
-import CardOutstanding from './Partials/CardOutstanding';
 import ChartOutstandingPercentage from './Partials/ChartOutstandingPercentage';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import ChartOverdue from './Partials/ChartOverdue';
-import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
 import CardDashboardChart from '@/Components/CardDashboardChart';
-import ChartRevisionVendor from './Partials/ChartRevisionVendor';
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -71,32 +67,17 @@ export default function Index(props) {
             </div>
             
             <div className="row mt-5">
-
-                <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />
-                <CardDashboardChart name="Outstanding Invoice" data={props.data.card_outstanding.invoice_amount} />
-                <CardDashboardChart name="Outstanding Invoice Amount" data={props.data.card_outstanding.formated_invoice_total} />
+                <CardDashboardChart name="New Invoice" data={props.data.card_new_invoice} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />
+                <CardDashboardChart name="Pending Invoice" data={props.data.card_pending_invoice} />
+                <CardDashboardChart name="New Invoice Batch" data={props.data.card_bp_new} />
+                <CardDashboardChart name="Pending Invoice Batch" data={props.data.card_bp_pending} />
+                <CardDashboardChart name="Reject Invoice Batch" data={props.data.card_bp_rejected} />
             </div>
 
             {/* <CardOutstanding className="pt-6" data={props.data.card_outstanding} month={data.month} /> */}
-            <div className="row">
+            <div className="row mt-5">
                 <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
-                <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
-                <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
             </div>
-            {/* <div className='flex justify-evenly items-center mt-3 gap-3'>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>OTP (%)</p>
-                    <ChartOutstandingPercentage data={props.data.chart_outstanding_percentage} />
-                </div>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>Overdue Invoice</p>
-                    <ChartOverdue data={props.data.chart_overdue} month={props.data.month_name} />
-                </div>
-                <div className='bg-white overflow-hidden shadow-lg sm:rounded-lg'>
-                    <p className='mt-3 text-center text-lg font-bold'>Invoice Processing Invoice</p>
-                    <ChartOutstandingProcessing data={props.data.chart_outstanding_processing} />
-                </div>
-            </div> */}
 
         </AuthenticatedLayout>
     );
