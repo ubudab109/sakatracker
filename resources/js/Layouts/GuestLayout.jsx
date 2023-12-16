@@ -14,7 +14,9 @@ export default function Guest({ children }) {
                                 <b className="text-xl">Hi, Selamat Datang</b>
                             </li>
                             <li className="mt-10 flex items-center justify-center border-dashed border-2">
-                                <b className="text-xl text-center">LOGO <br/> CHAMPS</b>
+                                {/* <b className="text-xl text-center">LOGO <br/> CHAMPS</b> */}
+                            <img src="/assets/images/logo.jpg" alt="" className="md:w-16 md:h-16 sm:w-6 " />
+
                             </li>
                         </ul>
                     </div>

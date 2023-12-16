@@ -363,7 +363,7 @@ class ExchangeInvoiceController extends Controller
                         $revisionExchange = RevisionExchangeInvoice::create([
                             'exchange_invoice_id' => $exchangeInvoice->id,
                             'approval_permission' => 'is_pic_exchange_invoice',
-                            'status' => 'menunggu persetujuan',
+                            'status' => 'validation process',
                             'level' => 0
                         ]);
             
@@ -394,7 +394,7 @@ class ExchangeInvoiceController extends Controller
                         $this->notifySelf(Auth::user()->id, 'E-faktur', 'Berhasil tambah E-faktur', '/exchange-invoice');
                     } else {
                         $exchangeInvoice->update([
-                            'status' => 'tukar faktur tidak valid'
+                            'status' => 'submit'
                         ]);
 
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -413,7 +413,7 @@ class ExchangeInvoiceController extends Controller
                 } else {
                     // Handle error if the response status code is not 200
                     $exchangeInvoice->update([
-                        'status' => 'tukar faktur tidak valid'
+                        'status' => 'submit'
                     ]);
 
                     $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -431,7 +431,7 @@ class ExchangeInvoiceController extends Controller
                 }
             } else {
                 $exchangeInvoice->update([
-                    'status' => 'tukar faktur tidak valid'
+                    'status' => 'submit'
                 ]);
 
                 $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -936,7 +936,7 @@ class ExchangeInvoiceController extends Controller
                         $this->notifySelf(Auth::user()->id, 'E-faktur', 'Berhasil tambah E-faktur', '/exchange-invoice');
                     } else {
                         $data->update([
-                            'status' => 'tukar faktur tidak valid'
+                            'status' => 'submit'
                         ]);
 
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -955,7 +955,7 @@ class ExchangeInvoiceController extends Controller
                 } else {
                     // Handle error if the response status code is not 200
                     $data->update([
-                        'status' => 'tukar faktur tidak valid'
+                        'status' => 'submit'
                     ]);
 
                     $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -973,7 +973,7 @@ class ExchangeInvoiceController extends Controller
                 }
             } else {
                 $data->update([
-                    'status' => 'tukar faktur tidak valid'
+                    'status' => 'submit'
                 ]);
 
                 $notifApprover['title'] = 'E-faktur Tidak Valid';

@@ -31,7 +31,9 @@ class VendorController extends Controller
      */
     public function index()
     {
-        $data['vendors'] = Vendor::where('user_id', Auth::user()->id)->orderBy('updated_at', 'desc')->get();
+        $data['vendors'] = Vendor::where('user_id', Auth::user()->id)
+        ->with('revision_register_vendor_latest')
+        ->orderBy('updated_at', 'desc')->get();
         $data['latest'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         return Inertia::render('Vendor/Profile/Index', [

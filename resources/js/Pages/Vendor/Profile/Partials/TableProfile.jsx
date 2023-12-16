@@ -68,7 +68,17 @@ export default function TableUser(props) {
                                     </td>
                                     <td>{`REQUPD${item.id}`}</td>
                                     <td>{formatDate(item.created_at)}</td>
-                                    <td>{item.status_account}</td>
+                                    <td>{
+                                        item.status_account === 'pengajuan perubahan' ? 'Submit' : (
+                                            item.revision_register_vendor_latest ? 
+                                            (
+                                                item.revision_register_vendor_latest.status === 'disetujui' && item.revision_register_vendor_latest.approval_role !== 'Accounting' ? 
+                                                'Approved By ' + item.revision_register_vendor_latest.approval_role :
+                                                'Completed'
+                                            )
+                                            : item.status_account
+                                        )    
+                                    }</td>
                                     {/* <td>-</td> */}
                                     <td>{formatDate(item.updated_at)}</td>
                                 </tr>

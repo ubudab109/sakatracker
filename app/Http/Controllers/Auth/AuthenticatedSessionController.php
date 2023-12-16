@@ -65,11 +65,6 @@ class AuthenticatedSessionController extends Controller
                 {
                     if($vendor->created_at->format('Y') != date('Y'))
                     {
-                        // if($vendor->expired_npwp < date('Y-m-d'))
-                        // {
-                        //     $this->notifExpired(Auth::user()->id, 'NPWP Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
-                        // }
-    
                         if($vendor->type_of_business != 'Pribadi')
                         {
                             if($vendor->expired_sppkp < date('Y-m-d'))
@@ -92,8 +87,6 @@ class AuthenticatedSessionController extends Controller
                                 $this->notifExpired(Auth::user()->id, 'NIB Expired Tahunan', 'Silahkan Membuat pengajuan baru', '/vendor');
                             }
                         }
-        
-        
                         return Redirect::route('vendor.report.index');
                     } else {
                         // if($vendor->expired_npwp < date('Y-m-d'))
@@ -130,8 +123,10 @@ class AuthenticatedSessionController extends Controller
             } else {
                 return Redirect::route('dashboard');    
             }
+        } else if ($user->role == 'admin') {
+            return Redirect::route('admin.dashboard-report');
         } else {
-            return Redirect::route('dashboard');
+            return Redirect::route('approver.dashboard-report');
         }
     }
 

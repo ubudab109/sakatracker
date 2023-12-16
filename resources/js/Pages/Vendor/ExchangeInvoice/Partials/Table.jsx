@@ -79,7 +79,12 @@ export default function Table(props) {
                                         {item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}
                                     </td>
                                     <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
-                                    <td>{item.status}</td>
+                                    <td>{
+                                        item.status === 'menunggu persetujuan' || item.status === 'sedang berlangsung'
+                                        ? 'Validation Process' : (
+                                            item.status === 'disetujui' ? 'Payment Process' : item.status
+                                        )    
+                                    }</td>
                                     <td>{formatDate(item.updated_at)}</td>
                                 </tr>
                             ))}
