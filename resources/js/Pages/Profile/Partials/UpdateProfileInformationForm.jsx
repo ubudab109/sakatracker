@@ -1,25 +1,38 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Link, useForm, usePage } from '@inertiajs/react';
-import { Transition } from '@headlessui/react';
-import { useState } from 'react';
-import ModifyButton from '@/Components/ModifyButton';
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import { Link, useForm, usePage } from "@inertiajs/react";
+import { Transition } from "@headlessui/react";
+import { useState } from "react";
+import ModifyButton from "@/Components/ModifyButton";
+import DangerButton from "@/Components/DangerButton";
 
-export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
+export default function UpdateProfileInformation({
+    mustVerifyEmail,
+    status,
+    className = "",
+}) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
+    const {
+        data,
+        setData,
+        patch,
+        post,
+        errors,
+        processing,
+        recentlySuccessful,
+    } = useForm({
         name: user.name,
         email: user.email,
-        code: '',
+        code: "",
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        patch(route("profile.update"));
     };
 
     const [showOtpInput, setShowOtpInput] = useState(true);
@@ -29,13 +42,15 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     };
 
     const sendOtp = (e) => {
-        post(route('verification-email.resend-otp'));
+        post(route("verification-email.resend-otp"));
     };
 
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-lg font-medium text-gray-900">
+                    Profile Information
+                </h2>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
@@ -50,8 +65,9 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         id="name"
                         className="mt-1 block w-full"
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         required
+                        readOnly
                         isFocused
                         autoComplete="name"
                     />
@@ -59,26 +75,62 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                     <InputError className="mt-2" message={errors.name} />
                 </div>
 
-                <div className=''>
+                <div className="">
                     <div>
-                        <InputLabel htmlFor="email" value="Email" />
-
-                        <TextInput
-                            id="email"
-                            type="email"
-                            className="mt-1 block w-full"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            required
-                            autoComplete="username"
-                            disabled={showOtpInput}
-                        />
+                        <>
+                            <InputLabel htmlFor="email" value="Old Email" />
+                            <TextInput
+                                id="email_old"
+                                type="email"
+                                className="mt-1 block w-full"
+                                value={data.email}
+                                required
+                                autoComplete="username"
+                                readOnly
+                                disabled
+                            />
+                        </>
+                        {!showOtpInput ? (
+                            <>
+                                <InputLabel htmlFor="email" value="New Email" />
+                                <TextInput
+                                    id="email"
+                                    type="email"
+                                    className="mt-1 block w-full"
+                                    onChange={(e) =>
+                                        setData("email", e.target.value)
+                                    }
+                                    required
+                                    placeholder="New Email"
+                                    autoComplete="username"
+                                    disabled={showOtpInput}
+                                />
+                            </>
+                        ) : null}
 
                         <InputError className="mt-2" message={errors.email} />
                     </div>
-                    <div className='text-end mt-1'>
-                        <ModifyButton hidden={showOtpInput} onClick={() => sendOtp()} maxTime={10} className="mt-3" type="button">Kirim OTP</ModifyButton>
-                        <PrimaryButton onClick={(e) => changeEmail(e)}>Ganti Email</PrimaryButton>
+                    <div className="text-end mt-1">
+                        <ModifyButton
+                            hidden={showOtpInput}
+                            onClick={() => sendOtp()}
+                            maxTime={10}
+                            className="mt-3"
+                            type="button"
+                        >
+                            Kirim OTP
+                        </ModifyButton>
+                        <PrimaryButton onClick={(e) => changeEmail(e)}>
+                            Ganti Email
+                        </PrimaryButton>
+                        {!showOtpInput ? (
+                            <DangerButton
+                                type="button"
+                                onClick={() => setShowOtpInput(true)}
+                            >
+                                Cancel
+                            </DangerButton>
+                        ) : null}
                     </div>
                 </div>
 
@@ -90,7 +142,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         type="text"
                         className="mt-1 block w-full"
                         value={data.code}
-                        onChange={(e) => setData('code', e.target.value)}
+                        onChange={(e) => setData("code", e.target.value)}
                         required
                         placeholder="OTP"
                         disabled={showOtpInput}
@@ -104,7 +156,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         <p className="text-sm mt-2 text-gray-800">
                             Your email address is unverified.
                             <Link
-                                href={route('verification.send')}
+                                href={route("verification.send")}
                                 method="post"
                                 as="button"
                                 className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -113,9 +165,10 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                             </Link>
                         </p>
 
-                        {status === 'verification-link-sent' && (
+                        {status === "verification-link-sent" && (
                             <div className="mt-2 font-medium text-sm text-green-600">
-                                A new verification link has been sent to your email address.
+                                A new verification link has been sent to your
+                                email address.
                             </div>
                         )}
                     </div>

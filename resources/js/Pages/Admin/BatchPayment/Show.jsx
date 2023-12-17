@@ -187,7 +187,7 @@ return (
                 <div className="mt-3">
                     <b>History</b>
                     <br />
-                    <History data={props.data.timeline} />
+                    <History data={props.data.timeline} batchPayment={props.data.batch_payment} />
                 </div>
             </div>
 

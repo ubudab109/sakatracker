@@ -26,4 +26,8 @@ class Vendor extends Model
     public function coas() {
         return $this->hasMany('App\Models\CoaVendor', 'vendor_id', 'id');
     }
+    public function attachments()
+    {
+        return $this->hasMany('App\Models\VendorAttachment', 'id', 'vendor_id');
+    }
 }

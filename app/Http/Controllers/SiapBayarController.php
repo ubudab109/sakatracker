@@ -14,6 +14,7 @@ use App\Models\ApproverPayment;
 use App\Models\UserRole;
 use App\Models\RevisionExchangeInvoice;
 use App\Models\Vendor;
+use App\Services\PaymentGatewayService;
 use Carbon\Carbon;
 use Auth;
 use Mail;
@@ -235,6 +236,10 @@ class SiapBayarController extends Controller
             Mail::to($invoice->vendor->user->email)->send(new ApproverInvoiceMail($notifMail));
         }
 
+        if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
+            PaymentGatewayService::MakeTransaction($batch_payment);
+        }
+
         $unpaid_invoices = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['status', 'unpaid']])->first();
         if ($unpaid_invoices == null) {
             $batch_payment->update([
@@ -242,9 +247,7 @@ class SiapBayarController extends Controller
                 'payment_date' => $request->payment_date,
             ]);
         }
-        if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
-            PaymentRequestJob::dispatch($batch_payment);
-        }
+        
 
         return response()->json([
             'status' => 'OK',

@@ -79,6 +79,7 @@ class PaymentGatewayService
     {
         $instance = new self();
         $auth = $instance->login();
+        
         try {
             if ($auth['success']) {
                 $data = [
@@ -109,6 +110,15 @@ class PaymentGatewayService
                         $exchangeInvoices[] = $invoice->id;
                     }
                 }
+                // SENDING REQUEST LOG
+                $logRequestSend = [
+                    'exchange_invoices' => json_encode($exchangeInvoices),
+                    'is_success' => true,
+                    'message' => 'Payment Gateway Received The Request',
+                    'data' => null,
+                ];
+                $instance->storeLogRequest($batchPayment, $logRequestSend);
+
                 $response = $instance->client->post($instance->url . '/transactions', [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $auth['token'],

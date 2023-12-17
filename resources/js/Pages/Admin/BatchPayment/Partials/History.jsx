@@ -1,4 +1,4 @@
-function History({data}) {
+function History({data, batchPayment}) {
     console.log(data);
     return (
         <div>
@@ -13,7 +13,7 @@ function History({data}) {
                                 {item.title}
                             </h3>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
-                                Status : {item.status}
+                                Status : {batchPayment.status && batchPayment.status === 'paid' ? 'disetujui' : item.status}
                             </p>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
                                 Note : {item.body}

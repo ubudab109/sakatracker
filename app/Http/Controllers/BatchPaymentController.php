@@ -130,7 +130,7 @@ class BatchPaymentController extends Controller
 			}
 
             $getRevisionReject = RevisionBatchPayment::where('batch_payment_id', $batch->id)->where('status', 'ditolak')->first();
-			if($getRevisionReject && $batch->status == 'draft')
+			if($getRevisionReject)
 			{
 				$batch['status'] = 'ditolak';
 			}

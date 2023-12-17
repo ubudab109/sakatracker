@@ -218,8 +218,8 @@ export default function Form(props) {
         objectFilesUrl.map((url) => URL.revokeObjectURL(url));
     }, []);
 
-    const handleFileEvent = (file) => {
-        const choosenFiles = Array.prototype.slice.call(file);
+    const handleFileEvent = (e) => {
+        const choosenFiles = Array.prototype.slice.call(e.target.files);
         handleChangeFile(choosenFiles);
     };
 
@@ -738,11 +738,17 @@ export default function Form(props) {
                                 className="font-bold"
                                 required={true}
                             />
-                            <div className="w-full">
-                                <FileUploader
-                                    handleChange={handleFileEvent}
+                            <div className="flex">
+                                <label htmlFor="attachment" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
+                                CHOOSE FILE
+                                </label>
+                                <input
+                                    type="file"
+                                    id="attachment"
+                                    className="hidden-input"
                                     name="attachment"
-                                    types={fileTypes}
+                                    hidden={true}
+                                    onChange={e => handleFileEvent(e)}
                                     multiple={true}
                                 />
                             </div>

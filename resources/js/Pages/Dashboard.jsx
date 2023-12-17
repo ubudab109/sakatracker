@@ -4,6 +4,7 @@ import FirstLogin from './FirstLogin';
 import { useEffect, useState } from 'react';
 import RevisionHistory from '@/Components/RevisionHistory';
 import ChartRevisionVendor from './Vendor/Report/Partials/ChartRevisionVendor';
+import ChartRevisionVendorApproval from '@/Components/ChartRevisionVendorApproval';
 
 
 export default function Dashboard({ auth, data }) {
@@ -64,7 +65,7 @@ export default function Dashboard({ auth, data }) {
       </div>
 
       {
-        auth.user.role == 'vendor' ? (
+        auth.user.role === 'vendor' ? (
           <div className="pt-6">
             <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
               <div className="p-6 d-flex flex-wrap align-items-center mb-4">
@@ -87,6 +88,29 @@ export default function Dashboard({ auth, data }) {
                 }
                 <div className="row mt-5">
                   <ChartRevisionVendor data={data.revision_vendor} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null
+      }
+      {
+        auth.user.role === 'approver' ? (
+          <div className="pt-6">
+            <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+              <div className="p-6 d-flex flex-wrap align-items-center mb-4">
+                <h5 className="card-title me-2">Pengajuan Perubahan Vendor</h5>
+                <div className="ms-auto">
+                  <div>
+                    <button type="button" className="btn btn-soft-secondary btn-sm">
+                      ALL
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="row mt-5">
+                  <ChartRevisionVendorApproval data={data.revision_vendor} />
                 </div>
               </div>
             </div>

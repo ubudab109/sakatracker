@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\ApprovalHistoryController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -360,6 +361,7 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'admin.supplier-site.destroy',
         ]
     ]);
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notification.index');
 });
 
 

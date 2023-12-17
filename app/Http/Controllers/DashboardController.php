@@ -37,6 +37,9 @@ class DashboardController extends Controller
             } else {
                 $data['revisions'] = [];
             }
+            $data['revision_vendor'] = $this->revisionVendor(Auth::user()->id);
+            return Inertia::render('Dashboard', ['data' => $data]);
+        } else if (Auth::user()->role == 'approver') {
             $data['revision_vendor'] = $this->revisionVendor();
             return Inertia::render('Dashboard', ['data' => $data]);
         }
@@ -68,11 +71,17 @@ class DashboardController extends Controller
         return view('pdfviewer', $data);
     }
 
-    private function revisionVendor()
+    private function revisionVendor(int $userId = null)
     {
-        $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
-        $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
-        $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+        if ($userId) {
+            $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
+            $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
+            $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+        } else {
+            $data['revisionApproved'] = RevisionRegisterVendor::where('status', 'disetujui')->count();
+            $data['revisionRejected'] = RevisionRegisterVendor::where('status', 'ditolak')->count();
+            $data['revisionProgress'] = RevisionRegisterVendor::where('status', 'menunggu persetujuan')->count();
+        }
         return $data;
     }
 

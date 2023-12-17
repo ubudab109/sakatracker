@@ -193,15 +193,23 @@ export default function Authenticated({
                             <div className="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                                 aria-labelledby="page-header-notifications-dropdown">
                                 <div className="p-3">
+                                <div className="row align-items-center mb-5">
+                                        <div className="col">
+                                            <a href={route('notification.index')} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                                Show All Notifications
+                                            </a>
+                                        </div>
+                                        <div className="col-auto">
+                                        </div>
+                                    </div>
                                     <div className="row align-items-center">
                                         <div className="col">
                                             <h6 className="m-0">
-                                                {" "}
+                                                 {" "}
                                                 Notifications{" "}
                                             </h6>
                                         </div>
                                         <div className="col-auto">
-
                                         </div>
                                     </div>
                                 </div>

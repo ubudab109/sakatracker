@@ -17,7 +17,9 @@ use App\Models\SlaHoliday;
 use App\Models\UserRole;
 use App\Models\Vendor;
 use App\Models\Prefix;
+use App\Models\RevisionVendorsAttachment;
 use App\Models\Suffix;
+use App\Models\VendorAttachment;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Auth;
@@ -49,17 +51,19 @@ class VendorController extends Controller
         $data['auth'] = Auth::user();
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
-        $data['vendor'] = Vendor::with('user')->where('user_id', $data['auth']->id)->latest('created_at')->first();
+        $data['vendor'] = Vendor::with(['user', 'attachments'])->where('user_id', Auth::user()->id)->latest('created_at')->first();
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
         foreach($arrayNameFile as $name)
         {
             $nameFile = $name;
             $name = url('/storage/') . '/' . $name . '/'; 
-            $testExplode = explode($name, $data['vendor'][$nameFile]);
-            $data['vendor'][$nameFile . '_name'] = $nameFile . '.pdf';
-            if(count($testExplode) == 2)
-            {
-                $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+            if ($data['vendor']) {
+                $testExplode = explode($name, $data['vendor'][$nameFile]);
+                $data['vendor'][$nameFile . '_name'] = $nameFile . '.pdf';
+                if(count($testExplode) == 2)
+                {
+                    $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+                }
             }
         }
         return Inertia::render('Vendor/Profile/Create', [
@@ -338,10 +342,25 @@ class VendorController extends Controller
             'suffix' => $request->suffix,
         ]);
 
+        if($request->attachment != null) {
+            foreach($request->attachment as $attachment) {
+                $attachmentPath = '';
+                if ($request->hasFile('attachment')) {
+                    $save = $attachment->store('public/vendor-attachment');
+                    $filename = $attachment->hashName();
+                    $attachmentPath = url('/') . '/storage/vendor-attachment/' . $filename;
+                }
+                VendorAttachment::create([
+                    'vendor_id' => $vendor->id,
+                    'file' => $attachmentPath
+                ]);
+            }
+        }
+
         $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         if($request->status_submit == 'pengajuan perubahan') { 
-            $this->createRevisionTimeline($vendor->id);
+            $this->createRevisionTimeline($request, $vendor->id);
 
             $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/vendor');
         } else {
@@ -376,8 +395,8 @@ class VendorController extends Controller
     public function show($id)
     {
         $data['auth'] = Auth::user();
-        $data['vendor'] = Vendor::with('coas')->where('id', $id)->where('user_id', $data['auth']->id)->first();
-        $data['timeline'] = RevisionRegisterVendor::with('user')->where('vendor_id', $data['vendor']->id)->get();
+        $data['vendor'] = Vendor::with(['coas', 'attachments'])->where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['timeline'] = RevisionRegisterVendor::with(['user'])->where('vendor_id', $data['vendor']->id)->get();
 
         $data['checkRejectedData'] = RevisionRegisterVendor::where('vendor_id', $data['vendor']->id)->where('status', 'ditolak')->first();
         
@@ -429,7 +448,7 @@ class VendorController extends Controller
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
         $data['checkVerifiedData'] = Vendor::with('user')->where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->first() == null ? 404 : 200;
-        $data['vendor'] = Vendor::with('user')->where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['vendor'] = Vendor::with(['user', 'attachments'])->where('id', $id)->where('user_id', $data['auth']->id)->first();
 
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
         foreach($arrayNameFile as $name)
@@ -856,71 +875,50 @@ class VendorController extends Controller
         $revision = RevisionRegisterVendor::where('vendor_id', $vendor_id)->first();
         $approval_vendors = ApproverVendor::orderBy('level')->get();
         $vendor = Vendor::where('id', $vendor_id)->first();
-        $checkAvailableApprovalAccount = Vendor::where('user_id', $vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
-        foreach($approval_vendors as $key => $approval) {
-            $revision_vendor = RevisionRegisterVendor::create([
-                'vendor_id' => $vendor_id,
-                'user_id' => null,
-                'status' => 'menunggu persetujuan',
-                'document' => '',
-                'approval_role' => $approval->role->name
-            ]);
-            if($key == 0)
-            {
-                $user_roles = UserRole::where('role_id', $approval->role_id)->get();
-                foreach($user_roles as $user_role)
-                {
-                    $data['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
-                    $data['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name : 'Registrasi data dengan Nama: ' . $revision_vendor->vendor->name;
-                    $data['url'] = '/admin/vendor-profile/' . $revision_vendor->id;
-
-                    Notification::create([
-                        'user_id' => $user_role->user_id,
-                        'title' => $data['title'],
-                        'description' => $data['description'],
-                        'url' => $data['url'],
-                    ]);
-                    $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($data));  
-                }
-
-                $sla_holiday = SlaHoliday::whereDate('date', $revision_vendor->updated_at)->first();
-                $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revision_vendor->updated_at);
-
-                while ($sla_holiday || $dateCarbon->isWeekend()) {
-                    $dateCarbon->addDay();
-                    $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-                }
-                
-                $revision_vendor->update([
-                    'sla_at' => $dateCarbon->addHours($approval->sla)
+        if ($vendor) {
+            $checkAvailableApprovalAccount = Vendor::where('user_id', $vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+            foreach($approval_vendors as $key => $approval) {
+                $revision_vendor = RevisionRegisterVendor::create([
+                    'vendor_id' => $vendor_id,
+                    'user_id' => null,
+                    'status' => 'menunggu persetujuan',
+                    'document' => '',
+                    'approval_role' => $approval->role->name
                 ]);
+                
+                if($key == 0)
+                {
+                    $user_roles = UserRole::where('role_id', $approval->role_id)->get();
+                    foreach($user_roles as $user_role)
+                    {
+                        $data['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
+                        $data['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name : 'Registrasi data dengan Nama: ' . $revision_vendor->vendor->name;
+                        $data['url'] = '/admin/vendor-profile/' . $revision_vendor->id;
+    
+                        Notification::create([
+                            'user_id' => $user_role->user_id,
+                            'title' => $data['title'],
+                            'description' => $data['description'],
+                            'url' => $data['url'],
+                        ]);
+                        $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($data));  
+                    }
+    
+                    $sla_holiday = SlaHoliday::whereDate('date', $revision_vendor->updated_at)->first();
+                    $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revision_vendor->updated_at);
+    
+                    while ($sla_holiday || $dateCarbon->isWeekend()) {
+                        $dateCarbon->addDay();
+                        $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
+                    }
+                    
+                    $revision_vendor->update([
+                        'sla_at' => $dateCarbon->addHours($approval->sla)
+                    ]);
+                }
             }
         }
-        // if($revision == null) {
-        //     RevisionRegisterVendor::create([
-        //         'vendor_id' => $vendor_id,
-        //         'user_id' => null,
-        //         'status' => 'menunggu persetujuan',
-        //         'document' => '',
-        //         'approval_role' => 'purchasing'
-        //     ]);
-
-        //     RevisionRegisterVendor::create([
-        //         'vendor_id' => $vendor_id,
-        //         'user_id' => null,
-        //         'status' => 'menunggu persetujuan',
-        //         'document' => '',
-        //         'approval_role' => 'legal'
-        //     ]);
-
-        //     RevisionRegisterVendor::create([
-        //         'vendor_id' => $vendor_id,
-        //         'user_id' => null,
-        //         'status' => 'menunggu persetujuan',
-        //         'document' => '',
-        //         'approval_role' => 'accounting'
-        //     ]);
-        // }
+        
     }
 
     /**
