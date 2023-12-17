@@ -14,6 +14,7 @@ import InputError from '@/Components/InputError';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import History from './Partials/History';
+import HistoryPaymentGateway from './Partials/HistoryPaymentGateway';
 
 export default function Show(props) {
 
@@ -188,6 +189,14 @@ return (
                     <b>History</b>
                     <br />
                     <History data={props.data.timeline} batchPayment={props.data.batch_payment} />
+                </div>
+            </div>
+
+            <div className="">
+                <div className="mt-3">
+                    <b>History Status API</b>
+                    <br />
+                    <HistoryPaymentGateway data={props.data.payment_gateway_histories} />
                 </div>
             </div>
 

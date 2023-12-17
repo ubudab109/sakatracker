@@ -17,17 +17,6 @@ export default function ShowBatchTable(props) {
         
     }, []);
 
-    function formatDate(timestamp) {
-        const date = new Date(timestamp);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-      
-        return `${day}-${month}-${year} ${hours}:${minutes}`;
-      }
-
        // Create our number formatterCurrency.
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -52,6 +41,7 @@ export default function ShowBatchTable(props) {
                                 <th>Total</th>
                                 <th>Type</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,6 +60,21 @@ export default function ShowBatchTable(props) {
                                     <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
                                     <td>{item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}</td>
                                     <td>{item.status}</td>
+                                    <td className='border border-slate-600' width={1}>
+                                        {/* <div className='flex gap-1'>
+                                            <>
+                                                <div onClick={(e) => swapClicked(item.id, 'up')}>
+                                                    <SwapButton icon={'up'} />
+                                                </div>
+                                                <div onClick={(e) => swapClicked(item.id, 'down')}>
+                                                    <SwapButton icon={'down'} />
+                                                </div>
+                                                <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
+                                                    <Edit />
+                                                </a>
+                                            </>
+                                        </div> */}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

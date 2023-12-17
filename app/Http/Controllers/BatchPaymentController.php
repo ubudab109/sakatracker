@@ -18,6 +18,7 @@ use App\Models\BatchPaymentInvoice;
 use App\Models\ApproverPayment;
 use App\Models\UserRole;
 use App\Models\Notification;
+use App\Models\PaymentGatewayHistory;
 use App\Models\Vendor;
 use App\Models\Role;
 use Auth;
@@ -531,6 +532,7 @@ class BatchPaymentController extends Controller
         $data['user_role'] = UserRole::where('user_id', Auth::user()->id)->first();
         $listRevisions = ApproverPayment::orderBy('level')->get();
         $data['timeline'] = [];
+        $data['payment_gateway_histories'] = PaymentGatewayHistory::where('batch_payment_id', $id)->get();
         foreach($listRevisions as $revision) {
             if ($data['batch_payment']->total >= $revision->start_fee) {
                 if($revision->end_fee == 0)
@@ -661,7 +663,6 @@ class BatchPaymentController extends Controller
                 }
             }
         }
-
         $data['batch_payment_invoices'] = [];
         $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get()
         ->map(function($batch_payment){

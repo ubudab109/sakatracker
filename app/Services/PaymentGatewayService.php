@@ -54,6 +54,7 @@ class PaymentGatewayService
             'exchange_invoice_id' => $data['exchange_invoices'],
             'is_success' => $data['is_success'],
             'message' => $data['message'] ?? '',
+            'desc' => $data['desc'] ?? '',
             'data' => $data['data'] ?? null,
         ]);
     }
@@ -114,7 +115,8 @@ class PaymentGatewayService
                 $logRequestSend = [
                     'exchange_invoices' => json_encode($exchangeInvoices),
                     'is_success' => true,
-                    'message' => 'Payment Gateway Received The Request',
+                    'message' => 'Payment Gateway Request',
+                    'desc' => 'Request send successfully',
                     'data' => null,
                 ];
                 $instance->storeLogRequest($batchPayment, $logRequestSend);
@@ -131,7 +133,8 @@ class PaymentGatewayService
                 $logRequest = [
                     'exchange_invoices' => json_encode($exchangeInvoices),
                     'is_success' => true,
-                    'message' => 'Transaction Successfully Saved',
+                    'message' => 'Payment Gateway Respond',
+                    'desc' => 'Successfuly create payment to API',
                     'data' => json_encode($data),
                 ];
                 // STORING LOG REQUEST
@@ -147,7 +150,8 @@ class PaymentGatewayService
                 $logRequest = [
                     'exchange_invoices' => null,
                     'is_success' => false,
-                    'message' => $auth['message'],
+                    'message' => 'Payment Gateway Request',
+                    'desc' => $auth['message'],
                     'data' => false,
                 ];
                 // STORING LOG REQUEST
@@ -162,7 +166,8 @@ class PaymentGatewayService
             $logRequest = [
                 'exchange_invoices' => null,
                 'is_success' => false,
-                'message' => $err->getMessage(),
+                'message' => 'Payment Gateway Respond',
+                'desc' => $err->getMessage(),
                 'data' => false,
             ];
             // STORING LOG REQUEST
