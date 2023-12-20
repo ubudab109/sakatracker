@@ -71,20 +71,24 @@ export default function Show(props) {
                                 <p className="font-bold mb-3">Company Information</p>
                                 <div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 text-sm text-gray-500 p-1'>
                                     <div className=''>
-                                        <p className='mb-3'>Nama</p>
+                                        <p className='mb-3'>Name</p>
                                         <p className='mb-3'>Email Address</p>
-                                        <p className='mb-3'>Jenis Usaha</p>
+                                        <p className='mb-3'>Business Name</p>
                                         <p className='mb-3'>NPWP</p>
-                                        <p className='mb-3'>Alamat Kantor</p>
-                                        <p className='mb-3'>Alamat NPWP</p>
+                                        <p className='mb-3'>KTP</p>
+                                        <p className='mb-3'>Office Address</p>
+                                        <p className='mb-3'>NPWP Address</p>
+                                        <p className='mb-3'>KTP Address</p>
                                     </div>
                                     <div className=''>
-                                        <p className='mb-3 break-all'>: {props.data.vendor.name}, {props.data.vendor.legality}</p>
-                                        <p className='mb-3 break-all'>: {props.data.vendor.email}</p>
-                                        <p className='mb-3'>: {props.data.vendor.name_business}</p>
-                                        <p className='mb-3'>: {props.data.vendor.npwp}</p>
-                                        <p className='mb-3'>: {props.data.vendor.office_address}</p>
-                                        <p className='mb-3'>: {props.data.vendor.npwp_address}</p>
+                                        <p className='mb-3 break-all'>: {props.data.vendor.name ?? '-'}, {props.data.vendor.legality ?? '-'}</p>
+                                        <p className='mb-3 break-all'>: {props.data.vendor.email ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.name_business ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.npwp ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ktp ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.office_address ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.npwp_address ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ktp_address ?? '-'}</p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className='mb-3'>Phone Number</p>
@@ -103,8 +107,8 @@ export default function Show(props) {
                                         <p className='mb-3'>Bill To</p> */}
                                     </div>
                                     <div className='lg:ml-5'>
-                                        <p className='mb-3'>: {props.data.vendor.phone_number}</p>
-                                        <p className='mb-3'>: {props.data.vendor.mobile_phone_number}</p>
+                                        <p className='mb-3'>: {props.data.vendor.phone_number ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.mobile_phone_number ?? '-'}</p>
                                         {/* <p className='mb-3'>: {props.data.vendor.top  ? props.data.vendor.top : '-'}</p>
                                         <p className='mb-3'>: {props.data.vendor.ppn  ? props.data.vendor.ppn : '-'}</p>
                                         <p className='mb-3'>: {props.data.vendor.pph  ? props.data.vendor.pph : '-'}</p>
@@ -121,27 +125,27 @@ export default function Show(props) {
                                 <div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 border-dashed border-y-2 border-gray-300 p-1'>
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Director Information</p>
-                                        <p className='text-sm text-gray-500 mb-3'>Nama</p>
+                                        <p className='text-sm text-gray-500 mb-3'>Name</p>
                                         <p className='text-sm text-gray-500 mb-3'>Email Address</p>
                                         <p className='text-sm text-gray-500 mb-3'>Phone Number</p>
                                     </div>
                                     <div className=' border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className='mb-3'>: {props.data.vendor.director_name}</p>
-                                        <p className='mb-3'>: {props.data.vendor.director_email}</p>
-                                        <p className='mb-3'>: {props.data.vendor.director_phone_number}</p>
+                                        <p className='mb-3'>: {props.data.vendor.director_name ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.director_email ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.director_phone_number ?? '-'}</p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className="font-bold text-black mb-3">FA Information</p>
-                                        <p className='text-sm text-gray-500 mb-3'>Nama</p>
+                                        <p className='text-sm text-gray-500 mb-3'>Name</p>
                                         <p className='text-sm text-gray-500 mb-3'>Email Address</p>
                                         <p className='text-sm text-gray-500 mb-3'>Phone Number</p>
                                     </div>
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className='mb-3'>: {props.data.vendor.fa_name}</p>
-                                        <p className='mb-3'>: {props.data.vendor.fa_email}</p>
-                                        <p className='mb-3'>: {props.data.vendor.fa_phone_number}</p>
+                                        <p className='mb-3'>: {props.data.vendor.fa_name ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.fa_email ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.fa_phone_number ?? '-'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -150,22 +154,22 @@ export default function Show(props) {
                                 <div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 border-dashed border-b-2 border-gray-300 p-1'>
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Marketing/Key Account Information</p>
-                                        <p className='text-sm text-gray-500 mb-3'>Nama</p>
+                                        <p className='text-sm text-gray-500 mb-3'>Name</p>
                                         <p className='text-sm text-gray-500 mb-3'>Email Address</p>
                                         <p className='text-sm text-gray-500 mb-3'>Phone Number</p>
                                     </div>
                                     <div className=' border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
-                                        <p className='mb-3'>: {props.data.vendor.marketing_key_account}</p>
-                                        <p className='mb-3'>: {props.data.vendor.marketing_email}</p>
-                                        <p className='mb-3'>: {props.data.vendor.marketing_phone_number}</p>
+                                        <p className='mb-3'>: {props.data.vendor.marketing_key_account ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.marketing_email ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.marketing_phone_number ?? '-'}</p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className="font-bold text-black mb-3">Financial Information</p>
                                         <p className='text-sm text-gray-500 mb-3'>Type Bank</p>
                                         <p className='text-sm text-gray-500 mb-3'>Bank</p>
-                                        <p className='text-sm text-gray-500 mb-3'>Nomor Rekening</p>
-                                        <p className='text-sm text-gray-500 mb-3'>Nama Akun</p>
+                                        <p className='text-sm text-gray-500 mb-3'>Rekening Number</p>
+                                        <p className='text-sm text-gray-500 mb-3'>Account Name</p>
                                         <p className='text-sm text-gray-500 mb-3'>Branch</p>
                                         <p className='text-sm text-gray-500 mb-3'>Swift Code</p>
                                     </div>
@@ -173,10 +177,10 @@ export default function Show(props) {
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: {props.data.vendor.is_virtual_account == 1 ? 'Virtual Account' : 'Non Vitual Account'}</p>
                                         <p className='mb-3'>: {props.data.vendor.is_bca == 1 ? 'BCA' : 'Non BCA'}</p>
-                                        <p className='mb-3'>: {props.data.vendor.bank_account_number}</p>
-                                        <p className='mb-3'>: {props.data.vendor.bank_account_name}</p>
-                                        <p className='mb-3'>: {props.data.vendor.branch_of_bank}</p>
-                                        <p className='mb-3'>: {props.data.vendor.bank_swift_code}</p>
+                                        <p className='mb-3'>: {props.data.vendor.bank_account_number ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.bank_account_name ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.branch_of_bank ?? '-'}</p>
+                                        <p className='mb-3'>: {props.data.vendor.bank_swift_code ?? '-'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +200,7 @@ export default function Show(props) {
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha PKP</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -204,7 +208,7 @@ export default function Show(props) {
                                             </a> : '' }
                                             / <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -212,7 +216,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -220,7 +224,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_siup}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -228,7 +232,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_tdp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -236,7 +240,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_nib}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -255,7 +259,7 @@ export default function Show(props) {
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className="mb-3">&nbsp;</p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -263,7 +267,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -271,7 +275,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -299,7 +303,7 @@ export default function Show(props) {
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Badan Usaha Non PKP</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -307,7 +311,7 @@ export default function Show(props) {
                                             </a> : '' }
                                             / <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -315,7 +319,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_sppkp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -323,7 +327,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_siup}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -331,7 +335,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_tdp}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -339,7 +343,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / {props.data.vendor.expired_nib}
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -347,7 +351,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             / <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -367,7 +371,7 @@ export default function Show(props) {
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className="mb-3">&nbsp;</p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -375,7 +379,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -383,7 +387,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -391,7 +395,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -403,19 +407,19 @@ export default function Show(props) {
                                 </div>
                             </div> : ''}
 
-                            {props.data.vendor.type_of_business == 'Pribadi' ? <div className='mb-3'>
+                            {props.data.vendor.type_of_business == 'Pribadi' || props.data.vendor.type_of_business == 'Pribadi Non PKP' ? <div className='mb-3'>
                                 <div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 border-dashed border-b-2 border-gray-300 p-1'>
                                     <div className='border-l-0'>
                                         <p className="font-bold text-black mb-3">Business Information</p>
                                         <p className='text-sm text-gray-500 mb-3'>Type</p>
-                                        <p className='text-sm text-gray-500 mb-3'>NPWP</p>
+                                        <p className='text-sm text-gray-500 mb-3'>NPWP/KTP</p>
                                         <p className='text-sm text-gray-500 mb-3'>Surat Pernyataan Non PKP</p>
                                         {/* <p className='text-sm text-gray-500 mb-3'>E-KTP</p> */}
                                     </div>
                                     <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className='mb-3'>: Wajib Pajak Orang Pribadi</p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -423,7 +427,7 @@ export default function Show(props) {
                                             </a> : '' }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -431,7 +435,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_ektp != '' ? <a href={props.data.vendor.file_ektp} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -450,7 +454,7 @@ export default function Show(props) {
                                     <div className='lg:ml-5 text-sm text-gray-500'>
                                         <p className='mb-3'>&nbsp;</p>
                                         <p className="mb-3">&nbsp;</p>
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -458,7 +462,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>: 
+                                        <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -466,7 +470,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                        {/* <p className='mb-3 flex justify-between'>: 
+                                        {/* <p className='mb-3 grid grid-cols-3'>: 
                                             {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />

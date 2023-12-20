@@ -69,7 +69,7 @@ export default function Index(props) {
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
                         <div className='text-center'>
-                            <p className="font-bold mb-3">Masukkan Nomor Invoie / Efaktur</p>
+                            <p className="font-bold mb-3">Enter the Evoice Number / E-faktur</p>
                             <div className="mb-3">
                                 <TextInput 
                                     id="invoice_number"
@@ -99,7 +99,7 @@ export default function Index(props) {
                                                         <div className='mb-3'>
                                                             <div className='flex justify-around font-bold'>
                                                                 <div className='grid grid-cols-3 w-full'>
-                                                                    <p>Nama Vendor</p>
+                                                                    <p>Vendor Name</p>
                                                                     <p className='text-center'>:</p>
                                                                     <p>{item.vendor.name  }</p>
                                                                 </div>
@@ -108,7 +108,7 @@ export default function Index(props) {
                                                         <div className='mb-3'>
                                                             <div className='flex justify-around font-bold'>
                                                                 <div className='grid grid-cols-3 w-full'>
-                                                                    <p>Nomor Dokumen</p>
+                                                                    <p>Dokumen Number</p>
                                                                     <p className='text-center'>:</p>
                                                                     <p>{item.document_number}</p>
                                                                 </div>
@@ -117,7 +117,7 @@ export default function Index(props) {
                                                         <div className='mb-3'>
                                                             <div className='flex justify-around font-bold'>
                                                                 <div className='grid grid-cols-3 w-full'>
-                                                                    <p>Nomor Invoice</p>
+                                                                    <p>Invoice Number</p>
                                                                     <p className='text-center'>:</p>
                                                                     <p>Invoice 123</p>
                                                                 </div>
@@ -144,16 +144,16 @@ export default function Index(props) {
                                                         <div className='mb-3'>
                                                             <div className='flex justify-around font-bold'>
                                                                 <div className='grid grid-cols-3 w-full'>
-                                                                    <p>Lampiran</p>
+                                                                    <p>Attachment</p>
                                                                     <p className='text-center'>:</p>
-                                                                    <p>{item.exchange_invoice_attachments != null ? item.exchange_invoice_attachments.length : 0} Berkas</p>
+                                                                    <p>{item.exchange_invoice_attachments != null ? item.exchange_invoice_attachments.length : 0} File</p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className='text-center my-auto'>
                                                         <Link href={`/admin/matching?invoice_number=${item.document_number}`}>
-                                                            <ModifyButton>Pilih</ModifyButton>
+                                                            <ModifyButton>Choose</ModifyButton>
                                                         </Link>
                                                     </div>
                                                 </div>
@@ -173,7 +173,7 @@ export default function Index(props) {
                                             <div className='mb-3'>
                                                 <div className='flex justify-around font-bold'>
                                                     <div className='grid grid-cols-3 w-full'>
-                                                        <p>Nama Vendor</p>
+                                                        <p>Vendor Name</p>
                                                         <p className='text-center'>:</p>
                                                         <p>{props.data.invoice[0].vendor.name  }</p>
                                                     </div>
@@ -182,7 +182,7 @@ export default function Index(props) {
                                             <div className='mb-3'>
                                                 <div className='flex justify-around font-bold'>
                                                     <div className='grid grid-cols-3 w-full'>
-                                                        <p>Nomor Dokumen</p>
+                                                        <p>Dokumen Number</p>
                                                         <p className='text-center'>:</p>
                                                         <p>{props.data.invoice[0].document_number}</p>
                                                     </div>
@@ -191,7 +191,7 @@ export default function Index(props) {
                                             <div className='mb-3'>
                                                 <div className='flex justify-around font-bold'>
                                                     <div className='grid grid-cols-3 w-full'>
-                                                        <p>Nomor Invoice</p>
+                                                        <p>Invoice Number</p>
                                                         <p className='text-center'>:</p>
                                                         <p>Invoice 123</p>
                                                     </div>
@@ -218,9 +218,9 @@ export default function Index(props) {
                                             <div className='mb-3'>
                                                 <div className='flex justify-around font-bold'>
                                                     <div className='grid grid-cols-3 w-full'>
-                                                        <p>Lampiran</p>
+                                                        <p>Attachment</p>
                                                         <p className='text-center'>:</p>
-                                                        <p>{props.data.invoice[0].exchange_invoice_attachments != null ? props.data.invoice[0].exchange_invoice_attachments.length : 0} Berkas</p>
+                                                        <p>{props.data.invoice[0].exchange_invoice_attachments != null ? props.data.invoice[0].exchange_invoice_attachments.length : 0} File</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -230,7 +230,7 @@ export default function Index(props) {
                                                 <form onSubmit={submit}>
                                                     <p className='text-lg'>&nbsp;</p>
                                                     <div className='mb-3'>
-                                                        <p className='font-bold'>Tindakan</p>
+                                                        <p className='font-bold'>Action</p>
                                                     </div>
                                                     <div className='mb-3'>
                                                         <div className='flex justify-around font-bold'>
@@ -241,9 +241,9 @@ export default function Index(props) {
                                                                         value={selectedOptionStatus}
                                                                         onChange={handleStatusChange}
                                                                     >
-                                                                        <option value="" hidden>Menunggu Pencocokan</option>
-                                                                        <option value="sesuai">Sesuai</option>
-                                                                        <option value="tidak sesuai">Tidak Sesuai</option>
+                                                                        <option value="" hidden>Waiting for Match</option>
+                                                                        <option value="sesuai">Match</option>
+                                                                        <option value="tidak sesuai">Not Match</option>
                                                                     </select>
 
                                                                 <InputError message={errors.status} className="mt-2" />
@@ -254,7 +254,7 @@ export default function Index(props) {
                                                         <div className='flex justify-center font-bold'>
                                                             <div className='grid grid-cols-1 text-center items-center w-full'>
                                                                 <PrimaryButton className="w-full justify-center">
-                                                                    Kirim
+                                                                    Send
                                                                 </PrimaryButton>
                                                             </div>
                                                         </div>
@@ -266,7 +266,7 @@ export default function Index(props) {
                                                         leave="transition ease-in-out"
                                                         leaveTo="opacity-0"
                                                     >
-                                                        <p className="text-sm text-gray-600">Berhasil melakukan tindakan</p>
+                                                        <p className="text-sm text-gray-600">Successfully performed the action</p>
                                                     </Transition>
                                                 </form>
                                             :''}

@@ -9,7 +9,7 @@ function ModalGR({ show, onClose, ...props }) {
         <div>
             <Modal show={show} onClose={onClose}>
                 <div className='border-b-2 p-3'>
-                    <b>Pilih PO dan GR</b>
+                    <b>Choose PO dan GR</b>
                 </div>
                 <div className="p-3">
                     <div className='mb-3'>

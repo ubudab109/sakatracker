@@ -294,21 +294,21 @@ class AdminVendorProfileController extends Controller
             ];
         }
 
-        // $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
-        // $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
-        // $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
-        // $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
-        // $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
-        // $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
-        // $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
+        $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
+        $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
+        $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
+        $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
+        $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
+        $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
+        $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
 
-        $data['coa_1'] = [];
-        $data['coa_2'] = [];
-        $data['coa_3'] = [];
-        $data['coa_4'] = [];
-        $data['coa_5'] = [];
-        $data['coa_6'] = [];
-        $data['coa_7'] = [];
+        // $data['coa_1'] = [];
+        // $data['coa_2'] = [];
+        // $data['coa_3'] = [];
+        // $data['coa_4'] = [];
+        // $data['coa_5'] = [];
+        // $data['coa_6'] = [];
+        // $data['coa_7'] = [];
 
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();
@@ -486,17 +486,20 @@ class AdminVendorProfileController extends Controller
             }
         }
 
-        if($data->vendor->type_of_business != 'Pribadi')
+        if($data->vendor->type_of_business != 'Pribadi' && $data->vendor->type_of_business != 'Pribadi Non PKP')
         {
             $validate_file_siup_validate = 'required';
             $validate_file_sppkp_validate = 'required';
-            $validate_file_tdp_validate = 'required';
+            $validate_file_tdp_validate = '';
             $validate_file_nib_validate = 'required';
             $validate_file_board_of_directors_composition_validate = 'required';
             if($request->status == 'disetujui') {
                 $validate_file_siup_validate = $request->file_siup_validate != 'acc' ? 'required|in:acc' : '';
                 $validate_file_sppkp_validate = $request->file_sppkp_validate != 'acc' ? 'required|in:acc' : '';
-                $validate_file_tdp_validate = $request->file_tdp_validate != 'acc' ? 'required|in:acc' : '';
+                if($data->vendor->file_tdp)
+                {
+                    $validate_file_tdp_validate = $request->file_tdp_validate != 'acc' ? 'required|in:acc' : '';
+                }
                 $validate_file_nib_validate = $request->file_nib_validate != 'acc' ? 'required|in:acc' : '';
                 $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != 'acc' ? 'required|in:acc' : '';
             }
@@ -510,9 +513,12 @@ class AdminVendorProfileController extends Controller
                 {
                     $validate_siup_note = $request->siup_note == null ? 'required' : '';
                 }
-                if($request->file_tdp_validate != 'acc')
+                if($data->vendor->file_tdp)
                 {
-                    $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
+                    if($request->file_tdp_validate != 'acc')
+                    {
+                        $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
+                    }
                 }
                 if($request->file_nib_validate != 'acc')
                 {
@@ -592,7 +598,7 @@ class AdminVendorProfileController extends Controller
 
         if($request->status == 'ditolak')
         {
-            $checkRevisiVendorApprove = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->update([
+            $checkRevisiVendorApprove = RevisionRegisterVendor::where('id', $id)->where('vendor_id', $data->vendor_id)->update([
                 'status' => 'ditolak'
             ]);
         }
@@ -608,7 +614,7 @@ class AdminVendorProfileController extends Controller
             'npwp_note' => $request->file_npwp != 'acc' ? $request->npwp_note ?? $data->vendor->npwp_note : 'acc',
             'sppkp_note' => $request->file_sppkp != 'acc' ? $request->sppkp_note ?? $data->vendor->sppkp_note : 'acc',
             'siup_note' => $request->file_siup != 'acc' ? $request->siup_note ?? $data->vendor->siup_note : 'acc',
-            'tdp_note' => $request->file_tdp != 'acc' ? $request->tdp_note ?? $data->vendor->tdp_note : 'acc',
+            'tdp_note' => $data->vendor->file_tdp ? $request->file_tdp != 'acc' ? $request->tdp_note ?? $data->vendor->tdp_note : 'acc' : null,
             'nib_note' => $request->file_nib != 'acc' ? $request->nib_note ?? $data->vendor->nib_note : 'acc',
             'board_of_directors_composition_note' => $request->file_board_of_directors_composition != 'acc' ? $request->board_of_directors_composition_note ?? $data->vendor->board_of_directors_composition_note : 'acc',
             'non_pkp_statement_note' => $request->file_non_pkp_statement != 'acc' ? $request->non_pkp_statement_note ?? $data->vendor->non_pkp_statement_note : 'acc',
@@ -718,7 +724,7 @@ class AdminVendorProfileController extends Controller
                 'user_id' => $data->vendor->user_id,
                 'title' => $checkAvailableApprovalAccount ? 'Perubahan Data Ditolak' : 'Registrasi Data Ditolak',
                 'description' => $request->note,
-                'url' => '/vendor/' . $data->vendor->id,
+                'url' => '/data-change/' . $data->vendor->id,
             ]);
 
             $notifMailVendor['title'] = $notif_vendor->title;
@@ -772,7 +778,7 @@ class AdminVendorProfileController extends Controller
 
             }
 
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data', 'Berhasil ditolak', '/admin/vendor/' . $data->vendor_id);
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data', 'Berhasil menolak data: ' . $data->vendor->name, '/admin/vendor/' . $data->vendor_id);
         } else {
             foreach($roleUser as $role) {
                 $checkStatus = RevisionRegisterVendor::where('vendor_id', $data->vendor_id)->where('approval_role', $role)->first();
@@ -855,7 +861,7 @@ class AdminVendorProfileController extends Controller
                 }
             }
 
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data',  'Berhasil disetujui', '/admin/vendor/' . $data->vendor_id);
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan Data' : 'Registrasi Data',  'Berhasil menyetujui data: ' . $data->vendor->name, '/admin/vendor/' . $data->vendor_id);
         }
 
         return redirect()->route('admin.vendor.show', $data->vendor_id);

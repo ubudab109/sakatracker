@@ -105,7 +105,7 @@ return (
                 <div class="mb-3">
                     <div class="flex justify-around font-bold">
                         <div class="grid grid-cols-3 w-full">
-                            <p>Nomor Batch</p>
+                            <p>Batch Number</p>
                             <p class="text-center">:</p>
                             <p>{props.data.batch_payment.no_batch}</p>
                         </div>
@@ -125,7 +125,7 @@ return (
                 <div class="mb-3">
                     <div class="flex justify-around font-bold">
                         <div class="grid grid-cols-3 w-full">
-                            <p>Jatuh Tempo</p>
+                            <p>Expired Date</p>
                             <p class="text-center">:</p>
                             <p>{props.data.batch_payment.jatuh_tempo}</p>
                         </div>
@@ -178,7 +178,7 @@ return (
 
             <Modal show={isModalOpen} onClose={closeModal}>
                 <div className='border-b-2 p-3'>
-                    <b>Apakah anda yakin mau melunasi payment ini?</b>
+                    <b>Are you sure you want to pay this payment?</b>
                 </div>
                 <div className="border-b-2 p-3">
                     <div>
@@ -195,7 +195,7 @@ return (
                 </div>
                 <div className="p-3">
                     <div className="mt-6 flex justify-end gap-3">
-                        <SecondaryButton onClick={closeModal}>Tutup</SecondaryButton>
+                        <SecondaryButton onClick={closeModal}>Close</SecondaryButton>
                         <PrimaryButton onClick={paidInvoice}>Submit</PrimaryButton>
                     </div>
                 </div>

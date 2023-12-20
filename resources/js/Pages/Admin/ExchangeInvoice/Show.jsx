@@ -89,9 +89,10 @@ export default function Index(props) {
         await axios.post(`/generate-rfp/${invoiceId}`)
             .then(res => {
                 console.log(res.data);
-                setRfpFile(res.data.rfp_docs);
-                setIsRfpViewerOpen(true);
+                // setRfpFile(res.data.rfp_docs);
+                // setIsRfpViewerOpen(true);
                 setIsGeneratingRfp(false);
+                window.open(route('admin.exchange-invoice.show', props.data.invoice.id), "_self");
             }).catch(err => {
                 setIsGeneratingRfp(false);
             });
@@ -296,6 +297,8 @@ export default function Index(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -307,7 +310,7 @@ export default function Index(props) {
             user={props.auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
-            <Head title="Detail Tukar Faktur" />
+            <Head title="Detail Management Invoice" />
 
             <ModalViewer
                 files={props.newdocs}
@@ -329,11 +332,11 @@ export default function Index(props) {
             />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 className="mb-sm-0 font-size-18">Tukar Faktur</h4>
+                <h4 className="mb-sm-0 font-size-18">Management Invoice</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
-                        <li className="breadcrumb-item"><a href={route('admin.exchange-invoice.index')}>Tukar Faktur</a></li>
-                        <li className="breadcrumb-item active">Detail Tukar Faktur</li>
+                        <li className="breadcrumb-item"><a href={route('admin.exchange-invoice.index')}>Management Invoice</a></li>
+                        <li className="breadcrumb-item active">Detail Management Invoice</li>
                     </ol>
                 </div>
             </div>
@@ -341,7 +344,7 @@ export default function Index(props) {
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                        <div className="p-6 text-gray-900 font-bold">Detail Tukar Faktur</div>
+                        <div className="p-6 text-gray-900 font-bold">Detail Management Invoice</div>
                     </div>
                 </div>
             </div>
@@ -349,161 +352,165 @@ export default function Index(props) {
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <div className='grid grid-cols-1 md:grid-cols-2'>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>ID Tukar Faktur</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.tax_invoice_number}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Nomor Invoice</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.invoice_number}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>No Efaktur</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.tax_invoice_number}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Jatuh Tempo</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.jatuh_tempo}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Nomor Rekening</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.bank_account_number}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Lokasi</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.location}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Menggunakan Ematerai</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.is_materai == 1 ? 'Iya' : 'Tidak'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Type</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.is_po == 1 ? 'PO' : 'Tanpa PO'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div></div>
-                            {props.data.invoice.is_po == 1 ?
+                        <div className='grid grid-cols-2'>
+                            <div>
                                 <div className='mb-3'>
                                     <div className='flex justify-around font-bold'>
                                         <div className='grid grid-cols-3 w-full'>
-                                            <p>NO PO</p>
-                                            <p className='text-center'>:</p>
-                                            <p>{props.data.invoice.po_number}</p>
+                                            <p>ID Tukar Faktur</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.tax_invoice_number}</p>
                                         </div>
                                     </div>
                                 </div>
-                                : ''}
-                            {props.data.invoice.is_po == 1 ?
-                                <div></div>
-                                : ''}
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Tanggal Invoice</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.date}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Nomor Invoice</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.invoice_number}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Status Approval</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.status_approval}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>No Efaktur</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.document_number}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>DPP</p>
-                                        <p className='text-center'>:</p>
-                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Jatuh Tempo</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.jatuh_tempo}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>PPN</p>
-                                        <p className='text-center'>:</p>
-                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Nomor Rekening</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.bank_account_number}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Total</p>
-                                        <p className='text-center'>:</p>
-                                        <p>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Lokasi</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.location}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div></div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p>Catatan</p>
-                                        <p className='text-center'>:</p>
-                                        <p>{props.data.invoice.note}</p>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Menggunakan Ematerai</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.is_materai == 1 ? 'Iya' : 'Tidak'}</p>
+                                        </div>
                                     </div>
                                 </div>
+                                {/* <div></div> */}
                             </div>
-                            <div></div>
+                            <div>
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Type</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.is_po == 1 ? 'PO' : 'Tanpa PO'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                {props.data.invoice.is_po == 1 ?
+                                    <div className='mb-3'>
+                                        <div className='flex justify-around font-bold'>
+                                            <div className='grid grid-cols-3 w-full'>
+                                                <p>NO PO</p>
+                                                <p className='text-center w-1'>:</p>
+                                                <p className='-ml-32'>{props.data.invoice.po_number}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    : ''}
+                                {/* {props.data.invoice.is_po == 1 ?
+                                    <div></div>
+                                    : ''} */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Tanggal Invoice</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.date}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Status Approval</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.status_approval}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>DPP</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className={`grid grid-cols-3 w-full ${props.data.invoice.pdf_rfp ? props.data.invoice.ppn != props.data.total_tax ? 'text-red-500' : '' : ''}`}>
+                                            <p>PPN</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Total</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                                <div className='mb-3'>
+                                    <div className='flex justify-around font-bold'>
+                                        <div className='grid grid-cols-3 w-full'>
+                                            <p>Note</p>
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='-ml-32'>{props.data.invoice.note}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* <div></div> */}
+                            </div>
                             {
                                 userHasRoles(props.auth.user.user_role, 'PIC TUKAR FAKTUR') ? null : (
                                     <div className='mb-3'>
@@ -514,9 +521,9 @@ export default function Index(props) {
                                                         <p style={{color: 'red'}}>{errorRfp}</p>
                                                     ) : null
                                                 }</p>
-                                                <p className='text-center'>:</p>
+                                                <p className='text-center w-1'>:</p>
                                                 
-                                                <div className="flex justify-left font-bold">
+                                                <div className="flex justify-left font-bold -ml-32">
                                                     {
                                                         props.auth.user.user_role[0].role.name === 'Preparer' ? (
                                                             <button style={{ fontSize: '10px' }} disabled={isGeneratingRfp} onClick={() => generateRfp(props.data.invoice.id)} className="btn btn-success btn-sm mr-3 text-white">
@@ -547,13 +554,12 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Faktur Pajak</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.tax_invoice != null ? 1 : 0} Berkas
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Invoice</p>
+                                        <p className='text-center w-1'>:</p>
+                                        <p className='flex -ml-36'>
+                                            {props.data.invoice.invoice != null ? 1 : 0} File
                                             <a
                                                 href="javascript:;"
-                                                className=''
                                                 onClick={(e) =>
                                                     openPopup(1)
                                                 }
@@ -575,121 +581,7 @@ export default function Index(props) {
                                             </a>
                                             <a 
                                             hidden={statusHideNote}
-                                            className='mr-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
-                                                <CheckCircle
-                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
-                                                        null
-                                                        ? "gray"
-                                                        : fileStatus.fileTaxInvoiceStatus ==
-                                                            true
-                                                            ? "green"
-                                                            : "gray"
-                                                        }-500`}
-                                                />
-                                            </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
-                                                <XCircle
-                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
-                                                        null
-                                                        ? "gray"
-                                                        : fileStatus.fileTaxInvoiceStatus ==
-                                                            false
-                                                            ? "red"
-                                                            : "gray"
-                                                        }-500`}
-                                                />
-                                            </a>
-                                            <InputError
-                                                message={
-                                                    errors.file_tax_invoice_validate
-                                                }
-                                            />
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div hidden={statusHideNote}>
-                                    <div
-                                        className="mb-3 w-full"
-                                        hidden={
-                                            fileStatus.fileTaxInvoiceStatus !=
-                                                null
-                                                ? fileStatus.fileTaxInvoiceStatus
-                                                : true
-                                        }
-                                    >
-                                        <InputLabel
-                                            value="Catatan File Faktur Pajak"
-                                            className="font-bold"
-                                        />
-                                        <textarea
-                                            name="tax_invoice_note"
-                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="catatan file tax_invoice *"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "tax_invoice_note",
-                                                    e.target.value
-                                                )
-                                            }
-                                            value={data.tax_invoice_note}
-                                        />
-
-                                        <InputError
-                                            message={
-                                                errors.tax_invoice_note
-                                            }
-                                            className="mt-2"
-                                        />
-                                    </div>
-                                </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 
-                                    <div>
-                                        <InputLabel
-                                            value="Catatan File Faktur Pajak"
-                                            className="font-bold"
-                                        />
-                                        <p className='mb-3 mt-0'>
-                                            {props.data.invoice.tax_invoice_note}
-                                        </p>
-                                    </div>
-                                : '' : ''}
-                            </div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Invoice</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.invoice != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup(2)
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3'
+                                            className='mr-3 ml-3'
                                             href="javascript:;" onClick={(e) =>clickStatusFile("file_invoice",0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileInvoiceStatus ==
@@ -737,13 +629,13 @@ export default function Index(props) {
                                         }
                                     >
                                         <InputLabel
-                                            value="Catatan File Invoice"
+                                            value="Note File Invoice"
                                             className="font-bold"
                                         />
                                         <textarea
                                             name="invoice_note"
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="catatan file invoice *"
+                                            placeholder="Note file invoice *"
                                             onChange={(e) =>
                                                 setData(
                                                     "invoice_note",
@@ -764,7 +656,7 @@ export default function Index(props) {
                                 {props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 
                                     <div>
                                         <InputLabel
-                                            value="Catatan File Invoice"
+                                            value="Note File Invoice"
                                             className="font-bold"
                                         />
                                         <p className='mb-3 mt-0'>
@@ -776,10 +668,125 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File BAST</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.bast != null ? 1 : 0} Berkas
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Faktur Pajak</p>
+                                        <p className='text-center w-1'>:</p>
+                                        <p className='flex -ml-36'>
+                                            {props.data.invoice.tax_invoice != null ? 1 : 0} File
+                                            <a
+                                                href="javascript:;"
+                                                className=''
+                                                onClick={(e) =>
+                                                    openPopup(2)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3 ml-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileTaxInvoiceStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileTaxInvoiceStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <InputError
+                                                message={
+                                                    errors.file_tax_invoice_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileTaxInvoiceStatus !=
+                                                null
+                                                ? fileStatus.fileTaxInvoiceStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Note File Faktur Pajak"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="tax_invoice_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="Note file tax_invoice *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "tax_invoice_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.tax_invoice_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.tax_invoice_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Note File Faktur Pajak"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.tax_invoice_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Quotation</p>
+                                        <p className='text-center w-1'>:</p>
+                                        <p className='flex -ml-36'>
+                                            {props.data.invoice.quotation != null ? 1 : 0} File
                                             <a
                                                 href="javascript:;"
                                                 onClick={(e) =>
@@ -803,121 +810,7 @@ export default function Index(props) {
                                             </a>
                                             <a 
                                             hidden={statusHideNote}
-                                            className='mr-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
-                                                <CheckCircle
-                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
-                                                        null
-                                                        ? "gray"
-                                                        : fileStatus.fileBastStatus ==
-                                                            true
-                                                            ? "green"
-                                                            : "gray"
-                                                        }-500`}
-                                                />
-                                            </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
-                                                <XCircle
-                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
-                                                        null
-                                                        ? "gray"
-                                                        : fileStatus.fileBastStatus ==
-                                                            false
-                                                            ? "red"
-                                                            : "gray"
-                                                        }-500`}
-                                                />
-                                            </a>
-                                            <InputError
-                                                message={
-                                                    errors.file_bast_validate
-                                                }
-                                            />
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div hidden={statusHideNote}>
-                                    <div
-                                        className="mb-3 w-full"
-                                        hidden={
-                                            fileStatus.fileBastStatus !=
-                                                null
-                                                ? fileStatus.fileBastStatus
-                                                : true
-                                        }
-                                    >
-                                        <InputLabel
-                                            value="Catatan File BAST"
-                                            className="font-bold"
-                                        />
-                                        <textarea
-                                            name="bast_note"
-                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="catatan file bast *"
-                                            onChange={(e) =>
-                                                setData(
-                                                    "bast_note",
-                                                    e.target.value
-                                                )
-                                            }
-                                            value={data.bast_note}
-                                        />
-
-                                        <InputError
-                                            message={
-                                                errors.bast_note
-                                            }
-                                            className="mt-2"
-                                        />
-                                    </div>
-                                </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 
-                                    <div>
-                                        <InputLabel
-                                            value="Catatan File BAST"
-                                            className="font-bold"
-                                        />
-                                        <p className='mb-3 mt-0'>
-                                            {props.data.invoice.bast_note}
-                                        </p>
-                                    </div>
-                                : '' : ''}
-                            </div>
-                            <div className='mb-3'>
-                                <div className='flex justify-around font-bold'>
-                                    <div className='grid grid-cols-3 w-full'>
-                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File Quotation</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.quotation != null ? 1 : 0} Berkas
-                                            <a
-                                                href="javascript:;"
-                                                onClick={(e) =>
-                                                    openPopup(4)
-                                                }
-                                            >
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    strokeWidth={1.5}
-                                                    stroke="currentColor"
-                                                    className="w-6 h-6 ml-2"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                    />
-                                                </svg>
-                                            </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3'
+                                            className='mr-3 ml-3'
                                             href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
@@ -965,13 +858,13 @@ export default function Index(props) {
                                         }
                                     >
                                         <InputLabel
-                                            value="Catatan File Quotation"
+                                            value="Note File Quotation"
                                             className="font-bold"
                                         />
                                         <textarea
                                             name="quotation_note"
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="catatan file quotation *"
+                                            placeholder="Note file quotation *"
                                             onChange={(e) =>
                                                 setData(
                                                     "quotation_note",
@@ -992,7 +885,7 @@ export default function Index(props) {
                                 {props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 
                                     <div>
                                         <InputLabel
-                                            value="Catatan File Quotation"
+                                            value="Note File Quotation"
                                             className="font-bold"
                                         />
                                         <p className='mb-3 mt-0'>
@@ -1006,13 +899,13 @@ export default function Index(props) {
                                     <div className='flex justify-around font-bold'>
                                         <div className='grid grid-cols-3 w-full'>
                                             <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File PO</p>
-                                            <p className='text-center'>:</p>
-                                            <p className='flex'>
-                                                {props.data.invoice.po != null ? 1 : 0} Berkas
+                                            <p className='text-center w-1'>:</p>
+                                            <p className='flex -ml-36'>
+                                                {props.data.invoice.po != null ? 1 : 0} File
                                                 <a
                                                     href="javascript:;"
                                                     onClick={(e) =>
-                                                        openPopup(5)
+                                                        openPopup(4)
                                                     }
                                                 >
                                                     <svg
@@ -1032,7 +925,7 @@ export default function Index(props) {
                                                 </a>
                                                 <a 
                                                 hidden={statusHideNote}
-                                                className='mr-3'
+                                                className='mr-3 ml-3'
                                                 href="javascript:;" onClick={(e) =>clickStatusFile("file_po",0)}>
                                                     <CheckCircle
                                                         className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
@@ -1082,13 +975,13 @@ export default function Index(props) {
                                             }
                                         >
                                             <InputLabel
-                                                value="Catatan File PO"
+                                                value="Note File PO"
                                                 className="font-bold"
                                             />
                                             <textarea
                                                 name="po_note"
                                                 className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                placeholder="catatan file po *"
+                                                placeholder="Note file po *"
                                                 onChange={(e) =>
                                                     setData(
                                                         "po_note",
@@ -1109,7 +1002,7 @@ export default function Index(props) {
                                     {props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 
                                     <div>
                                         <InputLabel
-                                            value="Catatan File PO"
+                                            value="Note File PO"
                                             className="font-bold"
                                         />
                                         <p className='mb-3 mt-0'>
@@ -1122,10 +1015,124 @@ export default function Index(props) {
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
                                     <div className='grid grid-cols-3 w-full'>
-                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>Lampiran</p>
-                                        <p className='text-center'>:</p>
-                                        <p className='flex'>
-                                            {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} Berkas
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>File BAST</p>
+                                        <p className='text-center w-1'>:</p>
+                                        <p className='flex -ml-36'>
+                                            {props.data.invoice.bast != null ? 1 : 0} File
+                                            <a
+                                                href="javascript:;"
+                                                onClick={(e) =>
+                                                    openPopup(5)
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={1.5}
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 ml-2"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+                                                    />
+                                                </svg>
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            className='mr-3 ml-3'
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
+                                                <CheckCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileBastStatus ==
+                                                            true
+                                                            ? "green"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <a 
+                                            hidden={statusHideNote}
+                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
+                                                <XCircle
+                                                    className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
+                                                        null
+                                                        ? "gray"
+                                                        : fileStatus.fileBastStatus ==
+                                                            false
+                                                            ? "red"
+                                                            : "gray"
+                                                        }-500`}
+                                                />
+                                            </a>
+                                            <InputError
+                                                message={
+                                                    errors.file_bast_validate
+                                                }
+                                            />
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div hidden={statusHideNote}>
+                                    <div
+                                        className="mb-3 w-full"
+                                        hidden={
+                                            fileStatus.fileBastStatus !=
+                                                null
+                                                ? fileStatus.fileBastStatus
+                                                : true
+                                        }
+                                    >
+                                        <InputLabel
+                                            value="Note File BAST"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="bast_note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="Note file bast *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "bast_note",
+                                                    e.target.value
+                                                )
+                                            }
+                                            value={data.bast_note}
+                                        />
+
+                                        <InputError
+                                            message={
+                                                errors.bast_note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 
+                                    <div>
+                                        <InputLabel
+                                            value="Note File BAST"
+                                            className="font-bold"
+                                        />
+                                        <p className='mb-3 mt-0'>
+                                            {props.data.invoice.bast_note}
+                                        </p>
+                                    </div>
+                                : '' : ''}
+                            </div>
+                            <div className='mb-3'>
+                                <div className='flex justify-around font-bold'>
+                                    <div className='grid grid-cols-3 w-full'>
+                                        <p className={`text-sm text-${props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 'red' : 'gray' : 'gray'}-500`}>Attachment</p>
+                                        <p className='text-center w-1'>:</p>
+                                        <p className='flex -ml-36'>
+                                            {props.data.invoice.exchange_invoice_attachments != null ? props.data.invoice.exchange_invoice_attachments.length : 0} File
                                             <>
                                                 <a
                                                     href="javascript:;"
@@ -1150,7 +1157,7 @@ export default function Index(props) {
                                                 </a>
                                                 <a 
                                                 hidden={statusHideNote}
-                                                className='mr-3'
+                                                className='mr-3 ml-3'
                                                 href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",0)}>
                                                     <CheckCircle
                                                         className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
@@ -1199,13 +1206,13 @@ export default function Index(props) {
                                         }
                                     >
                                         <InputLabel
-                                            value="Catatan File Lampiran"
+                                            value="Note File Lampiran"
                                             className="font-bold"
                                         />
                                         <textarea
                                             name="attachment_note"
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="catatan file attachment *"
+                                            placeholder="Note file attachment *"
                                             onChange={(e) =>
                                                 setData(
                                                     "attachment_note",
@@ -1226,7 +1233,7 @@ export default function Index(props) {
                                 {props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 
                                     <div>
                                         <InputLabel
-                                            value="Catatan File Lampiran"
+                                            value="Note File Lampiran"
                                             className="font-bold"
                                         />
                                         <p className='mb-3 mt-0'>
@@ -1247,12 +1254,12 @@ export default function Index(props) {
                                     <thead>
                                         <tr className="border-t bg-gray-100">
                                             {/* <th>Aksi</th> */}
-                                            <th>No. Dokumen</th>
-                                            <th>Nama Barang</th>
-                                            <th>Invoice No</th>
-                                            <th>Tanggal GR</th>
+                                            <th>GR Number</th>
+                                            <th>Name of goods</th>
+                                            <th>Invoice Number</th>
+                                            <th>GR Date</th>
                                             <th>Qty</th>
-                                            <th>Harga Satuan</th>
+                                            <th>Unit Price</th>
                                             <th>Total</th>
                                         </tr>
                                         <tr></tr>
@@ -1296,7 +1303,7 @@ export default function Index(props) {
                                                     <div className="mb-3">
                                                         <div className="flex justify-around font-bold">
                                                             <div className="grid grid-cols-3 w-full">
-                                                                <b>TINDAKAN</b>
+                                                                <b>Action</b>
                                                                 <p className="text-center"></p>
                                                                 <p></p>
                                                             </div>
@@ -1435,13 +1442,13 @@ export default function Index(props) {
                                                         <div className="flex justify-around font-bold">
                                                             <div className="grid grid-cols-1 w-full">
                                                                 <InputLabel
-                                                                    value="Catatan"
+                                                                    value="Note"
                                                                     className="font-bold"
                                                                 />
                                                                 <textarea
                                                                     name="note"
                                                                     className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                                    placeholder="catatan *"
+                                                                    placeholder="Note *"
                                                                     onChange={(e) =>
                                                                         setData(
                                                                             "note",
@@ -1463,7 +1470,7 @@ export default function Index(props) {
                                                     </div>
                                                     <div></div>
                                                     <div className="mb-3">
-                                                        <InputLabel value="Lampiran Lainnya" className="font-bold" required={true} />
+                                                        <InputLabel value="Attachment" className="font-bold" required={true} />
                                                         <div className="w-full">
                                                             <FileUploader handleChange={handleFileEvent} name="attachment" types={fileTypes} multiple={true} />
                                                         </div>
@@ -1523,7 +1530,7 @@ export default function Index(props) {
                                                                         )
                                                                     }
                                                                 >
-                                                                    Tolak
+                                                                    Reject
                                                                 </DangerButton>
                                                                 <PrimaryButton
                                                                     className="w-full items-center justify-center"
@@ -1536,7 +1543,7 @@ export default function Index(props) {
                                                                         )
                                                                     }
                                                                 >
-                                                                    Setuju
+                                                                    Approve
                                                                 </PrimaryButton>
                                                             </div>
                                                         </div>

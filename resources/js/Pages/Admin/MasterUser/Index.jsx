@@ -33,7 +33,7 @@ export default function Index(props) {
                 <div className="mt-3 text-end">
                     <Link href={route('master-user.create')}>
                         <ModifyButton>
-                            Tambah User
+                            Add User
                         </ModifyButton>
                     </Link>    
                 </div>

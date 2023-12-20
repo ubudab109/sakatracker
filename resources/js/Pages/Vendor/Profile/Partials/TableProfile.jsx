@@ -29,14 +29,14 @@ export default function TableUser(props) {
 
     return (
         <div className="pt-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
-                    <table ref={tableRef} className="w-full">
+            <div className="w-full">
+                <div className='table-responsive'>
+                    <table ref={tableRef} className="table align-middle datatable dt-responsive table-check nowrap w-full border-collapse border-spacing-y-8">
                         <thead>
-                            <tr>
-                                <th>Aksi</th>
-                                <th>Nomor Dokumen</th>
-                                <th>Tanggal Request</th>
+                            <tr className='bg-transparent'>
+                                <th>Action</th>
+                                <th>Document Number</th>
+                                <th>Request Date</th>
                                 <th>Status</th>
                                 {/* <th>Catatan</th> */}
                                 <th>Last Update</th>
@@ -68,17 +68,9 @@ export default function TableUser(props) {
                                     </td>
                                     <td>{`REQUPD${item.id}`}</td>
                                     <td>{formatDate(item.created_at)}</td>
-                                    <td>{
-                                        item.status_account === 'pengajuan perubahan' ? 'Submit' : (
-                                            item.revision_register_vendor_latest ? 
-                                            (
-                                                item.revision_register_vendor_latest.status === 'disetujui' && item.revision_register_vendor_latest.approval_role !== 'Accounting' ? 
-                                                'Approved By ' + item.revision_register_vendor_latest.approval_role :
-                                                'Completed'
-                                            )
-                                            : item.status_account
-                                        )    
-                                    }</td>
+                                    <td>
+                                        <div className={`badge bg-${item.status_account == 'Completed' ? 'green' : item.status_account == 'Rejected' ? 'red' : item.status_account == 'Submit' || item.status_account == 'draft' ? 'gray' : 'orange'}-300 text-${item.status_account == 'Completed' ? 'green' : item.status_account == 'Rejected' ? 'red' : item.status_account == 'Submit' || item.status_account == 'draft' ? 'gray' : 'orange'}-700 font-size-12 capitalize`}>{item.status_account}</div>
+                                    </td>
                                     {/* <td>-</td> */}
                                     <td>{formatDate(item.updated_at)}</td>
                                 </tr>

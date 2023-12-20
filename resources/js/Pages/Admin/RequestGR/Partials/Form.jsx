@@ -11,11 +11,14 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import makeAnimated from 'react-select/animated';
 import ModalViewer from "@/Components/ModalViewer";
+import DangerButton from "@/Components/DangerButton";
+import SecondaryButton from "@/Components/SecondaryButton";
 
 export default function Form(props) {
     console.log('test', props.data.newdocs);
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
         status: props.data != null ? props.data.request_good_receipt.status : '',
+        note: props.data != null ? props.data.request_good_receipt.note : '',
     });
 
     const submit = (e) => {
@@ -30,8 +33,19 @@ export default function Form(props) {
 
     const [selectedOptionStatus, setSelectedOptionStatus] = useState(props.data.request_good_receipt.status);
     const handleStatusChange = (event) => {
-        data.status = event.target.value;
+        data.status = event;
         setSelectedOptionStatus(event.target.value);
+        if (event == 'disetujui' && props.data.invoice.status == 'menunggu persetujuan') {
+            setShowOptionApproverInvoice(false);
+        } else {
+            setShowOptionApproverInvoice(true);
+        }
+
+        if (event == 'ditolak') {
+            setSelectedOptionApprover(false)
+        } else {
+            setSelectedOptionApprover(true)
+        }
     }
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [isPopupOpen1, setIsPopupOpen1] = useState(false);
@@ -54,6 +68,8 @@ export default function Form(props) {
     };
 
     const [pdfUrl, setPdfUrl] = useState("");
+
+    const [submitSuccess, setSubmitSuccess] = useState(false);
     
     return (
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
@@ -87,7 +103,7 @@ export default function Form(props) {
                 </div>
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="po_number" value="No. PO" required={true} />
+                    <InputLabel htmlFor="po_number" value="PO Number" required={true} />
 
                     <TextInput 
                         id="po_number"
@@ -103,7 +119,7 @@ export default function Form(props) {
                 </div>
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="document_number" value="No. Surat Jalan" required={true} />
+                    <InputLabel htmlFor="document_number" value="Travel Number" required={true} />
 
                     <TextInput 
                         id="document_number"
@@ -135,7 +151,7 @@ export default function Form(props) {
                 </div> */}
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="date_gr" value="Tanggal Surat Jalan" required={true} />
+                    <InputLabel htmlFor="date_gr" value="Travel Date" required={true} />
 
                     <TextInput 
                         id="date_gr"
@@ -205,9 +221,9 @@ export default function Form(props) {
                 <div className='mb-3'>
                     <div className='flex justify-around font-bold'>
                         <div className='grid grid-cols-1 w-full'>
-                            <p>Dokumen Surat Jalan</p>
+                            <p>Travel Documents</p>
                             <p className='flex'>
-                                {props.data.request_good_receipt.request_good_receipt_attachments != null ? props.data.request_good_receipt.request_good_receipt_attachments.length : 0} Berkas
+                                {props.data.request_good_receipt.request_good_receipt_attachments != null ? props.data.request_good_receipt.request_good_receipt_attachments.length : 0} File
                                 {props.data.request_good_receipt.request_good_receipt_attachments.length > 0 && (
                                 <a
                                     href="javascript:;"
@@ -234,29 +250,112 @@ export default function Form(props) {
                         </div>
                     </div>
                 </div>
+                
+                {props.data.request_good_receipt.status == 'pending'
+                ? 
+                    <>
+                        <p className="font-bold text-black mb-3">Action</p>
+                        
+                        <div className="grid grid-cols-2">
+                            {/* <div className="w-full mb-3">
+                                <InputLabel value="Status" className="font-bold" required={true}/>
+                                <select className="select select-bordered w-full mt-1"
+                                    id="status"
+                                    name="status"
+                                    value={selectedOptionStatus}
+                                    onChange={handleStatusChange}
+                                >
+                                    <option value="" hidden>Choose Status</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="reject">Rejected</option>
+                                </select>
 
-                <p className="font-bold text-black mb-3">Tindakan</p>
+                                <InputError message={errors.status} className="mt-2" />
+                            </div>
+                            <div></div> */}
+                            <div className="mb-3">
+                                <div className="flex justify-around font-bold">
+                                    <div className="grid grid-cols-1 w-full">
+                                        <InputLabel
+                                            value="Note"
+                                            className="font-bold"
+                                        />
+                                        <textarea
+                                            name="note"
+                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                            placeholder="Note *"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "note",
+                                                    e.target
+                                                        .value
+                                                )
+                                            }
+                                            value={data.note}
+                                        />
 
-                <div className="w-full mb-3">
-                    <InputLabel value="Status" className="font-bold" required={true}/>
-                    <select className="select select-bordered w-full mt-1"
-                        id="status"
-                        name="status"
-                        value={selectedOptionStatus}
-                        onChange={handleStatusChange}
-                    >
-                        <option value="" hidden>Pilih Status</option>
-                        <option value="approved">Sudah diinput ke DB</option>
-                        <option value="reject">Tolak</option>
-                    </select>
+                                        <InputError
+                                            message={
+                                                errors.note
+                                            }
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div className="flex gap-3">
+                                <DangerButton
+                                    className="w-full items-center justify-center"
+                                    hidden={
+                                        submitSuccess
+                                    }
+                                    onClick={() =>
+                                        handleStatusChange(
+                                            "ditolak"
+                                        )
+                                    }
+                                >
+                                    Reject
+                                </DangerButton>
+                                <PrimaryButton
+                                    className="w-full items-center justify-center"
+                                    hidden={
+                                        submitSuccess
+                                    }
+                                    onClick={() =>
+                                        handleStatusChange(
+                                            "disetujui"
+                                        )
+                                    }
+                                >
+                                    Approve
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                    </>
+                :''}
 
-                    <InputError message={errors.status} className="mt-2" />
+                {props.data.request_good_receipt.status == 'reject'
+                ? 
+                    <div className="grid grid-cols-2">
+                        <div>
+                            <p>Note:</p>
+                            <p>{props.data.request_good_receipt.note}</p>
+                        </div>
+                        <div></div>
+                    </div>
+                :''}
+
+                <div className="flex justify-end items-end gap-2 mt-2">
+                    <Link href={route('admin.request-good-receipt.index')}>
+                        <SecondaryButton>
+                            Back
+                        </SecondaryButton>
+                    </Link>
                 </div>
                 
-                <div className="flex items-center gap-2 mt-2">
-                    <PrimaryButton>
-                        Save
-                    </PrimaryButton>
+                {/* <div className="flex items-center gap-2 mt-2">
                     <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
@@ -266,7 +365,7 @@ export default function Form(props) {
                     >
                         <p className="text-sm text-gray-600">{props.message}</p>
                     </Transition>
-                </div>
+                </div> */}
             </form>
         </div>
     );    

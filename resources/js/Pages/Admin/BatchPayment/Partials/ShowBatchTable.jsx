@@ -5,7 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import $ from 'jquery';
 import 'datatables.net';
-import { Edit, Eye, Info } from 'react-feather';
+import { CheckSquare, Edit, Eye, Info, X } from 'react-feather';
 
 
 export default function ShowBatchTable(props) {
@@ -17,10 +17,23 @@ export default function ShowBatchTable(props) {
         
     }, []);
 
+    function formatDate(timestamp) {
+        const date = new Date(timestamp);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+        return `${day}-${month}-${year} ${hours}:${minutes}`;
+      }
+
        // Create our number formatterCurrency.
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -34,10 +47,10 @@ export default function ShowBatchTable(props) {
                     <table ref={tableRef} className="w-full table">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
+                                <th>Action</th>
                                 <th>ID Tukar Faktur</th>
-                                <th>Jatuh Tempo</th>
-                                <th>Tanggal Inv.</th>
+                                <th>Expired Date</th>
+                                <th>Inv. Date</th>
                                 <th>Total</th>
                                 <th>Type</th>
                                 <th>Status</th>
@@ -58,22 +71,19 @@ export default function ShowBatchTable(props) {
                                     <td>{item.jatuh_tempo}</td>
                                     <td>{item.date}</td>
                                     <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
-                                    <td>{item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}</td>
+                                    <td>{item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Non PO' : 'MT'}</td>
                                     <td>{item.status}</td>
                                     <td className='border border-slate-600' width={1}>
-                                        {/* <div className='flex gap-1'>
+                                        <div className='flex gap-1'>
                                             <>
-                                                <div onClick={(e) => swapClicked(item.id, 'up')}>
-                                                    <SwapButton icon={'up'} />
+                                                <div>
+                                                    <CheckSquare color="green" />
                                                 </div>
-                                                <div onClick={(e) => swapClicked(item.id, 'down')}>
-                                                    <SwapButton icon={'down'} />
+                                                <div>
+                                                    <X color="red" />
                                                 </div>
-                                                <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
-                                                    <Edit />
-                                                </a>
                                             </>
-                                        </div> */}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

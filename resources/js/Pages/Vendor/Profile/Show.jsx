@@ -9,6 +9,7 @@ import PDFPopup from '@/Components/PDFPopup';
 import PDFViewer from './Components/PDFViewer';
 import ModalViewer from '@/Components/ModalViewer';
 import { ArrowLeft } from 'react-feather';
+import History from './Partials/History';
 
 export default function Show(props) {
     console.log(props);
@@ -80,16 +81,20 @@ export default function Show(props) {
                                         <p className='mb-3'>Email Address</p>
                                         <p className='mb-3'>Jenis Usaha</p>
                                         <p className='mb-3'>NPWP</p>
+                                        <p className='mb-3'>KTP</p>
                                         <p className='mb-3'>Alamat Kantor</p>
                                         <p className='mb-3'>Alamat NPWP</p>
+                                        <p className='mb-3'>Alamat KTP</p>
                                     </div>
                                     <div className=''>
                                         <p className='mb-3'>: {props.data.vendor.name}, {props.data.vendor.legality}</p>
                                         <p className='mb-3'>: {props.data.vendor.email}</p>
                                         <p className='mb-3'>: {props.data.vendor.name_business}</p>
                                         <p className='mb-3'>: {props.data.vendor.npwp}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ktp}</p>
                                         <p className='mb-3'>: {props.data.vendor.office_address}</p>
                                         <p className='mb-3'>: {props.data.vendor.npwp_address}</p>
+                                        <p className='mb-3'>: {props.data.vendor.ktp_address}</p>
                                     </div>
                                     <div className='lg:ml-5 block'>
                                         <p className='mb-3'>Phone Number</p>
@@ -191,38 +196,33 @@ export default function Show(props) {
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
-                                            <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
+                                            {props.data.vendor.file_tdp
+                                            ?
+                                                <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
+                                            : ''}
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>NIB</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Akta Susunan Direksi</p>
                                         </div>
                                         <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                             <p className='mb-3'>&nbsp;</p>
                                             <p className='mb-3'>: Wajib Pajak Badan Usaha PKP</p>
-                                            {/* <p className='mb-3 flex justify-between'>: 
-                                                {props.data.vendor.file_npwp != '' ? <a href="javascript:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
+                                            <p className='mb-3 grid grid-cols-3'>: 
+                                                {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
-                                                / <p>-</p>
-                                            </p> */}
-                                            <p className='mb-3 flex justify-between'>: 
-                                                {props.data.vendor.file_npwp != '' ? <a href="javascript:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-0">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : <p>-</p> }
-                                                <span style={{marginLeft: '57px'}}>/</span>
+                                                /<label></label>
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
-                                                {props.data.vendor.file_sppkp != '' ? <a href="javascript:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
+                                            <p className='mb-3 grid grid-cols-3'>: 
+                                                {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_sppkp}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -230,15 +230,19 @@ export default function Show(props) {
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_siup}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
-                                                {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : <p>-</p> }
-                                                / {props.data.vendor.expired_tdp}
-                                            </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            {props.data.vendor.file_tdp
+                                            ? 
+                                                <p className='mb-3 grid grid-cols-3'>: 
+                                                    {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                                        </svg>
+                                                    </a> : <p>-</p> }
+                                                    / {props.data.vendor.expired_tdp}
+                                                </p>
+                                            : ''
+                                            }
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -246,13 +250,13 @@ export default function Show(props) {
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_nib}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
-                                            {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-0">
+                                            <p className='mb-3 grid grid-cols-3'>: 
+                                                {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : <p>-</p> }
-                                                <span style={{marginLeft: '68px'}}>/</span>
+                                                /<label></label>
                                             </p>
                                         </div>
                                     </div>
@@ -342,7 +346,9 @@ export default function Show(props) {
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.sppkp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SPPKP</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.siup_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>SIUP</p>
-                                            <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
+                                            {props.data.vendor.file_tdp ?
+                                                <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.tdp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>TDP</p>
+                                            : ''}
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.nib_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>NIB</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.board_of_directors_composition_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Akta Susunan Direksi</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-4`}>Surat Pernyataan Non PKP</p>
@@ -350,15 +356,15 @@ export default function Show(props) {
                                         <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                             <p className='mb-3'>&nbsp;</p>
                                             <p className='mb-3'>: Wajib Pajak Badan Usaha Non PKP</p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
-                                                / <p>&nbsp;</p>
+                                                /<label></label>
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -366,7 +372,7 @@ export default function Show(props) {
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_sppkp}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -374,15 +380,19 @@ export default function Show(props) {
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_siup}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
-                                                {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : <p>-</p> }
-                                                / {props.data.vendor.expired_tdp}
-                                            </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            {props.data.vendor.file_tdp
+                                            ? 
+                                                <p className='mb-3 grid grid-cols-3'>: 
+                                                    {props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                                        </svg>
+                                                    </a> : <p>-</p> }
+                                                    / {props.data.vendor.expired_tdp}
+                                                </p>
+                                            : ''
+                                            }
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -390,21 +400,21 @@ export default function Show(props) {
                                                 </a> : <p>-</p> }
                                                 / {props.data.vendor.expired_nib}
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_board_of_directors_composition != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_board_of_directors_composition)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : <p>-</p> }
-                                                / <p>&nbsp;</p>
+                                                /<label></label>
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : <p>-</p> }
-                                                / <p>&nbsp;</p>
+                                                /<label></label>
                                             </p>
                                         </div>
                                     </div>
@@ -439,11 +449,17 @@ export default function Show(props) {
                                                                 </>
                                                             : ''
                                                             }
-                                                            {props.data.vendor.tdp_note && props.data.vendor.tdp_note != 'acc' ? 
+                                                            {props.data.vendor.file_tdp
+                                                            ? 
                                                                 <>
-                                                                    <p className="font-bold text-black mb-3">Catatan File TDP :</p>
-                                                                    <p className="mb-3 break-all">{props.data.vendor.tdp_note}</p>
-                                                                    {/* <hr className='mb-3'></hr> */}
+                                                                    {props.data.vendor.tdp_note && props.data.vendor.tdp_note != 'acc' ? 
+                                                                        <>
+                                                                            <p className="font-bold text-black mb-3">Catatan File TDP :</p>
+                                                                            <p className="mb-3 break-all">{props.data.vendor.tdp_note}</p>
+                                                                            {/* <hr className='mb-3'></hr> */}
+                                                                        </>
+                                                                    : ''
+                                                                    }
                                                                 </>
                                                             : ''
                                                             }
@@ -485,36 +501,36 @@ export default function Show(props) {
                                 </div>
                             </div> : ''}
 
-                            {props.data.vendor.type_of_business == 'Pribadi' ? <div className='mb-3'>
+                            {props.data.vendor.type_of_business == 'Pribadi' || props.data.vendor.type_of_business == 'Pribadi Non PKP' ? <div className='mb-3'>
                                 <div className='grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2 border-dashed border-b-2 border-gray-300 p-1'>
                                     <div className='grid grid-cols-2'>
                                         <div className='border-l-0'>
                                             <p className="font-bold text-black mb-3">Business Information</p>
                                             <p className='text-sm text-gray-500 mb-3'>Type</p>
-                                            <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP</p>
+                                            <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.npwp_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>NPWP/KTP</p>
                                             <p className={`text-sm text-${props.data.vendor.status_account == 'ditolak' ? props.data.vendor.non_pkp_statement_note != 'acc' ? 'red' : 'gray' : 'gray'}-500 mb-3`}>Surat Pernyataan Non PKP</p>
                                             {/* <p className='text-sm text-gray-500 mb-3'>E-KTP</p> */}
                                         </div>
                                         <div className='border-dashed border-gray-300 text-sm text-gray-500'>
                                             <p className='mb-3'>&nbsp;</p>
-                                            <p className='mb-3'>: Wajib Pajak Orang Pribadi</p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3'>: Wajib Pajak Orang Pribadi ({props.data.vendor.type_of_business == 'Pribadi Non PKP' ? 'Non PKP' : ''} {props.data.vendor.type_of_business == 'Pribadi' ? 'PKP' : ''})</p>
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_npwp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_npwp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : '' }
-                                                <p>&nbsp;</p>
+                                               <label></label>
                                             </p>
-                                            <p className='mb-3 flex justify-between'>: 
+                                            <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_non_pkp_statement != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_non_pkp_statement)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
                                                 </a> : <p>-</p> }
-                                                <p>&nbsp;</p>
+                                               <label></label>
                                             </p>
-                                            {/* <p className='mb-3 flex justify-between'>: 
+                                            {/* <p className='mb-3 grid grid-cols-3'>: 
                                                 {props.data.vendor.file_ektp != '' ? <a href={props.data.vendor.file_ektp} target='_blank'>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -555,11 +571,17 @@ export default function Show(props) {
                                                                 </>
                                                             : ''
                                                             }
-                                                            {props.data.vendor.tdp_note && props.data.vendor.tdp_note != 'acc' ? 
+                                                            {props.data.vendor.file_tdp
+                                                            ? 
                                                                 <>
-                                                                    <p className="font-bold text-black mb-3">Catatan File TDP :</p>
-                                                                    <p className="mb-3 break-all">{props.data.vendor.tdp_note}</p>
-                                                                    {/* <hr className='mb-3'></hr> */}
+                                                                    {props.data.vendor.tdp_note && props.data.vendor.tdp_note != 'acc' ? 
+                                                                        <>
+                                                                            <p className="font-bold text-black mb-3">Catatan File TDP :</p>
+                                                                            <p className="mb-3 break-all">{props.data.vendor.tdp_note}</p>
+                                                                            {/* <hr className='mb-3'></hr> */}
+                                                                        </>
+                                                                    : ''
+                                                                    }
                                                                 </>
                                                             : ''
                                                             }
@@ -637,6 +659,58 @@ export default function Show(props) {
                                     </div>
                                 </div>
                         : ''}
+
+                        <div className='mb-3 p-6'>
+                            <p className='mb-3 font-bold text-lg'>Status Timeline</p>
+                            {/* <ul className="steps font-bold grid grid-cols-3">
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : ''}`}>Approver By Purchase</li>
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : ''}`}>Approver By Purchase</li>
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : ''}`}>Completed</li>
+                            </ul> */}
+
+                            {/* <div className='font-bold'>
+                                <div className="flex items-center whitespace-nowrap gap-3 overflow-auto">
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-white bg-red-500' : props.data.timelineRejectedBy ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            1
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-red-500' : props.data.timelineRejectedBy ? 'text-green-500' : ''}`}>
+                                            Approver By Purchase ------------{`>`}
+                                        </div>
+                                    </div>
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-white bg-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            2
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-green-500' : ''}`}>
+                                        Approver By Purchase ------------{`>`}
+                                        </div>
+                                    </div>
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-white bg-red-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            3
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-red-500' : ''}`}>
+                                            Complete ------------{`>`}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> */}
+
+                            <History data={props.data.timeline} />
+                        </div>
+
+                        {/* <div className="mt-3 p-6">
+                            <b>History</b>
+                            <br />
+                            <History data={props.data.timeline} />
+                        </div> */}
 
                         <p className="font-bold mb-3 p-6">
                             <Link href={route('vendor.index')}>

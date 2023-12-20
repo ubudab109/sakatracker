@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\RequestGoodReceiptAttachment;
+use App\Mail\ApproverInvoiceMail;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\OraclePurchaseOrder;
 use App\Models\RequestGoodReceipt;
 use App\Traits\NotifySelfTrait;
 use Illuminate\Http\Request;
+use App\Models\Notification;
 use App\Models\Vendor;
 use App\Models\User;
 use Inertia\Inertia;
+use Mail;
 use Auth;
 
 class RequestGoodReceiptController extends Controller
@@ -28,7 +31,7 @@ class RequestGoodReceiptController extends Controller
         }
         
         $vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
-        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)->get();
+        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)->orderByDesc('updated_at')->get();
 
         return Inertia::render('Vendor/RequestGR/Index', [
             'data' => $data
@@ -100,6 +103,8 @@ class RequestGoodReceiptController extends Controller
             }
         }
 
+        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $gr->po_number, '/admin/request-good-receipt/' . $gr->id . '/edit' );
+
         $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil tambah request GR', '/request-good-receipt');
 
         return Redirect::route('request-good-receipt.create');
@@ -128,15 +133,15 @@ class RequestGoodReceiptController extends Controller
             ->where('role', 'vendor')
         ->where('id', Auth::user()->id)
         ->first();
-		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        $poArray = $po->map(function ($po) {
-            return [
-                'value' => $po->po_num,
-                'label' => $po->po_num,
-            ];
-        });
+		// $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        // $poArray = $po->map(function ($po) {
+        //     return [
+        //         'value' => $po->po_num,
+        //         'label' => $po->po_num,
+        //     ];
+        // });
 
-        $data['po_array'] = $poArray->toArray();
+        // $data['po_array'] = $poArray->toArray();
 
         return Inertia::render('Vendor/RequestGR/Edit', [
             'data' => $data
@@ -155,6 +160,7 @@ class RequestGoodReceiptController extends Controller
             'po_number' => $request->po_number,
             // 'invoice_number' => $request->invoice_number,
             'date_gr' => $request->date_gr,
+            'status' => 'pending',
             // 'quantity' => $request->quantity,
             // 'unit_price' => $request->unit_price,
             // 'total_price' => $request->quantity * $request->unit_price,
@@ -179,8 +185,9 @@ class RequestGoodReceiptController extends Controller
 
         $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil ubah request GR', '/request-good-receipt');
 
+        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $data->po_number, '/admin/request-good-receipt/' . $data->id . '/edit' );
 
-        return Redirect::route('request-good-receipt.edit', $data->id);
+        return Redirect::route('request-good-receipt.index');
     }
 
     /**
@@ -193,5 +200,26 @@ class RequestGoodReceiptController extends Controller
         $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil hapus request GR', '/request-good-receipt');
 
         return Redirect::route('request-good-receipt.index');
+    }
+
+    public function notifyPurchasing($title, $description, $url)
+    {
+        $users = User::whereHas('user_role.role.permissions', function($q){
+            $q->where('name', 'verification_request_gr');
+        })->get();
+        foreach($users as $user)
+        {
+            $notif_vendor = Notification::create([
+                'user_id' => $user->id,
+                'title' => $title,
+                'description' => $description,
+                'url' => $url,
+            ]);
+
+            $notifMailVendor['title'] = $title;
+            $notifMailVendor['description'] = $description;
+            $notifMailVendor['url'] = $url;
+            Mail::to($user->email)->send(new ApproverInvoiceMail($notifMailVendor));
+        }
     }
 }

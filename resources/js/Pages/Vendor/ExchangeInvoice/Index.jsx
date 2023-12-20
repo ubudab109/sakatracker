@@ -23,43 +23,33 @@ export default function Index(props) {
             user={props.auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
-            <Head title="Tukar Faktur" />
+            <Head title="Invoice Exchange" />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 className="mb-sm-0 font-size-18">Tukar Faktur</h4>
+                <h4 className="mb-sm-0 font-size-18">Invoice Exchange List</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
-                        <li className="breadcrumb-item active"><a href="javascript: void(0);">Tukar Faktur</a></li>
+                        <li className="breadcrumb-item active"><a href="javascript: void(0);">Invoice Exchange</a></li>
                     </ol>
-                </div>
-            </div>
-
-            <div className="pt-6">
-                <div className="">
-                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                        <div className="p-6 text-gray-900 font-bold">Tukar Faktur</div>
-                    </div>
                 </div>
             </div>
 
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <div className="text-gray-900 font-bold flex items-end justify-end">
-                            {props.data.submissionStatus 
-                            ? 
-                                <PrimaryButton onClick={() => {
-                                    openModal();
-                                }}>
-                                    Tambah
-                                </PrimaryButton>
-                            : 
-                                <Link href={route('exchange-invoice.create')}>
-                                    <PrimaryButton>
-                                        Tambah
-                                    </PrimaryButton>
-                                </Link>
-                            }
+                        <div className="col-sm">
+                            <div className="mb-4">
+                                {props.data.submissionStatus 
+                                ? 
+                                    <button type="button" className="btn btn-light waves-effect waves-light" onClick={() => {
+                                        openModal();
+                                    }}><i className="bx bx-plus me-1"></i> Add Invoice</button>
+                                : 
+                                    <Link href={route('exchange-invoice.create')}>
+                                        <button type="button" className="btn btn-light waves-effect waves-light"><i className="bx bx-plus me-1"></i> Add Invoice</button>
+                                    </Link>
+                                }
+                            </div>
                         </div>
                         <Table data={props.data}/>
                     </div>
@@ -84,11 +74,11 @@ export default function Index(props) {
                     </p>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Nomor Rekening: {props.data.latest.bank_account_number}
+                        Rekening Number: {props.data.latest.bank_account_number}
                     </p>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Nama Akun: {props.data.latest.bank_account_name}
+                        Account Name: {props.data.latest.bank_account_name}
                     </p>
 
                     <p className="mt-1 text-sm text-gray-600">
@@ -108,7 +98,7 @@ export default function Index(props) {
                     </Link>
                     <Link href={route('exchange-invoice.create')}>
                         <PrimaryButton className="ml-3">
-                            Tetap Tambah
+                            Add
                         </PrimaryButton>
                     </Link>
                 </div>

@@ -25,10 +25,10 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_role') || props.permissions.includes('delete_role') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
                                 <th>Role</th>
-                                <th>Hak Akses</th>
+                                <th>Permission</th>
                             </tr>
                         </thead>
                         <tbody>

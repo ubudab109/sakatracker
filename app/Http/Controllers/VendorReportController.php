@@ -38,8 +38,37 @@ class VendorReportController extends Controller
                 'data' => $data
             ]);
         } else {
-            return Inertia::render('Dashboard');
+            $onProgressRevisionVendor = RevisionRegisterVendor::where('user_id', Auth::user()->id)
+                ->where('status', 'menunggu persetujuan')
+                ->orderBy('id', 'desc')->first();
+            if ($onProgressRevisionVendor) {
+
+                $approval = [];
+                $revisionVendors = RevisionRegisterVendor::where('vendor_id', $onProgressRevisionVendor->vendor_id)
+                    ->orderBy('id', 'asc')
+                    ->get();
+                foreach ($revisionVendors as $revision) {
+                    $approval[] = [
+                        'approval' => $revision->approval_role,
+                        'status' => ucwords($revision->status),
+                        'date' => date('Y-m-d H:i:s', strtotime($revision->updated_at))
+                    ];
+                }
+                $data['revisions'] = $approval;
+            } else {
+                $data['revisions'] = [];
+            }
+            $data['revision_vendor'] = $this->revisionVendor();
+            return Inertia::render('Dashboard', ['data' => $data]);
         }
+    }
+
+    private function revisionVendor()
+    {
+        $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
+        $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
+        $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+        return $data;
     }
 
     public function showOutstandingPurchaseOrder(Request $request)

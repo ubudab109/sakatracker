@@ -18,12 +18,12 @@ export default function Table(props) {
 
     return (
         <div className="pt-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
-                    <table ref={tableRef} className="w-full">
+            <div className="w-full">
+                <div className='table-responsive'>
+                    <table ref={tableRef} className="table align-middle datatable dt-responsive table-check nowrap w-full border-collapse border-spacing-y-8">
                         <thead>
-                            <tr>
-                                <th>Aksi</th>
+                            <tr className='bg-transparent'>
+                                <th>Action</th>
                                 <th>ID PO</th>
                                 <th>PO. Number</th>
                                 <th>PO. Date</th>
@@ -40,7 +40,7 @@ export default function Table(props) {
                                             className="text-blue-500"
                                         >
                                             {" "}
-                                            Buat PO
+                                            Add PO
                                         </a>
                                     </td>
                                     <td>{item.po_header_id}</td>

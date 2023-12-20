@@ -50,7 +50,7 @@ const items = [
   },
   {
     key: '2',
-    label: 'Tambah',
+    label: 'Add',
     children: (
         <OutstandingTable2 
             data={props.data}
@@ -142,17 +142,17 @@ const changeDueDate = (event) => {
 return (
 
 <AuthenticatedLayout user={props.auth.user} header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">
-    Buat Batch Payment</h2>}
+    Add Batch Payment</h2>}
     >
 
     <Head title="Master User" />
 
     <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 className="mb-sm-0 font-size-18">Buat Batch Payment</h4>
+        <h4 className="mb-sm-0 font-size-18">Add Batch Payment</h4>
         <div className="page-title-right">
             <ol className="breadcrumb m-0">
                 <li className="breadcrumb-item">Batch Payment</li>
-                <li className="breadcrumb-item active">Buat Batch Payment</li>
+                <li className="breadcrumb-item active">Add Batch Payment</li>
             </ol>
         </div>
     </div>
@@ -160,7 +160,7 @@ return (
     <div className="pt-6">
         <div className="">
             <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                <div className="p-6 text-gray-900 font-bold">Buat Batch Payment</div>
+                <div className="p-6 text-gray-900 font-bold">Add Batch Payment</div>
             </div>
         </div>
     </div>
@@ -168,7 +168,7 @@ return (
     <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
         <div>
             <div class="mb-3 grid grid-cols-8 gap-4 items-center">
-                <label for="batch_number" class="block font-medium text-sm text-gray-700 ">Nomor Batch</label>
+                <label for="batch_number" class="block font-medium text-sm text-gray-700 ">Batch Number</label>
                 <div class="col-span-3 flex gap-4 items-center">
                     <div>:</div>
                     <div class="font-bold">{props.data.batch_payment.no_batch}</div>
@@ -200,13 +200,13 @@ return (
             
             <div class="flex items-center gap-2 mt-2">
                     <button onClick={hapusDraf} class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
-                        Hapus
+                        Delete
                     </button>
-                    <button onClick={simpanDraf} type="button" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 undefined ">Simpan
-                        Draf
+                    <button onClick={simpanDraf} type="button" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 undefined ">
+                        Save Draft
                     </button>
                     <button onClick={simpanBatchPayment} class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 undefined ">
-                        Simpan
+                        Save
                     </button>
             </div>
         </div>

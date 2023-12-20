@@ -247,7 +247,9 @@ class SiapBayarController extends Controller
                 'payment_date' => $request->payment_date,
             ]);
         }
-        
+        if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
+            PaymentRequestJob::dispatch($batch_payment);
+        }
 
         return response()->json([
             'status' => 'OK',

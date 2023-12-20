@@ -7,15 +7,15 @@ export default function Create({ auth, mustVerifyEmail, status, ...props }) {
         <AuthenticatedLayout
             user={auth.user}
         >
-            <Head title="Tambah Approver Invoice Item" />
+            <Head title="Add Approver Invoice Item" />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 className="mb-sm-0 font-size-18">Tambah Approver Invoice Item</h4>
+                <h4 className="mb-sm-0 font-size-18">Add Approver Invoice Item</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item"><a href={route('approver-invoice.index')}>Master Approver Invoice</a></li>
                         <li className="breadcrumb-item"><a href={route('approver-invoice.show', props.data.approver.id)}>Detail Master Approver Invoice</a></li>
-                        <li className="breadcrumb-item active">Tambah Approver Invoice Item</li>
+                        <li className="breadcrumb-item active">Add Approver Invoice Item</li>
                     </ol>
                 </div>
             </div>
@@ -23,7 +23,7 @@ export default function Create({ auth, mustVerifyEmail, status, ...props }) {
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                        <div className="p-6 text-gray-900 font-bold">Tambah Approver Invoice Item</div>
+                        <div className="p-6 text-gray-900 font-bold">Add Approver Invoice Item</div>
                     </div>
                 </div>
             </div>

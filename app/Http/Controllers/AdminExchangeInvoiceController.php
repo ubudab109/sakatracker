@@ -296,7 +296,7 @@ class AdminExchangeInvoiceController extends Controller
         $docs = [];
         $rfpDocs = [];
 
-        $arrayFile = ['pdf_rfp', 'tax_invoice', 'invoice', 'bast', 'quotation', 'po'];
+        $arrayFile = ['pdf_rfp', 'invoice', 'tax_invoice', 'quotation', 'po', 'bast'];
         foreach($arrayFile as $array)
         {
             $doc_path = parse_url($data['invoice'][$array], PHP_URL_PATH);
@@ -365,6 +365,7 @@ class AdminExchangeInvoiceController extends Controller
 
         $data['total_debit'] = 0;
         $data['total_credit'] = 0;
+        $data['total_tax'] = 0;
 
         if (count($data['outstanding_invoice']) > 0) {
             foreach ($data['outstanding_invoice'] as $rfp_view) {
@@ -373,6 +374,7 @@ class AdminExchangeInvoiceController extends Controller
                 } else {
                     $data['total_credit'] += $rfp_view['amount_dist'];
                 }
+                $data['total_tax'] += $rfp_view['total_tax'];
             }
         }
 
@@ -926,8 +928,21 @@ class AdminExchangeInvoiceController extends Controller
                     $notifMail['description'] = $notif->description;
                     $notifMail['url'] = $notif->url;
                     Mail::to($approval_invoice->user->email)->send(new ApproverInvoiceMail($notifMail));
+
                     if($key == 0)
                     {
+                        $notif = Notification::create([
+                            'user_id' => $approval_invoice->user_id,
+                            'title' => 'E-Faktur Menunggu Verifikasi',
+                            'description' => 'E-Faktur dengan ID Tukar Faktur: ' . $revisionExchange->exchange_invoice->tax_invoice_number,
+                            'url' => '/admin/exchange-invoice/' . $exchange_invoice_id,
+                        ]);
+            
+                        $notifMail['title'] = $notif->title;
+                        $notifMail['description'] = $notif->description;
+                        $notifMail['url'] = $notif->url;
+                        Mail::to($approval_invoice->user->email)->send(new ApproverInvoiceMail($notifMail));
+
                         $sla_holiday = SlaHoliday::whereDate('date', $revisionExchange->updated_at)->first();
                         $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchange->updated_at);
 
@@ -961,9 +976,20 @@ class AdminExchangeInvoiceController extends Controller
                 $notifMail['description'] = $notif->description;
                 $notifMail['url'] = $notif->url;
                 Mail::to($approval_invoice->user->email)->send(new ApproverInvoiceMail($notifMail));
-                
                 if($key == 0)
                 {
+                    $notif = Notification::create([
+                        'user_id' => $approval_invoice->user_id,
+                        'title' => 'E-Faktur Menunggu Verifikasi',
+                        'description' => 'E-Faktur dengan ID Tukar Faktur: ' . $revisionExchange->exchange_invoice->tax_invoice_number,
+                        'url' => '/admin/exchange-invoice/' . $exchange_invoice_id,
+                    ]);
+        
+                    $notifMail['title'] = $notif->title;
+                    $notifMail['description'] = $notif->description;
+                    $notifMail['url'] = $notif->url;
+                    Mail::to($approval_invoice->user->email)->send(new ApproverInvoiceMail($notifMail));
+                    
                     $sla_holiday = SlaHoliday::whereDate('date', $revisionExchange->updated_at)->first();
                     $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revisionExchange->updated_at);
 

@@ -37,10 +37,10 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_approver_payment') || props.permissions.includes('delete_approver_payment') ?
-                                <th>Aksi</th>
+                                <th>Action</th>
                                 : ''}
                                 <th>Role</th>
-                                <th>Range Nominal</th>
+                                <th>Range Fee</th>
                                 <th>SLA</th>
                                 {/* <th>Level</th> */}
                             </tr>
@@ -74,7 +74,7 @@ export default function Table(props) {
                                     : ''}
                                     <td className='border border-slate-600'>{item.role.name}</td>
                                     <td className='border border-slate-600'>{item.start_fee == null ? 0 : item.start_fee} to {item.end_fee == null ? 0 : item.end_fee}</td>
-                                    <td className='border border-slate-600'>{item.sla} Jam</td>
+                                    <td className='border border-slate-600'>{item.sla} Hour</td>
                                     {/* <td className='border border-slate-600'>{item.level}</td> */}
                                 </tr>
                             ))}

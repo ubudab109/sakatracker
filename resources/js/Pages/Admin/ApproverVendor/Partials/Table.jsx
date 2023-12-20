@@ -35,7 +35,7 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_approver_vendor') || props.permissions.includes('delete_approver_vendor') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
                                 <th>Role</th>
                                 <th>SLA</th>
@@ -70,7 +70,7 @@ export default function Table(props) {
                                         </td>
                                     :''}
                                     <td className='border border-slate-600'>{item.role.name}</td>
-                                    <td className='border border-slate-600'>{item.sla} Jam</td>
+                                    <td className='border border-slate-600'>{item.sla} Hour</td>
                                     {/* <td className='border border-slate-600'>{item.level}</td> */}
                                 </tr>
                             ))}

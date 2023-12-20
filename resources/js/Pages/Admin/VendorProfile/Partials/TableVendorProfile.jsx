@@ -34,9 +34,9 @@ export default function TableVendorProfile(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('verification_vendor_profile') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>NPWP</th>
                                 <th>KTP</th>
                                 <th>Email</th>
@@ -54,14 +54,14 @@ export default function TableVendorProfile(props) {
                                             <div className='flex'>
                                                 <div className='mr-1'>
                                                     <Link href={route('admin.vendor-profile.edit', item.id)}>
-                                                        <div className="badge badge-primary">verifikasi</div>
+                                                        <div className="badge badge-primary">Verification</div>
                                                     </Link>
                                                 </div>
                                             </div>
                                         </td>
                                     :''}
                                     <td className='border border-slate-600'>{item.vendor.name}, {item.vendor.legality}</td>
-                                    <td className='border border-slate-600'>{npwpFormat(item.vendor.npwp.toString())}</td>
+                                    <td className='border border-slate-600'>{item.vendor.npwp ? npwpFormat(item.vendor.npwp.toString()) : ''}</td>
                                     <td className='border border-slate-600'>
                                         { item.vendor.ktp ? item.vendor.ktp.toString() : ''}
                                     </td>

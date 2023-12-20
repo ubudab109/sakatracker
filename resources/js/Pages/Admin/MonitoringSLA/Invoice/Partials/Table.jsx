@@ -32,12 +32,12 @@ export default function Table(props) {
                     <table ref={tableRef}  className="w-full">
                         <thead>
                             <tr>
-                                <th>No Dokumen</th>
-                                <th>Kode Vendor</th>
+                                <th>Document Number</th>
+                                <th>Vendor Code</th>
                                 <th>Status</th>
-                                <th>Tanggal Approve</th>
+                                <th>Approve Date</th>
                                 <th>Document Stage</th>
-                                <th>Tanggal Dibuat</th>
+                                <th>Created Date</th>
                                 {props.data.items.map((item, index) => (
                                     <th>{item.user.name}</th>
                                 ))}

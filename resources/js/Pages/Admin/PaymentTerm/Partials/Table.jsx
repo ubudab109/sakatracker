@@ -26,9 +26,9 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_payment_term') || props.permissions.includes('delete_payment_term') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>Day</th>
                             </tr>
                         </thead>

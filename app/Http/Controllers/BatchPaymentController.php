@@ -131,7 +131,7 @@ class BatchPaymentController extends Controller
 			}
 
             $getRevisionReject = RevisionBatchPayment::where('batch_payment_id', $batch->id)->where('status', 'ditolak')->first();
-			if($getRevisionReject)
+			if($getRevisionReject && $batch->status == 'draft')
 			{
 				$batch['status'] = 'ditolak';
 			}
@@ -211,19 +211,19 @@ class BatchPaymentController extends Controller
 				{
 					$approverLevel = ApproverPayment::where('level', $batchPayment->level)->first();
 					$revisionBatchPayment = RevisionBatchPayment::where('batch_payment_id', $batchPaymentInvoice->batch_payment_id)->where('approval_role', $approverLevel->role->name)->orderBy('id', 'desc')->first();
-					$invoice['status'] = 'on progres ' . $approverLevel->role->name;
+					$invoice['status'] = '-';
 					
 					$getRevisionReject = RevisionBatchPayment::where('batch_payment_id', $batchPaymentInvoice->batch_payment_id)->where('status', 'ditolak')->first();
-					if($getRevisionReject && $$batchPayment->status == 'draft')
+					if($getRevisionReject && $batchPayment->status == 'draft')
 					{
 						$invoice['status'] = 'ditolak ' . $getRevisionReject->approval_role ;
 					}
 				} else {
-					$invoice['status'] = 'belum diproses';
+					$invoice['status'] = '-';
 				}
 			
 			} else {
-				$invoice['status'] = 'belum diproses';
+				$invoice['status'] = '-';
 			}
 
             return $invoice;
@@ -663,6 +663,7 @@ class BatchPaymentController extends Controller
                 }
             }
         }
+
         $data['batch_payment_invoices'] = [];
         $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get()
         ->map(function($batch_payment){

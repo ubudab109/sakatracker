@@ -26,9 +26,9 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_tax') || props.permissions.includes('delete_tax') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>Tax</th>
                             </tr>
                         </thead>

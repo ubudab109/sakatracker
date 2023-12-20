@@ -66,7 +66,7 @@ export default function Table(props) {
                     </ModifyButton>
                     <Link href={route('admin.sla-holiday.create')}>
                         <ModifyButton>
-                            Tambah
+                            Add
                         </ModifyButton>
                     </Link>
                 </div>
@@ -77,12 +77,12 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_sla_calendar') || props.permissions.includes('delete_sla_calendar') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
-                                <th>Tanggal</th>
-                                <th>Deskripsi</th>
-                                <th>Tanggal Buat</th>
-                                <th>Tanggal Ubah</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,10 +118,10 @@ export default function Table(props) {
                 <form method="post" onSubmit={submit}>
                     <div className='border-b-2 p-3'>
                         <b>Import Data</b>
-                        <p>kolom excel harus terdiri dari 2 Row yaitu: </p>
-                        <p>Row 1 = tanggal dengan format Y-m-d</p>
-                        <p>Row 2 = deskripsi hari libur</p>
-                        <p>*note tanpa header</p>
+                        <p>excel column must consist of 2 Rows: </p>
+                        <p>Row 1 = date in Y-m-d format</p>
+                        <p>Row 2 = holiday description</p>
+                        <p>*note without header</p>
                         <div className="mb-1 mt-3">
                             <InputLabel htmlFor="excel" value="Attach File Excel" required={true} />
 

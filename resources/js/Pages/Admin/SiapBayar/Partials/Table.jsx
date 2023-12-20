@@ -36,6 +36,8 @@ export default function Table(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -49,10 +51,10 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
-                                <th>No. Batch</th>
+                                <th>Action</th>
+                                <th>Batch Number</th>
                                 {/* <th>Periode</th> */}
-                                <th>Jatuh Tempo</th>
+                                <th>Expired Date</th>
                                 <th>Total</th>
                                 <th>Status</th>
                                 <th>Last Update</th>

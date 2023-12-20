@@ -26,7 +26,7 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_approver_invoice') || props.permissions.includes('delete_approver_invoice') || props.permissions.includes('index_approver_invoice') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
                                 {/* <th>Role</th> */}
                                 <th>Nama</th>

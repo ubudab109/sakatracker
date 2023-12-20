@@ -53,7 +53,7 @@ export default function Index(props) {
 		bill_to: props.data.revision_vendor.vendor.bill_to,
 		approval_role: "",
 
-		npwp_note: props.data.revision_vendor.vendor.npwp_note == null ? 'NPWP terdapat kesalahan' : props.data.revision_vendor.vendor.npwp_note,
+		npwp_note: props.data.revision_vendor.vendor.npwp_note == null ? props.data.revision_vendor.vendor.type_of_business != "Pribadi" && props.data.revision_vendor.vendor.type_of_business == "Pribadi Non PKP" ? 'NPWP terdapat kesalahan' : 'NPWP/KTP terdapat kesalahan' : props.data.revision_vendor.vendor.npwp_note,
 		sppkp_note: props.data.revision_vendor.vendor.sppkp_note == null ? 'SPPKP terdapat kesalahan' : props.data.revision_vendor.vendor.sppkp_note,
 		siup_note: props.data.revision_vendor.vendor.siup_note == null ? 'SIUP terdapat kesalahan' : props.data.revision_vendor.vendor.siup_note,
 		tdp_note: props.data.revision_vendor.vendor.tdp_note == null ? 'TDP terdapat kesalahan' : props.data.revision_vendor.vendor.tdp_note,
@@ -64,7 +64,7 @@ export default function Index(props) {
 				.board_of_directors_composition_note,
 		non_pkp_statement_note: props.data.revision_vendor.vendor.non_pkp_statement_note == null ? 'Surat Pernyataan Non PKP terdapat kesalahan' : props.data.revision_vendor.vendor.non_pkp_statement_note,
 
-		file_npwp_validate: props.data.revision_vendor.vendor.npwp_note == null ? 'NPWP terdapat kesalahan' : props.data.revision_vendor.vendor.npwp_note,
+		file_npwp_validate: props.data.revision_vendor.vendor.npwp_note == null ? props.data.revision_vendor.vendor.type_of_business != "Pribadi" && props.data.revision_vendor.vendor.type_of_business == "Pribadi Non PKP" ? 'NPWP terdapat kesalahan' : 'NPWP/KTP terdapat kesalahan' : props.data.revision_vendor.vendor.npwp_note,
 		file_sppkp_validate: props.data.revision_vendor.vendor.sppkp_note == null ? 'SPPKP terdapat kesalahan' : props.data.revision_vendor.vendor.sppkp_note,
 		file_siup_validate: props.data.revision_vendor.vendor.siup_note == null ? 'SIUP terdapat kesalahan' : props.data.revision_vendor.vendor.siup_note,
 		file_tdp_validate: props.data.revision_vendor.vendor.tdp_note == null ? 'TDP terdapat kesalahan' : props.data.revision_vendor.vendor.tdp_note,
@@ -252,9 +252,16 @@ export default function Index(props) {
 					[statusKey]: false,
 				}));
 				if (fileName == 'file_npwp') {
-					setNpwpNote("NPWP Terdapat Kesalahan");
-					data[fileName] = "NPWP Terdapat Kesalahan";
-					data.npwp_note = "NPWP Terdapat Kesalahan";
+					if(props.data.revision_vendor.vendor.type_of_business != 'Pribadi' && props.data.revision_vendor.vendor.type_of_business != 'Pribadi Non PKP')
+					{
+						setNpwpNote("NPWP Terdapat Kesalahan");
+						data[fileName] = "NPWP Terdapat Kesalahan";
+						data.npwp_note = "NPWP Terdapat Kesalahan";
+					} else {
+						setNpwpNote("NPWP/KTP Terdapat Kesalahan");
+						data[fileName] = "NPWP/KTP Terdapat Kesalahan";
+						data.npwp_note = "NPWP/KTP Terdapat Kesalahan";
+					}
 				}
 				if (fileName == 'file_sppkp') {
 					setSppkpNote("SPPKP Terdapat Kesalahan");
@@ -535,11 +542,11 @@ export default function Index(props) {
 			} else {
 				// Tampilkan pesan kesalahan atau ambil tindakan lain sesuai kebutuhan
 				alert(
-					"Harap pilih semua opsi CoA sebelum menambahkan entri baru."
+					"Please Choose all CoA options before adding a new entry."
 				);
 			}
 		} else {
-			alert("Harap pilih Supplier Site sebelum menambahkan entri baru.");
+			alert("Please Choose Supplier Site before adding a new entry.");
 		}
 	};
 
@@ -645,17 +652,17 @@ export default function Index(props) {
             />
 
 			<div className="page-title-box d-sm-flex align-items-center justify-content-between">
-				<h4 className="mb-sm-0 font-size-18">Perubahan Data</h4>
+				<h4 className="mb-sm-0 font-size-18">Data Change</h4>
 				<div className="page-title-right">
 					<ol className="breadcrumb m-0">
 						<li className="breadcrumb-item">
 							<a href={route("admin.vendor-profile.index")}>
-								Perubahan Data
+								Data Change
 							</a>
 						</li>
 						<li className="breadcrumb-item active">
 							<a href="javascript: void(0);">
-								Verifikasi Perubahan Data
+								Verification Data Change
 							</a>
 						</li>
 					</ol>
@@ -669,7 +676,7 @@ export default function Index(props) {
 					</a>
 					<div className="bg-white overflow-hidden shadow-lg sm:rounded-lg w-full">
 						<div className="p-6 text-gray-900 font-bold">
-							Verifikasi Perubahan Data
+							Verification Data Change
 						</div>
 					</div>
 				</div>
@@ -686,7 +693,7 @@ export default function Index(props) {
 								<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 text-sm text-gray-500 p-1">
 									<div className="">
 										<div className="flex">
-											<p className="mb-3">Nama</p>
+											<p className="mb-3">Name</p>
 											<p className="mb-3 ml-24">
 												&nbsp;:
 												{props.data.latest_vendor !=
@@ -776,7 +783,7 @@ export default function Index(props) {
 											</p>
 										</div>
 										<div className="flex">
-											<p className="mb-3">Jenis Usaha</p>
+											<p className="mb-3">Type of business</p>
 											<p className="mb-3 ml-14">
 												&nbsp;&nbsp;:
 												{props.data.latest_vendor !=
@@ -840,7 +847,7 @@ export default function Index(props) {
 										</div>
 										<div className="flex">
 											<p className="mb-3">KTP</p>
-											<p className="mb-3 ml-24">
+											<p className="mb-3" style={{marginLeft: '112px'}}>
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -871,7 +878,7 @@ export default function Index(props) {
 										</div>
 										<div className="flex">
 											<p className="mb-3">
-												Alamat Kantor
+												Office Address
 											</p>
 											<p className="mb-3 ml-11">
 												&nbsp;:
@@ -904,7 +911,7 @@ export default function Index(props) {
 											</p>
 										</div>
 										<div className="flex">
-											<p className="mb-3">Alamat NPWP</p>
+											<p className="mb-3">NPWP Address</p>
 											<p className="mb-3 ml-12">
 												:
 												{props.data.latest_vendor !=
@@ -935,8 +942,8 @@ export default function Index(props) {
 											</p>
 										</div>
 										<div className="flex">
-											<p className="mb-3">Alamat KTP</p>
-											<p className="mb-3 ml-12">
+											<p className="mb-3">KTP Address</p>
+											<p className="mb-3" style={{marginLeft: '61px'}}>
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -1044,7 +1051,7 @@ export default function Index(props) {
 											Director Information
 										</p>
 										<div className="flex text-sm text-gray-500 mb-3">
-											<p className="mb-3">Nama</p>
+											<p className="mb-3">Name</p>
 											<p className="mb-3 ml-24">
 												&nbsp;:
 												{props.data.latest_vendor !=
@@ -1148,7 +1155,7 @@ export default function Index(props) {
 											FA Information
 										</p>
 										<div className="flex text-sm text-gray-500 mb-3">
-											<p className="mb-3">Nama</p>
+											<p className="mb-3">Name</p>
 											<p className="mb-3 ml-24">
 												&nbsp;:
 												{props.data.latest_vendor !=
@@ -1254,7 +1261,7 @@ export default function Index(props) {
 											Marketing/Key Account Information
 										</p>
 										<div className="flex text-sm text-gray-500 mb-3">
-											<p className="mb-3">Nama</p>
+											<p className="mb-3">Name</p>
 											<p className="mb-3 ml-24">
 												&nbsp;:
 												{props.data.latest_vendor !=
@@ -1414,7 +1421,7 @@ export default function Index(props) {
 											</p>
 										</div>
 										<div className="flex text-sm text-gray-500 mb-3">
-											<p className="">Nama Akun</p>
+											<p className="">Account Name</p>
 											<p className="ml-16">
 												&nbsp;:
 												{props.data.latest_vendor !=
@@ -1534,9 +1541,11 @@ export default function Index(props) {
 											<p className="text-sm text-gray-500 mb-4">
 												SIUP
 											</p>
-											<p className="text-sm text-gray-500 mb-4">
-												TDP
-											</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
+												<p className="text-sm text-gray-500 mb-4">
+													TDP
+												</p>
+											:''}
 											<p className="text-sm text-gray-500 mb-4">
 												NIB
 											</p>
@@ -1913,6 +1922,7 @@ export default function Index(props) {
 														.vendor.expired_siup
 												}
 											</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -1941,116 +1951,121 @@ export default function Index(props) {
                                                 ) : (
                                                     ""
                                                 )} */}
-												{props.data.revision_vendor
-													.vendor.file_tdp != "" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	3
-																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
+												{props.data.revision_vendor.vendor.file_tdp ?
+												<>
+													{props.data.revision_vendor
+														.vendor.file_tdp != "" ? (
+														<>
+															<a
+																href="javascript:;"
+																onClick={(e) =>
+																	openPopup1(
+																		3
+																	)
 																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
 															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																<svg
+																	xmlns="http://www.w3.org/2000/svg"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	strokeWidth={
+																		1.5
+																	}
+																	stroke="currentColor"
+																	className="w-6 h-6 ml-2"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																	/>
+																</svg>
+															</a>
+															<a
+																href="javascript:;"
+																onClick={(e) =>
+																	clickStatusFile(
+																		"file_tdp",
+																		0
+																	)
+																}
+																hidden={
+																	submitSuccess
+																}
+															>
+																<CheckCircle
+																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																		null
+																		? "gray"
+																		: fileStatus.fileTdpStatus ==
+																			true
+																			? "green"
+																			: "gray"
+																		}-500`}
 																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_tdp",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileTdpStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
+															</a>
+															<a
+																href="javascript:;"
+																onClick={(e) =>
+																	clickStatusFile(
+																		"file_tdp",
+																		1
+																	)
+																}
+																hidden={
+																	submitSuccess
+																}
+															>
+																<XCircle
+																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																		null
+																		? "gray"
+																		: fileStatus.fileTdpStatus ==
+																			false
+																			? "red"
+																			: "gray"
+																		}-500`}
+																/>
+															</a>
+															<InputError
+																message={
+																	errors.file_tdp_validate
+																}
 															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_tdp",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileTdpStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_tdp_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_tdp !=
-														props.data.revision_vendor
-															.vendor.expired_tdp ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
-															{
-																props.data
-																	.latest_vendor
-																	.expired_tdp
-															}
-														</span>
+														</>
+													) : (
+														<p>-</p>
+													)}
+													/
+													{props.data.latest_vendor !=
+														null ? (
+														props.data.latest_vendor
+															.expired_tdp !=
+															props.data.revision_vendor
+																.vendor.expired_tdp ? (
+															<span
+																className={`line-through text-red-600 mr-1`}
+															>
+																{
+																	props.data
+																		.latest_vendor
+																		.expired_tdp
+																}
+															</span>
+														) : (
+															""
+														)
 													) : (
 														""
-													)
-												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_tdp
-												}
+													)}
+													{
+														props.data.revision_vendor
+															.vendor.expired_tdp
+													}
+												</>
+												:''}
 											</p>
+											:''}
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -2316,37 +2331,40 @@ export default function Index(props) {
 															null
 															? fileStatus.fileNpwpStatus
 															: true
-													}>Catatan File NPWP </p>
+													}>Note File NPWP </p>
 											<p className="mb-6" hidden={
 														fileStatus.fileSppkpStatus !=
 															null
 															? fileStatus.fileSppkpStatus
 															: true
-													}>Catatan File SPPKP</p>
+													}>Note File SPPKP</p>
 											<p className="mb-7" hidden={
 														fileStatus.fileSiupStatus !=
 															null
 															? fileStatus.fileSiupStatus
 															: true
-													}>Catatan File SIUP</p>
-											<p className="mb-7" hidden={
-														fileStatus.fileTdpStatus !=
-															null
-															? fileStatus.fileTdpStatus
-															: true
-													}>Catatan File TDP</p>
+													}>Note File SIUP</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
+												<p className="mb-7" hidden={
+															fileStatus.fileTdpStatus !=
+																null
+																? fileStatus.fileTdpStatus
+																: true
+														}>Note File TDP
+												</p>
+											:''}
 											<p className="mb-7" hidden={
 														fileStatus.fileNibStatus !=
 															null
 															? fileStatus.fileNibStatus
 															: true
-													}>Catatan File NIB</p>
+													}>Note File NIB</p>
 											<p className="mb-7" hidden={
 														fileStatus.fileBodcStatus !=
 															null
 															? fileStatus.fileBodcStatus
 															: true
-													}>Catatan File Akta Susunan Direksi</p>
+													}>Note File Akta Susunan Direksi</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -2371,7 +2389,7 @@ export default function Index(props) {
 														type="text"
 														name="npwp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file npwp *"
+														placeholder="Note file npwp *"
 														onChange={(e) =>
 															setData(
 																"npwp_note",
@@ -2407,7 +2425,7 @@ export default function Index(props) {
 														type="text"
 														name="sppkp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file sppkp *"
+														placeholder="Note file sppkp *"
 														onChange={(e) =>
 															setData(
 																"sppkp_note",
@@ -2446,7 +2464,7 @@ export default function Index(props) {
 														type="text"
 														name="siup_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file siup *"
+														placeholder="Note file siup *"
 														onChange={(e) =>
 															setData(
 																"siup_note",
@@ -2467,6 +2485,7 @@ export default function Index(props) {
 													/>
 												</div>
 											</div>
+											{props.data.revision_vendor.vendor.file_tdp ?
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -2485,7 +2504,7 @@ export default function Index(props) {
 														type="text"
 														name="tdp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file tdp *"
+														placeholder="Note file tdp *"
 														onChange={(e) =>
 															setData(
 																"tdp_note",
@@ -2506,6 +2525,7 @@ export default function Index(props) {
 													/>
 												</div>
 											</div>
+											:''}
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -2524,7 +2544,7 @@ export default function Index(props) {
 														type="text"
 														name="nib_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file nib *"
+														placeholder="Note file nib *"
 														onChange={(e) =>
 															setData(
 																"nib_note",
@@ -2563,7 +2583,7 @@ export default function Index(props) {
 														type="text"
 														name="board_of_directors_composition_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file akta susunan direksi *"
+														placeholder="Note file akta susunan direksi *"
 														onChange={(e) =>
 															setData(
 																"board_of_directors_composition_note",
@@ -2616,9 +2636,11 @@ export default function Index(props) {
 											<p className="text-sm text-gray-500 mb-3">
 												SIUP
 											</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
 											<p className="text-sm text-gray-500 mb-4">
 												TDP
 											</p>
+											:''}
 											<p className="text-sm text-gray-500 mb-4">
 												NIB
 											</p>
@@ -3025,6 +3047,7 @@ export default function Index(props) {
 														.vendor.expired_siup
 												}
 											</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -3053,117 +3076,122 @@ export default function Index(props) {
                                                 ) : (
                                                     ""
                                                 )} */}
-												{props.data.revision_vendor
-													.vendor.file_tdp != "" ? (
-													<>
-														<a
-															href={
-																props.data
-																	.revision_vendor
-																	.vendor
-																	.file_tdp
-															}
-															target="_blank"
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
+												{props.data.revision_vendor.vendor.file_tdp ?
+												<>
+													{props.data.revision_vendor
+														.vendor.file_tdp != "" ? (
+														<>
+															<a
+																href={
+																	props.data
+																		.revision_vendor
+																		.vendor
+																		.file_tdp
 																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
+																target="_blank"
 															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																<svg
+																	xmlns="http://www.w3.org/2000/svg"
+																	fill="none"
+																	viewBox="0 0 24 24"
+																	strokeWidth={
+																		1.5
+																	}
+																	stroke="currentColor"
+																	className="w-6 h-6 ml-2"
+																>
+																	<path
+																		strokeLinecap="round"
+																		strokeLinejoin="round"
+																		d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																	/>
+																</svg>
+															</a>
+															<a
+																href="javascript:;"
+																onClick={(e) =>
+																	clickStatusFile(
+																		"file_tdp",
+																		0
+																	)
+																}
+																hidden={
+																	submitSuccess
+																}
+															>
+																<CheckCircle
+																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																		null
+																		? "gray"
+																		: fileStatus.fileTdpStatus ==
+																			true
+																			? "green"
+																			: "gray"
+																		}-500`}
 																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_tdp",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileTdpStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
+															</a>
+															<a
+																href="javascript:;"
+																onClick={(e) =>
+																	clickStatusFile(
+																		"file_tdp",
+																		1
+																	)
+																}
+																hidden={
+																	submitSuccess
+																}
+															>
+																<XCircle
+																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																		null
+																		? "gray"
+																		: fileStatus.fileTdpStatus ==
+																			false
+																			? "red"
+																			: "gray"
+																		}-500`}
+																/>
+															</a>
+															<InputError
+																message={
+																	errors.file_tdp_validate
+																}
 															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_tdp",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileTdpStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_tdp_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_tdp !=
-														props.data.revision_vendor
-															.vendor.expired_tdp ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
-															{
-																props.data
-																	.latest_vendor
-																	.expired_tdp
-															}
-														</span>
+														</>
+													) : (
+														<p>-</p>
+													)}
+													/
+													{props.data.latest_vendor !=
+														null ? (
+														props.data.latest_vendor
+															.expired_tdp !=
+															props.data.revision_vendor
+																.vendor.expired_tdp ? (
+															<span
+																className={`line-through text-red-600 mr-1`}
+															>
+																{
+																	props.data
+																		.latest_vendor
+																		.expired_tdp
+																}
+															</span>
+														) : (
+															""
+														)
 													) : (
 														""
-													)
-												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_tdp
-												}
+													)}
+													{
+														props.data.revision_vendor
+															.vendor.expired_tdp
+													}
+												</>
+												:''}
 											</p>
+											:''}
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -3545,43 +3573,45 @@ export default function Index(props) {
 															null
 															? fileStatus.fileNpwpStatus
 															: true
-													}>Catatan File NPWP </p>
+													}>Note File NPWP </p>
 											<p className="mb-6" hidden={
 														fileStatus.fileSppkpStatus !=
 															null
 															? fileStatus.fileSppkpStatus
 															: true
-													}>Catatan File SPPKP</p>
+													}>Note File SPPKP</p>
 											<p className="mb-6" hidden={
 														fileStatus.fileSiupStatus !=
 															null
 															? fileStatus.fileSiupStatus
 															: true
-													}>Catatan File SIUP</p>
+													}>Note File SIUP</p>
+													{props.data.revision_vendor.vendor.file_tdp ?
 											<p className="mb-7" hidden={
 														fileStatus.fileTdpStatus !=
 															null
 															? fileStatus.fileTdpStatus
 															: true
-													}>Catatan File TDP</p>
+													}>Note File TDP</p>
+													:''}
 											<p className="mb-7" hidden={
 														fileStatus.fileNibStatus !=
 															null
 															? fileStatus.fileNibStatus
 															: true
-													}>Catatan File NIB</p>
+													}>Note File NIB</p>
 											<p className="mb-7" hidden={
 														fileStatus.fileBodcStatus !=
 															null
 															? fileStatus.fileBodcStatus
 															: true
-													}>Catatan File Akta Susunan Direksi</p>
+													}>Note File Akta Susunan Direksi</p>
 											<p className="mb-7" hidden={
 														fileStatus.fileNonPkpStatus !=
 															null
 															? fileStatus.fileNonPkpStatus
 															: true
-													}>Catatan File Surat Pernyataan Non PKP</p>
+													}>Note File Surat Pernyataan Non PKP</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -3606,7 +3636,7 @@ export default function Index(props) {
 														type="text"
 														name="npwp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file npwp *"
+														placeholder="Note file npwp *"
 														onChange={(e) =>
 															setData(
 																"npwp_note",
@@ -3642,7 +3672,7 @@ export default function Index(props) {
 														type="text"
 														name="sppkp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file sppkp *"
+														placeholder="Note file sppkp *"
 														onChange={(e) =>
 															setData(
 																"sppkp_note",
@@ -3681,7 +3711,7 @@ export default function Index(props) {
 														type="text"
 														name="siup_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file siup *"
+														placeholder="Note file siup *"
 														onChange={(e) =>
 															setData(
 																"siup_note",
@@ -3702,6 +3732,7 @@ export default function Index(props) {
 													/>
 												</div>
 											</div>
+											{props.data.revision_vendor.vendor.file_tdp ?
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -3720,7 +3751,7 @@ export default function Index(props) {
 														type="text"
 														name="tdp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file tdp *"
+														placeholder="Note file tdp *"
 														onChange={(e) =>
 															setData(
 																"tdp_note",
@@ -3741,6 +3772,7 @@ export default function Index(props) {
 													/>
 												</div>
 											</div>
+											:''}
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -3759,7 +3791,7 @@ export default function Index(props) {
 														type="text"
 														name="nib_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file nib *"
+														placeholder="Note file nib *"
 														onChange={(e) =>
 															setData(
 																"nib_note",
@@ -3798,7 +3830,7 @@ export default function Index(props) {
 														type="text"
 														name="board_of_directors_composition_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file akta susunan direksi *"
+														placeholder="Note file akta susunan direksi *"
 														onChange={(e) =>
 															setData(
 																"board_of_directors_composition_note",
@@ -3837,7 +3869,7 @@ export default function Index(props) {
 														type="text"
 														name="non_pkp_statement_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file Surat pernyataan non pkp *"
+														placeholder="Note file Surat pernyataan non pkp *"
 														onChange={(e) =>
 															setData(
 																"non_pkp_statement_note",
@@ -3873,8 +3905,7 @@ export default function Index(props) {
 								""
 							)}
 
-							{props.data.revision_vendor.vendor
-								.type_of_business == "Pribadi" ? (
+							{props.data.revision_vendor.vendor.type_of_business == "Pribadi" || props.data.revision_vendor.vendor.type_of_business == "Pribadi Non PKP" ? (
 								<div className="mb-3">
 									<div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-2 border-dashed border-b-2 border-gray-300 p-1">
 										<div className="border-l-0">
@@ -3885,7 +3916,7 @@ export default function Index(props) {
 												Type
 											</p>
 											<p className="text-sm text-gray-500 mb-3">
-												NPWP
+												NPWP/KTP
 											</p>
 											<p className="text-sm text-gray-500 mb-3">
 												Surat Pernyataan Non PKP
@@ -3895,7 +3926,7 @@ export default function Index(props) {
 										<div className="border-dashed border-gray-300 text-sm text-gray-500">
 											<p className="mb-3">&nbsp;</p>
 											<p className="mb-3">
-												: Wajib Pajak Orang Pribadi
+												: Wajib Pajak Orang Pribadi ({props.data.revision_vendor.vendor.type_of_business == 'Pribadi' ? 'PKP' : ''} {props.data.revision_vendor.vendor.type_of_business == 'Pribadi Non PKP' ? 'Non PKP' : ''})
 											</p>
 											<p className="mb-3 flex gap-3">
 												:
@@ -4145,13 +4176,13 @@ export default function Index(props) {
 															null
 															? fileStatus.fileNpwpStatus
 															: true
-													}>Catatan File NPWP </p>
+													}>Note File NPWP </p>
 											<p className="mb-6" hidden={
 														fileStatus.fileNonPkpStatus !=
 															null
 															? fileStatus.fileNonPkpStatus
 															: true
-													}>Catatan File Surat Pernyataan Non PKP</p>
+													}>Note File Surat Pernyataan Non PKP</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -4176,7 +4207,7 @@ export default function Index(props) {
 														type="text"
 														name="npwp_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file npwp *"
+														placeholder="Note file npwp *"
 														onChange={(e) =>
 															setData(
 																"npwp_note",
@@ -4212,7 +4243,7 @@ export default function Index(props) {
 														type="text"
 														name="non_pkp_statement_note"
 														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="catatan file Surat pernyataan non pkp *"
+														placeholder="Note file Surat pernyataan non pkp *"
 														onChange={(e) =>
 															setData(
 																"non_pkp_statement_note",
@@ -4251,7 +4282,7 @@ export default function Index(props) {
 										className="font-bold text-black mb-3"
 										hidden={submitSuccess}
 									>
-										Tindakan
+										Action
 									</p>
 									<div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
 										<div className="">
@@ -4564,7 +4595,7 @@ export default function Index(props) {
                                                         }
                                                     >
                                                         <option value="" hidden>
-                                                            Pilih
+                                                            Choose
                                                         </option>
                                                         {props.data.approver_revision_done.map(
                                                             (item, index) => (
@@ -4594,13 +4625,13 @@ export default function Index(props) {
 												hidden={submitSuccess}
 											>
 												<InputLabel
-													value="Catatan"
+													value="Note"
 													className="font-bold"
 												/>
 												<textarea
 													name="note"
 													className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-													placeholder="catatan *"
+													placeholder="Note *"
 													onChange={(e) =>
 														setData(
 															"note",
@@ -4618,7 +4649,7 @@ export default function Index(props) {
 											<div className="mb-3">
 												<InputLabel
 													htmlFor="lampiran"
-													value="Lampiran"
+													value="Attachment"
 													required={true}
 												/>
 												<div className="flex">
@@ -4820,7 +4851,7 @@ export default function Index(props) {
 																	}
 																>
 																	<option value="" hidden>
-																		Pilih
+																		Choose
 																	</option>
 																	<option value="ada">
 																		Ada
@@ -4837,7 +4868,7 @@ export default function Index(props) {
 
 															<div className="mb-3 grid grid-cols-3 items-center justify-between">
 																<p className="font-bold">
-																	TOP
+																	PPH
 																</p>
 																<p className="font-bold">
 																	:
@@ -4855,7 +4886,7 @@ export default function Index(props) {
 																		}
 																	>
 																		<option value="" hidden>
-																			Pilih
+																			Choose
 																		</option>
 																		<option value="ada">
 																			Ada
@@ -4983,7 +5014,7 @@ export default function Index(props) {
 																		handleSupplierSiteChange
 																	}
 																>
-																	<option value="">Pilih</option>
+																	<option value="">Choose</option>
 																	{
 																		props.data.supplier_sites.map((item, key) => (
 																			<option value={item.name}>{item.name}</option>
@@ -5373,7 +5404,7 @@ export default function Index(props) {
 															)
 														}
 													>
-														Tolak
+														Reject
 													</DangerButton>
 													<PrimaryButton
 														className="w-full items-center justify-center ml-3"
@@ -5384,7 +5415,7 @@ export default function Index(props) {
 															)
 														}
 													>
-														Setuju
+														Approve
 													</PrimaryButton>
 												</div>
 											</p>
@@ -5442,7 +5473,7 @@ export default function Index(props) {
 								required
 							>
 								<option value="" hidden>
-									Pilih
+									Choose
 								</option>
 								{
 									props.data.supplier_sites.map((item, key) => (
@@ -5486,7 +5517,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_1 ? props.data.coa_1.map(
 														(item, index) => (
@@ -5526,7 +5557,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_2 ? props.data.coa_2.map(
 														(item, index) => (
@@ -5566,7 +5597,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_3 ? props.data.coa_3.map(
 														(item, index) => (
@@ -5606,7 +5637,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_4 ? props.data.coa_4.map(
 														(item, index) => (
@@ -5646,7 +5677,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_5 ? props.data.coa_5.map(
 														(item, index) => (
@@ -5686,7 +5717,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_6 ? props.data.coa_6.map(
 														(item, index) => (
@@ -5726,7 +5757,7 @@ export default function Index(props) {
 													required
 												>
 													<option value="" hidden>
-														Pilih
+														Choose
 													</option>
 													{props.data.coa_7 ? props.data.coa_7.map(
 														(item, index) => (
@@ -5861,7 +5892,8 @@ export default function Index(props) {
 												value={data.siup_note}
 											/>
 										: ''}
-
+										{props.data.revision_vendor.vendor.file_tdp ?
+										<>
 										{props.newdocs[idxfile].name == 'file_tdp' ? 
 											<textarea
 												name="tdp_note"
@@ -5882,6 +5914,8 @@ export default function Index(props) {
 												value={data.tdp_note}
 											/>
 										: ''}
+										</>
+										:''}
 
 										{props.newdocs[idxfile].name == 'file_nib' ? 
 											<textarea
@@ -6098,57 +6132,61 @@ export default function Index(props) {
 										</a>
 									</>
 									: ''}
-
-									{props.newdocs[idxfile].name == 'file_tdp' ? 
+									
+									{props.data.revision_vendor.vendor.file_tdp ?
 									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_tdp",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileTdpStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_tdp",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileTdpStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
+										{props.newdocs[idxfile].name == 'file_tdp' ? 
+										<>
+											<a
+												href="javascript:;"
+												onClick={(e) =>
+													clickStatusFile(
+														"file_tdp",
+														0
+													)
+												}
+												hidden={
+													submitSuccess
+												}
+											>
+												<CheckCircle
+													className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+														null
+														? "gray"
+														: fileStatus.fileTdpStatus ==
+															true
+															? "green"
+															: "gray"
+														}-500`}
+												/>
+											</a>
+											<a
+												href="javascript:;"
+												onClick={(e) =>
+													clickStatusFile(
+														"file_tdp",
+														1
+													)
+												}
+												hidden={
+													submitSuccess
+												}
+											>
+												<XCircle
+													className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+														null
+														? "gray"
+														: fileStatus.fileTdpStatus ==
+															false
+															? "red"
+															: "gray"
+														}-500`}
+												/>
+											</a>
+										</>
+										: ''}
 									</>
-									: ''}
+									:''}
 
 									{props.newdocs[idxfile].name == 'file_nib' ? 
 									<>

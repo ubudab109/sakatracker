@@ -8,7 +8,7 @@ import axios from "axios";
 export default function Table(props) {
     const [columns] = useState([
         {
-            name: "Aksi",
+            name: "Action",
             selector: (row) => row.action,
             sortable: false,
         },
@@ -18,12 +18,12 @@ export default function Table(props) {
             sortable: true,
         },
         {
-            name: "Invoice No",
+            name: "Invoice Number",
             selector: (row) => row.invoice_number,
             sortable: true,
         },
         {
-            name: "Tanggal Inv.",
+            name: "Inv. Date",
             selector: (row) => row.date,
             sortable: true,
         },
@@ -69,6 +69,8 @@ export default function Table(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -100,7 +102,7 @@ export default function Table(props) {
                     type:
                         row.is_po != null
                             ? row.is_po == 0
-                                ? "Tanpa PO"
+                                ? "Non PO"
                                 : "PO"
                             : "MT",
                     total: formatterCurrency.format(parseInt(row.total)).replace("€", "").trim(),
@@ -152,7 +154,7 @@ export default function Table(props) {
                         checked={checked}
                     />
                     <label for="filter">
-                        Lihat data yang harus diverifikasi
+                        View the data that must be verified
                     </label>
                 </form>
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">

@@ -7,14 +7,14 @@ export default function Create({ auth, mustVerifyEmail, status, ...props }) {
         <AuthenticatedLayout
             user={auth.user}
         >
-            <Head title="Tambah SLA Holiday" />
+            <Head title="Add SLA Holiday" />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 className="mb-sm-0 font-size-18">SLA Holiday</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item"><a href={route('admin.sla-calendar.index')}>SLA Calendar</a></li>
-                        <li className="breadcrumb-item active">Tambah SLA Holiday</li>
+                        <li className="breadcrumb-item active">Add SLA Holiday</li>
                     </ol>
                 </div>
             </div>
@@ -22,7 +22,7 @@ export default function Create({ auth, mustVerifyEmail, status, ...props }) {
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                        <div className="p-6 text-gray-900 font-bold">Tambah SLA Holiday</div>
+                        <div className="p-6 text-gray-900 font-bold">Add SLA Holiday</div>
                     </div>
                 </div>
             </div>

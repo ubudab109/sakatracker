@@ -60,6 +60,8 @@ export default function OutstandingTable2(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -73,9 +75,9 @@ export default function OutstandingTable2(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
-                                <th>No. Dokumen</th>
-                                <th>Tanggal Inv.</th>
+                                <th>Action</th>
+                                <th>Document Number</th>
+                                <th>Inv. Date</th>
                                 <th>Total</th>
                                 <th>Type</th>
                                 <th>Status</th>

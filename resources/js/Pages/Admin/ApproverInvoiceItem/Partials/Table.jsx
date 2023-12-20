@@ -36,11 +36,11 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_approver_invoice') || props.permissions.includes('delete_approver_invoice') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
                                 {/* <th>Role</th> */}
                                 <th>User</th>
-                                <th>Range Nominal</th>
+                                <th>Range Fee</th>
                                 <th>SLA</th>
                             </tr>
                         </thead>
@@ -74,7 +74,7 @@ export default function Table(props) {
                                     {/* <td className='border border-slate-600'>{item.role.name}</td> */}
                                     <td className='border border-slate-600'>{item.user.name}</td>
                                     <td className='border border-slate-600'>{item.start_fee == null ? 0 : item.start_fee} to {item.end_fee == null ? 0 : item.end_fee}</td>
-                                    <td className='border border-slate-600'>{item.sla} Jam</td>
+                                    <td className='border border-slate-600'>{item.sla} Hour</td>
                                 </tr>
                             ))}
                         </tbody>

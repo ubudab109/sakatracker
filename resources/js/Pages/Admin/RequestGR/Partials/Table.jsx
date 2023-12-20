@@ -24,14 +24,12 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                {props.permissions.includes('verification_request_gr') ?
-                                    <th>Aksi</th>
-                                :''}
+                                <th>Action</th>
                                 <th>Vendor</th>
-                                <th>No. PO</th>
-                                <th>No. Surat Jalan</th>
+                                <th>PO Number</th>
+                                <th>Travel Number</th>
                                 {/* <th>No. Invoice</th> */}
-                                <th>Tanggal Surat Jalan</th>
+                                <th>Travel Date</th>
                                 {/* <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Total Price</th> */}
@@ -41,17 +39,17 @@ export default function Table(props) {
                         <tbody>
                             {props.data.map((item, index) => (
                                 <tr className="border-t bg-gray-100">
-                                    {props.permissions.includes('verification_request_gr') ?
                                         <>
                                             <td className='border border-slate-600'>
-                                                <div className='flex gap-1'>
-                                                    <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
-                                                        <Edit />
-                                                    </a>
-                                                </div>
+                                                {props.permissions.includes('verification_request_gr') && item.status == 'pending' ?
+                                                    <div className='flex gap-1'>
+                                                        <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
+                                                            <Edit />
+                                                        </a>
+                                                    </div>
+                                                :''}
                                             </td>
                                         </>
-                                    :''}
                                     <td className='border border-slate-600'>{item.vendor.name}, {item.vendor.legality}</td>
                                     <td className='border border-slate-600'>{item.po_number}</td>
                                     <td className='border border-slate-600'>{item.document_number}</td>
@@ -62,9 +60,9 @@ export default function Table(props) {
                                     {/* <td className='border border-slate-600'>{item.total_price}</td> */}
                                     <td className='border border-slate-600'>
                                         {item.status == 'approved' ? 
-                                        'Sudah diinput ke DB'
+                                        'Approved'
                                         : item.status == 'reject' ? 
-                                        'Ditolak'
+                                        'Rejected'
                                         : item.status}
                                     </td>
                                 </tr>

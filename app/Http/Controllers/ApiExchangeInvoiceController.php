@@ -45,6 +45,7 @@ class ApiExchangeInvoiceController extends Controller
 
 			$data['total_debit'] = 0;
 			$data['total_credit'] = 0;
+			$data['total_tax'] = 0;
 
 			if($data['outstanding_invoice'])
 			{
@@ -56,6 +57,8 @@ class ApiExchangeInvoiceController extends Controller
 					} else {
 						$data['total_credit'] += $rfp_view->amount_dist;
 					}
+					
+					$data['total_tax'] += (int)$rfp_view->total_tax;
 				}
 			}
 

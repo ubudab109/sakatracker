@@ -25,9 +25,9 @@ export default function Table(props) {
                         <thead>
                             <tr>
                                 {props.permissions.includes('update_user') || props.permissions.includes('delete_user') ?
-                                    <th>Aksi</th>
+                                    <th>Action</th>
                                 :''}
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>Email Address</th>
                                 <th>Role</th>
                             </tr>

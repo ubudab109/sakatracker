@@ -24,8 +24,8 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
-                                <th>Nama</th>
+                                <th>Action</th>
+                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody>

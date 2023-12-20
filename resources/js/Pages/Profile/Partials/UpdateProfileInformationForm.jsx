@@ -1,38 +1,26 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
-import { Link, useForm, usePage } from "@inertiajs/react";
-import { Transition } from "@headlessui/react";
-import { useState } from "react";
-import ModifyButton from "@/Components/ModifyButton";
-import DangerButton from "@/Components/DangerButton";
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { Transition } from '@headlessui/react';
+import { useState } from 'react';
+import ModifyButton from '@/Components/ModifyButton';
+import DangerButton from '@/Components/DangerButton';
 
-export default function UpdateProfileInformation({
-    mustVerifyEmail,
-    status,
-    className = "",
-}) {
+export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
 
-    const {
-        data,
-        setData,
-        patch,
-        post,
-        errors,
-        processing,
-        recentlySuccessful,
-    } = useForm({
+    const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
-        code: "",
+        code: '',
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route("profile.update"));
+        patch(route('profile.update'));
     };
 
     const [showOtpInput, setShowOtpInput] = useState(true);
@@ -42,15 +30,13 @@ export default function UpdateProfileInformation({
     };
 
     const sendOtp = (e) => {
-        post(route("verification-email.resend-otp"));
+        post(route('verification-email.resend-otp'));
     };
 
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
@@ -58,24 +44,23 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
+                {/* <div>
                     <InputLabel htmlFor="name" value="Name" />
 
                     <TextInput
                         id="name"
                         className="mt-1 block w-full"
                         value={data.name}
-                        onChange={(e) => setData("name", e.target.value)}
+                        onChange={(e) => setData('name', e.target.value)}
                         required
-                        readOnly
                         isFocused
                         autoComplete="name"
                     />
 
                     <InputError className="mt-2" message={errors.name} />
-                </div>
+                </div> */}
 
-                <div className="">
+                <div className=''>
                     <div>
                         <>
                             <InputLabel htmlFor="email" value="Old Email" />
@@ -118,10 +103,10 @@ export default function UpdateProfileInformation({
                             className="mt-3"
                             type="button"
                         >
-                            Kirim OTP
+                            Send OTP
                         </ModifyButton>
                         <PrimaryButton onClick={(e) => changeEmail(e)}>
-                            Ganti Email
+                            Change Email
                         </PrimaryButton>
                         {!showOtpInput ? (
                             <DangerButton
@@ -142,7 +127,7 @@ export default function UpdateProfileInformation({
                         type="text"
                         className="mt-1 block w-full"
                         value={data.code}
-                        onChange={(e) => setData("code", e.target.value)}
+                        onChange={(e) => setData('code', e.target.value)}
                         required
                         placeholder="OTP"
                         disabled={showOtpInput}
@@ -156,7 +141,7 @@ export default function UpdateProfileInformation({
                         <p className="text-sm mt-2 text-gray-800">
                             Your email address is unverified.
                             <Link
-                                href={route("verification.send")}
+                                href={route('verification.send')}
                                 method="post"
                                 as="button"
                                 className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -165,10 +150,9 @@ export default function UpdateProfileInformation({
                             </Link>
                         </p>
 
-                        {status === "verification-link-sent" && (
+                        {status === 'verification-link-sent' && (
                             <div className="mt-2 font-medium text-sm text-green-600">
-                                A new verification link has been sent to your
-                                email address.
+                                A new verification link has been sent to your email address.
                             </div>
                         )}
                     </div>

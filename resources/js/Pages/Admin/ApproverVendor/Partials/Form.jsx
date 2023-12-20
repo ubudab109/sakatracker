@@ -81,7 +81,7 @@ export default function Form(props) {
                 </div> */}
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="sla" value="SLA (Jam)" required={true} />
+                    <InputLabel htmlFor="sla" value="SLA (Hour)" required={true} />
 
                     <TextInput 
                         id="sla"

@@ -28,27 +28,25 @@ export default function Table(props) {
         return `${day}-${month}-${year} ${hours}:${minutes}`;
       }
 
-      // Create our number formatter.
-    const formatterCurrency = new Intl.NumberFormat('en-US', {
+      const formatterCurrency = new Intl.NumberFormat('id-ID', {
         style: 'currency',
-        currency: 'EUR',
-    
-        // These options are needed to round to whole numbers if that's what you want.
-        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
     });
+    
 
     return (
         <div className="pt-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
-                    <table ref={tableRef} className="w-full">
+            <div className="w-full">
+                <div className='table-responsive'>
+                    <table ref={tableRef} className="table align-middle datatable dt-responsive table-check nowrap w-full border-collapse border-spacing-y-8">
                         <thead>
-                            <tr>
-                                <th>Aksi</th>
+                            <tr className='bg-transparent'>
+                                <th>Action</th>
                                 <th>ID Tukar Faktur</th>
-                                <th>Invoice No</th>
-                                <th>Tanggal Inv.</th>
+                                <th>Invoice Number</th>
+                                <th>Inv. Date</th>
                                 <th>Type</th>
                                 <th>Total</th>
                                 <th>Status</th>
@@ -72,17 +70,18 @@ export default function Table(props) {
                                             : ''}
                                         </div>
                                     </td>
-                                    <td>{item.tax_invoice_number}</td>
-                                    <td>{item.invoice_number}</td>
-                                    <td>{item.date}</td>
+                                    <td>{item.tax_invoice_number ?? '-'}</td>
+                                    <td>{item.invoice_number ?? '-'}</td>
+                                    <td>{item.date ?? '-'}</td>
                                     <td>
-                                        {item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}
+                                        {item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Non PO' : 'MT'}
                                     </td>
                                     <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
                                     <td>{
                                         item.status === 'menunggu persetujuan' || item.status === 'sedang berlangsung'
-                                        ? 'Validation Process' : (
-                                            item.status === 'disetujui' ? 'Payment Process' : item.status
+                                        ? <div className="badge bg-orange-300 text-orange-700 font-size-12">Validation Process</div>
+                                        : (
+                                            item.status === 'disetujui' ? <div className="badge bg-green-300 text-green-700 font-size-12">Payment Process</div> : item.status === 'ditolak' ? <div className="badge bg-red-300 text-red-700 font-size-12">Rejected</div> : <div className="badge bg-gray-300 text-gray-700 font-size-12 capitalize">{item.status ?? '-'}</div>
                                         )    
                                     }</td>
                                     <td>{formatDate(item.updated_at)}</td>

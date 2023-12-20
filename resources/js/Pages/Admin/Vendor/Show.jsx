@@ -293,11 +293,11 @@ export default function Show(props) {
 			} else {
 				// Tampilkan pesan kesalahan atau ambil tindakan lain sesuai kebutuhan
 				alert(
-					"Harap pilih semua opsi CoA sebelum menambahkan entri baru."
+					"Please Choose all CoA options before adding a new entry."
 				);
 			}
 		} else {
-			alert("Harap pilih Supplier Site sebelum menambahkan entri baru.");
+			alert("Please Choose Supplier Site before adding a new entry.");
 		}
 	};
 
@@ -404,8 +404,8 @@ export default function Show(props) {
                                         <p className="mb-3">Email Address</p>
                                         <p className="mb-3">NPWP</p>
                                         <p className="mb-3">KTP</p>
-                                        <p className="mb-3">Alamat NPWP</p>
-                                        <p className="mb-3">Alamat KTP</p>
+                                        <p className="mb-3">NPWP Address</p>
+                                        <p className="mb-3">KTP Address</p>
                                     </div>
                                     <div className="">
                                         <p className="mb-3">
@@ -469,7 +469,7 @@ export default function Show(props) {
                                             Director Information
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
-                                            Nama
+                                            Name
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
                                             Email Address
@@ -499,7 +499,7 @@ export default function Show(props) {
                                             FA Information
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
-                                            Nama
+                                            Name
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
                                             Email Address
@@ -531,7 +531,7 @@ export default function Show(props) {
                                             Marketing/Key Account Information
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
-                                            Nama
+                                            Name
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
                                             Email Address
@@ -572,10 +572,10 @@ export default function Show(props) {
                                             Bank
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
-                                            Nomor Rekening
+                                            Rekening Number
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
-                                            Nama Akun
+                                            Account Name
                                         </p>
                                         <p className="text-sm text-gray-500 mb-3">
                                             Branch
@@ -643,9 +643,11 @@ export default function Show(props) {
                                             <p className="text-sm text-gray-500 mb-4">
                                                 SIUP
                                             </p>
+                                            {props.data.vendor.file_tdp ? 
                                             <p className="text-sm text-gray-500 mb-4">
                                                 TDP
                                             </p>
+                                            :''}
                                             <p className="text-sm text-gray-500 mb-4">
                                                 NIB
                                             </p>
@@ -658,7 +660,7 @@ export default function Show(props) {
                                             <p className="mb-3">
                                                 : Wajib Pajak Badan Usaha PKP
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_npwp !=
@@ -689,7 +691,7 @@ export default function Show(props) {
                                                 )}
                                                 / <p>&nbsp;</p>
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_sppkp !=
@@ -724,7 +726,7 @@ export default function Show(props) {
                                                         .expired_sppkp
                                                 }
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_siup !=
@@ -756,7 +758,8 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_siup}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            {props.data.vendor.file_tdp ?
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_tdp !=
@@ -788,7 +791,8 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_tdp}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            :''}
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_nib !=
@@ -820,7 +824,7 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_nib}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -867,7 +871,7 @@ export default function Show(props) {
                                         <div className="lg:ml-5 text-sm text-gray-500">
                                             <p className="mb-3">&nbsp;</p>
                                             <p className="mb-3">&nbsp;</p>
-                                            {/* <p className="mb-3 flex justify-between">
+                                            {/* <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -899,7 +903,7 @@ export default function Show(props) {
                                                 )}
                                                 <p>&nbsp;</p>
                                             </p> */}
-                                            {/* <p className='mb-3 flex justify-between'>:
+                                            {/* <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -907,7 +911,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>:
+                                        <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -941,9 +945,11 @@ export default function Show(props) {
                                             <p className="text-sm text-gray-500 mb-3">
                                                 SIUP
                                             </p>
+                                            {props.data.vendor.file_tdp ?
                                             <p className="text-sm text-gray-500 mb-4">
                                                 TDP
                                             </p>
+                                            :''}
                                             <p className="text-sm text-gray-500 mb-4">
                                                 NIB
                                             </p>
@@ -960,7 +966,7 @@ export default function Show(props) {
                                                 : Wajib Pajak Badan Usaha Non
                                                 PKP
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_npwp !=
@@ -991,7 +997,7 @@ export default function Show(props) {
                                                 )}
                                                 / <p>&nbsp;</p>
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_sppkp !=
@@ -1026,7 +1032,7 @@ export default function Show(props) {
                                                         .expired_sppkp
                                                 }
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_siup !=
@@ -1058,7 +1064,8 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_siup}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            {props.data.vendor.file_tdp ?
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_tdp !=
@@ -1090,7 +1097,8 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_tdp}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            :''}
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_nib !=
@@ -1122,7 +1130,7 @@ export default function Show(props) {
                                                 /{" "}
                                                 {props.data.vendor.expired_nib}
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1154,7 +1162,7 @@ export default function Show(props) {
                                                 )}
                                                 / <p>&nbsp;</p>
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1204,7 +1212,7 @@ export default function Show(props) {
                                         <div className="lg:ml-5 text-sm text-gray-500">
                                             <p className="mb-3">&nbsp;</p>
                                             <p className="mb-3">&nbsp;</p>
-                                            {/* <p className="mb-3 flex justify-between">
+                                            {/* <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1236,7 +1244,7 @@ export default function Show(props) {
                                                 )}
                                                 <p>&nbsp;</p>
                                             </p> */}
-                                            {/* <p className='mb-3 flex justify-between'>:
+                                            {/* <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -1244,7 +1252,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>:
+                                        <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -1252,7 +1260,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                            {/* <p className="mb-3 flex justify-between">
+                                            {/* <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1302,7 +1310,7 @@ export default function Show(props) {
                                                 Type
                                             </p>
                                             <p className="text-sm text-gray-500 mb-3">
-                                                NPWP
+                                                NPWP/KTP
                                             </p>
                                             <p className="text-sm text-gray-500 mb-3">
                                                 Surat Pernyataan Non PKP
@@ -1312,9 +1320,9 @@ export default function Show(props) {
                                         <div className="border-dashed border-gray-300 text-sm text-gray-500">
                                             <p className="mb-3">&nbsp;</p>
                                             <p className="mb-3">
-                                                : Wajib Pajak Orang Pribadi
+                                                : Wajib Pajak Orang Pribadi ({props.data.vendor.type_of_business == 'Pribadi' ? 'PKP' : ''} {props.data.vendor.type_of_business == 'Pribadi Non PKP' ? 'Non PKP' : ''})
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor.file_npwp !=
@@ -1345,7 +1353,7 @@ export default function Show(props) {
                                                 )}
                                                 <p>&nbsp;</p>
                                             </p>
-                                            <p className="mb-3 flex justify-between">
+                                            <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1377,7 +1385,7 @@ export default function Show(props) {
                                                 )}
                                                 <p>&nbsp;</p>
                                             </p>
-                                            {/* <p className='mb-3 flex justify-between'>:
+                                            {/* <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_ektp != '' ? <a href={props.data.vendor.file_ektp} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -1400,7 +1408,7 @@ export default function Show(props) {
                                         <div className="lg:ml-5 text-sm text-gray-500">
                                             <p className="mb-3">&nbsp;</p>
                                             <p className="mb-3">&nbsp;</p>
-                                            {/* <p className='mb-3 flex justify-between'>:
+                                            {/* <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_front_page_bank != '' ? <a href={props.data.vendor.file_front_page_bank} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -1408,7 +1416,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p>
-                                        <p className='mb-3 flex justify-between'>:
+                                        <p className='mb-3 grid grid-cols-3'>:
                                             {props.data.vendor.file_bank_account_statement_letter != '' ? <a href={props.data.vendor.file_bank_account_statement_letter} target='_blank'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
@@ -1416,7 +1424,7 @@ export default function Show(props) {
                                             </a> : <p>-</p> }
                                             <p>&nbsp;</p>
                                         </p> */}
-                                            {/* <p className="mb-3 flex justify-between">
+                                            {/* <p className="mb-3 grid grid-cols-3">
                                                 :
                                                 
                                                 {props.data.vendor
@@ -1613,7 +1621,7 @@ export default function Show(props) {
                                                                 handleSupplierSiteChange
                                                             }
                                                         >
-                                                            <option value="">Pilih</option>
+                                                            <option value="">Choose</option>
                                                             {
                                                                 props.data.supplier_sites.map((item, key) => (
                                                                     <option value={item.name}>{item.name}</option>
@@ -1908,7 +1916,7 @@ export default function Show(props) {
                                         className="items-center justify-center ml-3"
                                         type="submit"
                                     >
-                                        Simpan Perubahan
+                                        Save
                                     </PrimaryButton>
                                 : ''}
                             </form>
@@ -1918,7 +1926,7 @@ export default function Show(props) {
                             <div className="p-3 mb-3">
                                 <div className="flex justify-center">
                                     <InputLabel
-                                        value="Tambah Supplier Site"
+                                        value="Add Supplier Site"
                                         className="font-bold text-xl"
                                         required={true}
                                     />
@@ -1981,7 +1989,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_1 ? props.data.coa_1.map(
                                                                     (item, index) => (
@@ -2021,7 +2029,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_2 ? props.data.coa_2.map(
                                                                     (item, index) => (
@@ -2061,7 +2069,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_3 ? props.data.coa_3.map(
                                                                     (item, index) => (
@@ -2101,7 +2109,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_4 ? props.data.coa_4.map(
                                                                     (item, index) => (
@@ -2141,7 +2149,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_5 ? props.data.coa_5.map(
                                                                     (item, index) => (
@@ -2181,7 +2189,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_6 ? props.data.coa_6.map(
                                                                     (item, index) => (
@@ -2221,7 +2229,7 @@ export default function Show(props) {
                                                                 required
                                                             >
                                                                 <option value="" hidden>
-                                                                    Pilih
+                                                                    Choose
                                                                 </option>
                                                                 {props.data.coa_7 ? props.data.coa_7.map(
                                                                     (item, index) => (
@@ -2247,7 +2255,7 @@ export default function Show(props) {
                                 </div>
                                 <div className="mt-6 flex justify-end gap-3">
                                     <SecondaryButton onClick={closeModalSS}>
-                                        Tutup
+                                        Close
                                     </SecondaryButton>
                                     <PrimaryButton onClick={addEntry}>Simpan</PrimaryButton>
                                 </div>

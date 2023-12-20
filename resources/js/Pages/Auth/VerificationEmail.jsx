@@ -23,61 +23,86 @@ export default function VerificationEmail(props) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Lupa Kata Sandi" />
+        <div class="auth-page">
+            <Head title="Confirm OTP Code" />
+            <div class="container-fluid p-0">
+                <div class="row g-0">
+                    <div class="col-xxl-3 col-lg-4 col-md-5">
+                        <div class="auth-full-page-content d-flex p-sm-5 p-4">
+                            <div class="w-100">
+                                <div class="d-flex flex-column h-100">
+                                    <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
+                                        <a href="#" class="d-block auth-logo">
+                                            <img src="/assets/images/logo-chams.png" width={128} />
+                                        </a>
+                                    </div>
+                                    <div class="auth-content my-auto">
+                                        <div class="text-center">
+                                            <h5 class="mb-0">Confirm OTP Code</h5>
+                                            <p class="text-muted mt-2">Confirm OTP Code with Chams.</p>
+                                        </div>
+                                        <div class="alert alert-success text-center my-4" role="alert">
+                                            Enter your Email and Code OTP for verification account!
+                                        </div>
+                                        <form class="mt-4" onSubmit={submit}>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="text" name="email" class="form-control" id="email" placeholder="Enter email" 
+                                                    value={data.email}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                    readOnly={isDisabledEmail}
+                                                />
+                                                <InputError message={errors.email} className="mt-2" />
+                                                <PrimaryButton type="button" onClick={() => {
+                                                    if (isDisabledEmail) setIsDisabledEmail(false);
+                                                    else setIsDisabledEmail(true);
+                                                }} className="mt-1 float-right mb-3">{isDisabledEmail ? 'Edit Email' : 'Cancel'}</PrimaryButton>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">OTP Code</label>
+                                                <input type="text" name="otp_code" class="form-control" id="otp_code" placeholder="Enter otp code" 
+                                                    value={data.otp_code}
+                                                    onChange={(e) => setData('otp_code', e.target.value)}
+                                                />
+                                                <InputError message={errors.otp_code} className="mt-2" />
+                                            </div>
+                                            <ResendOTP onResendClick={() => post(`/verification-email/resend-otp?user=${props.user.id}&email=${data.email}`)} maxTime={10} className="mt-3" />
+                                            <div class="mb-3 mt-4">
+                                                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit" disabled={processing}>Submit</button>
+                                            </div>
+                                        </form>
 
-            <b className='text-2xl'>Konfirmasi Kode OTP</b>
-
-            <div className="mb-4 text-sm text-gray-600 mt-4">
-                Silahkan cek email anda untuk mendapatkan kode OTP.
+                                        <div class="mt-5 text-center">
+                                            <p class="text-muted mb-0">Already verification account ?  <a href={route('login')}
+                                                    class="text-primary fw-semibold"> Sign In </a> </p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 mt-md-5 text-center">
+                                        <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-9 col-lg-8 col-md-7">
+                        <div class="auth-bg pt-md-5 p-4 d-flex">
+                            <div class="bg-overlay bg-primary"></div>
+                            <ul class="bg-bubbles">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <form onSubmit={submit}>
-                <div>
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        placeholder="Email address"
-                        className={`mt-1 block w-full ${isDisabledEmail ? 'bg-gray-100' : ''}`}
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                        readOnly={isDisabledEmail}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                    <PrimaryButton type="button" onClick={() => {
-                        if (isDisabledEmail) setIsDisabledEmail(false);
-                        else setIsDisabledEmail(true);
-                    }} className="mt-2">{isDisabledEmail ? 'Edit Email' : 'Cancel'}</PrimaryButton>
-                </div>
-                <div className="mt-3">
-                    <TextInput
-                        id="otp_code"
-                        type="text"
-                        name="otp_code"
-                        placeholder="Kode OTP"
-                        className="mt-1 block w-full"
-                        isFocused={true}
-                        value={data.otp_code}
-                        onChange={(e) => setData('otp_code', e.target.value)}
-                    />
-
-                    <InputError message={errors.otp_code} className="mt-2" />
-                </div>
-
-                <ResendOTP onResendClick={() => post(`/verification-email/resend-otp?user=${props.user.id}&email=${data.email}`)} maxTime={10} className="mt-3" />
-
-                <div className="flex items-center justify-between mt-4">
-                    <Link href={route('login')} className='underline text-blue-800'>
-                        Kembali Login
-                    </Link>
-                    <PrimaryButton className="ml-4" disabled={processing}>
-                        Verifikasi Email
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+        </div>
     );
 }

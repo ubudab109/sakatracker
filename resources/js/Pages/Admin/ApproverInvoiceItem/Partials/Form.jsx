@@ -63,7 +63,7 @@ export default function Form(props) {
 
                 <div className="grid grid-cols-2 gap-3">
                     <div className="mb-3">
-                        <InputLabel htmlFor="start_fee" value="Start Nominal" required={true} />
+                        <InputLabel htmlFor="start_fee" value="Start Fee" required={true} />
 
                         <TextInput 
                             id="start_fee"
@@ -84,7 +84,7 @@ export default function Form(props) {
                         />
                     </div>
                     <div className="mb-3">
-                        <InputLabel htmlFor="end_fee" value="End Nominal" required={true} />
+                        <InputLabel htmlFor="end_fee" value="End Fee" required={true} />
 
                         <TextInput 
                             id="end_fee"
@@ -107,7 +107,7 @@ export default function Form(props) {
                 </div>
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="sla" value="SLA (Jam)" required={true} />
+                    <InputLabel htmlFor="sla" value="SLA (Hour)" required={true} />
 
                     <TextInput 
                         id="sla"

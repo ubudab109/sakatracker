@@ -17,7 +17,6 @@ use App\Models\SlaHoliday;
 use App\Models\UserRole;
 use App\Models\Vendor;
 use App\Models\Prefix;
-use App\Models\RevisionVendorsAttachment;
 use App\Models\Suffix;
 use App\Models\VendorAttachment;
 use Inertia\Inertia;
@@ -35,7 +34,35 @@ class VendorController extends Controller
     {
         $data['vendors'] = Vendor::where('user_id', Auth::user()->id)
         ->with('revision_register_vendor_latest')
-        ->orderBy('updated_at', 'desc')->get();
+        ->orderBy('updated_at', 'desc')->get()
+        ->map(function($vendor){
+            if($vendor->status_account == 'ditolak')
+            {
+                $vendor['status_account'] = 'Rejected';
+            }
+
+            if($vendor->status_account == 'pengajuan perubahan')
+            {
+				if($vendor->approve_revision_register_vendor_latest)
+				{
+                    if($vendor->approve_revision_register_vendor_latest->approval_role != 'Accounting')
+		            {
+                    	$vendor['status_account'] = 'Approved By ' . $vendor->approve_revision_register_vendor_latest->approval_role;
+					} else {
+						$vendor['status_account'] = 'Completed';
+					}
+				} else {
+					$vendor['status_account'] = 'Submit';
+				}
+            }
+			
+			if($vendor->status_account == 'disetujui')
+            {
+				$vendor['status_account'] = 'Completed';
+			}
+            
+            return $vendor;
+        });
         $data['latest'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         return Inertia::render('Vendor/Profile/Index', [
@@ -53,16 +80,20 @@ class VendorController extends Controller
         $data['prefix'] = Prefix::all();
         $data['vendor'] = Vendor::with(['user', 'attachments'])->where('user_id', Auth::user()->id)->latest('created_at')->first();
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
-        foreach($arrayNameFile as $name)
+        if($data['vendor'] != null)
         {
-            $nameFile = $name;
-            $name = url('/storage/') . '/' . $name . '/'; 
-            if ($data['vendor']) {
-                $testExplode = explode($name, $data['vendor'][$nameFile]);
-                $data['vendor'][$nameFile . '_name'] = $nameFile . '.pdf';
-                if(count($testExplode) == 2)
-                {
-                    $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+            foreach($arrayNameFile as $name)
+            {
+                $nameFile = $name;
+                $name = $name . '/'; 
+                if ($data['vendor']) {
+                    $testExplode = [];
+                    $testExplode = explode($name, $data['vendor'][$nameFile]);
+                    $data['vendor'][$nameFile . '_name'] = $nameFile . '.pdf';
+                    if(count($testExplode) == 2)
+                    {
+                        $data['vendor'][$nameFile . '_name'] = $testExplode[1];
+                    }
                 }
             }
         }
@@ -125,7 +156,7 @@ class VendorController extends Controller
         $file_ektp = '';
         $expired_ektp = '';
 
-        if($request->type_of_business == 'Pribadi')
+        if($request->type_of_business == 'Pribadi' || $request->type_of_business == 'Pribadi Non PKP')
         {
             $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
@@ -144,8 +175,8 @@ class VendorController extends Controller
             $expired_sppkp = 'required|date|date_format:Y-m-d';
             $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
-            $expired_tdp = 'required|date|date_format:Y-m-d';
+            $file_tdp = $request->file_tdp != null ? '' : '' . 'max:5000';
+            $expired_tdp = '';
             $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
             $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
@@ -162,8 +193,8 @@ class VendorController extends Controller
             $expired_sppkp = 'required|date|date_format:Y-m-d';
             $file_siup = $request->file_siup != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
-            $file_tdp = $request->file_tdp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
-            $expired_tdp = 'required|date|date_format:Y-m-d';
+            $file_tdp = $request->file_tdp != null ? '' : '' . 'max:5000';
+            $expired_tdp = '';
             $file_nib = $request->file_nib != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
             $file_board_of_directors_composition = $request->file_board_of_directors_composition != null ? '' : 'required|' . 'mimes:pdf|max:5000';
@@ -173,12 +204,15 @@ class VendorController extends Controller
 
         if($request->status_submit == 'pengajuan perubahan') {
             $request->validate([
+                'document_type' => 'required_if:type_of_business,Pribadi',
+                'ktp' => 'required_if:document_type,ktp',
+                'ktp_address' => 'required_if:document_type,ktp',
                 'name' => 'required|string|max:255'.$validateName,
-                'npwp' => 'required|string|max:255'.$validateNpwp,
+                'npwp' => 'required_if:document_type,npwp|max:255'.$validateNpwp,
                 'email' => 'required|string|email|max:255',
                 'name_business' => 'required|string|max:255',
                 'office_address' => 'required|string|max:255',
-                'npwp_address' => 'required|string|max:255',
+                'npwp_address' => 'required_if:document_type,npwp|max:255',
                 'country_id' => 'required|max:255',
                 'province_id' => 'required|max:255',
                 'city_id' => 'required|max:255',
@@ -219,8 +253,8 @@ class VendorController extends Controller
                 'file_ektp' => $file_ektp,
                 'expired_ektp' => $expired_ektp,
                 'term_condition' => 'required',
-                'suffix' => $request->type_of_business != 'Pribadi' ? $request->legality == null ? 'required' : '' : '',
-                'legality' => $request->type_of_business != 'Pribadi' ? $request->suffix == null ? 'required' : '' : '',
+                'suffix' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->legality == null ? 'required' : '' : '',
+                'legality' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->suffix == null ? 'required' : '' : '',
             ]);
         }
 
@@ -274,13 +308,15 @@ class VendorController extends Controller
         }
 
         $vendor = Vendor::create([
+            'ktp' => $request->document_type == 'ktp' ? $request->ktp ?? null : null,
+            'ktp_address' => $request->document_type == 'ktp' ? $request->ktp_address ?? null : null,
             'user_id' => Auth::user()->id,
             'name' => $request->name,
             'email' => $request->email,
-            'npwp' => $request->npwp,
+            'npwp' => $request->document_type == 'npwp' ? $request->npwp ?? null : null,
             'name_business' => $request->name_business,
             'office_address' => $request->office_address,
-            'npwp_address' => $request->npwp_address,
+            'npwp_address' => $request->document_type == 'npwp' ? $request->npwp_address ?? null : null,
             'country_id' => $request->country_id,
             'country' => $request->country,
             'province_id' => $request->province_id,
@@ -360,11 +396,11 @@ class VendorController extends Controller
         $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
         if($request->status_submit == 'pengajuan perubahan') { 
-            $this->createRevisionTimeline($request, $vendor->id);
+            $this->createRevisionTimeline($vendor->id);
 
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/vendor');
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/data-change');
         } else {
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/vendor');
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/data-change');
         }
 
         // if($request->status_submit == 'draft')
@@ -395,14 +431,33 @@ class VendorController extends Controller
     public function show($id)
     {
         $data['auth'] = Auth::user();
-        $data['vendor'] = Vendor::with(['coas', 'attachments'])->where('id', $id)->where('user_id', $data['auth']->id)->first();
-        $data['timeline'] = RevisionRegisterVendor::with(['user'])->where('vendor_id', $data['vendor']->id)->get();
+        $data['vendor'] = Vendor::with('coas')->where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['timeline'] = RevisionRegisterVendor::with('user')->where('vendor_id', $data['vendor']->id)->orderBy('id')->get()
+        ->map(function($timeline){
+            $timeline['date'] = date('d-m-Y H:i:s', strtotime($timeline->updated_at));
+            return $timeline;
+        });
 
-        $data['checkRejectedData'] = RevisionRegisterVendor::where('vendor_id', $data['vendor']->id)->where('status', 'ditolak')->first();
+        // $data['checkRejectedData'] = RevisionRegisterVendor::where('vendor_id', $data['vendor']->id)->where('status', 'ditolak')->first();
         
-        if(count($data['timeline']) == 0) {
-            $data['timeline'] = '';
-        }
+        // if(count($data['timeline']) == 0) {
+        //     $data['timeline'] = '';
+        // }
+
+        // $data['timelineLevel'] = 0;
+        // $data['timelineRejectedBy'] = '';
+        // if($data['timeline'] != '')
+		// {
+		// 	foreach($data['timeline'] as $timeline)
+		// 	{
+		// 		if($timeline->status == 'disetujui')
+		// 		{
+		// 			$data['timelineLevel'] += 1;
+		// 		} else if($timeline->status == 'ditolak') {
+		// 			$data['timelineRejectedBy'] = $timeline->approval_role;
+		// 		}
+		// 	}
+		// }
 
         $newdocs = [];
         $docs = [];
@@ -448,13 +503,13 @@ class VendorController extends Controller
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
         $data['checkVerifiedData'] = Vendor::with('user')->where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->first() == null ? 404 : 200;
-        $data['vendor'] = Vendor::with(['user', 'attachments'])->where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['vendor'] = Vendor::with('user')->where('id', $id)->where('user_id', $data['auth']->id)->first();
 
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
         foreach($arrayNameFile as $name)
         {
             $nameFile = $name;
-            $name = url('/storage/') . '/' . $name . '/'; 
+            $name = $name . '/'; 
             $testExplode = explode($name, $data['vendor'][$nameFile]);
             $data['vendor'][$nameFile . '_name'] = 'No File Chosen';
             if(count($testExplode) == 2)
@@ -522,7 +577,7 @@ class VendorController extends Controller
         $file_ektp = '';
         $expired_ektp = '';
 
-        if($request->type_of_business == 'Pribadi')
+        if($request->type_of_business == 'Pribadi' || $request->type_of_business == 'Pribadi Non PKP')
         {
             // $file_npwp = 'required|mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
@@ -541,7 +596,7 @@ class VendorController extends Controller
             // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
             // $file_tdp = 'required|mimes:pdf|max:5000';
-            $expired_tdp = 'required|date|date_format:Y-m-d';
+            $expired_tdp = '';
             // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
             // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
@@ -557,7 +612,7 @@ class VendorController extends Controller
             // $file_siup = 'required|mimes:pdf|max:5000';
             $expired_siup = 'required|date|date_format:Y-m-d';
             // $file_tdp = 'required|mimes:pdf|max:5000';
-            $expired_tdp = 'required|date|date_format:Y-m-d';
+            $expired_tdp = '';
             // $file_nib = 'required|mimes:pdf|max:5000';
             $expired_nib ='required|date|date_format:Y-m-d';
             // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
@@ -569,14 +624,14 @@ class VendorController extends Controller
                 if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
                 if($data->file_sppkp == null) {$file_sppkp = 'required|mimes:pdf|max:5000';}
                 if($data->file_siup == null) {$file_siup = 'required|mimes:pdf|max:5000';}
-                if($data->file_tdp == null) {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->file_tdp == null) {$file_tdp = 'max:5000';}
                 if($data->file_nib == null) {$file_nib = 'required|mimes:pdf|max:5000';}
                 if($data->file_board_of_directors_composition == null) {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
 
                 if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:5000';}
                 if($data->sppkp_note != null && $data->sppkp_note != 'acc' && $data->sppkp_note != 'done revisi') {$file_sppkp = 'required|mimes:pdf|max:5000';}
                 if($data->siup_note != null && $data->siup_note != 'acc' && $data->siup_note != 'done revisi') {$file_siup = 'required|mimes:pdf|max:5000';}
-                if($data->tdp_note != null && $data->tdp_note != 'acc' && $data->tdp_note != 'done revisi') {$file_tdp = 'required|mimes:pdf|max:5000';}
+                if($data->tdp_note != null && $data->tdp_note != 'acc' && $data->tdp_note != 'done revisi') {$file_tdp = 'max:5000';}
                 if($data->nib_note != null && $data->nib_note != 'acc' && $data->nib_note != 'done revisi') {$file_nib = 'required|mimes:pdf|max:5000';}
                 if($data->board_of_directors_composition_note != null && $data->board_of_directors_composition_note != 'acc' && $data->board_of_directors_composition_note != 'done revisi') {$file_board_of_directors_composition = 'required|mimes:pdf|max:5000';}
             }
@@ -586,7 +641,7 @@ class VendorController extends Controller
                 // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
                 // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}
             }
-            if($request->type_of_business == 'Pribadi') {
+            if($request->type_of_business == 'Pribadi' || $request->type_of_business == 'Pribadi Non PKP') {
                 if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
                 if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
                 if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:5000';}
@@ -599,12 +654,15 @@ class VendorController extends Controller
 
         if($request->status_submit == 'pengajuan perubahan') {
             $request->validate([
+                'document_type' => 'required_if:type_of_business,Pribadi',
+                'ktp' => 'required_if:document_type,ktp',
+                'ktp_address' => 'required_if:document_type,ktp',
                 'name' => 'required|string|max:255'.$validateName,
-                'npwp' => 'required|string|max:255'.$validateNpwp,
+                'npwp' => 'required_if:document_type,npwp|max:255'.$validateNpwp,
                 'email' => 'required|string|email|max:255',
                 'name_business' => 'required|string|max:255',
                 'office_address' => 'required|string|max:255',
-                'npwp_address' => 'required|string|max:255',
+                'npwp_address' => 'required_if:document_type,npwp|max:255',
                 'country_id' => 'required|max:255',
                 'province_id' => 'required|max:255',
                 'city_id' => 'required|max:255',
@@ -645,8 +703,8 @@ class VendorController extends Controller
                 'file_ektp' => $file_ektp,
                 'expired_ektp' => $expired_ektp,
                 'term_condition' => 'required',
-                'suffix' => $request->type_of_business != 'Pribadi' ? $request->legality == null ? 'required' : '' : '',
-                'legality' => $request->type_of_business != 'Pribadi' ? $request->suffix == null ? 'required' : '' : '',
+                'suffix' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->legality == null ? 'required' : '' : '',
+                'legality' => $request->type_of_business != 'Pribadi' && $request->type_of_business != 'Pribadi Non PKP' ? $request->suffix == null ? 'required' : '' : '',
             ]);
         }
 
@@ -714,12 +772,14 @@ class VendorController extends Controller
         }
         
         $data->update([
+            'ktp' => $request->document_type == 'ktp' ? $request->ktp ?? null : null,
+            'ktp_address' => $request->document_type == 'ktp' ? $request->ktp_address ?? null : null,
             'name' => $request->name,
             'email' => $request->email,
-            'npwp' => $request->npwp,
+            'npwp' => $request->document_type == 'npwp' ? $request->npwp ?? null : null,
             'name_business' => $request->name_business,
             'office_address' => $request->office_address,
-            'npwp_address' => $request->npwp_address,
+            'npwp_address' => $request->document_type == 'npwp' ? $request->npwp_address ?? null : null,
             'country_id' => $request->country_id,
             'country' => $request->country,
             'province_id' => $request->province_id,
@@ -859,11 +919,11 @@ class VendorController extends Controller
             }
             $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/vendor');
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', $checkAvailableApprovalAccount ? 'Berhasil pengajuan perubahan data' : 'Berhasil pengajuan registrasi data', '/data-change');
             return Redirect::route('vendor.show', $data->id);
         } else {
             $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
-            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/vendor');
+            $this->notifySelf(Auth::user()->id, $checkAvailableApprovalAccount ? 'Perubahan data' : 'Registrasi Data', 'Berhasil simpan draft data', '/data-change');
             
             return Redirect::route('vendor.edit', $data->id);
         }
@@ -875,50 +935,71 @@ class VendorController extends Controller
         $revision = RevisionRegisterVendor::where('vendor_id', $vendor_id)->first();
         $approval_vendors = ApproverVendor::orderBy('level')->get();
         $vendor = Vendor::where('id', $vendor_id)->first();
-        if ($vendor) {
-            $checkAvailableApprovalAccount = Vendor::where('user_id', $vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
-            foreach($approval_vendors as $key => $approval) {
-                $revision_vendor = RevisionRegisterVendor::create([
-                    'vendor_id' => $vendor_id,
-                    'user_id' => null,
-                    'status' => 'menunggu persetujuan',
-                    'document' => '',
-                    'approval_role' => $approval->role->name
-                ]);
-                
-                if($key == 0)
+        $checkAvailableApprovalAccount = Vendor::where('user_id', $vendor->user_id)->where('status_account', 'disetujui')->latest('created_at')->first();
+        foreach($approval_vendors as $key => $approval) {
+            $revision_vendor = RevisionRegisterVendor::create([
+                'vendor_id' => $vendor_id,
+                'user_id' => null,
+                'status' => 'menunggu persetujuan',
+                'document' => '',
+                'approval_role' => $approval->role->name
+            ]);
+            if($key == 0)
+            {
+                $user_roles = UserRole::where('role_id', $approval->role_id)->get();
+                foreach($user_roles as $user_role)
                 {
-                    $user_roles = UserRole::where('role_id', $approval->role_id)->get();
-                    foreach($user_roles as $user_role)
-                    {
-                        $data['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
-                        $data['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name : 'Registrasi data dengan Nama: ' . $revision_vendor->vendor->name;
-                        $data['url'] = '/admin/vendor-profile/' . $revision_vendor->id;
-    
-                        Notification::create([
-                            'user_id' => $user_role->user_id,
-                            'title' => $data['title'],
-                            'description' => $data['description'],
-                            'url' => $data['url'],
-                        ]);
-                        $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($data));  
-                    }
-    
-                    $sla_holiday = SlaHoliday::whereDate('date', $revision_vendor->updated_at)->first();
-                    $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revision_vendor->updated_at);
-    
-                    while ($sla_holiday || $dateCarbon->isWeekend()) {
-                        $dateCarbon->addDay();
-                        $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-                    }
-                    
-                    $revision_vendor->update([
-                        'sla_at' => $dateCarbon->addHours($approval->sla)
+                    $data['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';
+                    $data['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $revision_vendor->vendor->name : 'Registrasi data dengan Nama: ' . $revision_vendor->vendor->name;
+                    $data['url'] = '/admin/vendor-profile/' . $revision_vendor->id;
+
+                    Notification::create([
+                        'user_id' => $user_role->user_id,
+                        'title' => $data['title'],
+                        'description' => $data['description'],
+                        'url' => $data['url'],
                     ]);
+                    $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($data));  
                 }
+
+                $sla_holiday = SlaHoliday::whereDate('date', $revision_vendor->updated_at)->first();
+                $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', $revision_vendor->updated_at);
+
+                while ($sla_holiday || $dateCarbon->isWeekend()) {
+                    $dateCarbon->addDay();
+                    $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
+                }
+                
+                $revision_vendor->update([
+                    'sla_at' => $dateCarbon->addHours($approval->sla)
+                ]);
             }
         }
-        
+        // if($revision == null) {
+        //     RevisionRegisterVendor::create([
+        //         'vendor_id' => $vendor_id,
+        //         'user_id' => null,
+        //         'status' => 'menunggu persetujuan',
+        //         'document' => '',
+        //         'approval_role' => 'purchasing'
+        //     ]);
+
+        //     RevisionRegisterVendor::create([
+        //         'vendor_id' => $vendor_id,
+        //         'user_id' => null,
+        //         'status' => 'menunggu persetujuan',
+        //         'document' => '',
+        //         'approval_role' => 'legal'
+        //     ]);
+
+        //     RevisionRegisterVendor::create([
+        //         'vendor_id' => $vendor_id,
+        //         'user_id' => null,
+        //         'status' => 'menunggu persetujuan',
+        //         'document' => '',
+        //         'approval_role' => 'accounting'
+        //     ]);
+        // }
     }
 
     /**

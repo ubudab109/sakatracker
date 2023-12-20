@@ -31,7 +31,7 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
+                                <th>Action</th>
                                 <th>Name</th>
                                 {/* <th>Level</th> */}
                             </tr>

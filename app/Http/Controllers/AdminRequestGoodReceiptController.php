@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Redirect;
+use App\Mail\ApproverInvoiceMail;
 use App\Models\RequestGoodReceipt;
+use App\Models\Notification;
+use App\Traits\NotifySelfTrait;
 use Illuminate\Http\Request;
 use App\Models\Anotation;
 use App\Models\Vendor;
 use Inertia\Inertia;
 use Storage;
 use Auth;
+use Mail;
 use Str;
 
 class AdminRequestGoodReceiptController extends Controller
 {
+    use NotifySelfTrait;
+
     public function checkPermission($role)
     {
         $permissions = [];
@@ -40,7 +46,7 @@ class AdminRequestGoodReceiptController extends Controller
     {
         $data['permissions'] = $this->checkPermission('index');
 
-        $data['request_good_receipts'] = RequestGoodReceipt::with('vendor')->get();
+        $data['request_good_receipts'] = RequestGoodReceipt::with('vendor')->orderByDesc('updated_at')->get();
 
         return Inertia::render('Admin/RequestGR/Index', [
             'data' => $data
@@ -98,10 +104,54 @@ class AdminRequestGoodReceiptController extends Controller
     {
         $data = RequestGoodReceipt::where('id', $id)->first();
 
-        $data->update([
-            'status' => $request->status,
-        ]);
+        if($request->status == 'ditolak')
+        {
+            $request->validate([
+                'note' => 'required|max:255'
+            ]);
+        }
 
-        return Redirect::route('admin.request-good-receipt.edit', $data->id);
+        $data->update([
+            'status' => $request->status == 'ditolak' ? 'reject' : 'approved',
+            'note' => $request->note,
+        ]);
+        
+        if($request->status == 'ditolak')
+        {
+            $notif_vendor = Notification::create([
+                'user_id' => $data->vendor->user_id,
+                'title' => 'Request GR Ditolak',
+                'description' => 'No. PO: ' . $data->po_number ?? '-',
+                'url' => '/request-good-receipt/',
+            ]);
+
+            $this->notifySelf(
+                Auth::user()->id, 
+                'Request GR',
+                'Berhasil tolak request GR dengan No. PO: ' . $data->po_number ?? '-',
+                '/admin/request-good-receipt/'. $data->id . '/edit'
+            );
+        } else {
+            $notif_vendor = Notification::create([
+                'user_id' => $data->vendor->user_id,
+                'title' => 'Request GR disetujui',
+                'description' => 'No. PO: ' . $data->po_number ?? '-',
+                'url' => '/request-good-receipt/',
+            ]);
+
+            $this->notifySelf(
+                Auth::user()->id, 
+                'Request GR',
+                'Berhasil setujui request GR dengan No. PO: ' . $data->po_number ?? '-',
+                '/admin/request-good-receipt/'. $data->id . '/edit'
+            );
+        }
+
+        $notifMailVendor['title'] = $notif_vendor->title;
+        $notifMailVendor['description'] = $notif_vendor->description;
+        $notifMailVendor['url'] = $notif_vendor->url;
+        Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifMailVendor));
+
+        return Redirect::route('admin.request-good-receipt.index');
     }
 }

@@ -27,87 +27,104 @@ export default function Login({ status, canResetPassword }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div class="auth-page">
+            <Head title="Login" />
+            <div class="container-fluid p-0">
+                <div class="row g-0">
+                    <div class="col-xxl-3 col-lg-4 col-md-5">
+                        <div class="auth-full-page-content d-flex p-sm-5 p-4">
+                            <div class="w-100">
+                                <div class="d-flex flex-column h-100">
+                                    <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
+                                        <a href="#" class="d-block auth-logo">
+                                            <img src="/assets/images/logo-chams.png" width={128} />
+                                        </a>
+                                    </div>
+                                    <div class="auth-content my-auto">
+                                        <div class="text-center">
+                                            <h5 class="mb-0">Welcome Back !</h5>
+                                            <p class="text-muted mt-2">Sign in to continue to Chams.</p>
+                                        </div>
+                                        <form class="mt-4 pt-2" onSubmit={submit}>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email Address</label>
+                                                <input type="email" name="email" class="form-control" id="email" placeholder="Enter email"
+                                                    value={data.email}
+                                                    isFocused={true}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                />
+                                                <InputError message={errors.email} className="mt-2" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <div class="d-flex align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <label class="form-label">Password</label>
+                                                    </div>
+                                                    <div class="flex-shrink-0">
+                                                        <div class="">
+                                                            <a href={route('password.request')} class="text-muted">Forgot password?</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="">
+                                                    <input type="password" name="password" class="form-control" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon" 
+                                                        onChange={(e) => setData('password', e.target.value)}
+                                                        value={data.password}
+                                                    />
+                                                    <InputError message={errors.password} className="mt-2" />
+                                                </div>
+                                            </div>
+                                            <div class="row mb-4">
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="remember-check" />
+                                                        <label class="form-check-label" for="remember-check">
+                                                            Remember me
+                                                        </label>
+                                                    </div>  
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="mb-3">
+                                                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit" disabled={processing}>Log In</button>
+                                            </div>
+                                        </form>
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <b className='text-2xl'>Login</b>
-            <p className='mt-2'>
-                Belum punya akun?
-                <Link href={route('register')} className="text-blue-800 underline ml-1">
-                    Mendaftar
-                </Link>
-            </p>
-
-            <form className='mt-10' onSubmit={submit}>
-                <div>
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        placeholder="Email address"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-between mt-4">
-                    <div className='flex items-center'>
-                        <Checkbox 
-                            className="mr-1" 
-                            value={true} 
-                            name="remember"
-                            onClick={(e) => setData('remember', e.target.value)}
-                        />
-                        <InputLabel value="Remember Me" />
+                                        <div class="mt-5 text-center">
+                                            <p class="text-muted mb-0">Don't have an account ? <a href={route('register')}
+                                                    class="text-primary fw-semibold"> Signup now </a> </p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-muted mb-0"><a href={route('verification-email')} class="text-primary fw-semibold"> Click here </a> To resend otp code </p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 mt-md-5 text-center">
+                                        <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <Link
-                        href={route('password.request')}
-                        className="underline text-sm text-blue-800"
-                    >
-                        Lupa Kata Sandi?
-                    </Link>
+                    <div class="col-xxl-9 col-lg-8 col-md-7">
+                        <div class="auth-bg pt-md-5 p-4 d-flex">
+                            <div class="bg-overlay bg-primary"></div>
+                            <ul class="bg-bubbles">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-
-                <p className='mt-2'>
-                    <Link href={route('verification-email')} className="text-blue-800 underline mr-1">
-                        Klik disini
-                    </Link>
-                    Untuk mengirim ulang kode otp
-                </p>
-
-                <div className="flex items-center justify-center mt-4">
-
-                    <PrimaryButton className="w-full justify-center" disabled={processing}>
-                        Login
-                    </PrimaryButton>
-                    
-                </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }

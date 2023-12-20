@@ -3,6 +3,7 @@ import TableProfile from '@/Pages/Vendor/Profile/Partials/TableProfile';
 import { Head, Link } from '@inertiajs/react';
 import React from "react";
 import PrimaryButton from '@/Components/PrimaryButton';
+import { useState } from 'react';
 
 export default function Index(props) {
     console.log(props);
@@ -11,14 +12,14 @@ export default function Index(props) {
             user={props.auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>}
         >
-            <Head title="Perubahan Data" />
+            <Head title="Data Change" />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 className="mb-sm-0 font-size-18">Perubahan Data</h4>
+                <h4 className="mb-sm-0 font-size-18">Data Change</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item"><a href="javascript: void(0);">Vendor Management</a></li>
-                        <li className="breadcrumb-item active">Perubahan Data</li>
+                        <li className="breadcrumb-item active">Data Change</li>
                     </ol>
                 </div>
             </div>
@@ -26,7 +27,7 @@ export default function Index(props) {
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                        <div className="p-6 text-gray-900 font-bold">Perubahan Data</div>
+                        <div className="p-6 text-gray-900 font-bold">Data Change</div>
                     </div>
                 </div>
             </div>
@@ -34,13 +35,9 @@ export default function Index(props) {
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <div className="text-gray-900 font-bold flex items-end justify-end">
-                            <Link href={route('vendor.create')}>
-                                <PrimaryButton>
-                                    Buat Pengajuan Ubah Data
-                                </PrimaryButton>
-                            </Link>
-                        </div>
+                        <Link href={route('vendor.create')}>
+                            <button type="button" className="btn btn-light waves-effect waves-light"><i className="bx bx-plus me-1"></i> Add Data Change Submission</button>
+                        </Link>
                         <TableProfile data={props.data.vendors} latestData={props.data.latest} />
                     </div>
                 </div>

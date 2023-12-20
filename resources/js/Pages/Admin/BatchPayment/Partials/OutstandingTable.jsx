@@ -56,6 +56,8 @@ export default function OutstandingTable(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -69,7 +71,7 @@ export default function OutstandingTable(props) {
                 <Link
                     href={`/admin/batch-payment/create-batch?invoice_id=${selectedInvoiceId}&start_date=${props.data.start_date}&end_date=${props.data.end_date}&is_bca=${props.data.is_bca}&name=${props.data.name}&invoice_number=${props.data.invoice_number}`}
                 >
-                    <PrimaryButton>Buat Batch Payment</PrimaryButton>
+                    <PrimaryButton>Add Batch Payment</PrimaryButton>
                 </Link>
             </div>
             <div className="mt-3">
@@ -80,13 +82,13 @@ export default function OutstandingTable(props) {
                                 <table ref={tableRef} className="w-full">
                                     <thead>
                                         <tr>
-                                            <th>Aksi</th>
-                                            <th>Tanggal Jatuh Tempo</th>
+                                            <th>Action</th>
+                                            <th>Expired Date</th>
                                             <th>BCA/NON BCA</th>
-                                            <th>Nama Vendor</th>
-                                            <th>Nomor Invoice</th>
+                                            <th>Vendor Name</th>
+                                            <th>Invoice Number</th>
                                             <th>Total</th>
-                                            <th>Nama Bank</th>
+                                            <th>Bank Name</th>
                                             <th>Detail Rekening</th>
                                             <th>Status</th>
                                         </tr>
@@ -237,7 +239,7 @@ export default function OutstandingTable(props) {
                                 className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
                                 name="is_bca"
                             >
-                                <option value="">Pilih</option>
+                                <option value="">Choose</option>
                                 <option value="1">BCA</option>
                                 <option value="0">Non BCA</option>
                             </select>
@@ -272,7 +274,7 @@ export default function OutstandingTable(props) {
                         </div>
                         <div className="mt-6 flex justify-end gap-3">
                             <SecondaryButton onClick={closeModal} type="button">
-                                Tutup
+                                Close
                             </SecondaryButton>
                             <PrimaryButton>Filter</PrimaryButton>
                         </div>

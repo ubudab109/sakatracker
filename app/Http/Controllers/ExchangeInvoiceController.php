@@ -86,7 +86,12 @@ class ExchangeInvoiceController extends Controller
                 // }
                 if($invoice['status'] == 'tukar faktur tidak valid')
 				{
-					$invoice['status'] = 'E-faktur tidak valid';
+					$invoice['status'] = 'Submit';
+				}
+
+                if($invoice['status'] == 'unpaid')
+				{
+					$invoice['status'] = 'Ready to Paid';
 				}
             } else {
                 $invoice['status'] = 'draft';
@@ -128,15 +133,15 @@ class ExchangeInvoiceController extends Controller
         ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = Location::all();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_header_id,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_header_id,
+                'label' => $po->po_num,
+            ];
+        });
 
-        // $data['po_array'] = $poArray->toArray();
+        $data['po_array'] = $poArray->toArray();
         $data['po_number'] = $request->po_number ?? null;
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
@@ -238,15 +243,15 @@ class ExchangeInvoiceController extends Controller
         ]);
 
         $exchangeInvoice->update([
-            'document_number' => 'DTF000' . $exchangeInvoice->id
+            'document_number' => $exchangeInvoice->id
         ]);
 
         if($request->attachment != null) {
             foreach($request->attachment as $attachment) {
                 $attachmentPath = '';
                 if ($request->hasFile('attachment')) {
-                    $save = $attachment->store('public/attachment');
-                    $filename = $attachment->hashName();
+                    $filename = date('YmdHis') . rand(10, 99) . '_' . $attachment->getClientOriginalName();
+                    $save = $attachment->storeAs('public/attachment', $filename);
                     $attachmentPath = url('/') . '/storage/attachment/' . $filename;
                 }
                 ExchangeInvoiceAttachment::create([
@@ -312,13 +317,7 @@ class ExchangeInvoiceController extends Controller
 
             if(count($checkUrl) == 2)
             {
-                // Initialize Guzzle HTTP client
-                $client = new Client();
-        
-                // Send a GET request to the URL
-                $response = $client->get($url);
-
-                if($response);
+                $response = Http::get($url);
         
                 if ($response->getStatusCode() == 200) {
                     // Get the XML content from the response
@@ -363,7 +362,7 @@ class ExchangeInvoiceController extends Controller
                         $revisionExchange = RevisionExchangeInvoice::create([
                             'exchange_invoice_id' => $exchangeInvoice->id,
                             'approval_permission' => 'is_pic_exchange_invoice',
-                            'status' => 'validation process',
+                            'status' => 'menunggu persetujuan',
                             'level' => 0
                         ]);
             
@@ -388,13 +387,14 @@ class ExchangeInvoiceController extends Controller
                         }
 
                         $exchangeInvoice->update([
-                            'ppn' => $xml->jumlahPpn
+                            'ppn' => $xml->jumlahPpn,
+                            'document_number' => $xml->kdJenisTransaksi . $xml->fgPengganti . '.' . substr($xml->nomorFaktur, 0, 3) . '-' . substr($xml->nomorFaktur, 3, 2) . '.' . substr($xml->nomorFaktur, 5)
                         ]);
 
                         $this->notifySelf(Auth::user()->id, 'E-faktur', 'Berhasil tambah E-faktur', '/exchange-invoice');
                     } else {
                         $exchangeInvoice->update([
-                            'status' => 'submit'
+                            'status' => 'tukar faktur tidak valid'
                         ]);
 
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -413,7 +413,7 @@ class ExchangeInvoiceController extends Controller
                 } else {
                     // Handle error if the response status code is not 200
                     $exchangeInvoice->update([
-                        'status' => 'submit'
+                        'status' => 'tukar faktur tidak valid'
                     ]);
 
                     $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -431,7 +431,7 @@ class ExchangeInvoiceController extends Controller
                 }
             } else {
                 $exchangeInvoice->update([
-                    'status' => 'submit'
+                    'status' => 'tukar faktur tidak valid'
                 ]);
 
                 $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -572,6 +572,20 @@ class ExchangeInvoiceController extends Controller
                 $newdocs[] = $newdoc;
             }
         }
+		
+		$data['timelineLevel'] = 0;
+        if($data['invoice']->status == 'menunggu persetujuan' || $data['invoice']->status == 'sedang berlangsung')
+        {
+            $data['timelineLevel'] = 2;
+        } else if($data['invoice']->status == 'disetujui') {
+            $data['timelineLevel'] = 3;
+        } else if($data['invoice']->status == 'ditolak') {
+            $data['timelineLevel'] = 0;
+        } else if($data['invoice']->status == 'unpaid') {
+            $data['timelineLevel'] = 4;
+        } else if($data['invoice']->status == 'paid') {
+            $data['timelineLevel'] = 5;
+        }
 
         return Inertia::render('Vendor/ExchangeInvoice/Show', [
             'data' => $data,
@@ -594,17 +608,31 @@ class ExchangeInvoiceController extends Controller
         ->where('id', Auth::user()->id)
         ->first();
         $data['invoice'] = ExchangeInvoice::with('purchase_orders', 'exchange_invoice_attachments')->findOrFail($id);
+
+        foreach($data['invoice']->exchange_invoice_attachments as $key => $attachment)
+        {
+            $data['invoice']['exchange_invoice_attachments'][$key]['url'] = $attachment->file;
+            $nameFile = $attachment->file;
+            $name = 'attachment' . '/';
+            $testExplode = explode($name, $attachment->file);
+			$data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = 'No File Chosen';
+			if(count($testExplode) == 2)
+			{
+				$data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = $testExplode[1];
+			}
+        }
+        
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = Location::all();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_header_id,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_header_id,
+                'label' => $po->po_num,
+            ];
+        });
 
-        // $data['po_array'] = $poArray->toArray();
+        $data['po_array'] = $poArray->toArray();
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         $data['noDraft'] = 0;
@@ -612,11 +640,11 @@ class ExchangeInvoiceController extends Controller
             $data['noDraft'] = 1;
         }
 
-        $arrayNameFile = ['quotation', 'po', 'bast', 'tax_invoice', 'invoice'];
+		$arrayNameFile = ['quotation', 'po', 'bast', 'tax_invoice', 'invoice'];
         foreach($arrayNameFile as $name)
         {
             $nameFile = $name;
-            $name = url('/storage/') . '/' . $name . '/'; 
+            $name = $name . '/'; 
             $testExplode = explode($name, $data['invoice'][$nameFile]);
             $data['invoice'][$nameFile . '_name'] = 'No File Chosen';
             if(count($testExplode) == 2)
@@ -784,8 +812,8 @@ class ExchangeInvoiceController extends Controller
 				if($attachmentPath == null)
 				{
 					if ($request->hasFile('attachment')) {
-						$save = $attachment->store('public/attachment');
-						$filename = $attachment->hashName();
+						$filename = date('YmdHis') . rand(10, 99) . '_' . $attachment->getClientOriginalName();
+                        $save = $attachment->storeAs('public/attachment', $filename);
 						$attachmentPath = url('/') . '/storage/attachment/' . $filename;
 					}
 				}
@@ -854,11 +882,7 @@ class ExchangeInvoiceController extends Controller
 
             if(count($checkUrl) == 2)
             {
-                // Initialize Guzzle HTTP client
-                $client = new Client();
-        
-                // Send a GET request to the URL
-                $response = $client->get($url);
+                $response = Http::get($url);
         
                 if ($response->getStatusCode() == 200) {
                     // Get the XML content from the response
@@ -930,13 +954,14 @@ class ExchangeInvoiceController extends Controller
                         }
 
                         $data->update([
-                            'ppn' => $xml->jumlahPpn
+                            'ppn' => $xml->jumlahPpn,
+                            'document_number' => $xml->kdJenisTransaksi . $xml->fgPengganti . '.' . substr($xml->nomorFaktur, 0, 3) . '-' . substr($xml->nomorFaktur, 3, 2) . '.' . substr($xml->nomorFaktur, 5)
                         ]);
 
                         $this->notifySelf(Auth::user()->id, 'E-faktur', 'Berhasil tambah E-faktur', '/exchange-invoice');
                     } else {
                         $data->update([
-                            'status' => 'submit'
+                            'status' => 'tukar faktur tidak valid'
                         ]);
 
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -955,7 +980,7 @@ class ExchangeInvoiceController extends Controller
                 } else {
                     // Handle error if the response status code is not 200
                     $data->update([
-                        'status' => 'submit'
+                        'status' => 'tukar faktur tidak valid'
                     ]);
 
                     $notifApprover['title'] = 'E-faktur Tidak Valid';
@@ -973,7 +998,7 @@ class ExchangeInvoiceController extends Controller
                 }
             } else {
                 $data->update([
-                    'status' => 'submit'
+                    'status' => 'tukar faktur tidak valid'
                 ]);
 
                 $notifApprover['title'] = 'E-faktur Tidak Valid';

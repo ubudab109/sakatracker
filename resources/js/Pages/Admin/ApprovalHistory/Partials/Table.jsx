@@ -36,7 +36,7 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Nama</th>
+                                <th>Name</th>
                                 <th>NPWP</th>
                                 <th>KTP</th>
                                 <th>Email</th>

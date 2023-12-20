@@ -28,19 +28,13 @@ export default function Index(props) {
                     </div>
                 </div>
             </div>
-            
-            <div className="mt-3 text-end">
-                <Link href={route('request-good-receipt.create')}>
-                    <ModifyButton>
-                        Tambah
-                    </ModifyButton>
-                </Link>    
-            </div>
 
             <div className="pt-3">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg p-6">
-                        <p className="font-bold mb-3">List Request GR</p>
+                        <Link href={route('request-good-receipt.create')}>
+                            <button type="button" className="btn btn-light waves-effect waves-light"><i className="bx bx-plus me-1"></i> Add Request GR</button>
+                        </Link>
                         <Table data={props.data.request_good_receipts} routeEdit="request-good-receipt.edit"/>
                     </div>
                 </div>

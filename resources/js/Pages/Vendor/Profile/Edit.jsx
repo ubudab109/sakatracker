@@ -69,6 +69,10 @@ export default function Edit(props) {
         suffix: props.data.vendor.suffix != null ? props.data.vendor.suffix : '',
         term_condition: '',
         status_submit: '',
+
+        document_type: props.data.vendor.type_of_business == 'PKP' || props.data.vendor.type_of_business == 'Non PKP'  ? 'npwp' : 'ktp',
+        ktp: props.data.vendor.ktp != null ? props.data.vendor.ktp : '',
+        ktp_address: props.data.vendor.ktp_address != null ? props.data.vendor.ktp_address : '',
     });
 
     const [selectedNameBusiness, setSelectedNameBusiness] = useState(props.data.vendor.name_business != null ? props.data.vendor.name_business : '');
@@ -106,6 +110,8 @@ export default function Edit(props) {
             || column.name_business 
             || column.npwp 
             || column.npwp_address 
+            || column.ktp
+            || column.ktp_address 
             || column.postal_code 
             || column.province_id 
             || column.phone_number
@@ -205,7 +211,7 @@ export default function Edit(props) {
 
     const [tabPkp, setTabPkp] = useState(data.type_of_business == 'PKP' ? '' : 'hidden');
     const [tabNonPkp, setTabNonPkp] = useState(data.type_of_business == 'Non PKP' ? '' : 'hidden');
-    const [tabPribadi, setTabPribadi] = useState(data.type_of_business == 'Pribadi' ? '' : 'hidden');
+    const [tabPribadi, setTabPribadi] = useState(data.type_of_business == 'Pribadi' || data.type_of_business == 'Pribadi Non PKP' ? '' : 'hidden');
 
     const [radioOptionType, setSelectedOption] = useState(data.type_of_business);
 
@@ -216,7 +222,12 @@ export default function Edit(props) {
         data.type_of_business = event.target.value;
         data.type_of_business == 'PKP' ? setTabPkp('') : setTabPkp('hidden');
         data.type_of_business == 'Non PKP' ? setTabNonPkp('') : setTabNonPkp('hidden');
-        data.type_of_business == 'Pribadi' ? setTabPribadi('') : setTabPribadi('hidden');
+        data.type_of_business == 'Pribadi' || data.type_of_business == 'Pribadi Non PKP' ? setTabPribadi('') : setTabPribadi('hidden');
+        if (value === 'Pribadi' || value === 'Pribadi Non PKP') {
+            setData('document_type', 'ktp');
+        } else {
+            setData('document_type', 'npwp');
+        }
     };
 
     const [isCheckedTermCondition, setIsCheckedTermCondition] = useState(false);
@@ -386,6 +397,16 @@ export default function Edit(props) {
     const handleLegalityChange = (event) => {
         data.legality = event.target.value;
         setSelectedOptionLegality(data.legality);
+        setData({
+            ...data,
+            ktp: '',
+            npwp: '',
+            ktp_address: '',
+            npwp_address: ''
+        });
+        if (event.target.value === 'PT') {
+            setData('document_type', 'npwp');
+        }
     }
 
     const [selectedOptionSuffix, setSelectedOptionSuffix] = useState(props.data.vendor.suffix ? props.data.vendor.suffix : '');
@@ -416,12 +437,12 @@ export default function Edit(props) {
             />
 
             <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 className="mb-sm-0 font-size-18">Perubahan Data</h4>
+                <h4 className="mb-sm-0 font-size-18">Data Change</h4>
                 <div className="page-title-right">
                     <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item"><a href="javascript: void(0);">Vendor Management</a></li>
-                        <li className="breadcrumb-item"><a href={route('vendor.index')}>Perubahan Data</a></li>
-                        <li className="breadcrumb-item active">Edit Perubahan Data</li>
+                        <li className="breadcrumb-item"><a href={route('vendor.index')}>Data Change</a></li>
+                        <li className="breadcrumb-item active">Edit Data Change</li>
                     </ol>
                 </div>
             </div>
@@ -481,7 +502,7 @@ export default function Edit(props) {
                                         />
                                     </div>
 
-                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
+                                    <div className="mb-3">
                                         <InputLabel value="Prefix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="legality"
@@ -502,7 +523,7 @@ export default function Edit(props) {
                                         />
                                     </div>
 
-                                    <div className="mb-3" hidden={radioOptionType != 'Pribadi' ? false : true}>
+                                    <div className="mb-3">
                                         <InputLabel value="Suffix" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="suffix"
@@ -523,7 +544,24 @@ export default function Edit(props) {
                                         />
                                     </div>
 
-                                    <InputError message={errors.legality} className="mt-2" />
+                                    {
+                                        radioOptionType !== 'Pribadi' && radioOptionType !== 'Pribadi Non PKP' ? (
+                                            <div className="mb-3">
+                                                <InputLabel value="Document Type" className="font-bold" required={true} />
+                                                <select className="select select-bordered w-full mt-1"
+                                                    id="document_type"
+                                                    name="document_type"
+                                                    value={data.document_type}
+                                                    onChange={(e) => setData({ ...data, document_type: e.target.value })}
+                                                >
+                                                    <option value="npwp">NPWP</option>
+                                                    <option value="ktp">NIK</option>
+                                                </select>
+
+                                                <InputError message={errors.document_type} className="mt-2" />
+                                            </div>
+                                        ) : null
+                                    }
 
                                     <div className="mb-3">
                                         <InputLabel value="Email Address" className="font-bold" required={true}/>
@@ -547,14 +585,14 @@ export default function Edit(props) {
                                     </div>
 
                                     <div className="mt-3 mb-3">
-                                        <InputLabel htmlFor="name_business" value="Jenis Usaha" required={true} />
+                                        <InputLabel htmlFor="name_business" value="Business Name" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="type_of_business"
                                             name="type_of_business"
                                             value={selectedNameBusiness}
                                             onChange={handleNameBusiness}
                                         >
-                                            <option value={''} defaultValue={''} disabled>Jenis Usaha</option>
+                                            <option value={''} defaultValue={''} disabled>Business Name</option>
                                             {typeOfBusiness.map((item, index) => (
                                                 <option key={index} value={item.value}>
                                                     {item.title}
@@ -565,34 +603,82 @@ export default function Edit(props) {
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="NPWP" className="font-bold" required={true}/>
-                                        <input 
-                                            className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                                            maxLength={16}
-                                            minLength={16}
-                                            onKeyPress={(event) => {
-                                                if (!/[0-9]/.test(event.key)) {
-                                                    event.preventDefault();
-                                                }
-                                            }}
-                                            id="npwp"
-                                            name="npwp"
-                                            value={data.npwp}
-                                            type='text'
-                                            placeholder="NPWP *"
-                                            autoComplete="npwp"
-                                            isFocused={true}
-                                            onChange={(e) => setData('npwp', e.target.value)}
-                                            disabled={props.data.checkVerifiedData == 404 ? true : false}
-                                        />
-                                        <InputError 
-                                            message={errors.npwp}
-                                            className="mt-2"
-                                        />
+                                        <InputLabel htmlFor={data.document_type === 'nwpwp' ? 'npwp' : (data.document_type === 'ktp' ? 'ktp' : 'npwp')} value={data.document_type === 'nwpwp' ? 'NPWP' : (data.document_type === 'ktp' ? 'KTP' : 'NPWP')} required={true} />
+                                        {
+                                            data.document_type === 'npwp' && data.type_of_business !== 'Pribadi' && data.type_of_business !== 'Pribadi Non PKP' ? (
+                                                <>
+                                                    <input
+                                                        className={
+                                                            `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                        }
+                                                        maxLength={16}
+                                                        minLength={15}
+                                                        id="npwp"
+                                                        name="npwp"
+                                                        value={data.npwp}
+                                                        type='text'
+                                                        placeholder="NPWP *"
+                                                        autoComplete="npwp"
+                                                        isFocused={true}
+                                                        onChange={(e) => setData('npwp', e.target.value)}
+                                                        disabled={data.type_of_business === ""}
+                                                        
+                                                    />
+
+                                                    <InputError message={errors.npwp} className="mt-2" />
+                                                </>
+                                            ) : (
+                                                data.document_type === 'ktp' ? (
+                                                    <>
+                                                        <input
+                                                            className={
+                                                                `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                            }
+                                                            maxLength={15}
+                                                            id="ktp"
+                                                            name="ktp"
+                                                            value={data.ktp}
+                                                            type='text'
+                                                            placeholder="NIK *"
+                                                            autoComplete="ktp"
+                                                            disabled={data.type_of_business === ""}
+                                                            isFocused={true}
+                                                            onChange={(e) => setData('ktp', e.target.value)}
+                                                            
+                                                        />
+
+                                                        <InputError message={errors.ktp} className="mt-2" />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <input
+                                                            className={
+                                                                `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                            }
+                                                            maxLength={16}
+                                                            minLength={15}
+                                                            id="npwp"
+                                                            name="npwp"
+                                                            value={data.npwp}
+                                                            type='text'
+                                                            disabled={data.type_of_business === ""}
+                                                            placeholder="NPWP *"
+                                                            autoComplete="npwp"
+                                                            isFocused={true}
+                                                            onChange={(e) => setData('npwp', e.target.value)}
+
+                                                            
+                                                        />
+
+                                                        <InputError message={errors.npwp} className="mt-2" />
+                                                    </>
+                                                )
+                                            )
+                                        }
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Alamat Kantor" className="font-bold" required={true}/>
+                                        <InputLabel value="Office Address" className="font-bold" required={true}/>
                                         <textarea 
                                             name="office_address"
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
@@ -605,16 +691,16 @@ export default function Edit(props) {
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Alamat NPWP" className="font-bold" required={true}/>
-                                        <textarea 
-                                            name="npwp_address"
+                                        <InputLabel htmlFor="npwp_address" value={data.document_type === 'nwpwp' ? 'NPWP Address' : (data.document_type === 'ktp' ? 'NIK Address' : 'NPWP Address *')} required={true} />
+                                        <textarea
+                                            name={data.document_type === 'nwpwp' ? 'npwp_address' : (data.document_type === 'ktp' ? 'ktp_address' : 'npwp_address')}
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                            placeholder="NPWP Address *"
-                                            onChange={(e) => setData('npwp_address', e.target.value)}
-                                            value={data.npwp_address}
+                                            placeholder={data.document_type === 'nwpwp' ? 'NPWP Address *' : (data.document_type === 'ktp' ? 'NIK Address *' : 'NPWP Address *')}
+                                            onChange={(e) => setData(e.target.name, e.target.value)}
+                                            value={data.document_type === 'nwpwp' ? data.npwp_address : (data.document_type === 'ktp' ? data.ktp_address : data.npwp_address)}
                                         />
 
-                                        <InputError message={errors.npwp_address} className="mt-2" />
+                                        <InputError message={data.document_type === 'nwpwp' ? errors.npwp_address : (data.document_type === 'ktp' ? errors.ktp_address : errors.npwp_address)} className="mt-2" />
                                     </div>
                                 </div>
                                 <div className="ml-5">
@@ -647,7 +733,7 @@ export default function Edit(props) {
                                                 <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
                                             </label>
                                         </div>
-                                        <div class="flex items-center" hidden={data.legality == 'PT' ? true : false}>
+                                        <div class="flex items-center mb-2">
                                             <label className="inline-flex items-center">
                                                 <input
                                                 type="radio"
@@ -657,7 +743,20 @@ export default function Edit(props) {
                                                 checked={radioOptionType === 'Pribadi'}
                                                 onChange={handleRadioChange}
                                                 />
-                                                <span className="ml-2">Wajib Pajak Orang Pribadi</span>
+                                                <span className="ml-2">Wajib Pajak Orang Pribadi (PKP)</span>
+                                            </label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <label className="inline-flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="type_of_business"
+                                                    className="form-checkbox"
+                                                    value="Pribadi Non PKP"
+                                                    checked={radioOptionType === 'Pribadi Non PKP'}
+                                                    onChange={handleRadioChange}
+                                                />
+                                                <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
                                             </label>
                                         </div>
                                         <InputError message={errors.type_of_business} className="mt-2" />
@@ -716,7 +815,7 @@ export default function Edit(props) {
                                     </div> */}
 
                                     <div className="w-full mb-3">
-                                        <InputLabel value="Negara" className="font-bold" required={true}/>
+                                        <InputLabel value="Country" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="country_id"
                                             name="country_id"
@@ -733,14 +832,14 @@ export default function Edit(props) {
                                     </div>
 
                                     <div className="w-full mb-3">
-                                        <InputLabel value="Kota" className="font-bold" required={true}/>
+                                        <InputLabel value="City" className="font-bold" required={true}/>
                                         <select className="select select-bordered w-full mt-1"
                                             id="city_id"
                                             name="city_id"
                                             value={selectedOptionCity}
                                             onChange={handleCityChange}
                                         >
-                                            <option value="" hidden>Kota</option>
+                                            <option value="" hidden>City</option>
                                             {cities.map((city) => (
                                                 <option key={city.id} value={city.id}>
                                                     {city.name}
@@ -799,7 +898,7 @@ export default function Edit(props) {
                                         <InputError message={errors.province_id} className="mt-2" />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Kode Pos" className="font-bold" required={true}/>
+                                        <InputLabel value="Postal Code" className="font-bold" required={true}/>
                                         <TextInput
                                             id="postal_code"
                                             name="postal_code"
@@ -1710,11 +1809,11 @@ export default function Edit(props) {
                                 </div>
                             </div>
                             <div className={`${tabPribadi}`}>
-                                <p className="font-bold mb-3">Type of Business: Wajib Pajak Pribadi</p>
+                                <p className="font-bold mb-3">Type of Business: Wajib Pajak Pribadi {data.type_of_business == 'Pribadi' ? '(PKP)' : ''} {data.type_of_business == 'Pribadi Non PKP' ? '(Non PKP)' : ''}</p>
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP/KTP" className="font-bold" required={true}/>
                                             <div className="flex">
                                                 <label htmlFor={`${props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? '' : 'file-npwp' : 'file-npwp' : 'file-npwp' }`} className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     {props.data.vendor.status_account == 'ditolak' ? npwpFile ? npwpFile != 'No File Chosen' ? 'FILENAME' : 'CHOOSE FILE' : 'CHOOSE FILE' : 'CHOOSE FILE' }
@@ -1884,7 +1983,7 @@ export default function Edit(props) {
                                                 checked={isCheckedTermCondition}
                                                 onChange={handleCheckboxTermConditionChange}
                                                 />
-                                                <span className="ml-2">Setuju</span>
+                                                <span className="ml-2">I have read and agreed to the Terms and Conditions</span>
                                             </label>
                                         </div>
                                         <InputError message={errors.term_condition} className="mt-2" />
@@ -1899,7 +1998,7 @@ export default function Edit(props) {
                             </Link>
                             <div className="ml-3" onClick={submitDraft}>
                                 <PrimaryButton disabled={processing}>
-                                    Simpan Draft
+                                    Save Draft
                                 </PrimaryButton>
                             </div>
                             <div className="ml-3" onClick={submitNonDraft}>
@@ -1922,7 +2021,7 @@ export default function Edit(props) {
             >
                 <div className="toast">
                     <div className="alert alert-success">
-                        <span className='text-white'>Berhasil melakukan perubahan data.</span>
+                        <span className='text-white'>Successfully made data changes.</span>
                     </div>
                 </div>
             </Transition>

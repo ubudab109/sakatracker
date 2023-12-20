@@ -58,10 +58,10 @@ export default function TabWeekend(props) {
                 <table className="table-auto w-full text-center">
                     <thead>
                         <tr className="border-b-2">
-                            <th>Hari</th>
-                            <th>Libur</th>
-                            <th>Start Jam</th>
-                            <th>End Jam</th>
+                            <th>Day</th>
+                            <th>Holiday</th>
+                            <th>Start Hour</th>
+                            <th>End Hour</th>
                         </tr>
                     </thead>
                     <tbody>

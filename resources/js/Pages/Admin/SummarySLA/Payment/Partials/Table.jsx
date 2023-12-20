@@ -19,8 +19,8 @@ export default function Table(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Nama</th>
+                                <th>Number</th>
+                                <th>Name</th>
                                 <th>On Time</th>
                                 <th>Delayed</th>
                                 <th>Achievement(%)</th>

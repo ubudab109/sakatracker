@@ -20,16 +20,16 @@ export default function Table(props) {
 
     return (
         <div className="pt-6">
-            <div className="max-w-7xl mx-auto">
-                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
-                    <table ref={tableRef} className="w-full">
+            <div className="w-full">
+                <div className='table-responsive'>
+                    <table ref={tableRef} className="table align-middle datatable dt-responsive table-check nowrap w-full border-collapse border-spacing-y-8">
                         <thead>
-                            <tr>
-                                <th>Aksi</th>
-                                <th>No. PO</th>
-                                <th>No. Surat Jalan</th>
+                            <tr className='bg-transparent'>
+                                <th>Action</th>
+                                <th>PO Number</th>
+                                <th>Travel Number</th>
                                 {/* <th>No. Invoice</th> */}
-                                <th>Tanggal Surat Jalan</th>
+                                <th>Travel Date</th>
                                 {/* <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Total Price</th> */}
@@ -40,16 +40,11 @@ export default function Table(props) {
                             {props.data.map((item, index) => (
                                 <tr className="border-t bg-gray-100">
                                     <td className='border border-slate-600'>
-                                        {item.status == 'pending' ?
-                                            <div className='flex gap-1'>
-                                                    <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
-                                                        <Edit />
-                                                    </a>
-                                                    <a href='javascript:;' className='text-red-500' onClick={() => { setShowModal(true); setItemToDelete(item); }}>
-                                                        <Trash />
-                                                    </a>
-                                            </div>
-                                        :''}
+                                        {item.status == 'reject' ?
+                                            <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
+                                                <Edit />
+                                            </a>
+                                        : '-'}
                                     </td>
                                     <td className='border border-slate-600'>{item.po_number}</td>
                                     <td className='border border-slate-600'>{item.document_number}</td>
@@ -60,10 +55,11 @@ export default function Table(props) {
                                     <td className='border border-slate-600'>{item.total_price}</td> */}
                                     <td className='border border-slate-600'>
                                         {item.status == 'approved' ? 
-                                        'Sudah diinput ke DB'
+                                            <div className="badge bg-green-300 text-green-700 font-size-12">Approved</div>
                                         : item.status == 'reject' ? 
-                                        'Ditolak'
-                                        : item.status}
+                                            <div className="badge bg-red-300 text-red-700 font-size-12">Rejected</div>
+                                        : <div className="badge bg-gray-300 text-gray-700 font-size-12 capitalize">{item.status}</div>
+                                        }
                                     </td>
                                 </tr>
                             ))}

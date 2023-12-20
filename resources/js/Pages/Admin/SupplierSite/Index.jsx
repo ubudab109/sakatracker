@@ -32,7 +32,7 @@ export default function Index(props) {
             <div className="mt-3 text-end">
                 <Link href={route('admin.supplier-site.create')}>
                     <ModifyButton>
-                        Tambah
+                        Add
                     </ModifyButton>
                 </Link>
             </div>

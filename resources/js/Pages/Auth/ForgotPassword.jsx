@@ -16,39 +16,72 @@ export default function ForgotPassword({ status }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Lupa Kata Sandi" />
+        <div class="auth-page">
+            <Head title="Reset Password" />
+            <div class="container-fluid p-0">
+                <div class="row g-0">
+                    <div class="col-xxl-3 col-lg-4 col-md-5">
+                        <div class="auth-full-page-content d-flex p-sm-5 p-4">
+                            <div class="w-100">
+                                <div class="d-flex flex-column h-100">
+                                    <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
+                                        <a href="#" class="d-block auth-logo">
+                                            <img src="/assets/images/logo-chams.png" width={128} />
+                                        </a>
+                                    </div>
+                                    <div class="auth-content my-auto">
+                                        <div class="text-center">
+                                            <h5 class="mb-0">Reset Password</h5>
+                                            <p class="text-muted mt-2">Reset Password with Chams.</p>
+                                        </div>
+                                        <div class="alert alert-success text-center my-4" role="alert">
+                                            Enter your Email and instructions will be sent to you!
+                                        </div>
+                                        <form class="mt-4" onSubmit={submit}>
+                                            <div class="mb-3">
+                                                <label class="form-label">Email</label>
+                                                <input type="text" name="email" class="form-control" id="email" placeholder="Enter email" 
+                                                    value={data.email}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                />
+                                                <InputError message={errors.email} className="mt-2" />
+                                            </div>
+                                            <div class="mb-3 mt-4">
+                                                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit" disabled={processing}>Reset</button>
+                                            </div>
+                                        </form>
 
-            <b className='text-2xl'>Lupa Kata Sandi</b>
-
-            <div className="mb-4 text-sm text-gray-600 mt-4">
-            lupa kata sandi Anda? Tidak masalah. Beri tahu kami alamat email Anda dan kami akan mengirimi Anda tautan setel ulang kata sandi melalui email yang memungkinkan Anda memilih yang baru.
-            </div>
-
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData('email', e.target.value)}
-                />
-
-                <InputError message={errors.email} className="mt-2" />
-
-                <div className="flex items-center justify-between mt-4">
-                    <Link href={route('login')} className='underline text-blue-800'>
-                        Kembali Login
-                    </Link>
-                    <PrimaryButton className="ml-4" disabled={processing}>
-                        Atur Ulang Kata Sandi
-                    </PrimaryButton>
+                                        <div class="mt-5 text-center">
+                                            <p class="text-muted mb-0">Remember It ?  <a href={route('login')}
+                                                    class="text-primary fw-semibold"> Sign In </a> </p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 mt-md-5 text-center">
+                                        <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-9 col-lg-8 col-md-7">
+                        <div class="auth-bg pt-md-5 p-4 d-flex">
+                            <div class="bg-overlay bg-primary"></div>
+                            <ul class="bg-bubbles">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }

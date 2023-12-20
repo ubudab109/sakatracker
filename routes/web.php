@@ -177,12 +177,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/vendor/outstanding-purchase-order', [VendorReportController::class, 'showOutstandingPurchaseOrder'])->name('vendor.outstanding-purchase-order.index');
 
-    Route::get('/vendor', [VendorController::class, 'index'])->name('vendor.index');
-    Route::get('/vendor/create', [VendorController::class, 'create'])->name('vendor.create');
-    Route::post('/vendor', [VendorController::class, 'store'])->name('vendor.store');
-    Route::get('/vendor/{id}/edit', [VendorController::class, 'edit'])->name('vendor.edit');
-    Route::post('/vendor/{id}', [VendorController::class, 'update'])->name('vendor.update');
-    Route::get('/vendor/{id}', [VendorController::class, 'show'])->name('vendor.show');
+    Route::get('/data-change', [VendorController::class, 'index'])->name('vendor.index');
+    Route::get('/data-change/create', [VendorController::class, 'create'])->name('vendor.create');
+    Route::post('/data-change', [VendorController::class, 'store'])->name('vendor.store');
+    Route::get('/data-change/{id}/edit', [VendorController::class, 'edit'])->name('vendor.edit');
+    Route::post('/data-change/{id}', [VendorController::class, 'update'])->name('vendor.update');
+    Route::get('/data-change/{id}', [VendorController::class, 'show'])->name('vendor.show');
 
     Route::get('/tax', [TaxController::class, 'index'])->name('tax.index');
     Route::get('/tax/create', [TaxController::class, 'create'])->name('tax.create');

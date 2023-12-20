@@ -32,7 +32,7 @@ export default function ChartRevisionVendor(props) {
       <div className="card card-h-100">
         <div className="card-body">
           <div className="d-flex flex-wrap align-items-center mb-4">
-            <h5 className="card-title me-2">Timeline Pengajuan</h5>
+            <h5 className="card-title me-2">Submission Timeline</h5>
             <div className="ms-auto">
               <div>
                 <button type="button" className="btn btn-soft-secondary btn-sm">
@@ -51,16 +51,16 @@ export default function ChartRevisionVendor(props) {
             <div className="col-sm align-self-center">
               <div className="mt-sm-0">
                 <div className="">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#f5c542'}}></i> Menunggu Persetujuan = {props.data.revisionProgress}</p>
+                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#f5c542'}}></i> Waiting for approval = {props.data.revisionProgress}</p>
                 </div>
 
                 <div className="mt-4 pt-2">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#42f587'}}></i> Disetujui = {props.data.revisionApproved} </p>
+                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#42f587'}}></i> Approved = {props.data.revisionApproved} </p>
                   {/* <h6>80</h6> */}
                 </div>
 
                 <div className="mt-4 pt-2">
-                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#e83e1c'}}></i> Ditolak = {props.data.revisionRejected} </p>
+                  <p className="mb-2"><i className="mdi mdi-circle align-middle font-size-10 me-2" style={{color: '#e83e1c'}}></i> Rejected = {props.data.revisionRejected} </p>
                   {/* <h6>80</h6> */}
                 </div>
               </div>

@@ -11,12 +11,11 @@ export default function Guest({ children }) {
                                 <img src="/images/logo-kalbe-black.png"  />
                             </li>
                             <li className="mt-10 flex items-center justify-center">
-                                <b className="text-xl">Hi, Selamat Datang</b>
+                                <b className="text-xl">Hi, Welcome</b>
                             </li>
-                            <li className="mt-10 flex items-center justify-center border-dashed border-2">
+                            <li className="mt-10 flex items-center justify-center ">
                                 {/* <b className="text-xl text-center">LOGO <br/> CHAMPS</b> */}
-                            <img src="/assets/images/logo.jpg" alt="" className="md:w-16 md:h-16 sm:w-6 " />
-
+                                <img src="/assets/images/logo.jpg" alt="" className="lg:w-32 lg:h-24 md:w-16 md:h-16 sm:w-6 " />
                             </li>
                         </ul>
                     </div>

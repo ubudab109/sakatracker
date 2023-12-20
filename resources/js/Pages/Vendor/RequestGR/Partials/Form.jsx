@@ -53,7 +53,7 @@ export default function Form(props) {
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
             <form onSubmit={submit}>
                 <div className='mb-3'>
-                    <InputLabel value="Nomor PO" className="font-bold" required={true}/>
+                    <InputLabel value="PO Number" className="font-bold" required={true}/>
 
                     <div className="flex items-center gap-3">
                         <Select
@@ -71,7 +71,7 @@ export default function Form(props) {
                     </div>
                 </div>
                 <div className="mb-3">
-                    <InputLabel htmlFor="document_number" value="No. Surat Jalan" required={true} />
+                    <InputLabel htmlFor="document_number" value="Travel Number" required={true} />
 
                     <TextInput 
                         id="document_number"
@@ -79,7 +79,7 @@ export default function Form(props) {
                         value={data.document_number}
                         className="mt-1 block w-full"
                         autoComplete="document_number"
-                        placeholder="no surat jalan.."
+                        placeholder="travel number.."
                         isFocused={true}
                         onChange={(e) => setData('document_number', e.target.value)}
                         
@@ -113,7 +113,7 @@ export default function Form(props) {
                 </div> */}
 
                 <div className="mb-3">
-                    <InputLabel htmlFor="date_gr" value="Tanggal Surat Jalan" required={true} />
+                    <InputLabel htmlFor="date_gr" value="Travel Date" required={true} />
 
                     <TextInput 
                         id="date_gr"
@@ -180,7 +180,7 @@ export default function Form(props) {
 
                 <div className="grid grid-cols-2">                    
                     <div className="mb-3 ">
-                        <InputLabel value="Upload Surat jalan" className="font-bold" required={true}/>
+                        <InputLabel value="Upload Travel" className="font-bold" required={true}/>
                         <div className="w-full">
                             <FileUploader handleChange={handleChangeFile} name="attachment" types={fileTypes} multiple={true} />
                         </div>
@@ -193,6 +193,21 @@ export default function Form(props) {
                         
                     </div>
                 </div>
+
+                {props.data.request_good_receipt
+                ? 
+                <>
+                    {props.data.request_good_receipt.status  == 'reject' ? 
+                        <div className="grid grid-cols-2 mb-3">
+                            <div className="border-2 border-dashed p-6">
+                                <p>Purchasing Note:</p>
+                                <p>{props.data.request_good_receipt.note}</p>
+                            </div>
+                            <div></div>
+                        </div>
+                    : ''}
+                </>
+                :''}
                 
                 <div className="flex items-center gap-2 mt-2">
                     <PrimaryButton>

@@ -164,7 +164,7 @@ export default function Form(props) {
             ? []
             : props.data.invoice.exchange_invoice_attachments
     );
-    const [objectFilesUrl, setObjectFilesUrl] = useState([]);
+    const [objectFilesUrl, setObjectFilesUrl] = useState(props.data.invoice ? props.data.invoice.exchange_invoice_attachments.length > 0 ? props.data.invoice.exchange_invoice_attachments : [] : []);
     const [limitedFiles, setLimitedFiles] = useState(0);
     const handleChangeFile = (fileUploaded) => {
         const uploaded = [...files];
@@ -326,6 +326,14 @@ export default function Form(props) {
         { value: "silver", label: "Silver", color: "#666666" },
     ];
 
+    // Create our number formatter.
+    const formatterCurrency = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    });
+
     return (
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg mt-6 p-6">
             <ModalViewer
@@ -335,7 +343,7 @@ export default function Form(props) {
             />
             <form onSubmit={submit}>
                 <p className="text-gray-500 mb-3">
-                    Anda menggunakan data profil yang disetujui tanggal{" "}
+                You use date approved profile data{" "}
                     {formatDate(props.data.user.updated_at)} (
                     <a href={route("vendor.company-profile.index")}>
                         Lihat Detail
@@ -382,12 +390,12 @@ export default function Form(props) {
                             <thead>
                                 <tr className="border-t bg-gray-100">
                                     {/* <th>Aksi</th> */}
-                                    <th>No. Dokumen</th>
-                                    <th>Nama Barang</th>
-                                    <th>Invoice No</th>
-                                    <th>Tanggal GR</th>
+                                    <th>GR Number</th>
+                                    <th>Name of goods</th>
+                                    <th>Invoice Number</th>
+                                    <th>GR Date</th>
                                     <th>Qty</th>
-                                    <th>Harga Satuan</th>
+                                    <th>Unit Price</th>
                                     <th>Total</th>
                                 </tr>
                                 <tr></tr>
@@ -444,19 +452,27 @@ export default function Form(props) {
                                                                     : data.quantity}
                                                             </td>
                                                             <td>
-                                                                {data.unit_price ==
-                                                                null
-                                                                    ? item1
-                                                                          .purchase_order_detail
-                                                                          .unit_price
-                                                                    : data.unit_price}
+                                                                {
+                                                                formatterCurrency.format(parseInt(
+                                                                    data.unit_price ==
+                                                                    null
+                                                                        ? item1
+                                                                            .purchase_order_detail
+                                                                            .unit_price
+                                                                        : data.unit_price
+                                                                )).replace("€", "").trim()
+                                                                }
                                                             </td>
                                                             <td>
-                                                                {data.total_price ==
-                                                                null
-                                                                    ? item1
-                                                                          .sub_total
-                                                                    : data.total_price}
+                                                                {
+                                                                formatterCurrency.format(parseInt(
+                                                                    data.total_price ==
+                                                                    null
+                                                                        ? item1
+                                                                            .sub_total
+                                                                        : data.total_price
+                                                                )).replace("€", "").trim()
+                                                                }
                                                             </td>
                                                         </tr>
                                                     )
@@ -487,8 +503,8 @@ export default function Form(props) {
                                                     </td>
                                                     <td>{item.date_gr}</td>
                                                     <td>{item.quantity}</td>
-                                                    <td>{item.unit_price}</td>
-                                                    <td>{item.total_price}</td>
+                                                    <td>{formatterCurrency.format(parseInt(item.unit_price)).replace("€", "").trim()}</td>
+                                                    <td>{formatterCurrency.format(parseInt(item.total_price)).replace("€", "").trim()}</td>
                                                 </tr>
                                             </>
                                         )}
@@ -519,7 +535,7 @@ export default function Form(props) {
                         </div> */}
                         <div className="mb-1">
                             <InputLabel
-                                value="Lokasi"
+                                value="Location"
                                 className="font-bold"
                                 required={true}
                             />
@@ -531,7 +547,7 @@ export default function Form(props) {
                                 onChange={enhancedHandleOptionChange2}
                             >
                                 <option value="" defaultValue={''} disabled>
-                                    Lokasi
+                                    Location
                                 </option>
                                 {props.data.locations.map((item, index) => (
                                     <option value={item.name} label={item.name}>
@@ -700,10 +716,10 @@ export default function Form(props) {
                                 onChange={enhancedHandleOptionChange3}
                             >
                                 <option value="" defaultValue={''} disabled>
-                                    Pilih
+                                    Choose
                                 </option>
-                                <option value="1">Iya</option>
-                                <option value="0">Tidak</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
                             </select>
 
                             <InputError
@@ -713,14 +729,14 @@ export default function Form(props) {
                         </div>
                         <div className="mb-1">
                             <InputLabel
-                                value="Catatan"
+                                value="Note"
                                 className="font-bold"
                                 required={true}
                             />
                             <textarea
                                 name="note"
                                 className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                placeholder="Catatan"
+                                placeholder="Note"
                                 onChange={(e) =>
                                     setData("note", e.target.value)
                                 }
@@ -755,21 +771,21 @@ export default function Form(props) {
                             <div className="row">
                                 <ul className="list-group p-2">
                                     {objectFilesUrl.length > 0
-                                        ? objectFilesUrl.map((url) => (
-                                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        ? objectFilesUrl.map((url, index) => (
+                                              <li class="list-group-item d-flex justify-content-between align-items-center" key={index}>
                                                   <a
                                                       style={{ color: "blue" }}
                                                       href={url.url}
                                                       target="_blank"
                                                       rel="no-referrer"
                                                   >
-                                                      {url.fileName}
+                                                      {url.fileName ?? url.file}
                                                   </a>
                                                   <span
                                                       onClick={() =>
                                                           removeFiles(
-                                                              url.fileName,
-                                                              url.fileSize
+                                                                url.fileName ?? url.file,
+                                                                // url.fileSize
                                                           )
                                                       }
                                                       style={{
@@ -1034,7 +1050,7 @@ export default function Form(props) {
                                     setData("status_submit", "draft");
                                 }}
                             >
-                                Simpan Draft
+                                Save Draft
                             </PrimaryButton>
                         )
                     ) : (
@@ -1043,7 +1059,7 @@ export default function Form(props) {
                                 setData("status_submit", "draft");
                             }}
                         >
-                            Simpan Draft
+                            Save Draft
                         </PrimaryButton>
                     )}
                     <PrimaryButton
@@ -1067,12 +1083,12 @@ export default function Form(props) {
 
             <Modal show={isModalGROpen} onClose={closeModalGR}>
                 <div className="border-b-2 p-3">
-                    <b>Pilih PO dan GR</b>
+                    <b>Choose PO dan GR</b>
                 </div>
                 <div className="p-3">
                     <div className="mb-3">
                         <InputLabel
-                            value="Nomor PO"
+                            value="PO Number"
                             className="font-bold"
                             required={true}
                         />
@@ -1108,13 +1124,13 @@ export default function Form(props) {
                         <table className="table table-xs">
                             <thead>
                                 <tr className="border-t bg-gray-100">
-                                    <th>Aksi</th>
-                                    <th>No. Dokumen</th>
-                                    <th>Nama Barang</th>
-                                    <th>Invoice No</th>
-                                    <th>Tanggal GR</th>
+                                    <th>Action</th>
+                                    <th>GR Number</th>
+                                    <th>Name of goods</th>
+                                    <th>Invoice Number</th>
+                                    <th>GR Date</th>
                                     <th>Qty</th>
-                                    <th>Harga Satuan</th>
+                                    <th>Unit Price</th>
                                     <th>Total</th>
                                 </tr>
                                 <tr></tr>
@@ -1164,19 +1180,8 @@ export default function Form(props) {
                                                     }
                                                 </td>
                                                 <td>{item1.qty_received}</td>
-                                                <td>
-                                                    {
-                                                        item1
-                                                            .purchase_order_detail
-                                                            .unit_price
-                                                    }
-                                                </td>
-                                                <td>
-                                                    {
-                                                        item1
-                                                            .sub_total
-                                                    }
-                                                </td>
+                                                <td>{formatterCurrency.format(parseInt(item1.purchase_order_detail.unit_price)).replace("€", "").trim()}</td>
+                                                <td>{formatterCurrency.format(parseInt(item1.sub_total)).replace("€", "").trim()}</td>
                                             </tr>
                                         ))}
                                     </>
@@ -1186,7 +1191,7 @@ export default function Form(props) {
                     </div>
                     {selectedValue5 ? (
                         <p className="float-left mt-3">
-                            Data GR Tidak ditemukan?
+                            GR data Not found?
                             <a
                                 href={`/request-good-receipt/create?po_number=${selectedLabel5}`}
                                 className="text-blue-500"
@@ -1200,10 +1205,10 @@ export default function Form(props) {
                     )}
                     <div className="mt-6 flex justify-end gap-3">
                         <SecondaryButton onClick={closeModalGR}>
-                            Tutup
+                            Close
                         </SecondaryButton>
                         <PrimaryButton onClick={submitModalGR}>
-                            Simpan
+                            Save
                         </PrimaryButton>
                     </div>
                 </div>

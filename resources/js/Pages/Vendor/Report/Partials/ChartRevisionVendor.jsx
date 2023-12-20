@@ -32,7 +32,7 @@ export default function ChartRevisionVendor(props) {
       <div className="card card-h-100">
         <div className="card-body">
           <div className="d-flex flex-wrap align-items-center mb-4">
-            <h5 className="card-title me-2">Timeline Pengajuan</h5>
+            <h5 className="card-title me-2">Submission Timeline</h5>
             <div className="ms-auto">
               <div>
                 <button type="button" className="btn btn-soft-secondary btn-sm">

@@ -19,6 +19,10 @@ class Vendor extends Model
         return $this->hasOne('App\Models\RevisionRegisterVendor')->latest('created_at');
     }
 
+    public function approve_revision_register_vendor_latest() {
+        return $this->hasOne('App\Models\RevisionRegisterVendor')->where('status', 'disetujui')->orderByDesc('id');
+    }
+
     public function revision_register_vendors() {
         return $this->hasMany('App\Models\RevisionRegisterVendor');
     }
@@ -26,6 +30,7 @@ class Vendor extends Model
     public function coas() {
         return $this->hasMany('App\Models\CoaVendor', 'vendor_id', 'id');
     }
+
     public function attachments()
     {
         return $this->hasMany('App\Models\VendorAttachment', 'id', 'vendor_id');

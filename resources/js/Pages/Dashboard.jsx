@@ -60,7 +60,7 @@ export default function Dashboard({ auth, data }) {
 
       <div className="pt-6">
         <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-          <div className="p-6 text-gray-900 font-bold">Hi, selamat datang</div>
+          <div className="p-6 text-gray-900 font-bold">Hi, Welcome</div>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function Dashboard({ auth, data }) {
           <div className="pt-6">
             <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
               <div className="p-6 d-flex flex-wrap align-items-center mb-4">
-                <h5 className="card-title me-2">Timeline Pengajuan</h5>
+                <h5 className="card-title me-2">Submission Timeline</h5>
                 <div className="ms-auto">
                   <div>
                     <button type="button" className="btn btn-soft-secondary btn-sm">
@@ -83,7 +83,7 @@ export default function Dashboard({ auth, data }) {
                   data.revisions && data.revisions.length ? (
                     <RevisionHistory data={data.revisions} />
                   ) : (
-                    <h5>Tidak ada proses pengajuan perubahan data saat ini.</h5>
+                    <h5>There is no process for submitting data changes at this time.</h5>
                   )
                 }
                 <div className="row mt-5">

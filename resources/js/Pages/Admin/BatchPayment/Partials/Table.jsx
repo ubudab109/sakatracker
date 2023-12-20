@@ -44,6 +44,8 @@ export default function Table(props) {
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
 
         // These options are needed to round to whole numbers if that's what you want.
         //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
@@ -58,16 +60,16 @@ export default function Table(props) {
                         onChange={event => filterCompleted(event)}
                         checked={props.data.filter}
                     />
-                    <label for="filter">Lihat data yang harus diverifikasi</label>
+                    <label for="filter">View the data that must be verified</label>
                 </form>
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
+                                <th>Action</th>
                                 <th>No. Batch</th>
                                 <th>Periode</th>
-                                <th>Jatuh Tempo</th>
+                                <th>Expired Date</th>
                                 <th>Total</th>
                                 <th>Status</th>
                                 <th>Last Update</th>
