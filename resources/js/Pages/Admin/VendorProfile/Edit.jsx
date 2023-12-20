@@ -840,7 +840,7 @@ export default function Index(props) {
 										</div>
 										<div className="flex">
 											<p className="mb-3">KTP</p>
-											<p className="mb-3 ml-24">
+											<p className="mb-3" style={{marginLeft: '112px'}}>
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -936,7 +936,7 @@ export default function Index(props) {
 										</div>
 										<div className="flex">
 											<p className="mb-3">Alamat KTP</p>
-											<p className="mb-3 ml-12">
+											<p className="mb-3" style={{marginLeft: '61px'}}>
 												:
 												{props.data.latest_vendor !=
 													null ? (

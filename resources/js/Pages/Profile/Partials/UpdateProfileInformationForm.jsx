@@ -121,7 +121,7 @@ export default function UpdateProfileInformation({
                             Kirim OTP
                         </ModifyButton>
                         <PrimaryButton onClick={(e) => changeEmail(e)}>
-                            Ganti Email
+                            Change Email
                         </PrimaryButton>
                         {!showOtpInput ? (
                             <DangerButton

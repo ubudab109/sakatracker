@@ -5,7 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import $ from 'jquery';
 import 'datatables.net';
-import { Edit, Eye, Info } from 'react-feather';
+import { CheckSquare, Edit, Eye, Info, X } from 'react-feather';
 
 
 export default function ShowBatchTable(props) {
@@ -61,19 +61,16 @@ export default function ShowBatchTable(props) {
                                     <td>{item.is_po == 1 ? 'PO' : item.is_po == 0 ? 'Tanpa PO' : 'MT'}</td>
                                     <td>{item.status}</td>
                                     <td className='border border-slate-600' width={1}>
-                                        {/* <div className='flex gap-1'>
+                                        <div className='flex gap-1'>
                                             <>
-                                                <div onClick={(e) => swapClicked(item.id, 'up')}>
-                                                    <SwapButton icon={'up'} />
+                                                <div>
+                                                    <CheckSquare color="green" />
                                                 </div>
-                                                <div onClick={(e) => swapClicked(item.id, 'down')}>
-                                                    <SwapButton icon={'down'} />
+                                                <div>
+                                                    <X color="red" />
                                                 </div>
-                                                <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
-                                                    <Edit />
-                                                </a>
                                             </>
-                                        </div> */}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

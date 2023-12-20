@@ -36,6 +36,7 @@ class PaymentGatewayService
             return [
                 'success' => true,
                 'message' => 'Logged In Successfully',
+                'token' => $data['token'],
                 'data' => $data,
             ];
         } catch (\Exception $err) {
@@ -43,6 +44,7 @@ class PaymentGatewayService
                 'success' => false,
                 'message' => $err->getMessage(),
                 'data' => null,
+                'token' => null,
             ];
         }
     }

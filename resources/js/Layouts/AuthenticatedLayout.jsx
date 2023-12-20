@@ -165,10 +165,10 @@ export default function Authenticated({
                         <div className="navbar-brand-box">
                             <a href="#" className="logo logo-dark">
                                 <span className="logo-sm">
-                                    <img src="/assets/images/logo.jpg" alt="" className="md:w-16 md:h-16 sm:w-6 " />
+                                    <img src="/assets/images/logo2.png" alt="" className="md:w-16 md:h-16 sm:w-6 " />
                                 </span>
                                 <span className="logo-lg flex items-center justify-start">
-                                    <img src="/assets/images/logo.jpg" alt="" className="h-13 w-6" />{" "}
+                                    <img src="/assets/images/logo2.png" alt="" className="h-13 w-6" />{" "}
                                     <span className="logo-txt">Saka Tracker</span>
                                 </span>
                             </a>

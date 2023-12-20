@@ -1826,6 +1826,7 @@ export default function Create(props) {
 													props.data.vendor.type_of_business === 'Pribadi' || props.data.vendor.type_of_business === 'Pribadi Non PKP'
 													? 'NPWP/KTP' : 'NPWP'
 												}
+												maxLength={16}
 												className="font-bold"
 												required={true}
 											/>
@@ -3381,7 +3382,7 @@ export default function Create(props) {
 													handleCheckboxTermConditionChange
 												}
 											/>
-											<span className="ml-2">Setuju</span>
+											<span className="ml-2">I have read and agreed to the Terms and Conditions</span>
 										</label>
 									</div>
 									<InputError

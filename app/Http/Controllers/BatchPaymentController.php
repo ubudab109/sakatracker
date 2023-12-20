@@ -987,8 +987,7 @@ class BatchPaymentController extends Controller
 
         return redirect()->back();
     }
-
-
+    
     public function rejectBatchPayment($id, Request $request)
     {
         $batch_payment = BatchPayment::find($id);
