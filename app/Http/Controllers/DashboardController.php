@@ -106,7 +106,10 @@ class DashboardController extends Controller
 
     public function getNotifications($id)
     {
-        $notifications = Notification::where('user_id', $id)->orderBy('created_at', 'desc')->get();
+        $notifications = Notification::where('user_id', $id)
+        ->where('read', 0)
+        ->orderBy('id', 'desc')
+        ->get();
         $unreadNotification = Notification::where([['user_id', $id], ['read', false]])->get();
 
         return response()->json([

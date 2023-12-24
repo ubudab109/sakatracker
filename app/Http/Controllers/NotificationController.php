@@ -13,6 +13,7 @@ class NotificationController extends Controller
     {
         $data['notifications'] = Notification::where('user_id', Auth::user()->id)
         ->orderBy('read', 'asc')
+        ->orderBy('id', 'desc')
         ->get();
         return Inertia::render('Notifications/Index', ['data' => $data]);
     }
