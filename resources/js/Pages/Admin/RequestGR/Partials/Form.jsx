@@ -338,10 +338,10 @@ export default function Form(props) {
 
                 {props.data.request_good_receipt.status == 'reject'
                 ? 
-                    <div className="grid grid-cols-2">
-                        <div>
+                    <div className="grid grid-cols-2 mb-3">
+                        <div className="border-2 border-dashed p-6">
                             <p>Note:</p>
-                            <p>{props.data.request_good_receipt.note}</p>
+                            <p className="break-all">{props.data.request_good_receipt.note}</p>
                         </div>
                         <div></div>
                     </div>

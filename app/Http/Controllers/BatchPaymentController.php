@@ -657,6 +657,11 @@ class BatchPaymentController extends Controller
 								}
 							}
                         }
+                        if($data['batch_payment']->status == 'ready to paid' || $data['batch_payment']->status == 'paid')
+						{
+							$item['color'] = 'green';
+							$item['status'] = 'disetujui';	
+						}
                         $item['attachments'] = [];
                         $data['timeline'][] = $item;
                     }

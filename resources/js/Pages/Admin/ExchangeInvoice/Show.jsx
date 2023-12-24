@@ -1281,7 +1281,7 @@ export default function Index(props) {
                                                 <td>{data.document_number}</td>
                                                 <td>{data.item_description}</td>
                                                 <td>
-                                                    invoice 123
+                                                    {data.invoice_number}
                                                 </td>
                                                 <td>{data.date_gr}</td>
                                                 <td>{data.quantity}</td>

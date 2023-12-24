@@ -102,8 +102,8 @@ class RoleController extends Controller
             ], [
                 'title' => 'Batch Payment',
                 'name' => 'batch_payment',
-                'permission' => ['index'],
-                'label' => ['Lihat']
+                'permission' => ['index', 'store'],
+                'label' => ['Lihat', 'Tambah']
             ], [
                 'title' => 'Siap Bayar',
                 'name' => 'pay_ready',

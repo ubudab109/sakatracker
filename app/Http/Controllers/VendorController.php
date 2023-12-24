@@ -18,6 +18,7 @@ use App\Models\UserRole;
 use App\Models\Vendor;
 use App\Models\Prefix;
 use App\Models\Suffix;
+use App\Models\Role;
 use App\Models\VendorAttachment;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -873,9 +874,42 @@ class VendorController extends Controller
             {
                 $this->createRevisionTimeline($data->id);
             }
-            $checkRejectedData = RevisionRegisterVendor::where('vendor_id', $data->id)->where('status', 'ditolak')->orderBy('id')->get();
+            $checkRejectedData = RevisionRegisterVendor::where('vendor_id', $data->id)->orderBy('id')->get();
             foreach($checkRejectedData as $key => $rejectedData) {
-                RevisionRegisterVendor::where('id', $rejectedData->id)->where('status', 'ditolak')->update([
+                $dataRealReject = RevisionRegisterVendor::where('id', $rejectedData->id)->where('status', 'ditolak')->first();
+                if($dataRealReject)
+                {
+                    $dataRealReject->update([
+                        'status' => 'menunggu persetujuan'
+                    ]);
+
+                    $role = Role::where('name', $dataRealReject->approval_role)->first();
+                    if($role)
+                    {
+                        $approval_vendor = ApproverVendor::where('role_id', $role->id)->first();
+                        if($approval_vendor)
+                        {
+                            $user_roles = UserRole::where('role_id', $approval_vendor->role_id)->get();
+                            $checkAvailableApprovalAccount = Vendor::where('user_id', $data->user->id)->where('status_account', 'disetujui')->latest('created_at')->first();
+                            foreach($user_roles as $user_role)
+                            {
+                                $notif['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data telah direvisi, dan data dikembalikan ke puchasing' : 'Registrasi Data telah direvisi,  dan data dikembalikan ke puchasing';
+                                $notif['description'] = $checkAvailableApprovalAccount ? 'Perubahan data dengan Nama: ' . $rejectedData->vendor->name : 'Registrasi data dengan Nama: ' . $rejectedData->vendor->name;
+                                $notif['url'] = '/admin/vendor-profile/';
+            
+                                Notification::create([
+                                    'user_id' => $user_role->user_id,
+                                    'title' => $notif['title'],
+                                    'description' => $notif['description'],
+                                    'url' => $notif['url'],
+                                ]);
+                                $mail = Mail::to($user_role->user->email)->send(new ApproverVendorMail($notif));  
+                            }
+                        }
+                    }
+                }
+
+                RevisionRegisterVendor::where('id', $rejectedData->id)->update([
                     'status' => 'menunggu persetujuan'
                 ]);
 

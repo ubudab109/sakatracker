@@ -203,13 +203,30 @@ export default function Register(props) {
             <Head title="Sign Up" />
             <div class="container-fluid p-0">
                 <div class="row g-0">
-                    <div class="col-xxl-5 col-lg-6 col-md-7">
+                    <div class="col-xxl-3 col-lg-3 col-md-3">
+                        <div class="auth-bg pt-md-5 p-4 d-flex">
+                            <div class="bg-overlay bg-primary"></div>
+                            <ul class="bg-bubbles">
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xxl-6 col-lg-6 col-md-6">
                         <div class="auth-full-page-content d-flex p-sm-5 p-4">
                             <div class="w-100">
                                 <div class="d-flex flex-column h-100">
                                     <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
                                         <a href="#" class="d-block auth-logo">
-                                            <img src="/assets/images/logo-chams.png" width={128} />
+                                            <img src="/assets/images/logo-chams.png" width={256} />
                                         </a>
                                     </div>
                                     <div class="auth-content my-auto">
@@ -634,13 +651,13 @@ export default function Register(props) {
                                         </div>
                                     </div>
                                     <div class="mt-4 mt-md-5 text-center">
-                                        <p class="mb-0">© <script>2023</script> Chams</p>
+                                    <p class="mb-0">© <script>2023</script> Chams</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xxl-7 col-lg-6 col-md-5">
+                    <div class="col-xxl-3 col-lg-3 col-md-3">
                         <div class="auth-bg pt-md-5 p-4 d-flex">
                             <div class="bg-overlay bg-primary"></div>
                             <ul class="bg-bubbles">

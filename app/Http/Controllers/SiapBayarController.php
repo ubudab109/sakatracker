@@ -42,7 +42,9 @@ class SiapBayarController extends Controller
 
     public function index(){
         $data['permissions'] = $this->checkPermission('index');
-        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')->where('status', 'ready to paid')
+        $data['batch_payments'] = BatchPayment::with('batch_payment_invoices')
+        ->where('status', 'ready to paid')
+        ->orWhere('status', 'paid')
         ->orderBy('updated_at', 'DESC')->get()->map(function($batch_payment){
             $status = 'ready to paid';
             $checkUnpaidCount = $batch_payment->batch_payment_invoices->where('status', 'paid')->count();
@@ -52,7 +54,7 @@ class SiapBayarController extends Controller
             } else {
                 if($checkUnpaidCount > 0)
                 {
-                    $status = 'Pembayaran Sebagian';
+                    $status = 'Partial Payment';
                 }
             }
             $batch_payment['status'] = $status;
@@ -101,6 +103,16 @@ class SiapBayarController extends Controller
 
     public function showSiapBayar($id){
         $data['batch_payment'] = BatchPayment::find($id);
+        $checkUnpaidCount = $data['batch_payment']->batch_payment_invoices->where('status', 'paid')->count();
+		if($checkUnpaidCount == $data['batch_payment']->batch_payment_invoices->count())
+		{
+			$data['batch_payment']['status'] = 'paid';
+		} else {
+			if($checkUnpaidCount > 0)
+			{
+				$data['batch_payment']['status'] = 'Partial Payment';
+			}
+		}
 
         if($data['batch_payment']->batch_payment_invoice)
         {

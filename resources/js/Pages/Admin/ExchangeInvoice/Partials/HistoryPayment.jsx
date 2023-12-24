@@ -13,7 +13,7 @@ function History({data}) {
                                 {item.title}
                             </h3>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
-                                Status : {item.status}
+                                Status : {item.status == 'disetujui' ? 'Approved' : ''} {item.status == 'ditolak' ? 'Rejected' : ''} {item.status == 'menunggu' ? 'Waiting for Approval' : ''}
                             </p>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
                                 Note : {item.body}

@@ -480,9 +480,10 @@ class AdminVendorProfileController extends Controller
         
 
         if($request->status == 'ditolak') {
-            if($request->file_npwp_validate != 'acc')
+            if($request->file_npwp_validate != 'Terdapat Kesalahan')
             {
                 $validate_npwp_note = $request->npwp_note == null ? 'required' : '';
+                $validate_file_npwp_validate = $request->file_npwp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
             }
         }
 
@@ -505,28 +506,33 @@ class AdminVendorProfileController extends Controller
             }
 
             if($request->status == 'ditolak') {
-                if($request->file_sppkp_validate != 'acc')
+                if($request->file_sppkp_validate != 'Terdapat Kesalahan')
                 {
                     $validate_sppkp_note = $request->sppkp_note == null ? 'required' : '';
+                    $validate_file_sppkp_validate = $request->file_sppkp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                 }
-                if($request->file_siup_validate != 'acc')
+                if($request->file_siup_validate != 'Terdapat Kesalahan')
                 {
                     $validate_siup_note = $request->siup_note == null ? 'required' : '';
+                    $validate_file_siup_validate = $request->file_siup_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                 }
                 if($data->vendor->file_tdp)
                 {
-                    if($request->file_tdp_validate != 'acc')
+                    if($request->file_tdp_validate != 'Terdapat Kesalahan')
                     {
                         $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
+                        $validate_file_tdp_validate = $request->file_tdp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                     }
                 }
-                if($request->file_nib_validate != 'acc')
+                if($request->file_nib_validate != 'Terdapat Kesalahan')
                 {
                     $validate_nib_note = $request->nib_note == null ? 'required' : '';
+                    $validate_file_nib_validate = $request->file_nib_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                 }
-                if($request->file_board_of_directors_composition_validate != 'acc')
+                if($request->file_board_of_directors_composition_validate != 'Terdapat Kesalahan')
                 {
                     $validate_board_of_directors_composition_note = $request->board_of_directors_composition_note == null ? 'required' : '';
+                    $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                 }
             }
         }
@@ -539,9 +545,10 @@ class AdminVendorProfileController extends Controller
             }
 
             if($request->status == 'ditolak') {
-                if($request->file_non_pkp_statement_validate != 'acc')
+                if($request->file_non_pkp_statement_validate != 'Terdapat Kesalahan')
                 {
                     $validate_non_pkp_note = $request->non_pkp_note == null ? 'required' : '';
+                    $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
                 }
             }
         }
@@ -799,7 +806,8 @@ class AdminVendorProfileController extends Controller
                 $role = Role::where('name', $checkNextApproval->approval_role)->first();
                 if($role)
                 {
-                    $user_roles = UserRole::where('role_id', $role->id)->get();
+                    $approval_vendor = ApproverVendor::where('role_id', $role->id)->first();
+                    $user_roles = UserRole::where('role_id', $approval_vendor->role_id)->get();
                     foreach($user_roles as $user_role)
                     {
                         $notifApprover['title'] = $checkAvailableApprovalAccount ? 'Perubahan Data Menunggu Verifikasi' : 'Registrasi Data Menunggu Verifikasi';

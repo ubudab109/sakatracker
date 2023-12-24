@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiDashboardController;
 use App\Http\Controllers\ApiExchangeInvoiceController;
-use App\Http\Controllers\SchedularController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,4 +19,4 @@ use App\Http\Controllers\SchedularController;
 Route::get('/check-first-login', [ApiDashboardController::class, 'checkFirstLogin']);
 Route::get('/purchase-order-detail', [ApiExchangeInvoiceController::class, 'purchaseOrderDetail']);
 Route::get('/rfp', [ApiExchangeInvoiceController::class, 'rfp']);
-Route::get('/cron', [SchedularController::class, 'cron']);
+

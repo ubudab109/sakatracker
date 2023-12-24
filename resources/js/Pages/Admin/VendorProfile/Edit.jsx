@@ -692,10 +692,10 @@ export default function Index(props) {
 								</p>
 								<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 text-sm text-gray-500 p-1">
 									<div className="">
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">Name</p>
-											<p className="mb-3 ml-24">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -749,12 +749,12 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">
 												Email Address
 											</p>
-											<p className="mb-3 ml-11">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -782,10 +782,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">Type of business</p>
-											<p className="mb-3 ml-14">
-												&nbsp;&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -814,9 +814,9 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">NPWP</p>
-											<p className="mb-3 ml-24">
+											<p className="mb-3 -ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -845,9 +845,9 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">KTP</p>
-											<p className="mb-3" style={{marginLeft: '112px'}}>
+											<p className="mb-3 -ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -876,12 +876,12 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">
 												Office Address
 											</p>
-											<p className="mb-3 ml-11">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -910,9 +910,9 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">NPWP Address</p>
-											<p className="mb-3 ml-12">
+											<p className="mb-3 -ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -941,9 +941,9 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">KTP Address</p>
-											<p className="mb-3" style={{marginLeft: '61px'}}>
+											<p className="mb-3 -ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -974,10 +974,10 @@ export default function Index(props) {
 										</div>
 									</div>
 									<div className="lg:ml-5 block">
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">Phone Number</p>
-											<p className="mb-3 ml-12">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1005,11 +1005,11 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex">
+										<div className="grid grid-cols-2 gap-3">
 											<p className="mb-3">
 												Mobile Number
 											</p>
-											<p className="mb-3 ml-12">
+											<p className="mb-3 -ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -1050,10 +1050,10 @@ export default function Index(props) {
 										<p className="font-bold text-black mb-3">
 											Director Information
 										</p>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Name</p>
-											<p className="mb-3 ml-24">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1082,12 +1082,12 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">
 												Email Address
 											</p>
-											<p className="mb-3 ml-11">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1116,10 +1116,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Phone Number</p>
-											<p className="mb-3 ml-10">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1154,10 +1154,10 @@ export default function Index(props) {
 										<p className="font-bold text-black mb-3">
 											FA Information
 										</p>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Name</p>
-											<p className="mb-3 ml-24">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1185,12 +1185,12 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">
 												Email Address
 											</p>
-											<p className="mb-3 ml-11">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1218,10 +1218,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Phone Number</p>
-											<p className="mb-3 ml-10">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1260,10 +1260,10 @@ export default function Index(props) {
 										<p className="font-bold text-black mb-3">
 											Marketing/Key Account Information
 										</p>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Name</p>
-											<p className="mb-3 ml-24">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1293,12 +1293,12 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">
 												Email Address
 											</p>
-											<p className="mb-3 ml-11">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1327,10 +1327,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="mb-3">Phone Number</p>
-											<p className="mb-3 ml-10">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1365,10 +1365,10 @@ export default function Index(props) {
 										<p className="font-bold text-black mb-3">
 											Financial Information
 										</p>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Type Bank</p>
-											<p className="ml-16">
-												&nbsp;&nbsp;&nbsp;:
+											<p className="-ml-36">
+												:
 												{props.data.revision_vendor
 													.vendor
 													.is_virtual_account == 1
@@ -1376,10 +1376,10 @@ export default function Index(props) {
 													: "Non Vitual Account"}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Bank</p>
-											<p className="ml-24">
-												&nbsp;&nbsp;&nbsp;&nbsp;:
+											<p className="-ml-36">
+												:
 												{props.data.revision_vendor
 													.vendor.is_bca == 1
 													? "BCA"
@@ -1387,10 +1387,10 @@ export default function Index(props) {
 														.vendor.bank_name}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Nomor Rekening</p>
-											<p className="mb-3 ml-8">
-												&nbsp;:
+											<p className="mb-3 -ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1420,10 +1420,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Account Name</p>
-											<p className="ml-16">
-												&nbsp;:
+											<p className="-ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor
@@ -1453,9 +1453,9 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Branch</p>
-											<p className="ml-24">
+											<p className="-ml-36">
 												:
 												{props.data.latest_vendor !=
 													null ? (
@@ -1485,10 +1485,10 @@ export default function Index(props) {
 												}
 											</p>
 										</div>
-										<div className="flex text-sm text-gray-500 mb-3">
+										<div className="grid grid-cols-2 gap-3 text-sm text-gray-500 mb-3">
 											<p className="">Swift Code</p>
-											<p className="ml-16">
-												&nbsp;&nbsp;:
+											<p className="-ml-36">
+												:
 												{props.data.latest_vendor !=
 													null ? (
 													props.data.latest_vendor

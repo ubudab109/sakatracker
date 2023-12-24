@@ -473,7 +473,9 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td class='border-2'></td>
+                                <td class='border-2'>
+                                    <div style="height: 36px;"></div>
+                                </td>
                                 <td class='border-2'></td>
                                 <td class='border-2'></td>
                                 <td class='border-2'></td>

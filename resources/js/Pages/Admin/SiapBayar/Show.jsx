@@ -188,7 +188,7 @@ return (
                             name="date"
                             className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
                             value={paymentDate}
-                            onChange={e => console.log(e.target.value)}
+                            onChange={(e) => setPaymentDate(e.target.value)}
                         />
                         <InputError message={errorPayment} className="mt-2" />
                     </div>

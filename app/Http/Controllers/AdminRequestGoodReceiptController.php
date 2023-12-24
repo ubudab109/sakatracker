@@ -46,7 +46,7 @@ class AdminRequestGoodReceiptController extends Controller
     {
         $data['permissions'] = $this->checkPermission('index');
 
-        $data['request_good_receipts'] = RequestGoodReceipt::with('vendor')->orderByDesc('updated_at')->get();
+        $data['request_good_receipts'] = RequestGoodReceipt::with('vendor')->orderByDesc('id')->get();
 
         return Inertia::render('Admin/RequestGR/Index', [
             'data' => $data

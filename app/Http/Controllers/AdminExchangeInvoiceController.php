@@ -707,6 +707,18 @@ class AdminExchangeInvoiceController extends Controller
             'attachment_note' => $request->file_attachment != 'acc' ? $request->attachment_note ?? $data->exchange_invoice->attachment_note : 'acc',
         ]);
 
+        if(!in_array('Preparer', $permissions) && !in_array('PIC TUKAR FAKTUR', $permissions))
+		{
+			$data->exchange_invoice->update([
+                'tax_invoice_note' => 'acc',
+                'invoice_note' => 'acc',
+                'bast_note' => 'acc',
+                'quotation_note' => 'acc',
+                'po_note' => 'acc',
+                'attachment_note' => 'acc',
+            ]);
+		}
+
         if($request->status == 'ditolak') {
             $data->exchange_invoice->update([
                 'status' => 'ditolak',
@@ -921,7 +933,7 @@ class AdminExchangeInvoiceController extends Controller
                         'user_id' => $approval_invoice->user_id,
                         'title' => 'E-Faktur Menunggu Verifikasi',
                         'description' => 'E-Faktur dengan ID Tukar Faktur: ' . $revisionExchange->exchange_invoice->tax_invoice_number,
-                        'url' => 'admin/exchange-invoice/' . $exchange_invoice_id,
+                        'url' => '/admin/exchange-invoice/' . $exchange_invoice_id,
                     ]);
         
                     $notifMail['title'] = $notif->title;
@@ -969,7 +981,7 @@ class AdminExchangeInvoiceController extends Controller
                     'user_id' => $approval_invoice->user_id,
                     'title' => 'E-Faktur Menunggu Verifikasi',
                     'description' => 'E-Faktur dengan ID Tukar Faktur: ' . $revisionExchange->exchange_invoice->tax_invoice_number,
-                    'url' => 'admin/exchange-invoice/' . $exchange_invoice_id,
+                    'url' => '/admin/exchange-invoice/' . $exchange_invoice_id,
                 ]);
     
                 $notifMail['title'] = $notif->title;

@@ -3,7 +3,7 @@ import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import Dropdown from '@/Components/Dropdown';
 import $ from 'jquery';
 import 'datatables.net';
-import { Edit, Trash, X, Check } from 'react-feather';
+import { Edit, Trash, X, Check, Eye } from 'react-feather';
 
 export default function Table(props) {
     console.log(props);
@@ -47,7 +47,17 @@ export default function Table(props) {
                                                             <Edit />
                                                         </a>
                                                     </div>
-                                                :''}
+                                                :
+                                                <>
+                                                    {item.status == 'approved' || item.status == 'reject' ?
+                                                            <div className='flex gap-1'>
+                                                                <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
+                                                                    <Eye />
+                                                                </a>
+                                                            </div>
+                                                    : ''}
+                                                </>
+                                                }
                                             </td>
                                         </>
                                     <td className='border border-slate-600'>{item.vendor.name}, {item.vendor.legality}</td>

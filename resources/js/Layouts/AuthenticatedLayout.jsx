@@ -170,10 +170,10 @@ export default function Authenticated({
                         <div className="navbar-brand-box">
                             <a href="#" className="logo logo-dark">
                                 <span className="logo-sm">
-                                    <img src="/assets/images/logo_fix.png" alt="" className="w-32"/>
+                                    <img src="/assets/images/logo2.png" alt="" className="md:w-32 sm:w-12 " />
                                 </span>
                                 <span className="logo-lg flex items-center justify-start">
-                                    <img src="/assets/images/logo_fix.png" alt="" className="w-32" />{" "}
+                                    <img src="/assets/images/logo2.png" alt="" className="w-32" />{" "}
                                     {/* <span className="logo-txt">CHAMS</span> */}
                                 </span>
                             </a>
