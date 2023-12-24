@@ -93,7 +93,7 @@ export default function Show(props) {
                                         <p className='mb-3'>: {props.data.vendor.npwp}</p>
                                         <p className='mb-3'>: {props.data.vendor.ktp}</p>
                                         <p className='mb-3'>: {props.data.vendor.office_address}</p>
-                                        <p className='mb-3'>: {props.data.vendor.npwp_address}</p>
+                                        <p className='mb-3'>: Sahid Sudirman Centre, Jl. Jenderal Sudirman No.10, RT.10/RW.11, Karet Tengsin, Kecamatan Tanah Abang, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10250</p>
                                         <p className='mb-3'>: {props.data.vendor.ktp_address}</p>
                                     </div>
                                     <div className='lg:ml-5 block'>
@@ -719,7 +719,7 @@ export default function Show(props) {
                                 </SecondaryButton>
                             </Link>
                             <Link href={route('vendor.edit', props.data.vendor.id)}>
-                                {props.data.checkRejectedData != null ?
+                                {props.data.vendor.status_account === 'ditolak' ?
                                     <PrimaryButton className='ml-3'>
                                         Revisi Pengajuan
                                     </PrimaryButton>

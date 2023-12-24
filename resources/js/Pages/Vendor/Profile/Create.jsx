@@ -688,7 +688,7 @@ export default function Create(props) {
                                                             className={
                                                                 `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
                                                             }
-                                                            maxLength={15}
+                                                            maxLength={16}
                                                             id="ktp"
                                                             name="ktp"
                                                             value={data.ktp}
@@ -1616,7 +1616,7 @@ export default function Create(props) {
                                                 className="mt-2"
                                             />
                                         </div>
-                                        <div className="mb-3">
+                                        {/* <div className="mb-3">
                                             <InputLabel value="Tanggal Expired NIB" className="font-bold" required={true}/>
                                             <TextInput 
                                                 id="expired_nib"
@@ -1633,7 +1633,7 @@ export default function Create(props) {
                                                 message={errors.expired_nib}
                                                 className="mt-2"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>

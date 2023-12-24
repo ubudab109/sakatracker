@@ -29,7 +29,7 @@ export default function Register(props) {
         phone_number: '',
         mobile_phone_number: '',
         postal_code: '',
-        type_of_business: 'Pribadi',
+        type_of_business: 'PKP',
         password: '',
         password_confirmation: '',
         suffix: '',
@@ -177,7 +177,7 @@ export default function Register(props) {
         setSelectedOptionCity(data.city_id);
     }
 
-    const [radioOptionType, setSelectedOption] = useState('Pribadi');
+    const [radioOptionType, setSelectedOption] = useState('PKP');
 
     const handleRadioChange = (event) => {
         const value = event.target.value;
@@ -382,7 +382,7 @@ export default function Register(props) {
                                                                     className={
                                                                         `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
                                                                     }
-                                                                    maxLength={15}
+                                                                    maxLength={16}
                                                                     id="ktp"
                                                                     name="ktp"
                                                                     value={data.ktp}
@@ -634,7 +634,7 @@ export default function Register(props) {
                                         </div>
                                     </div>
                                     <div class="mt-4 mt-md-5 text-center">
-                                        <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                        <p class="mb-0">© <script>2023</script> Chams</p>
                                     </div>
                                 </div>
                             </div>

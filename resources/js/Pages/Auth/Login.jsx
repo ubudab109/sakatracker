@@ -100,7 +100,8 @@ export default function Login({ status, canResetPassword }) {
                                         </div>
                                     </div>
                                     <div class="mt-4 mt-md-5 text-center">
-                                        <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                        {/* <p class="mb-0">© <script>2023</script> Chams   . Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p> */}
+                                        <p class="mb-0">© <script>2023</script> Chams</p>
                                     </div>
                                 </div>
                             </div>

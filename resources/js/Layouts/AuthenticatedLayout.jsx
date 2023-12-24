@@ -138,17 +138,22 @@ export default function Authenticated({
         });
     }
 
-    const readNotifications = (id) => {
-        Axios.get("/read-notifications/" + id).then((response) => {
-            console.log(response.data);
-            setUnread(0);
-        });
+    const readNotifications = async (id) => {
+        try {
+            await Axios.get("/read-notifications/" + id).then((response) => {
+                setUnread(0);
+            });
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
-    const redirectPage = (url, id) => {
-        console.log(id);
-        window.location.href = url;
-        readNotifications(id);
+    const redirectPage = async (url, id) => {
+        const isReaded = await readNotifications(id);
+        if (isReaded) {
+            window.location.href = url;
+        }
     }
 
     useEffect(() => {
@@ -165,11 +170,11 @@ export default function Authenticated({
                         <div className="navbar-brand-box">
                             <a href="#" className="logo logo-dark">
                                 <span className="logo-sm">
-                                    <img src="/assets/images/logo2.png" alt="" className="md:w-16 md:h-16 sm:w-6 " />
+                                    <img src="/assets/images/logo_fix.png" alt="" className="w-32"/>
                                 </span>
                                 <span className="logo-lg flex items-center justify-start">
-                                    <img src="/assets/images/logo2.png" alt="" className="h-13 w-6" />{" "}
-                                    <span className="logo-txt">CHAMS</span>
+                                    <img src="/assets/images/logo_fix.png" alt="" className="w-32" />{" "}
+                                    {/* <span className="logo-txt">CHAMS</span> */}
                                 </span>
                             </a>
                         </div>

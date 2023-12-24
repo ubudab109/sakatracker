@@ -105,7 +105,6 @@ class OtpCodeController extends Controller
 
     public function resendOtp(Request $request) {
         $data['user'] = User::where('email', $request->email)->first();
-
         if($data['user'] != null)
         {
             $request->validate([
@@ -167,8 +166,9 @@ class OtpCodeController extends Controller
                 ]);
 
                 $data['otp_code'] = $randomInt;
-                
-                $mail = Mail::to($data['user']->email)->send(new VerificationEmailMail($data));
+                 
+                $email = $request->email ?? $data['user']->email;
+                $mail = Mail::to($email)->send(new VerificationEmailMail($data));
 
                 return Redirect::route('profile.edit', [
                     'status' => 200,
@@ -229,8 +229,6 @@ class OtpCodeController extends Controller
 				]);
 			}
 		}
-
-        
     }
 
     /**

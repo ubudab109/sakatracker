@@ -13,7 +13,9 @@ export default function TableNotification(props) {
     const tableRef = useRef(null);
 
     useEffect(() => {
-        $(tableRef.current).DataTable();
+        $(tableRef.current).DataTable({
+            ordering: false
+        });
     }, []);
 
     function formatDate(timestamp) {
@@ -34,6 +36,7 @@ export default function TableNotification(props) {
                     <table ref={tableRef} className="w-full">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Title</th>
                                 <th>Description</th>
                                 <th>Date</th>
@@ -42,13 +45,14 @@ export default function TableNotification(props) {
                         </thead>
                         <tbody>
                             {props.data.map((item, index) => (
-                                <tr className="border-t bg-gray-100">
+                                <tr className="border-t bg-gray-100" key={item.id}>
+                                    <td>{item.id}</td>
                                     <td>{item.title}</td>
                                     <td>{item.description}</td>
                                     <td>{formatDate(item.created_at)}</td>
                                     <td>
                                         {
-                                            item.read === 1 || item.read === '1' ? <span style={{color: 'green'}}>Readed</span> : <span style={{color: 'red'}}>Unread</span>
+                                            item.read || item.read === 1 ? <span style={{color: 'green'}}>Readed</span> : <span style={{color: 'red'}}>Unread</span>
                                         }
                                     </td>
                                 </tr>

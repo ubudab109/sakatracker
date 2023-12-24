@@ -10,7 +10,7 @@ import DangerButton from '@/Components/DangerButton';
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }) {
     const user = usePage().props.auth.user;
-
+    // const [oldEmail, setOldEmail] = useState(user.email);
     const { data, setData, patch, post, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
@@ -68,7 +68,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                                 id="email_old"
                                 type="email"
                                 className="mt-1 block w-full"
-                                value={data.email}
+                                value={user.email}
                                 required
                                 autoComplete="username"
                                 readOnly
