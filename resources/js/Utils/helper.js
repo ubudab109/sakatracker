@@ -21,7 +21,7 @@ export const npwpFormat = (value) => {
  * power of 2.
  */
 export const convertMb = (totalSizeBytes) => {
-    return totalSizeBytes / Math.pow(1024,2);
+    return totalSizeBytes / Math.pow(1024, 2);
 }
 
 /**
@@ -73,6 +73,20 @@ export const formatTimestamp = (timestamp) => {
     const year = date.getFullYear();
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
+
     return `${day}-${month}-${year} ${hours}:${minutes}`;
-  }
+}
+
+export const isSimilarDate = (date) => {
+    // Create a Date object for the current date
+    const currentDate = new Date();
+
+    // Assuming your data date is stored in a variable called dataDate
+    const dataDate = new Date(date); // Replace this with your actual data date
+
+    // Compare the dates (year, month, and day)
+    const isSimilarDate = currentDate.getFullYear() === dataDate.getFullYear() &&
+        currentDate.getMonth() === dataDate.getMonth() &&
+        currentDate.getDate() === dataDate.getDate();
+    return isSimilarDate;
+}

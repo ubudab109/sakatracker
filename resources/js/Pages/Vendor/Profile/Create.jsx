@@ -70,26 +70,32 @@ export default function Create(props) {
         term_condition: '',
         status_submit: '',
 
-        document_type: props.data.vendor ? props.data.vendor.type_of_business == 'PKP' || props.data.vendor.type_of_business == 'Non PKP'  ? 'npwp' : 'ktp' : 'ktp',
+        document_type: props.data.vendor ? props.data.vendor.type_of_business == 'PKP' || props.data.vendor.type_of_business == 'Non PKP' ? 'npwp' : 'ktp' : 'ktp',
         ktp: props.data.vendor != null ? props.data.vendor.ktp : '',
         ktp_address: props.data.vendor != null ? props.data.vendor.ktp_address : '',
         attachment: [],
     });
 
     const [files, setFiles] = useState(
-		props.data.vendor.attachments.length < 1
-				? []
-				: props.data.vendor.attachments
-	);
-	const [objectFilesUrl, setObjectFilesUrl] = useState([]);
-	const [limitedFiles, setLimitedFiles] = useState(0);
+        props.data.vendor.attachments.length < 1
+            ? []
+            : props.data.vendor.attachments
+    );
+    const [objectFilesUrl, setObjectFilesUrl] = useState([]);
+    const [limitedFiles, setLimitedFiles] = useState(0);
 
     const [selectedNameBusiness, setSelectedNameBusiness] = useState(props.data.vendor != null ? props.data.vendor.name_business : '');
 
+    const [documentCompanyType, setDocumentCompanyType] = useState(props.data.vendor.file_siup ? 'SIUP' : (props.data.vendor.file_nib ? props.data.vendor.file_nib : ''));
     const handleNameBusiness = (event) => {
         data.name_business = event.target.value;
         setSelectedNameBusiness(data.name_business);
-    }  
+    }
+
+    const handleDocumentType = (e) => {
+        console.log(e.target.value);
+        setDocumentCompanyType(e.target.value);
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -99,58 +105,53 @@ export default function Create(props) {
     };
 
     const checkErrorValidatorTab = (column) => {
-        if(column.name 
-            || column.email 
-            || column.name_business 
-            || column.npwp 
-            || column.npwp_address 
+        if (column.name
+            || column.email
+            || column.name_business
+            || column.npwp
+            || column.npwp_address
             || column.ktp
-            || column.ktp_address 
-            || column.postal_code 
-            || column.province_id 
+            || column.ktp_address
+            || column.postal_code
+            || column.province_id
             || column.phone_number
             || column.mobile_phone_number
             || column.type_of_business
-        )
-        {
+        ) {
             openCard1Clicked(0);
-        } else if(column.director_name 
-            || column.director_phone_number 
-            || column.director_email 
-            || column.fa_name 
-            || column.fa_phone_number 
-            || column.fa_email 
-            || column.marketing_email 
+        } else if (column.director_name
+            || column.director_phone_number
+            || column.director_email
+            || column.fa_name
+            || column.fa_phone_number
+            || column.fa_email
+            || column.marketing_email
             || column.marketing_phone_number
             || column.marketing_key_account
-        )
-        {
+        ) {
             openCard2Clicked(1);
-        } else if(column.bank_name 
-            || column.bank_account_number 
-            || column.bank_account_name 
-            || column.branch_of_bank 
-            || column.bank_swift_code 
-        )
-        {
+        } else if (column.bank_name
+            || column.bank_account_number
+            || column.bank_account_name
+            || column.branch_of_bank
+            || column.bank_swift_code
+        ) {
             openCard3Clicked(2);
-        } else if(column.file_nib 
-            || column.file_npwp 
-            || column.file_siup 
-            || column.file_sppkp 
-            || column.file_tdp 
-            || column.file_board_of_directors_composition 
-            || column.file_non_pkp_statement 
+        } else if (column.file_nib
+            || column.file_npwp
+            || column.file_siup
+            || column.file_sppkp
+            || column.file_tdp
+            || column.file_board_of_directors_composition
+            || column.file_non_pkp_statement
             || column.expired_nib
             || column.expired_siup
             || column.expired_sppkp
             || column.expired_tdp
-        )
-        {
+        ) {
             openCard4Clicked(3);
-        } else if(column.term_condition 
-        )
-        {
+        } else if (column.term_condition
+        ) {
             openCard5Clicked(4);
         } else {
             openCard5Clicked(4);
@@ -173,9 +174,9 @@ export default function Create(props) {
 
     const handleCardClicked = (index) => {
         const tabPaneStates = ['hidden', 'hidden', 'hidden', 'hidden', 'hidden']; // Assuming you have 5 tab panes
-        
+
         tabPaneStates[index] = '';
-        
+
         setTabPane1(tabPaneStates[0]);
         setTabPane2(tabPaneStates[1]);
         setTabPane3(tabPaneStates[2]);
@@ -186,19 +187,19 @@ export default function Create(props) {
     const openCard1Clicked = () => {
         handleCardClicked(0);
     }
-    
+
     const openCard2Clicked = () => {
         handleCardClicked(1);
     }
-    
+
     const openCard3Clicked = () => {
         handleCardClicked(2);
     }
-    
+
     const openCard4Clicked = () => {
         handleCardClicked(3);
     }
-    
+
     const openCard5Clicked = () => {
         handleCardClicked(4);
     }
@@ -209,7 +210,7 @@ export default function Create(props) {
 
     const openPopup = (item) => {
         // console.log(item);
-        setPdfUrl(item); 
+        setPdfUrl(item);
         setIsPopupOpen(true);
     };
 
@@ -227,7 +228,7 @@ export default function Create(props) {
 
     const handleRadioChange = (event) => {
         const value = event.target.value;
-        setSelectedOption(event.target.value); 
+        setSelectedOption(event.target.value);
         data.type_of_business = event.target.value;
         data.type_of_business == 'PKP' ? setTabPkp('') : setTabPkp('hidden');
         data.type_of_business == 'Non PKP' ? setTabNonPkp('') : setTabNonPkp('hidden');
@@ -242,8 +243,8 @@ export default function Create(props) {
     const [isCheckedTermCondition, setIsCheckedTermCondition] = useState(false);
 
     const handleCheckboxTermConditionChange = (event) => {
-        setCheckboxTermCondition(event.target.value); 
-        if(!isCheckedTermCondition) {
+        setCheckboxTermCondition(event.target.value);
+        if (!isCheckedTermCondition) {
             setIsCheckedTermCondition(true);
             data.term_condition = event.target.value;
         } else {
@@ -265,40 +266,40 @@ export default function Create(props) {
     const [error, setError1] = useState(null);
 
     useEffect(() => {
-        
+
         fetch(`/get-country`)
-        .then((response) => {
-            if (!response.ok) {
-            throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then((res) => {
-            setDataApi(res);
-            setLoading(false);
-        })
-        .catch((error) => {
-            setError1(error);
-            setLoading(false);
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((res) => {
+                setDataApi(res);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setError1(error);
+                setLoading(false);
+            });
 
         fetch(`/get-state?country_id=${data.country_id}`)
             .then((response) => response.json())
-        .then((res) => {
-            setProvinces(res);
-        })
-        .catch((error) => {
-            console.error('Error fetching states:', error);
-        });
+            .then((res) => {
+                setProvinces(res);
+            })
+            .catch((error) => {
+                console.error('Error fetching states:', error);
+            });
 
         fetch(`/get-city?state_id=${data.province_id}`)
-        .then((response) => response.json())
-        .then((res) => {
-            setCities(res);
-        })
-        .catch((error) => {
-            console.error('Error fetching cities:', error);
-        });
+            .then((response) => response.json())
+            .then((res) => {
+                setCities(res);
+            })
+            .catch((error) => {
+                console.error('Error fetching cities:', error);
+            });
 
     }, []);
 
@@ -327,14 +328,14 @@ export default function Create(props) {
 
         const selectedOption = event.target.selectedOptions[0];
         data.country = selectedOption.label;
-        
+
         fetch(`/get-state?country_id=${data.country_id}`)
             .then((response) => response.json())
             .then((res) => {
                 setProvinces(res);
             })
             .catch((error) => {
-            console.error('Error fetching states:', error);
+                console.error('Error fetching states:', error);
             });
     };
 
@@ -345,17 +346,17 @@ export default function Create(props) {
 
         const selectedOption = event.target.selectedOptions[0];
         data.province_name = selectedOption.label;
-        
+
         fetch(`/get-city?state_id=${data.province_id}`)
             .then((response) => response.json())
             .then((res) => {
                 setCities(res);
             })
             .catch((error) => {
-            console.error('Error fetching cities:', error);
+                console.error('Error fetching cities:', error);
             });
     };
-    
+
     const handleCityChange = (event) => {
         data.city_id = event.target.value;
         const selectedOption = event.target.selectedOptions[0];
@@ -364,11 +365,10 @@ export default function Create(props) {
         setSelectedOptionCity(data.city_id);
     }
 
-    const [showBankName, setShowBankName] = useState(props.data.vendor ?  props.data.vendor.is_bca == 1 ? true : false : false);
+    const [showBankName, setShowBankName] = useState(props.data.vendor ? props.data.vendor.is_bca == 1 ? true : false : false);
     const handleBcaChange = (event) => {
         data.is_bca = event.target.value;
-        if(data.is_bca == 1)
-        {
+        if (data.is_bca == 1) {
             data.bank_name = 'bca';
             setShowBankName(true);
         } else {
@@ -384,20 +384,20 @@ export default function Create(props) {
     }
 
     const [npwp, setNPWP] = useState(props.data.vendor ? props.data.vendor.npwp != null ? props.data.vendor.npwp : '' : '');
-    
+
     const handleNPWPChange = (e) => {
         const value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
         const formattedNPWP = formatNPWP(value);
         data.npwp = formattedNPWP;
         setNPWP(formattedNPWP);
     };
-    
+
     const formatNPWP = (npwpValue) => {
         const npwpWithoutDots = npwpValue.replace(/\./g, ''); // Remove existing dots
         const formattedNPWP = npwpWithoutDots
-        .slice(0, 15) // Limit to 15 characters
-        .replace(/(\d{2})(\d{2})(\d{3})(\d{3})(\d{3})/, '$1.$2.$3.$4.$5');
-    
+            .slice(0, 15) // Limit to 15 characters
+            .replace(/(\d{2})(\d{2})(\d{3})(\d{3})(\d{3})/, '$1.$2.$3.$4.$5');
+
         return formattedNPWP;
     };
 
@@ -424,50 +424,50 @@ export default function Create(props) {
     }
 
     const handleChangeFile = (fileUploaded) => {
-		console.log(fileUploaded);
-		const uploaded = [...files];
-		const objectUrl = [...objectFilesUrl];
-		let currentSize = 0;
-		fileUploaded.some((file) => {
-				if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-						uploaded.push(file);
-						const objectFile = Object.assign(file);
-						const url = URL.createObjectURL(objectFile);
-						let sizeFile = convertMb(file.size);
-						objectUrl.push({
-								url: url,
-								fileName: file.name,
-								fileSize: sizeFile,
-						});
-						currentSize += sizeFile;
-						setLimitedFiles(currentSize);
-				}
-		});
-		setFiles(uploaded);
-		setObjectFilesUrl(objectUrl);
-		setData("attachment", uploaded);
-	};
+        console.log(fileUploaded);
+        const uploaded = [...files];
+        const objectUrl = [...objectFilesUrl];
+        let currentSize = 0;
+        fileUploaded.some((file) => {
+            if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+                uploaded.push(file);
+                const objectFile = Object.assign(file);
+                const url = URL.createObjectURL(objectFile);
+                let sizeFile = convertMb(file.size);
+                objectUrl.push({
+                    url: url,
+                    fileName: file.name,
+                    fileSize: sizeFile,
+                });
+                currentSize += sizeFile;
+                setLimitedFiles(currentSize);
+            }
+        });
+        setFiles(uploaded);
+        setObjectFilesUrl(objectUrl);
+        setData("attachment", uploaded);
+    };
 
-	const removeFiles = (fileName, fileSize) => {
-			const fileUploaded = [...files];
-			const objectUrl = [...objectFilesUrl];
-			const indexFile = fileUploaded.findIndex((f) => f.name === fileName);
-			const indexObjectUrl = objectUrl.findIndex(
-					(o) => o.fileName === fileName
-			);
-			fileUploaded.splice(indexFile, 1);
-			objectUrl.splice(indexObjectUrl, 1);
-			setFiles(fileUploaded);
-			setObjectFilesUrl(objectUrl);
-			setLimitedFiles(limitedFiles - fileSize);
-			setData("attachment", fileUploaded);
-	};
+    const removeFiles = (fileName, fileSize) => {
+        const fileUploaded = [...files];
+        const objectUrl = [...objectFilesUrl];
+        const indexFile = fileUploaded.findIndex((f) => f.name === fileName);
+        const indexObjectUrl = objectUrl.findIndex(
+            (o) => o.fileName === fileName
+        );
+        fileUploaded.splice(indexFile, 1);
+        objectUrl.splice(indexObjectUrl, 1);
+        setFiles(fileUploaded);
+        setObjectFilesUrl(objectUrl);
+        setLimitedFiles(limitedFiles - fileSize);
+        setData("attachment", fileUploaded);
+    };
 
-	const handleFileEvent = (e) => {
-			const choosenFiles = Array.prototype.slice.call(e.target.files);
-			handleChangeFile(choosenFiles);
-	};
-    
+    const handleFileEvent = (e) => {
+        const choosenFiles = Array.prototype.slice.call(e.target.files);
+        handleChangeFile(choosenFiles);
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -537,8 +537,8 @@ export default function Create(props) {
                             <div className="grid grid-cols-2">
                                 <div>
                                     <div className="mb-3">
-                                        <InputLabel value="Name" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Name" className="font-bold" required={true} />
+                                        <TextInput
                                             id="name"
                                             name="name"
                                             value={data.name}
@@ -549,14 +549,14 @@ export default function Create(props) {
                                             onChange={(e) => setData('name', e.target.value)}
                                             readonly="true"
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.name}
                                             className="mt-2"
                                         />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Prefix" className="font-bold" required={true}/>
+                                        <InputLabel value="Prefix" className="font-bold" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="legality"
                                             name="legality"
@@ -570,14 +570,14 @@ export default function Create(props) {
                                                 </option>
                                             ))}
                                         </select>
-                                        <InputError 
+                                        <InputError
                                             message={errors.prefix}
                                             className="mt-2"
                                         />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Suffix" className="font-bold" required={true}/>
+                                        <InputLabel value="Suffix" className="font-bold" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="suffix"
                                             name="suffix"
@@ -591,7 +591,7 @@ export default function Create(props) {
                                                 </option>
                                             ))}
                                         </select>
-                                        <InputError 
+                                        <InputError
                                             message={errors.suffix}
                                             className="mt-2"
                                         />
@@ -617,8 +617,8 @@ export default function Create(props) {
                                     }
 
                                     <div className="mb-3">
-                                        <InputLabel value="Email Address" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Email Address" className="font-bold" required={true} />
+                                        <TextInput
                                             id="email"
                                             name="email"
                                             type="email"
@@ -629,9 +629,9 @@ export default function Create(props) {
                                             placeholder="email.."
                                             isFocused={true}
                                             onChange={(e) => setData('email', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.email}
                                             className="mt-2"
                                         />
@@ -642,7 +642,7 @@ export default function Create(props) {
                                         <select className="select select-bordered w-full mt-1"
                                             id="type_of_business"
                                             name="type_of_business"
-                                            
+
                                             value={selectedNameBusiness}
                                             onChange={handleNameBusiness}
                                         >
@@ -676,7 +676,7 @@ export default function Create(props) {
                                                         isFocused={true}
                                                         onChange={(e) => setData('npwp', e.target.value)}
                                                         disabled={data.type_of_business === ""}
-                                                        
+
                                                     />
 
                                                     <InputError message={errors.npwp} className="mt-2" />
@@ -698,7 +698,7 @@ export default function Create(props) {
                                                             disabled={data.type_of_business === ""}
                                                             isFocused={true}
                                                             onChange={(e) => setData('ktp', e.target.value)}
-                                                            
+
                                                         />
 
                                                         <InputError message={errors.ktp} className="mt-2" />
@@ -721,7 +721,7 @@ export default function Create(props) {
                                                             isFocused={true}
                                                             onChange={(e) => setData('npwp', e.target.value)}
 
-                                                            
+
                                                         />
 
                                                         <InputError message={errors.npwp} className="mt-2" />
@@ -732,8 +732,8 @@ export default function Create(props) {
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Office Address" className="font-bold" required={true}/>
-                                        <textarea 
+                                        <InputLabel value="Office Address" className="font-bold" required={true} />
+                                        <textarea
                                             name="office_address"
                                             className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
                                             placeholder="Office Address *"
@@ -764,12 +764,12 @@ export default function Create(props) {
                                         <div class="flex items-center mb-2 mt-3" >
                                             <label className="inline-flex items-center">
                                                 <input
-                                                type="radio"
-                                                name="type_of_business"
-                                                className="form-checkbox"
-                                                value="PKP"
-                                                checked={radioOptionType === 'PKP'}
-                                                onChange={handleRadioChange}
+                                                    type="radio"
+                                                    name="type_of_business"
+                                                    className="form-checkbox"
+                                                    value="PKP"
+                                                    checked={radioOptionType === 'PKP'}
+                                                    onChange={handleRadioChange}
                                                 />
                                                 <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
                                             </label>
@@ -777,12 +777,12 @@ export default function Create(props) {
                                         <div class="flex items-center mb-2" >
                                             <label className="inline-flex items-center">
                                                 <input
-                                                type="radio"
-                                                name="type_of_business"
-                                                className="form-checkbox"
-                                                value="Non PKP"
-                                                checked={radioOptionType === 'Non PKP'}
-                                                onChange={handleRadioChange}
+                                                    type="radio"
+                                                    name="type_of_business"
+                                                    className="form-checkbox"
+                                                    value="Non PKP"
+                                                    checked={radioOptionType === 'Non PKP'}
+                                                    onChange={handleRadioChange}
                                                 />
                                                 <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
                                             </label>
@@ -790,12 +790,12 @@ export default function Create(props) {
                                         <div class="flex items-center mb-2" >
                                             <label className="inline-flex items-center">
                                                 <input
-                                                type="radio"
-                                                name="type_of_business"
-                                                className="form-checkbox"
-                                                value="Pribadi"
-                                                checked={radioOptionType === 'Pribadi'}
-                                                onChange={handleRadioChange}
+                                                    type="radio"
+                                                    name="type_of_business"
+                                                    className="form-checkbox"
+                                                    value="Pribadi"
+                                                    checked={radioOptionType === 'Pribadi'}
+                                                    onChange={handleRadioChange}
                                                 />
                                                 <span className="ml-2">Wajib Pajak Orang Pribadi (PKP)</span>
                                             </label>
@@ -872,7 +872,7 @@ export default function Create(props) {
                                     </div> */}
 
                                     <div className="w-full mb-3">
-                                        <InputLabel value="Country" className="font-bold" required={true}/>
+                                        <InputLabel value="Country" className="font-bold" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="country_id"
                                             name="country_id"
@@ -889,7 +889,7 @@ export default function Create(props) {
                                     </div>
 
                                     <div className="w-full mb-3">
-                                        <InputLabel value="City" className="font-bold" required={true}/>
+                                        <InputLabel value="City" className="font-bold" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="city_id"
                                             name="city_id"
@@ -908,7 +908,7 @@ export default function Create(props) {
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Phone Number" className="font-bold" required={true}/>
+                                        <InputLabel value="Phone Number" className="font-bold" required={true} />
                                         <TextInput
                                             id="phone_number"
                                             name="phone_number"
@@ -916,14 +916,14 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Phone Number"
                                             onChange={(e) => setData('phone_number', e.target.value)}
-                                            
+
                                         />
 
                                         <InputError message={errors.phone_number} className="mt-2" />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Mobile Number" className="font-bold" required={true}/>
+                                        <InputLabel value="Mobile Number" className="font-bold" required={true} />
                                         <TextInput
                                             id="mobile_phone_number"
                                             name="mobile_phone_number"
@@ -931,7 +931,7 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Mobile Number"
                                             onChange={(e) => setData('mobile_phone_number', e.target.value)}
-                                            
+
                                         />
 
                                         <InputError message={errors.mobile_phone_number} className="mt-2" />
@@ -939,7 +939,7 @@ export default function Create(props) {
                                 </div>
                                 <div className='ml-5'>
                                     <div className="w-full mb-3">
-                                        <InputLabel value="Province" className="font-bold" required={true}/>
+                                        <InputLabel value="Province" className="font-bold" required={true} />
                                         <select className="select select-bordered w-full mt-1"
                                             id="province_id"
                                             name="province_id"
@@ -957,7 +957,7 @@ export default function Create(props) {
                                         <InputError message={errors.province_id} className="mt-2" />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Postal Code" className="font-bold" required={true}/>
+                                        <InputLabel value="Postal Code" className="font-bold" required={true} />
                                         <TextInput
                                             id="postal_code"
                                             name="postal_code"
@@ -965,7 +965,7 @@ export default function Create(props) {
                                             className="mt-1 block w-full"
                                             placeholder="Postal Code"
                                             onChange={(e) => setData('postal_code', e.target.value)}
-                                            
+
                                         />
 
                                         <InputError message={errors.postal_code} className="mt-2" />
@@ -978,8 +978,8 @@ export default function Create(props) {
                                 <div>
                                     <p className="font-bold mb-3">Director Information</p>
                                     <div className="mb-3">
-                                        <InputLabel value="Director Name" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Director Name" className="font-bold" required={true} />
+                                        <TextInput
                                             id="director_name"
                                             name="director_name"
                                             value={data.director_name}
@@ -988,16 +988,16 @@ export default function Create(props) {
                                             placeholder="director name.."
                                             isFocused={true}
                                             onChange={(e) => setData('director_name', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.director_name}
                                             className="mt-2"
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Director Phone Number" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Director Phone Number" className="font-bold" required={true} />
+                                        <TextInput
                                             id="director_phone_number"
                                             name="director_phone_number"
                                             value={data.director_phone_number}
@@ -1006,16 +1006,16 @@ export default function Create(props) {
                                             placeholder="director phone number.."
                                             isFocused={true}
                                             onChange={(e) => setData('director_phone_number', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.director_phone_number}
                                             className="mt-2"
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Director Email" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Director Email" className="font-bold" required={true} />
+                                        <TextInput
                                             id="director_email"
                                             name="director_email"
                                             type="email"
@@ -1025,9 +1025,9 @@ export default function Create(props) {
                                             placeholder="director email.."
                                             isFocused={true}
                                             onChange={(e) => setData('director_email', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.director_email}
                                             className="mt-2"
                                         />
@@ -1035,8 +1035,8 @@ export default function Create(props) {
 
                                     <p className="font-bold mb-3">Marketing/Key Account Information</p>
                                     <div className="mb-3">
-                                        <InputLabel value="Marketing Key Account" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Marketing Key Account" className="font-bold" required={true} />
+                                        <TextInput
                                             id="marketing_key_account"
                                             name="marketing_key_account"
                                             value={data.marketing_key_account}
@@ -1045,16 +1045,16 @@ export default function Create(props) {
                                             placeholder="Marketing key account.."
                                             isFocused={true}
                                             onChange={(e) => setData('marketing_key_account', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.marketing_key_account}
                                             className="mt-2"
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Marketing Phone Number" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Marketing Phone Number" className="font-bold" required={true} />
+                                        <TextInput
                                             id="marketing_phone_number"
                                             name="marketing_phone_number"
                                             value={data.marketing_phone_number}
@@ -1063,16 +1063,16 @@ export default function Create(props) {
                                             placeholder="marketing phone number.."
                                             isFocused={true}
                                             onChange={(e) => setData('marketing_phone_number', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.marketing_phone_number}
                                             className="mt-2"
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <InputLabel value="Marketing Email" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Marketing Email" className="font-bold" required={true} />
+                                        <TextInput
                                             id="marketing_email"
                                             name="marketing_email"
                                             type="email"
@@ -1082,9 +1082,9 @@ export default function Create(props) {
                                             placeholder="marketing email.."
                                             isFocused={true}
                                             onChange={(e) => setData('marketing_email', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.marketing_email}
                                             className="mt-2"
                                         />
@@ -1093,68 +1093,68 @@ export default function Create(props) {
                                 </div>
                                 <div className="ml-5">
                                     <p className="font-bold mb-3">FA Information</p>
-                                        <div className="mb-3">
-                                            <InputLabel value="FA Name" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="fa_name"
-                                                name="fa_name"
-                                                value={data.fa_name}
-                                                className="mt-1 block w-full"
-                                                autoComplete="fa_name"
-                                                placeholder="fa name.."
-                                                isFocused={true}
-                                                onChange={(e) => setData('fa_name', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.fa_name}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="FA Phone Number" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="fa_phone_number"
-                                                name="fa_phone_number"
-                                                value={data.fa_phone_number}
-                                                className="mt-1 block w-full"
-                                                autoComplete="fa_phone_number"
-                                                placeholder="fa phone number.."
-                                                isFocused={true}
-                                                onChange={(e) => setData('fa_phone_number', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.fa_phone_number}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="FA Email" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="fa_email"
-                                                name="fa_email"
-                                                type="email"
-                                                value={data.fa_email}
-                                                className="mt-1 block w-full"
-                                                autoComplete="fa_email"
-                                                placeholder="FA email.."
-                                                isFocused={true}
-                                                onChange={(e) => setData('fa_email', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.fa_email}
-                                                className="mt-2"
-                                            />
-                                        </div>
+                                    <div className="mb-3">
+                                        <InputLabel value="FA Name" className="font-bold" required={true} />
+                                        <TextInput
+                                            id="fa_name"
+                                            name="fa_name"
+                                            value={data.fa_name}
+                                            className="mt-1 block w-full"
+                                            autoComplete="fa_name"
+                                            placeholder="fa name.."
+                                            isFocused={true}
+                                            onChange={(e) => setData('fa_name', e.target.value)}
+
+                                        />
+                                        <InputError
+                                            message={errors.fa_name}
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <InputLabel value="FA Phone Number" className="font-bold" required={true} />
+                                        <TextInput
+                                            id="fa_phone_number"
+                                            name="fa_phone_number"
+                                            value={data.fa_phone_number}
+                                            className="mt-1 block w-full"
+                                            autoComplete="fa_phone_number"
+                                            placeholder="fa phone number.."
+                                            isFocused={true}
+                                            onChange={(e) => setData('fa_phone_number', e.target.value)}
+
+                                        />
+                                        <InputError
+                                            message={errors.fa_phone_number}
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <InputLabel value="FA Email" className="font-bold" required={true} />
+                                        <TextInput
+                                            id="fa_email"
+                                            name="fa_email"
+                                            type="email"
+                                            value={data.fa_email}
+                                            className="mt-1 block w-full"
+                                            autoComplete="fa_email"
+                                            placeholder="FA email.."
+                                            isFocused={true}
+                                            onChange={(e) => setData('fa_email', e.target.value)}
+
+                                        />
+                                        <InputError
+                                            message={errors.fa_email}
+                                            className="mt-2"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div id="card-type-tab-3" className={`${tabPane3}`} role="tabpanel" aria-labelledby="card-type-tab-item-3">
                             <div className="grid grid-cols-2">
                                 <div className="w-full mb-3">
-                                    <InputLabel value="Bank" className="font-bold" required={true}/>
+                                    <InputLabel value="Bank" className="font-bold" required={true} />
                                     <select className="select select-bordered w-full mt-1"
                                         id="is_bca"
                                         name="is_bca"
@@ -1169,7 +1169,7 @@ export default function Create(props) {
                                     <InputError message={errors.is_bca} className="mt-2" />
                                 </div>
                                 <div className="w-full ml-5 mb-3">
-                                    <InputLabel value="Account Type" className="font-bold" required={true}/>
+                                    <InputLabel value="Account Type" className="font-bold" required={true} />
                                     <select className="select select-bordered w-full mt-1"
                                         id="is_virtual_account"
                                         name="is_virtual_account"
@@ -1184,8 +1184,8 @@ export default function Create(props) {
                                     <InputError message={errors.is_virtual_account} className="mt-2" />
                                 </div>
                                 <div className="mb-3" hidden={showBankName}>
-                                    <InputLabel value="Bank Name" className="font-bold" required={true}/>
-                                    <TextInput 
+                                    <InputLabel value="Bank Name" className="font-bold" required={true} />
+                                    <TextInput
                                         id="bank_name"
                                         name="bank_name"
                                         value={data.bank_name}
@@ -1193,9 +1193,9 @@ export default function Create(props) {
                                         placeholder="Bank name.."
                                         isFocused={true}
                                         onChange={(e) => setData('bank_name', e.target.value)}
-                                        
+
                                     />
-                                    <InputError 
+                                    <InputError
                                         message={errors.bank_name}
                                         className="mt-2"
                                     />
@@ -1207,8 +1207,8 @@ export default function Create(props) {
                                 <div>
                                     <p className="font-bold mb-3">Bank Details</p>
                                     <div className="mb-3">
-                                        <InputLabel value="Account Name" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Account Name" className="font-bold" required={true} />
+                                        <TextInput
                                             id="bank_account_name"
                                             name="bank_account_name"
                                             value={data.bank_account_name}
@@ -1217,17 +1217,17 @@ export default function Create(props) {
                                             placeholder="bank account name.."
                                             isFocused={true}
                                             onChange={(e) => setData('bank_account_name', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.bank_account_name}
                                             className="mt-2"
                                         />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Account Number" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Account Number" className="font-bold" required={true} />
+                                        <TextInput
                                             id="bank_account_number"
                                             name="bank_account_number"
                                             value={data.bank_account_number}
@@ -1236,17 +1236,17 @@ export default function Create(props) {
                                             placeholder="bank account number.."
                                             isFocused={true}
                                             onChange={(e) => setData('bank_account_number', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.bank_account_number}
                                             className="mt-2"
                                         />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Branch" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Branch" className="font-bold" required={true} />
+                                        <TextInput
                                             id="branch_of_bank"
                                             name="branch_of_bank"
                                             value={data.branch_of_bank}
@@ -1255,17 +1255,17 @@ export default function Create(props) {
                                             placeholder="branch.."
                                             isFocused={true}
                                             onChange={(e) => setData('branch_of_bank', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.branch_of_bank}
                                             className="mt-2"
                                         />
                                     </div>
 
                                     <div className="mb-3">
-                                        <InputLabel value="Swift Code" className="font-bold" required={true}/>
-                                        <TextInput 
+                                        <InputLabel value="Swift Code" className="font-bold" required={true} />
+                                        <TextInput
                                             id="bank_swift_code"
                                             name="bank_swift_code"
                                             value={data.bank_swift_code}
@@ -1274,9 +1274,9 @@ export default function Create(props) {
                                             placeholder="swift code.."
                                             isFocused={true}
                                             onChange={(e) => setData('bank_swift_code', e.target.value)}
-                                            
+
                                         />
-                                        <InputError 
+                                        <InputError
                                             message={errors.bank_swift_code}
                                             className="mt-2"
                                         />
@@ -1290,7 +1290,7 @@ export default function Create(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1311,23 +1311,23 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_npwp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SPPKP" className="font-bold" required={true}/>
+                                            <InputLabel value="SPPKP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
                                                 <div className="border-1 p-3 rounded-e-lg w-50 break-all">{sppkpFile ? sppkpFile : 'No file chosen'}</div>
-                                                {props.data.vendor ?  props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
+                                                {props.data.vendor ? props.data.vendor.file_sppkp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_sppkp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-sppkp"
@@ -1338,50 +1338,76 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_sppkp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SIUP" className="font-bold" required={true}/>
+                                            <InputLabel value="SIUP/NIB" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
                                                 <div className="border-1 p-3 rounded-e-lg w-50 break-all">{siupFile ? siupFile : 'No file chosen'}</div>
-                                                {props.data.vendor ?  props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
+                                                {props.data.vendor ? props.data.vendor.file_siup != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_siup)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-siup"
+                                                    disabled={documentCompanyType === ''}
                                                     className="hidden-input"
                                                     name="file_siup"
                                                     hidden={true}
                                                     onChange={(e) => handleFile(e, setSiupFile)}
                                                 />
+
+                                            </div>
+                                            <div class="flex items-center mb-2 mt-3" >
+                                                <label className="inline-flex items-center mr-2">
+                                                    <input
+                                                        type="radio"
+                                                        name="document_company_type"
+                                                        className="form-checkbox"
+                                                        value="SIUP"
+                                                        checked={documentCompanyType === 'SIUP'}
+                                                        onChange={handleDocumentType}
+                                                    />
+                                                    <span className="ml-2">SIUP</span>
+                                                </label>
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        name="document_company_type"
+                                                        className="form-checkbox"
+                                                        value="NIB"
+                                                        checked={documentCompanyType === 'NIB'}
+                                                        onChange={handleDocumentType}
+                                                    />
+                                                    <span className="ml-2">NIB</span>
+                                                </label>
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
-                                                message={errors.file_siup}
+                                            <InputError
+                                                message={errors.file_siup ?? errors.file_nib}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="TDP" className="font-bold" required={true}/>
+                                            <InputLabel value="TDP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
                                                 </label>
                                                 <div className="border-1 p-3 rounded-e-lg w-50 break-all">{tdpFile ? tdpFile : 'No file chosen'}</div>
-                                                {props.data.vendor ?  props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
+                                                {props.data.vendor ? props.data.vendor.file_tdp != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_tdp)}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-tdp"
@@ -1392,13 +1418,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_tdp}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="NIB" className="font-bold" required={true}/>
+                                        {/* <div className="mb-3">
+                                            <InputLabel value="NIB" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1408,7 +1434,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-nib"
@@ -1419,13 +1445,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_nib}
                                                 className="mt-2"
                                             />
-                                        </div>
+                                        </div> */}
                                         <div className="mb-3">
-                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
+                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1435,7 +1461,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-bodc"
@@ -1446,125 +1472,107 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_board_of_directors_composition}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-											<InputLabel
-												value="Lampiran Lainnya"
-												className="font-bold"
-												required={true}
-											/>
-											<div className="flex">
-												<label
-													htmlFor="attachment"
-													className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800"
-												>
-													CHOOSE FILE
-												</label>
-												<div className="border-1 p-3 rounded-e-lg w-50 break-all">
-													No File Chosen
-												</div>
-												<input
-													type="file"
-													id="attachment"
-													className="hidden-input"
-													name="attachment"
-													hidden={true}
-													onChange={(e) =>
-														handleFileEvent(e)
-													}
-													multiple={true}
-												/>
-											</div>
-											<div className="row">
-												<ul className="list-group p-2">
-													{objectFilesUrl.length > 0
-														? objectFilesUrl.map(
-															(url) => (
-																<li class="list-group-item d-flex justify-content-between align-items-center">
-																	<a
-																		style={{
-																			color: "blue",
-																		}}
-																		href={
-																			url.url
-																		}
-																		target="_blank"
-																		rel="no-referrer"
-																	>
-																		{
-																			url.fileName
-																		}
-																	</a>
-																	<span
-																		onClick={() =>
-																			removeFiles(
-																				url.fileName,
-																				url.fileSize
-																			)
-																		}
-																		style={{
-																			cursor: "pointer",
-																			background:
-																				"red",
-																			color: "white",
-																		}}
-																		class="badge badge-danger badge-pill"
-																	>
-																		X
-																	</span>
-																</li>
-															)
-														)
-														: null}
-												</ul>
-											</div>
-											<p>
-												{files
-													? `Total File: ${files.length}`
-													: "no files uploaded yet"}
-											</p>
-											<i className="text-muted">
-												* Max: 20mb
-											</i>
-											{limitedFiles > 20 ? (
-												<InputError
-													message="Maximum files is 20 MB"
-													className="mt-2"
-												/>
-											) : null}
+                                            <InputLabel
+                                                value="Lampiran Lainnya"
+                                                className="font-bold"
+                                                required={true}
+                                            />
+                                            <div className="flex">
+                                                <label
+                                                    htmlFor="attachment"
+                                                    className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800"
+                                                >
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">
+                                                    No File Chosen
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    id="attachment"
+                                                    className="hidden-input"
+                                                    name="attachment"
+                                                    hidden={true}
+                                                    onChange={(e) =>
+                                                        handleFileEvent(e)
+                                                    }
+                                                    multiple={true}
+                                                />
+                                            </div>
+                                            <div className="row">
+                                                <ul className="list-group p-2">
+                                                    {objectFilesUrl.length > 0
+                                                        ? objectFilesUrl.map(
+                                                            (url) => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.url
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.fileName
+                                                                        }
+                                                                    </a>
+                                                                    <span
+                                                                        onClick={() =>
+                                                                            removeFiles(
+                                                                                url.fileName,
+                                                                                url.fileSize
+                                                                            )
+                                                                        }
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span>
+                                                                </li>
+                                                            )
+                                                        )
+                                                        : null}
+                                                </ul>
+                                            </div>
+                                            <p>
+                                                {files
+                                                    ? `Total File: ${files.length}`
+                                                    : "no files uploaded yet"}
+                                            </p>
+                                            <i className="text-muted">
+                                                * Max: 20mb
+                                            </i>
+                                            {limitedFiles > 20 ? (
+                                                <InputError
+                                                    message="Maximum files is 20 MB"
+                                                    className="mt-2"
+                                                />
+                                            ) : null}
 
-											<InputError
-												message={errors.file}
-												className="mt-2"
-											/>
-										</div>
+                                            <InputError
+                                                message={errors.file}
+                                                className="mt-2"
+                                            />
+                                        </div>
                                     </div>
                                     <div>
-                                        <div className="md:mb-24">
-                                            {/* <InputLabel value="Tanggal Expired NPWP" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="expired_npwp"
-                                                name="expired_npwp"
-                                                type="date"
-                                                value={data.expired_npwp}
-                                                className="mt-1 block w-full"
-                                                autoComplete="expired_npwp"
-                                                isFocused={true}
-                                                onChange={(e) => setData('expired_npwp', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.expired_npwp}
-                                                className="mt-2"
-                                            /> */}
-                                        </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired SPPKP" className="font-bold" required={true}/>
-                                            <TextInput 
+                                            <InputLabel value="Tanggal Expired SPPKP" className="font-bold" required={true} />
+                                            <TextInput
                                                 id="expired_sppkp"
                                                 name="expired_sppkp"
                                                 type="date"
@@ -1573,34 +1581,38 @@ export default function Create(props) {
                                                 autoComplete="expired_sppkp"
                                                 isFocused={true}
                                                 onChange={(e) => setData('expired_sppkp', e.target.value)}
-                                                
+
                                             />
-                                            <InputError 
+                                            <InputError
                                                 message={errors.expired_sppkp}
                                                 className="mt-2"
                                             />
                                         </div>
+                                        {
+                                            documentCompanyType === 'SIUP' ? (
+                                                <div className="mb-3">
+                                                    <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
+                                                    <TextInput
+                                                        id="expired_siup"
+                                                        name="expired_siup"
+                                                        type="date"
+                                                        value={data.expired_siup}
+                                                        className="mt-1 block w-full"
+                                                        autoComplete="expired_siup"
+                                                        isFocused={true}
+                                                        onChange={(e) => setData('expired_siup', e.target.value)}
+
+                                                    />
+                                                    <InputError
+                                                        message={errors.expired_siup}
+                                                        className="mt-2"
+                                                    />
+                                                </div>
+                                            ) : null
+                                        }
                                         <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="expired_siup"
-                                                name="expired_siup"
-                                                type="date"
-                                                value={data.expired_siup}
-                                                className="mt-1 block w-full"
-                                                autoComplete="expired_siup"
-                                                isFocused={true}
-                                                onChange={(e) => setData('expired_siup', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.expired_siup}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired TDP" className="font-bold" required={true}/>
-                                            <TextInput 
+                                            <InputLabel value="Tanggal Expired TDP" className="font-bold" required={true} />
+                                            <TextInput
                                                 id="expired_tdp"
                                                 name="expired_tdp"
                                                 type="date"
@@ -1609,31 +1621,14 @@ export default function Create(props) {
                                                 autoComplete="expired_tdp"
                                                 isFocused={true}
                                                 onChange={(e) => setData('expired_tdp', e.target.value)}
-                                                
+
                                             />
-                                            <InputError 
+                                            <InputError
                                                 message={errors.expired_tdp}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired NIB" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="expired_nib"
-                                                name="expired_nib"
-                                                type="date"
-                                                value={data.expired_nib}
-                                                className="mt-1 block w-full"
-                                                autoComplete="expired_nib"
-                                                isFocused={true}
-                                                onChange={(e) => setData('expired_nib', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.expired_nib}
-                                                className="mt-2"
-                                            />
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -1642,7 +1637,7 @@ export default function Create(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1652,7 +1647,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-npwp"
@@ -1663,13 +1658,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_npwp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SPPKP" className="font-bold" required={true}/>
+                                            <InputLabel value="SPPKP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-sppkp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1679,7 +1674,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-sppkp"
@@ -1690,13 +1685,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_sppkp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="SIUP" className="font-bold" required={true}/>
+                                            <InputLabel value="SIUP/NIB" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-siup" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1706,24 +1701,50 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-siup"
+                                                    disabled={documentCompanyType === ''}
                                                     className="hidden-input"
                                                     name="file_siup"
                                                     hidden={true}
                                                     onChange={(e) => handleFile(e, setSiupFile)}
                                                 />
+
+                                            </div>
+                                            <div class="flex items-center mb-2 mt-3" >
+                                                <label className="inline-flex items-center mr-2">
+                                                    <input
+                                                        type="radio"
+                                                        name="document_company_type"
+                                                        className="form-checkbox"
+                                                        value="SIUP"
+                                                        checked={documentCompanyType === 'SIUP'}
+                                                        onChange={handleDocumentType}
+                                                    />
+                                                    <span className="ml-2">SIUP</span>
+                                                </label>
+                                                <label className="inline-flex items-center">
+                                                    <input
+                                                        type="radio"
+                                                        name="document_company_type"
+                                                        className="form-checkbox"
+                                                        value="NIB"
+                                                        checked={documentCompanyType === 'NIB'}
+                                                        onChange={handleDocumentType}
+                                                    />
+                                                    <span className="ml-2">NIB</span>
+                                                </label>
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
-                                                message={errors.file_siup}
+                                            <InputError
+                                                message={errors.file_siup ?? errors.file_nib}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="TDP" className="font-bold" required={true}/>
+                                            <InputLabel value="TDP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-tdp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1733,7 +1754,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-tdp"
@@ -1744,40 +1765,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_tdp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="NIB" className="font-bold" required={true}/>
-                                            <div className="flex">
-                                                <label htmlFor="file-nib" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
-                                                    CHOOSE FILE
-                                                </label>
-                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">{nibFile ? nibFile : 'No file chosen'}</div>
-                                                {props.data.vendor ? props.data.vendor.file_nib != '' ? <a href="javascrip:;" onClick={() => openPopup(props.data.vendor.file_nib)}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                    </svg>
-                                                </a> : '' : '' }
-                                                <input
-                                                    type="file"
-                                                    id="file-nib"
-                                                    className="hidden-input"
-                                                    name="file_nib"
-                                                    hidden={true}
-                                                    onChange={(e) => handleFile(e, setNibFile)}
-                                                />
-                                            </div>
-                                            <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
-                                                message={errors.file_nib}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true}/>
+                                            <InputLabel value="Akta Susunan Direksi" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-bodc" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1787,7 +1781,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-bodc"
@@ -1798,12 +1792,12 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_board_of_directors_composition}
                                                 className="mt-2"
                                             />
                                         </div>
-                                        <div className="mb-3">
+                                        {/* <div className="mb-3">
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
                                             <div className="flex">
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
@@ -1829,6 +1823,97 @@ export default function Create(props) {
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
                                             />
+                                        </div> */}
+                                        <div className="mb-3">
+                                            <InputLabel
+                                                value="Others"
+                                                className="font-bold"
+                                                required={true}
+                                            />
+                                            <div className="flex">
+                                                <label
+                                                    htmlFor="attachment"
+                                                    className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800"
+                                                >
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">
+                                                    No File Chosen
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    id="attachment"
+                                                    className="hidden-input"
+                                                    name="attachment"
+                                                    hidden={true}
+                                                    onChange={(e) =>
+                                                        handleFileEvent(e)
+                                                    }
+                                                    multiple={true}
+                                                />
+                                            </div>
+                                            <div className="row">
+                                                <ul className="list-group p-2">
+                                                    {objectFilesUrl.length > 0
+                                                        ? objectFilesUrl.map(
+                                                            (url) => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.url
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.fileName
+                                                                        }
+                                                                    </a>
+                                                                    <span
+                                                                        onClick={() =>
+                                                                            removeFiles(
+                                                                                url.fileName,
+                                                                                url.fileSize
+                                                                            )
+                                                                        }
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span>
+                                                                </li>
+                                                            )
+                                                        )
+                                                        : null}
+                                                </ul>
+                                            </div>
+                                            <p>
+                                                {files
+                                                    ? `Total File: ${files.length}`
+                                                    : "no files uploaded yet"}
+                                            </p>
+                                            <i className="text-muted">
+                                                * Max: 20mb
+                                            </i>
+                                            {limitedFiles > 20 ? (
+                                                <InputError
+                                                    message="Maximum files is 20 MB"
+                                                    className="mt-2"
+                                                />
+                                            ) : null}
+
+                                            <InputError
+                                                message={errors.file}
+                                                className="mt-2"
+                                            />
                                         </div>
                                     </div>
                                     <div>
@@ -1851,8 +1936,8 @@ export default function Create(props) {
                                             /> */}
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired SPPKP" className="font-bold" required={true}/>
-                                            <TextInput 
+                                            <InputLabel value="Tanggal Expired SPPKP" className="font-bold" required={true} />
+                                            <TextInput
                                                 id="expired_sppkp"
                                                 name="expired_sppkp"
                                                 type="date"
@@ -1861,34 +1946,38 @@ export default function Create(props) {
                                                 autoComplete="expired_sppkp"
                                                 isFocused={true}
                                                 onChange={(e) => setData('expired_sppkp', e.target.value)}
-                                                
+
                                             />
-                                            <InputError 
+                                            <InputError
                                                 message={errors.expired_sppkp}
                                                 className="mt-2"
                                             />
                                         </div>
+                                        {
+                                            documentCompanyType === 'SIUP' ? (
+                                                <div className="mb-3">
+                                                    <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
+                                                    <TextInput
+                                                        id="expired_siup"
+                                                        name="expired_siup"
+                                                        type="date"
+                                                        value={data.expired_siup}
+                                                        className="mt-1 block w-full"
+                                                        autoComplete="expired_siup"
+                                                        isFocused={true}
+                                                        onChange={(e) => setData('expired_siup', e.target.value)}
+
+                                                    />
+                                                    <InputError
+                                                        message={errors.expired_siup}
+                                                        className="mt-2"
+                                                    />
+                                                </div>
+                                            ) : null
+                                        }
                                         <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="expired_siup"
-                                                name="expired_siup"
-                                                type="date"
-                                                value={data.expired_siup}
-                                                className="mt-1 block w-full"
-                                                autoComplete="expired_siup"
-                                                isFocused={true}
-                                                onChange={(e) => setData('expired_siup', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.expired_siup}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired TDP" className="font-bold" required={true}/>
-                                            <TextInput 
+                                            <InputLabel value="Tanggal Expired TDP" className="font-bold" required={true} />
+                                            <TextInput
                                                 id="expired_tdp"
                                                 name="expired_tdp"
                                                 type="date"
@@ -1897,28 +1986,10 @@ export default function Create(props) {
                                                 autoComplete="expired_tdp"
                                                 isFocused={true}
                                                 onChange={(e) => setData('expired_tdp', e.target.value)}
-                                                
+
                                             />
-                                            <InputError 
+                                            <InputError
                                                 message={errors.expired_tdp}
-                                                className="mt-2"
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <InputLabel value="Tanggal Expired NIB" className="font-bold" required={true}/>
-                                            <TextInput 
-                                                id="expired_nib"
-                                                name="expired_nib"
-                                                type="date"
-                                                value={data.expired_nib}
-                                                className="mt-1 block w-full"
-                                                autoComplete="expired_nib"
-                                                isFocused={true}
-                                                onChange={(e) => setData('expired_nib', e.target.value)}
-                                                
-                                            />
-                                            <InputError 
-                                                message={errors.expired_nib}
                                                 className="mt-2"
                                             />
                                         </div>
@@ -1930,7 +2001,7 @@ export default function Create(props) {
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div>
                                         <div className="mb-3">
-                                            <InputLabel value="NPWP/KTP" className="font-bold" required={true}/>
+                                            <InputLabel value="NPWP/KTP" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-npwp" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1940,7 +2011,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-npwp"
@@ -1951,13 +2022,13 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_npwp}
                                                 className="mt-2"
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true}/>
+                                            <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
                                                     CHOOSE FILE
@@ -1967,7 +2038,7 @@ export default function Create(props) {
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                                                     </svg>
-                                                </a> : '' : '' }
+                                                </a> : '' : ''}
                                                 <input
                                                     type="file"
                                                     id="file-non-kpk"
@@ -1978,7 +2049,7 @@ export default function Create(props) {
                                                 />
                                             </div>
                                             <i className='text-muted'>* Max: 5mb</i>
-                                            <InputError 
+                                            <InputError
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
                                             />
@@ -2041,12 +2112,12 @@ export default function Create(props) {
                                     <div class="flex items-center mb-2 mt-3">
                                         <label className="inline-flex items-center">
                                             <input
-                                            type="checkbox"
-                                            name="term_condition"
-                                            className="form-checkbox"
-                                            value="1"
-                                            checked={isCheckedTermCondition}
-                                            onChange={handleCheckboxTermConditionChange}
+                                                type="checkbox"
+                                                name="term_condition"
+                                                className="form-checkbox"
+                                                value="1"
+                                                checked={isCheckedTermCondition}
+                                                onChange={handleCheckboxTermConditionChange}
                                             />
                                             <span className="ml-2">I have read and agreed to the Terms and Conditions</span>
                                         </label>
@@ -2076,7 +2147,7 @@ export default function Create(props) {
                 </div>
 
             </div>
-            
+
             <Transition
                 show={recentlySuccessful}
                 enter="transition ease-in-out"

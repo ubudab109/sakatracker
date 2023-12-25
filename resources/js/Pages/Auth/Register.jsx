@@ -205,7 +205,7 @@ export default function Register(props) {
                 <div class="row g-0">
                     <div class="col-xxl-3 col-lg-3 col-md-3">
                         <div class="auth-bg pt-md-5 p-4 d-flex">
-                            <div class="bg-overlay bg-primary"></div>
+                            <div class="bg-overlay bg-primary" style={{height: '2000px'}}></div>
                             <ul class="bg-bubbles">
                                 <li></li>
                                 <li></li>
@@ -221,445 +221,464 @@ export default function Register(props) {
                         </div>
                     </div>
                     <div class="col-xxl-6 col-lg-6 col-md-6">
-                        <div class="auth-full-page-content d-flex p-sm-5 p-4">
-                            <div class="w-100">
-                                <div class="d-flex flex-column h-100">
-                                    <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
-                                        <a href="#" class="d-block auth-logo">
-                                            <img src="/assets/images/logo-chams.png" width={256} />
-                                        </a>
-                                    </div>
-                                    <div class="auth-content my-auto">
-                                        <div class="text-center">
-                                            <h5 class="mb-0">Sign Up</h5>
-                                            <p class="text-muted mt-2">Sign Up with Chams.</p>
-                                        </div>
-                                        <form class="mt-4" onSubmit={submit}>
-                                            <div className='mt-3'>
-                                                <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
-
-                                                <div class="flex items-center mb-2 mt-3">
-                                                    <label className="inline-flex items-center">
-                                                        <input
-                                                            type="radio"
-                                                            name="type_of_business"
-                                                            className="form-checkbox"
-                                                            value="PKP"
-                                                            checked={radioOptionType === 'PKP'}
-                                                            onChange={handleRadioChange}
-                                                        />
-                                                        <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
-                                                    </label>
-                                                </div>
-                                                <div class="flex items-center mb-2">
-                                                    <label className="inline-flex items-center">
-                                                        <input
-                                                            type="radio"
-                                                            name="type_of_business"
-                                                            className="form-checkbox"
-                                                            value="Non PKP"
-                                                            checked={radioOptionType === 'Non PKP'}
-                                                            onChange={handleRadioChange}
-                                                        />
-                                                        <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
-                                                    </label>
-                                                </div>
-                                                <div class="flex items-center mb-2">
-                                                    <label className="inline-flex items-center">
-                                                        <input
-                                                            type="radio"
-                                                            name="type_of_business"
-                                                            className="form-checkbox"
-                                                            value="Pribadi"
-                                                            checked={radioOptionType === 'Pribadi'}
-                                                            onChange={handleRadioChange}
-                                                        />
-                                                        <span className="ml-2">Wajib Pajak Orang Pribadi (PKP)</span>
-                                                    </label>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <label className="inline-flex items-center">
-                                                        <input
-                                                            type="radio"
-                                                            name="type_of_business"
-                                                            className="form-checkbox"
-                                                            value="Pribadi Non PKP"
-                                                            checked={radioOptionType === 'Pribadi Non PKP'}
-                                                            onChange={handleRadioChange}
-                                                        />
-                                                        <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
-                                                    </label>
-                                                </div>
-                                                <InputError message={errors.type_of_business} className="mt-2" />
+                        <ul class="bg-bubbles">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <div class="auth-bg pt-md-5 p-4 d-flex">
+                            <div class="bg-overlay bg-primary p-4" style={{height: '2000px'}}>
+                                <div className="card" style={{ height: '100%' }}>
+                                    <div className="card-body">
+                                        <div class="d-flex flex-column h-100">
+                                            <div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
+                                                <a href="#" class="d-block auth-logo">
+                                                    <img src="/assets/images/logo-chams.png" width={256} />
+                                                </a>
                                             </div>
-                                            <div className="mt-3">
-                                                <div className='grid grid-cols-3 gap-3'>
-                                                    <div>
-                                                        <InputLabel value="Prefix" className="font-bold" required={false} />
+                                            <div class="auth-content my-auto">
+                                                <div class="text-center">
+                                                    <h5 class="mb-0">Sign Up</h5>
+                                                    <p class="text-muted mt-2">Sign Up with Chams.</p>
+                                                </div>
+                                                <form class="mt-4" onSubmit={submit}>
+                                                    <div className='mt-3'>
+                                                        <InputLabel htmlFor="type_of_business" value="Type of Business" required={true} />
+
+                                                        <div class="flex items-center mb-2 mt-3">
+                                                            <label className="inline-flex items-center">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="type_of_business"
+                                                                    className="form-checkbox"
+                                                                    value="PKP"
+                                                                    checked={radioOptionType === 'PKP'}
+                                                                    onChange={handleRadioChange}
+                                                                />
+                                                                <span className="ml-2">Wajib Pajak Badan Usaha (PKP)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="flex items-center mb-2">
+                                                            <label className="inline-flex items-center">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="type_of_business"
+                                                                    className="form-checkbox"
+                                                                    value="Non PKP"
+                                                                    checked={radioOptionType === 'Non PKP'}
+                                                                    onChange={handleRadioChange}
+                                                                />
+                                                                <span className="ml-2">Wajib Pajak Badan Usaha (Non PKP)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="flex items-center mb-2">
+                                                            <label className="inline-flex items-center">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="type_of_business"
+                                                                    className="form-checkbox"
+                                                                    value="Pribadi"
+                                                                    checked={radioOptionType === 'Pribadi'}
+                                                                    onChange={handleRadioChange}
+                                                                />
+                                                                <span className="ml-2">Wajib Pajak Orang Pribadi (PKP)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="flex items-center">
+                                                            <label className="inline-flex items-center">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="type_of_business"
+                                                                    className="form-checkbox"
+                                                                    value="Pribadi Non PKP"
+                                                                    checked={radioOptionType === 'Pribadi Non PKP'}
+                                                                    onChange={handleRadioChange}
+                                                                />
+                                                                <span className="ml-2">Wajib Pajak Orang Pribadi (Non PKP)</span>
+                                                            </label>
+                                                        </div>
+                                                        <InputError message={errors.type_of_business} className="mt-2" />
+                                                    </div>
+                                                    <div className="mt-3">
+                                                        <div className='grid grid-cols-3 gap-3'>
+                                                            <div>
+                                                                <InputLabel value="Prefix" className="font-bold" required={false} />
+                                                                <select className="select select-bordered w-full mt-1"
+                                                                    id="legality"
+                                                                    name="legality"
+                                                                    value={selectedOptionLegality}
+                                                                    onChange={handleLegalityChange}
+                                                                >
+                                                                    {props.data.prefix.map((item) => (
+                                                                        <option key={item.id} value={item.name}>
+                                                                            {item.name}
+                                                                        </option>
+                                                                    ))}
+                                                                    <option value=""></option>
+                                                                </select>
+
+                                                                <InputError message={errors.legality} className="mt-2" />
+                                                            </div>
+                                                            <div className='mt-1'>
+                                                                <InputLabel htmlFor="name" value="Nama Perusahaan" required={true} />
+
+                                                                <TextInput
+                                                                    id="name"
+                                                                    name="name"
+                                                                    value={data.name}
+                                                                    className="mt-1 block w-full h-12"
+                                                                    autoComplete="name"
+                                                                    placeholder="Nama Perusahaan *"
+                                                                    onChange={(e) => setData('name', e.target.value)}
+                                                                    required
+                                                                />
+
+                                                                <InputError message={errors.name} className="mt-2" />
+                                                            </div>
+
+                                                            <div>
+                                                                <InputLabel value="Suffix" className="font-bold" required={false} />
+                                                                <select className="select select-bordered w-full mt-1"
+                                                                    id="suffix"
+                                                                    name="suffix"
+                                                                    value={selectedOptionSuffix}
+                                                                    onChange={handleSuffixChange}
+                                                                >
+                                                                    {props.data.suffix.map((item) => (
+                                                                        <option key={item.id} value={item.name}>
+                                                                            {item.name}
+                                                                        </option>
+                                                                    ))}
+                                                                    <option value=""></option>
+                                                                </select>
+
+                                                                <InputError message={errors.suffix} className="mt-2" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {
+                                                        radioOptionType !== 'Pribadi' && radioOptionType !== 'Pribadi Non PKP' ? (
+                                                            <div className="mt-2">
+                                                                <InputLabel value="Tipe Dokumen" className="font-bold" required={true} />
+                                                                <select className="select select-bordered w-full mt-1"
+                                                                    id="document_type"
+                                                                    name="document_type"
+                                                                    value={data.document_type}
+                                                                    onChange={(e) => setData({ ...data, document_type: e.target.value })}
+                                                                >
+                                                                    <option value="npwp">NPWP</option>
+                                                                    <option value="ktp">NIK</option>
+                                                                </select>
+
+                                                                <InputError message={errors.document_type} className="mt-2" />
+                                                            </div>
+                                                        ) : null
+                                                    }
+                                                    <div className="mt-4">
+                                                        <InputLabel htmlFor={data.document_type === 'nwpwp' ? 'npwp' : (data.document_type === 'ktp' ? 'ktp' : 'npwp')} value={data.document_type === 'nwpwp' ? 'NPWP' : (data.document_type === 'ktp' ? 'KTP' : 'NPWP')} required={true} />
+                                                        {
+                                                            data.document_type === 'npwp' && data.type_of_business !== 'Pribadi' && data.type_of_business !== 'Pribadi Non PKP' ? (
+                                                                <>
+                                                                    <input
+                                                                        className={
+                                                                            `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                                        }
+                                                                        maxLength={16}
+                                                                        minLength={15}
+                                                                        id="npwp"
+                                                                        name="npwp"
+                                                                        value={data.npwp}
+                                                                        type='text'
+                                                                        placeholder="NPWP *"
+                                                                        autoComplete="npwp"
+                                                                        isFocused={true}
+                                                                        onChange={(e) => setData('npwp', e.target.value)}
+                                                                        disabled={data.type_of_business === ""}
+                                                                        required
+                                                                    />
+
+                                                                    <InputError message={errors.npwp} className="mt-2" />
+                                                                </>
+                                                            ) : (
+                                                                data.document_type === 'ktp' ? (
+                                                                    <>
+                                                                        <input
+                                                                            className={
+                                                                                `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                                            }
+                                                                            maxLength={16}
+                                                                            id="ktp"
+                                                                            name="ktp"
+                                                                            value={data.ktp}
+                                                                            type='text'
+                                                                            placeholder="NIK *"
+                                                                            autoComplete="ktp"
+                                                                            disabled={data.type_of_business === ""}
+                                                                            isFocused={true}
+                                                                            onChange={(e) => setData('ktp', e.target.value)}
+                                                                            required
+                                                                        />
+
+                                                                        <InputError message={errors.ktp} className="mt-2" />
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <input
+                                                                            className={
+                                                                                `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
+                                                                            }
+                                                                            maxLength={16}
+                                                                            minLength={15}
+                                                                            id="npwp"
+                                                                            name="npwp"
+                                                                            value={data.npwp}
+                                                                            type='text'
+                                                                            disabled={data.type_of_business === ""}
+                                                                            placeholder="NPWP *"
+                                                                            autoComplete="npwp"
+                                                                            isFocused={true}
+                                                                            onChange={(e) => setData('npwp', e.target.value)}
+
+                                                                            required
+                                                                        />
+
+                                                                        <InputError message={errors.npwp} className="mt-2" />
+                                                                    </>
+                                                                )
+                                                            )
+                                                        }
+                                                    </div>
+
+                                                    <div className="mt-3">
+                                                        <InputLabel htmlFor="name_business" value="Business Name" required={true} />
                                                         <select className="select select-bordered w-full mt-1"
-                                                            id="legality"
-                                                            name="legality"
-                                                            value={selectedOptionLegality}
-                                                            onChange={handleLegalityChange}
+                                                            id="type_of_business"
+                                                            name="type_of_business"
+                                                            required
+                                                            value={selectedNameBusiness}
+                                                            onChange={handleNameBusiness}
                                                         >
-                                                            {props.data.prefix.map((item) => (
-                                                                <option key={item.id} value={item.name}>
-                                                                    {item.name}
+                                                            <option value={''} defaultValue={''} disabled>Business Name</option>
+                                                            {typeOfBusiness.map((item, index) => (
+                                                                <option key={index} value={item.value}>
+                                                                    {item.title}
                                                                 </option>
                                                             ))}
-                                                            <option value=""></option>
                                                         </select>
-
-                                                        <InputError message={errors.legality} className="mt-2" />
+                                                        <InputError message={errors.name_business} className="mt-2" />
                                                     </div>
-                                                    <div className='mt-1'>
-                                                        <InputLabel htmlFor="name" value="Nama Perusahaan" required={true} />
 
+                                                    <div className="mt-3">
+                                                        <InputLabel htmlFor="email" value="Email Address" required={true} />
                                                         <TextInput
-                                                            id="name"
-                                                            name="name"
-                                                            value={data.name}
-                                                            className="mt-1 block w-full h-12"
-                                                            autoComplete="name"
-                                                            placeholder="Nama Perusahaan *"
-                                                            onChange={(e) => setData('name', e.target.value)}
+                                                            id="email"
+                                                            name="email"
+                                                            type="email"
+                                                            value={data.email}
+                                                            placeholder="Email Address *"
+                                                            className="mt-1 block w-full"
+                                                            onChange={(e) => setData('email', e.target.value)}
                                                             required
                                                         />
 
-                                                        <InputError message={errors.name} className="mt-2" />
+                                                        <InputError message={errors.email} className="mt-2" />
                                                     </div>
 
-                                                    <div>
-                                                        <InputLabel value="Suffix" className="font-bold" required={false} />
-                                                        <select className="select select-bordered w-full mt-1"
-                                                            id="suffix"
-                                                            name="suffix"
-                                                            value={selectedOptionSuffix}
-                                                            onChange={handleSuffixChange}
-                                                        >
-                                                            {props.data.suffix.map((item) => (
-                                                                <option key={item.id} value={item.name}>
-                                                                    {item.name}
-                                                                </option>
-                                                            ))}
-                                                            <option value=""></option>
-                                                        </select>
+                                                    <div className="mt-3">
+                                                        <InputLabel htmlFor="office_address" value="Office Address" required={true} />
+                                                        <textarea
+                                                            name="office_address"
+                                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                                            placeholder="Office Address *"
+                                                            onChange={(e) => setData('office_address', e.target.value)}
+                                                            value={data.office_address}
+                                                        />
 
-                                                        <InputError message={errors.suffix} className="mt-2" />
+                                                        <InputError message={errors.office_address} className="mt-2" />
                                                     </div>
-                                                </div>
-                                            </div>
-                                            {
-                                                radioOptionType !== 'Pribadi' && radioOptionType !== 'Pribadi Non PKP' ? (
-                                                    <div className="mt-2">
-                                                        <InputLabel value="Tipe Dokumen" className="font-bold" required={true} />
-                                                        <select className="select select-bordered w-full mt-1"
-                                                            id="document_type"
-                                                            name="document_type"
-                                                            value={data.document_type}
-                                                            onChange={(e) => setData({ ...data, document_type: e.target.value })}
-                                                        >
-                                                            <option value="npwp">NPWP</option>
-                                                            <option value="ktp">NIK</option>
-                                                        </select>
 
-                                                        <InputError message={errors.document_type} className="mt-2" />
+                                                    <div className="mt-3">
+                                                        <InputLabel htmlFor="npwp_address" value={data.document_type === 'nwpwp' ? 'NPWP Address' : (data.document_type === 'ktp' ? 'NIK Address' : 'NPWP Address *')} required={true} />
+                                                        <textarea
+                                                            name={data.document_type === 'nwpwp' ? 'npwp_address' : (data.document_type === 'ktp' ? 'ktp_address' : 'npwp_address')}
+                                                            className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+                                                            placeholder={data.document_type === 'nwpwp' ? 'NPWP Address *' : (data.document_type === 'ktp' ? 'NIK Address *' : 'NPWP Address *')}
+                                                            onChange={(e) => setData(e.target.name, e.target.value)}
+                                                            value={data.document_type === 'nwpwp' ? data.npwp_address : (data.document_type === 'ktp' ? data.ktp_address : data.npwp_address)}
+                                                        />
+
+                                                        <InputError message={data.document_type === 'nwpwp' ? errors.npwp_address : (data.document_type === 'ktp' ? errors.ktp_address : errors.npwp_address)} className="mt-2" />
                                                     </div>
-                                                ) : null
-                                            }
-                                            <div className="mt-4">
-                                                <InputLabel htmlFor={data.document_type === 'nwpwp' ? 'npwp' : (data.document_type === 'ktp' ? 'ktp' : 'npwp')} value={data.document_type === 'nwpwp' ? 'NPWP' : (data.document_type === 'ktp' ? 'KTP' : 'NPWP')} required={true} />
-                                                {
-                                                    data.document_type === 'npwp' && data.type_of_business !== 'Pribadi' && data.type_of_business !== 'Pribadi Non PKP' ? (
-                                                        <>
-                                                            <input
-                                                                className={
-                                                                    `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
-                                                                }
-                                                                maxLength={16}
-                                                                minLength={15}
-                                                                id="npwp"
-                                                                name="npwp"
-                                                                value={data.npwp}
-                                                                type='text'
-                                                                placeholder="NPWP *"
-                                                                autoComplete="npwp"
-                                                                isFocused={true}
-                                                                onChange={(e) => setData('npwp', e.target.value)}
-                                                                disabled={data.type_of_business === ""}
+
+                                                    <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
+                                                        <div className="w-full">
+                                                            <InputLabel htmlFor="country_id" value="Negara" required={true} />
+                                                            <select className="select select-bordered w-full mt-1"
+                                                                id="country_id"
+                                                                name="country_id"
+                                                                value={selectedOptionCountry}
+                                                                onChange={handleCountryChange}
+                                                            >
+                                                                <option value="" hidden>Country</option>
+                                                                {dataApi.map((item, index) => (
+                                                                    <option value={item.id} label={item.name}>{item.name}</option>
+                                                                ))}
+                                                            </select>
+
+                                                            <InputError message={errors.country_id} className="mt-2" />
+                                                        </div>
+                                                        <div className="w-full">
+                                                            <InputLabel htmlFor="province_id" value="Province" required={true} />
+                                                            <select className="select select-bordered w-full mt-1"
+                                                                id="province_id"
+                                                                name="province_id"
+                                                                value={selectedOptionProvince}
+                                                                onChange={handleProvinceChange}
+                                                            >
+                                                                <option value="" hidden>Province</option>
+                                                                {provinces.map((province) => (
+                                                                    <option key={province.id} value={province.id}>
+                                                                        {province.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+
+                                                            <InputError message={errors.province_id} className="mt-2" />
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-4">
+                                                        <div className="w-full">
+                                                            <InputLabel htmlFor="city_id" value="City" required={true} />
+                                                            <select className="select select-bordered w-full mt-1"
+                                                                id="city_id"
+                                                                name="city_id"
+                                                                value={selectedOptionCity}
+                                                                onChange={handleCityChange}
+                                                            >
+                                                                <option value="" hidden>City</option>
+                                                                {cities.map((city) => (
+                                                                    <option key={city.id} value={city.id}>
+                                                                        {city.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <i className='text-sm text-gray-500'>* Silahkan pilih province untuk memunculkan option city</i>
+
+                                                            <InputError message={errors.city_id} className="mt-2" />
+                                                        </div>
+                                                        <div className="mt-1">
+                                                            <InputLabel htmlFor="postal_code" value="Postal Code" required={true} />
+                                                            <TextInput
+                                                                id="postal_code"
+                                                                name="postal_code"
+                                                                value={data.postal_code}
+                                                                className="mt-1 block w-full h-12"
+                                                                placeholder="Postal Code *"
+                                                                onChange={(e) => setData('postal_code', e.target.value)}
                                                                 required
                                                             />
 
-                                                            <InputError message={errors.npwp} className="mt-2" />
-                                                        </>
-                                                    ) : (
-                                                        data.document_type === 'ktp' ? (
-                                                            <>
-                                                                <input
-                                                                    className={
-                                                                        `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
-                                                                    }
-                                                                    maxLength={16}
-                                                                    id="ktp"
-                                                                    name="ktp"
-                                                                    value={data.ktp}
-                                                                    type='text'
-                                                                    placeholder="NIK *"
-                                                                    autoComplete="ktp"
-                                                                    disabled={data.type_of_business === ""}
-                                                                    isFocused={true}
-                                                                    onChange={(e) => setData('ktp', e.target.value)}
-                                                                    required
-                                                                />
+                                                            <InputError message={errors.postal_code} className="mt-2" />
+                                                        </div>
+                                                    </div>
 
-                                                                <InputError message={errors.ktp} className="mt-2" />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <input
-                                                                    className={
-                                                                        `border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full ${data.type_of_business === "" ? 'bg-gray-200' : ''}`
-                                                                    }
-                                                                    maxLength={16}
-                                                                    minLength={15}
-                                                                    id="npwp"
-                                                                    name="npwp"
-                                                                    value={data.npwp}
-                                                                    type='text'
-                                                                    disabled={data.type_of_business === ""}
-                                                                    placeholder="NPWP *"
-                                                                    autoComplete="npwp"
-                                                                    isFocused={true}
-                                                                    onChange={(e) => setData('npwp', e.target.value)}
+                                                    <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
+                                                        <div className="">
+                                                            <InputLabel htmlFor="phone_number" value="Telephone" required={true} />
+                                                            <TextInput
+                                                                id="phone_number"
+                                                                name="phone_number"
+                                                                value={data.phone_number}
+                                                                className="mt-1 block w-full"
+                                                                placeholder="Telephone *"
+                                                                onChange={(e) => setData('phone_number', e.target.value)}
+                                                                required
+                                                            />
 
-                                                                    required
-                                                                />
+                                                            <InputError message={errors.phone_number} className="mt-2" />
+                                                        </div>
 
-                                                                <InputError message={errors.npwp} className="mt-2" />
-                                                            </>
-                                                        )
-                                                    )
-                                                }
-                                            </div>
+                                                        <div className="">
+                                                            <InputLabel htmlFor="mobile_phone_number" value="Mobile Number" required={true} />
+                                                            <TextInput
+                                                                id="mobile_phone_number"
+                                                                name="mobile_phone_number"
+                                                                value={data.mobile_phone_number}
+                                                                className="mt-1 block w-full"
+                                                                placeholder="Mobile Number *"
+                                                                onChange={(e) => setData('mobile_phone_number', e.target.value)}
+                                                                required
+                                                            />
 
-                                            <div className="mt-3">
-                                                <InputLabel htmlFor="name_business" value="Business Name" required={true} />
-                                                <select className="select select-bordered w-full mt-1"
-                                                    id="type_of_business"
-                                                    name="type_of_business"
-                                                    required
-                                                    value={selectedNameBusiness}
-                                                    onChange={handleNameBusiness}
-                                                >
-                                                    <option value={''} defaultValue={''} disabled>Business Name</option>
-                                                    {typeOfBusiness.map((item, index) => (
-                                                        <option key={index} value={item.value}>
-                                                            {item.title}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <InputError message={errors.name_business} className="mt-2" />
-                                            </div>
+                                                            <InputError message={errors.mobile_phone_number} className="mt-2" />
+                                                        </div>
+                                                    </div>
 
-                                            <div className="mt-3">
-                                                <InputLabel htmlFor="email" value="Email Address" required={true} />
-                                                <TextInput
-                                                    id="email"
-                                                    name="email"
-                                                    type="email"
-                                                    value={data.email}
-                                                    placeholder="Email Address *"
-                                                    className="mt-1 block w-full"
-                                                    onChange={(e) => setData('email', e.target.value)}
-                                                    required
-                                                />
+                                                    <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
+                                                        <div>
+                                                            <InputLabel htmlFor="password" value="Password" required={true} />
+                                                            <TextInput
+                                                                id="password"
+                                                                value={data.password}
+                                                                onChange={(e) => setData('password', e.target.value)}
+                                                                type="password"
+                                                                placeholder="Pasword *"
+                                                                className="mt-1 block w-full"
+                                                                autoComplete="new-password"
+                                                            />
 
-                                                <InputError message={errors.email} className="mt-2" />
-                                            </div>
+                                                            <InputError message={errors.password} className="mt-2" />
+                                                        </div>
 
-                                            <div className="mt-3">
-                                                <InputLabel htmlFor="office_address" value="Office Address" required={true} />
-                                                <textarea
-                                                    name="office_address"
-                                                    className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                    placeholder="Office Address *"
-                                                    onChange={(e) => setData('office_address', e.target.value)}
-                                                    value={data.office_address}
-                                                />
+                                                        <div>
+                                                            <InputLabel htmlFor="password_confirmation" value="Confirm Password" required={true} />
+                                                            <TextInput
+                                                                id="password_confirmation"
+                                                                value={data.password_confirmation}
+                                                                onChange={(e) => setData('password_confirmation', e.target.value)}
+                                                                type="password"
+                                                                placeholder="Confirm Pasword *"
+                                                                className="mt-1 block w-full"
+                                                                autoComplete="new-password"
+                                                            />
 
-                                                <InputError message={errors.office_address} className="mt-2" />
-                                            </div>
+                                                            <InputError message={errors.password_confirmation} className="mt-2" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 mt-4">
+                                                        <button class="btn btn-primary w-100 waves-effect waves-light" type="submit" disabled={processing}>Sign Up</button>
+                                                    </div>
+                                                </form>
 
-                                            <div className="mt-3">
-                                                <InputLabel htmlFor="npwp_address" value={data.document_type === 'nwpwp' ? 'NPWP Address' : (data.document_type === 'ktp' ? 'NIK Address' : 'NPWP Address *')} required={true} />
-                                                <textarea
-                                                    name={data.document_type === 'nwpwp' ? 'npwp_address' : (data.document_type === 'ktp' ? 'ktp_address' : 'npwp_address')}
-                                                    className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-                                                    placeholder={data.document_type === 'nwpwp' ? 'NPWP Address *' : (data.document_type === 'ktp' ? 'NIK Address *' : 'NPWP Address *')}
-                                                    onChange={(e) => setData(e.target.name, e.target.value)}
-                                                    value={data.document_type === 'nwpwp' ? data.npwp_address : (data.document_type === 'ktp' ? data.ktp_address : data.npwp_address)}
-                                                />
-
-                                                <InputError message={data.document_type === 'nwpwp' ? errors.npwp_address : (data.document_type === 'ktp' ? errors.ktp_address : errors.npwp_address)} className="mt-2" />
-                                            </div>
-
-                                            <div className="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
-                                                <div className="w-full">
-                                                    <InputLabel htmlFor="country_id" value="Negara" required={true} />
-                                                    <select className="select select-bordered w-full mt-1"
-                                                        id="country_id"
-                                                        name="country_id"
-                                                        value={selectedOptionCountry}
-                                                        onChange={handleCountryChange}
-                                                    >
-                                                        <option value="" hidden>Country</option>
-                                                        {dataApi.map((item, index) => (
-                                                            <option value={item.id} label={item.name}>{item.name}</option>
-                                                        ))}
-                                                    </select>
-
-                                                    <InputError message={errors.country_id} className="mt-2" />
-                                                </div>
-                                                <div className="w-full">
-                                                    <InputLabel htmlFor="province_id" value="Province" required={true} />
-                                                    <select className="select select-bordered w-full mt-1"
-                                                        id="province_id"
-                                                        name="province_id"
-                                                        value={selectedOptionProvince}
-                                                        onChange={handleProvinceChange}
-                                                    >
-                                                        <option value="" hidden>Province</option>
-                                                        {provinces.map((province) => (
-                                                            <option key={province.id} value={province.id}>
-                                                                {province.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-
-                                                    <InputError message={errors.province_id} className="mt-2" />
+                                                <div class="mt-5 text-center">
+                                                    <p class="text-muted mb-0">Already have an account ?  <a href={route('login')}
+                                                        class="text-primary fw-semibold"> Sign In </a> </p>
                                                 </div>
                                             </div>
-
-
-                                            <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-4">
-                                                <div className="w-full">
-                                                    <InputLabel htmlFor="city_id" value="City" required={true} />
-                                                    <select className="select select-bordered w-full mt-1"
-                                                        id="city_id"
-                                                        name="city_id"
-                                                        value={selectedOptionCity}
-                                                        onChange={handleCityChange}
-                                                    >
-                                                        <option value="" hidden>City</option>
-                                                        {cities.map((city) => (
-                                                            <option key={city.id} value={city.id}>
-                                                                {city.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <i className='text-sm text-gray-500'>* Silahkan pilih province untuk memunculkan option city</i>
-
-                                                    <InputError message={errors.city_id} className="mt-2" />
-                                                </div>
-                                                <div className="mt-1">
-                                                    <InputLabel htmlFor="postal_code" value="Postal Code" required={true} />
-                                                    <TextInput
-                                                        id="postal_code"
-                                                        name="postal_code"
-                                                        value={data.postal_code}
-                                                        className="mt-1 block w-full h-12"
-                                                        placeholder="Postal Code *"
-                                                        onChange={(e) => setData('postal_code', e.target.value)}
-                                                        required
-                                                    />
-
-                                                    <InputError message={errors.postal_code} className="mt-2" />
-                                                </div>
+                                            <div class="mt-4 mt-md-5 text-center">
+                                                <p class="mb-0">© <script>2023</script> Chams</p>
                                             </div>
-
-                                            <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
-                                                <div className="">
-                                                    <InputLabel htmlFor="phone_number" value="Telephone" required={true} />
-                                                    <TextInput
-                                                        id="phone_number"
-                                                        name="phone_number"
-                                                        value={data.phone_number}
-                                                        className="mt-1 block w-full"
-                                                        placeholder="Telephone *"
-                                                        onChange={(e) => setData('phone_number', e.target.value)}
-                                                        required
-                                                    />
-
-                                                    <InputError message={errors.phone_number} className="mt-2" />
-                                                </div>
-
-                                                <div className="">
-                                                    <InputLabel htmlFor="mobile_phone_number" value="Mobile Number" required={true} />
-                                                    <TextInput
-                                                        id="mobile_phone_number"
-                                                        name="mobile_phone_number"
-                                                        value={data.mobile_phone_number}
-                                                        className="mt-1 block w-full"
-                                                        placeholder="Mobile Number *"
-                                                        onChange={(e) => setData('mobile_phone_number', e.target.value)}
-                                                        required
-                                                    />
-
-                                                    <InputError message={errors.mobile_phone_number} className="mt-2" />
-                                                </div>
-                                            </div>
-
-                                            <div class="grid md:grid-cols-2 gap-4 sm:grid-cols-1 mt-3">
-                                                <div>
-                                                    <InputLabel htmlFor="password" value="Password" required={true} />
-                                                    <TextInput
-                                                        id="password"
-                                                        value={data.password}
-                                                        onChange={(e) => setData('password', e.target.value)}
-                                                        type="password"
-                                                        placeholder="Pasword *"
-                                                        className="mt-1 block w-full"
-                                                        autoComplete="new-password"
-                                                    />
-
-                                                    <InputError message={errors.password} className="mt-2" />
-                                                </div>
-
-                                                <div>
-                                                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" required={true} />
-                                                    <TextInput
-                                                        id="password_confirmation"
-                                                        value={data.password_confirmation}
-                                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                                        type="password"
-                                                        placeholder="Confirm Pasword *"
-                                                        className="mt-1 block w-full"
-                                                        autoComplete="new-password"
-                                                    />
-
-                                                    <InputError message={errors.password_confirmation} className="mt-2" />
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 mt-4">
-                                                <button class="btn btn-primary w-100 waves-effect waves-light" type="submit" disabled={processing}>Sign Up</button>
-                                            </div>
-                                        </form>
-
-                                        <div class="mt-5 text-center">
-                                            <p class="text-muted mb-0">Already have an account ?  <a href={route('login')}
-                                                    class="text-primary fw-semibold"> Sign In </a> </p>
                                         </div>
-                                    </div>
-                                    <div class="mt-4 mt-md-5 text-center">
-                                    <p class="mb-0">© <script>2023</script> Chams</p>
+
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                     <div class="col-xxl-3 col-lg-3 col-md-3">
                         <div class="auth-bg pt-md-5 p-4 d-flex">
-                            <div class="bg-overlay bg-primary"></div>
+                            <div class="bg-overlay bg-primary" style={{height: '2000px'}}></div>
                             <ul class="bg-bubbles">
                                 <li></li>
                                 <li></li>

@@ -29,6 +29,7 @@ export default function Index(props) {
     const [rfpFile, setRfpFile] = useState(props.rfp_docs.length < 1 ? [] : props.rfp_docs);
     const [isGeneratingRfp, setIsGeneratingRfp] = useState(false);
     const [errorRfp, setErrorRfp] = useState('');
+    const [currentBatchId, setCurrentBatchId] = useState('');
     // const [urlRfpViewer]
     const pdfRref = useRef();
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -174,6 +175,11 @@ export default function Index(props) {
     }
 
     useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const batchId = urlParams.get('batchId');
+        if (batchId) {
+            setCurrentBatchId(batchId);
+        }
         return () => objectFilesUrl.map(url => URL.revokeObjectURL(url));
     })
 
@@ -183,7 +189,7 @@ export default function Index(props) {
     }
 
     const initialState = {
-		fileTaxInvoiceStatus: props.data.invoice.tax_invoice_note
+        fileTaxInvoiceStatus: props.data.invoice.tax_invoice_note
             ? props.data.invoice.tax_invoice_note != "acc"
                 ? false
                 : true
@@ -213,85 +219,84 @@ export default function Index(props) {
                 ? false
                 : true
             : null,
-	};
+    };
 
-	const [fileStatus, setFileStatus] = useState(initialState);
-	const [taxInvoiceNote, setTaxInvoiceNote] = useState(props.data.invoice.tax_invoice_note == null ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note == 'done revisi' ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note);
-	const [invoiceNote, setInvoiceNote] = useState(props.data.invoice.invoice_note == null ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note == 'done revisi' ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note);
-	const [bastNote, setBastNote] = useState(props.data.invoice.bast_note == null ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note == 'done revisi' ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note);
-	const [quotationNote, setQuotationNote] = useState(props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note == 'done revisi' ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note);
-	const [poNote, setPoNote] = useState(props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note == 'done revisi' ? 'PO terdapat kesalahan' : props.data.invoice.po_note);
-	const [attachmentNote, setAttachmentNote] = useState(props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note == 'done revisi' ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note);
+    const [fileStatus, setFileStatus] = useState(initialState);
+    const [taxInvoiceNote, setTaxInvoiceNote] = useState(props.data.invoice.tax_invoice_note == null ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note == 'done revisi' ? 'Tukar Faktur terdapat kesalahan' : props.data.invoice.tax_invoice_note);
+    const [invoiceNote, setInvoiceNote] = useState(props.data.invoice.invoice_note == null ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note == 'done revisi' ? 'Invoice terdapat kesalahan' : props.data.invoice.invoice_note);
+    const [bastNote, setBastNote] = useState(props.data.invoice.bast_note == null ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note == 'done revisi' ? 'BAST terdapat kesalahan' : props.data.invoice.bast_note);
+    const [quotationNote, setQuotationNote] = useState(props.data.invoice.quotation_note == null ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note == 'done revisi' ? 'Quotation terdapat kesalahan' : props.data.invoice.quotation_note);
+    const [poNote, setPoNote] = useState(props.data.invoice.po_note == null ? 'PO terdapat kesalahan' : props.data.invoice.po_note == 'done revisi' ? 'PO terdapat kesalahan' : props.data.invoice.po_note);
+    const [attachmentNote, setAttachmentNote] = useState(props.data.invoice.attachment_note == null ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note == 'done revisi' ? 'Lampiran terdapat kesalahan' : props.data.invoice.attachment_note);
     const [statusHideNote, setStatusHideNote] = useState(props.auth.user.user_role[0].role.name == 'Preparer' || props.auth.user.user_role[0].role.name == 'PIC TUKAR FAKTUR' ? props.data.invoice.status == 'menunggu persetujuan' || props.data.invoice.status == 'sedang berlangsung' ? props.data.revision_id != null ? false : true : true : true);
-	const clickStatusFile = (name, stat) => {
-		const setDataAndStatus = (fileName, statusKey) => {
-			if (name === fileName && stat === 1) {
-				setFileStatus((prevStatus) => ({
-					...prevStatus,
-					[statusKey]: false,
-				}));
-				if (fileName == 'file_tax_invoice') {
-					setTaxInvoiceNote("Tukar Faktur Terdapat Kesalahan");
-					data[fileName] = "Tukar Faktur Terdapat Kesalahan";
-					data.tax_invoice_note = "Tukar Faktur Terdapat Kesalahan";
-				}
+    const clickStatusFile = (name, stat) => {
+        const setDataAndStatus = (fileName, statusKey) => {
+            if (name === fileName && stat === 1) {
+                setFileStatus((prevStatus) => ({
+                    ...prevStatus,
+                    [statusKey]: false,
+                }));
+                if (fileName == 'file_tax_invoice') {
+                    setTaxInvoiceNote("Tukar Faktur Terdapat Kesalahan");
+                    data[fileName] = "Tukar Faktur Terdapat Kesalahan";
+                    data.tax_invoice_note = "Tukar Faktur Terdapat Kesalahan";
+                }
                 if (fileName == 'file_invoice') {
-					setInvoiceNote("Invoice Terdapat Kesalahan");
-					data[fileName] = "Invoice Terdapat Kesalahan";
-					data.invoice_note = "Invoice Terdapat Kesalahan";
-				}
+                    setInvoiceNote("Invoice Terdapat Kesalahan");
+                    data[fileName] = "Invoice Terdapat Kesalahan";
+                    data.invoice_note = "Invoice Terdapat Kesalahan";
+                }
                 if (fileName == 'file_bast') {
-					setBastNote("BAST Terdapat Kesalahan");
-					data[fileName] = "BAST Terdapat Kesalahan";
-					data.bast_note = "BAST Terdapat Kesalahan";
-				}
+                    setBastNote("BAST Terdapat Kesalahan");
+                    data[fileName] = "BAST Terdapat Kesalahan";
+                    data.bast_note = "BAST Terdapat Kesalahan";
+                }
                 if (fileName == 'file_quotation') {
-					setQuotationNote("Quotation Terdapat Kesalahan");
-					data[fileName] = "Quotation Terdapat Kesalahan";
-					data.quotation_note = "Quotation Terdapat Kesalahan";
-				}
+                    setQuotationNote("Quotation Terdapat Kesalahan");
+                    data[fileName] = "Quotation Terdapat Kesalahan";
+                    data.quotation_note = "Quotation Terdapat Kesalahan";
+                }
                 if (fileName == 'file_po') {
-					setPoNote("PO Terdapat Kesalahan");
-					data[fileName] = "PO Terdapat Kesalahan";
-					data.po_note = "PO Terdapat Kesalahan";
-				}
+                    setPoNote("PO Terdapat Kesalahan");
+                    data[fileName] = "PO Terdapat Kesalahan";
+                    data.po_note = "PO Terdapat Kesalahan";
+                }
                 if (fileName == 'file_attachment') {
-					setAttachmentNote("Lampiran Terdapat Kesalahan");
-					data[fileName] = "Lampiran Terdapat Kesalahan";
-					data.attachment_note = "Lampiran Terdapat Kesalahan";
-				}
-			}
-			if (name === fileName && stat === 0) {
-				setFileStatus((prevStatus) => ({
-					...prevStatus,
-					[statusKey]: true,
-				}));
-				data[fileName] = "acc";
-			}
-			if (statusKey == "validate" && `${name}_validate` === fileName) {
-				if(stat === 0)
-				{
-					data[fileName] = "acc";
-				} else {
-					data[fileName] = "Terdapat Kesalahan";
-				}
-			}
-		};
+                    setAttachmentNote("Lampiran Terdapat Kesalahan");
+                    data[fileName] = "Lampiran Terdapat Kesalahan";
+                    data.attachment_note = "Lampiran Terdapat Kesalahan";
+                }
+            }
+            if (name === fileName && stat === 0) {
+                setFileStatus((prevStatus) => ({
+                    ...prevStatus,
+                    [statusKey]: true,
+                }));
+                data[fileName] = "acc";
+            }
+            if (statusKey == "validate" && `${name}_validate` === fileName) {
+                if (stat === 0) {
+                    data[fileName] = "acc";
+                } else {
+                    data[fileName] = "Terdapat Kesalahan";
+                }
+            }
+        };
 
-		setDataAndStatus("file_tax_invoice", "fileTaxInvoiceStatus");
-		setDataAndStatus("file_invoice", "fileInvoiceStatus");
-		setDataAndStatus("file_bast", "fileBastStatus");
-		setDataAndStatus("file_quotation", "fileQuotationStatus");
-		setDataAndStatus("file_po", "filePoStatus");
-		setDataAndStatus("file_attachment", "fileAttachmentStatus");
-		setDataAndStatus("file_tax_invoice_validate", "validate");
-		setDataAndStatus("file_invoice_validate", "validate");
-		setDataAndStatus("file_bast_validate", "validate");
-		setDataAndStatus("file_quotation_validate", "validate");
-		setDataAndStatus("file_po_validate", "validate");
-		setDataAndStatus("file_attachment_validate", "validate");
-		// Add more conditions as needed for other files
-	};
+        setDataAndStatus("file_tax_invoice", "fileTaxInvoiceStatus");
+        setDataAndStatus("file_invoice", "fileInvoiceStatus");
+        setDataAndStatus("file_bast", "fileBastStatus");
+        setDataAndStatus("file_quotation", "fileQuotationStatus");
+        setDataAndStatus("file_po", "filePoStatus");
+        setDataAndStatus("file_attachment", "fileAttachmentStatus");
+        setDataAndStatus("file_tax_invoice_validate", "validate");
+        setDataAndStatus("file_invoice_validate", "validate");
+        setDataAndStatus("file_bast_validate", "validate");
+        setDataAndStatus("file_quotation_validate", "validate");
+        setDataAndStatus("file_po_validate", "validate");
+        setDataAndStatus("file_attachment_validate", "validate");
+        // Add more conditions as needed for other files
+    };
 
     // Create our number formatterCurrency.
     const formatterCurrency = new Intl.NumberFormat('en-US', {
@@ -518,11 +523,11 @@ export default function Index(props) {
                                             <div className='grid grid-cols-3 w-full'>
                                                 <p>RFP {
                                                     errorRfp !== '' ? (
-                                                        <p style={{color: 'red'}}>{errorRfp}</p>
+                                                        <p style={{ color: 'red' }}>{errorRfp}</p>
                                                     ) : null
                                                 }</p>
                                                 <p className='text-center w-1'>:</p>
-                                                
+
                                                 <div className="flex justify-left font-bold -ml-32">
                                                     {
                                                         props.auth.user.user_role[0].role.name === 'Preparer' ? (
@@ -579,10 +584,10 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3 ml-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_invoice",0)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                className='mr-3 ml-3'
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_invoice", 0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileInvoiceStatus ==
                                                         null
@@ -594,9 +599,9 @@ export default function Index(props) {
                                                         }-500`}
                                                 />
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_invoice",1)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_invoice", 1)}>
                                                 <XCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileInvoiceStatus ==
                                                         null
@@ -653,7 +658,7 @@ export default function Index(props) {
                                         />
                                     </div>
                                 </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ? 
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.invoice_note != 'acc' ?
                                     <div>
                                         <InputLabel
                                             value="Note File Invoice"
@@ -663,7 +668,7 @@ export default function Index(props) {
                                             {props.data.invoice.invoice_note}
                                         </p>
                                     </div>
-                                : '' : ''}
+                                    : '' : ''}
                             </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
@@ -694,10 +699,10 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3 ml-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",0)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                className='mr-3 ml-3'
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_tax_invoice", 0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
                                                         null
@@ -709,9 +714,9 @@ export default function Index(props) {
                                                         }-500`}
                                                 />
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_tax_invoice",1)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_tax_invoice", 1)}>
                                                 <XCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileTaxInvoiceStatus ==
                                                         null
@@ -768,7 +773,7 @@ export default function Index(props) {
                                         />
                                     </div>
                                 </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ? 
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.tax_invoice_note != 'acc' ?
                                     <div>
                                         <InputLabel
                                             value="Note File Faktur Pajak"
@@ -778,7 +783,7 @@ export default function Index(props) {
                                             {props.data.invoice.tax_invoice_note}
                                         </p>
                                     </div>
-                                : '' : ''}
+                                    : '' : ''}
                             </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
@@ -808,10 +813,10 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3 ml-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",0)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                className='mr-3 ml-3'
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_quotation", 0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
                                                         null
@@ -823,9 +828,9 @@ export default function Index(props) {
                                                         }-500`}
                                                 />
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_quotation",1)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_quotation", 1)}>
                                                 <XCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileQuotationStatus ==
                                                         null
@@ -882,7 +887,7 @@ export default function Index(props) {
                                         />
                                     </div>
                                 </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ? 
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.quotation_note != 'acc' ?
                                     <div>
                                         <InputLabel
                                             value="Note File Quotation"
@@ -892,7 +897,7 @@ export default function Index(props) {
                                             {props.data.invoice.quotation_note}
                                         </p>
                                     </div>
-                                : '' : ''}
+                                    : '' : ''}
                             </div>
                             {props.data.invoice.is_po == 1 ?
                                 <div className='mb-3'>
@@ -923,10 +928,10 @@ export default function Index(props) {
                                                         />
                                                     </svg>
                                                 </a>
-                                                <a 
-                                                hidden={statusHideNote}
-                                                className='mr-3 ml-3'
-                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_po",0)}>
+                                                <a
+                                                    hidden={statusHideNote}
+                                                    className='mr-3 ml-3'
+                                                    href="javascript:;" onClick={(e) => clickStatusFile("file_po", 0)}>
                                                     <CheckCircle
                                                         className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
                                                             null
@@ -938,9 +943,9 @@ export default function Index(props) {
                                                             }-500`}
                                                     />
                                                 </a>
-                                                <a 
-                                                hidden={statusHideNote}
-                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_po",1)}>
+                                                <a
+                                                    hidden={statusHideNote}
+                                                    href="javascript:;" onClick={(e) => clickStatusFile("file_po", 1)}>
                                                     <XCircle
                                                         className={`rounded-full text-white bg-${fileStatus.filePoStatus ==
                                                             null
@@ -999,17 +1004,17 @@ export default function Index(props) {
                                             />
                                         </div>
                                     </div>
-                                    {props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ? 
-                                    <div>
-                                        <InputLabel
-                                            value="Note File PO"
-                                            className="font-bold"
-                                        />
-                                        <p className='mb-3 mt-0'>
-                                            {props.data.invoice.po_note}
-                                        </p>
-                                    </div>
-                                : '' : ''}
+                                    {props.data.invoice.status == 'ditolak' ? props.data.invoice.po_note != 'acc' ?
+                                        <div>
+                                            <InputLabel
+                                                value="Note File PO"
+                                                className="font-bold"
+                                            />
+                                            <p className='mb-3 mt-0'>
+                                                {props.data.invoice.po_note}
+                                            </p>
+                                        </div>
+                                        : '' : ''}
                                 </div>
                                 : ''}
                             <div className='mb-3'>
@@ -1040,10 +1045,10 @@ export default function Index(props) {
                                                     />
                                                 </svg>
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            className='mr-3 ml-3'
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",0)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                className='mr-3 ml-3'
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_bast", 0)}>
                                                 <CheckCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
                                                         null
@@ -1055,9 +1060,9 @@ export default function Index(props) {
                                                         }-500`}
                                                 />
                                             </a>
-                                            <a 
-                                            hidden={statusHideNote}
-                                            href="javascript:;" onClick={(e) =>clickStatusFile("file_bast",1)}>
+                                            <a
+                                                hidden={statusHideNote}
+                                                href="javascript:;" onClick={(e) => clickStatusFile("file_bast", 1)}>
                                                 <XCircle
                                                     className={`rounded-full text-white bg-${fileStatus.fileBastStatus ==
                                                         null
@@ -1114,7 +1119,7 @@ export default function Index(props) {
                                         />
                                     </div>
                                 </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ? 
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.bast_note != 'acc' ?
                                     <div>
                                         <InputLabel
                                             value="Note File BAST"
@@ -1124,7 +1129,7 @@ export default function Index(props) {
                                             {props.data.invoice.bast_note}
                                         </p>
                                     </div>
-                                : '' : ''}
+                                    : '' : ''}
                             </div>
                             <div className='mb-3'>
                                 <div className='flex justify-around font-bold'>
@@ -1155,10 +1160,10 @@ export default function Index(props) {
                                                         />
                                                     </svg>
                                                 </a>
-                                                <a 
-                                                hidden={statusHideNote}
-                                                className='mr-3 ml-3'
-                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",0)}>
+                                                <a
+                                                    hidden={statusHideNote}
+                                                    className='mr-3 ml-3'
+                                                    href="javascript:;" onClick={(e) => clickStatusFile("file_attachment", 0)}>
                                                     <CheckCircle
                                                         className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
                                                             null
@@ -1170,9 +1175,9 @@ export default function Index(props) {
                                                             }-500`}
                                                     />
                                                 </a>
-                                                <a 
-                                                hidden={statusHideNote}
-                                                href="javascript:;" onClick={(e) =>clickStatusFile("file_attachment",1)}>
+                                                <a
+                                                    hidden={statusHideNote}
+                                                    href="javascript:;" onClick={(e) => clickStatusFile("file_attachment", 1)}>
                                                     <XCircle
                                                         className={`rounded-full text-white bg-${fileStatus.fileAttachmentStatus ==
                                                             null
@@ -1230,7 +1235,7 @@ export default function Index(props) {
                                         />
                                     </div>
                                 </div>
-                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ? 
+                                {props.data.invoice.status == 'ditolak' ? props.data.invoice.attachment_note != 'acc' ?
                                     <div>
                                         <InputLabel
                                             value="Note File Lampiran"
@@ -1240,7 +1245,7 @@ export default function Index(props) {
                                             {props.data.invoice.attachment_note}
                                         </p>
                                     </div>
-                                : '' : ''}
+                                    : '' : ''}
                             </div>
                         </div>
                         <div id="pdf-content" ref={pdfRref} style={{ display: 'none' }}>
@@ -1595,11 +1600,22 @@ export default function Index(props) {
                             ""
                         )}
                         <div className="flex justify-end items-end gap-2 mt-2">
-                            <Link href={route('admin.exchange-invoice.index')}>
-                                <SecondaryButton>
-                                    Back
-                                </SecondaryButton>
-                            </Link>
+                            {
+                                currentBatchId ? (
+                                    <Link href={route('admin.batch-payment.show', currentBatchId)}>
+                                        <SecondaryButton>
+                                            Back
+                                        </SecondaryButton>
+                                    </Link>
+                                ) : (
+
+                                    <Link href={route('admin.exchange-invoice.index')}>
+                                        <SecondaryButton>
+                                            Back
+                                        </SecondaryButton>
+                                    </Link>
+                                )
+                            }
                         </div>
                     </div>
                 </div>

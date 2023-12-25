@@ -182,7 +182,7 @@ return (
                 </div>
             </dic>
 
-            <ShowBatchTable data={props.data.batch_payment_invoices}/>
+            <ShowBatchTable data={props.data.batch_payment_invoices} batchId={props.data.batch_payment.id} />
 
             <div className="">
                 <div className="mt-3">

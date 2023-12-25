@@ -62,7 +62,7 @@ export default function ShowBatchTable(props) {
                                 <tr>
                                     <td>
                                         <div className='flex gap-1'>
-                                            <a href={route('admin.exchange-invoice.show', item.id)} className='text-gray-500'>
+                                            <a href={route('admin.exchange-invoice.show', {id: item.id, batchId: props.batchId})} className='text-gray-500'>
                                                 <Eye />
                                             </a>
                                         </div>

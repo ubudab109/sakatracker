@@ -199,7 +199,7 @@ class SiapBayarController extends Controller
         ]);
     }
 
-    public function paidSiapBayar($id){
+    public function paidSiapBayar(Request $request, $id){
         $request->validate([
             'payment_date' => 'required',
         ]);

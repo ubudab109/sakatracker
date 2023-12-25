@@ -25,6 +25,7 @@ use App\Models\Role;
 use App\Models\Tax;
 use App\Models\ShipTo;
 use App\Models\BillTo;
+use App\Models\VendorAttachment;
 use Carbon\Carbon;
 use Storage;
 use Auth;
@@ -241,6 +242,8 @@ class AdminVendorProfileController extends Controller
     public function edit($id) {
         $data['permissions'] = $this->checkPermission('verification');
         $data['revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('id', $id)->first();
+        $data['vendor_attachments'] = VendorAttachment::where('vendor_id', $data['revision_vendor']->vendor_id)->get();
+        // dd($data['vendor_attachments']);
         $data['supplier_sites'] = SupplierSite::all();
         $data['before_revision_vendor'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', '!=', 'menunggu persetujuan')->orderBy('id', 'desc')->first();
         $data['timeline'] = RevisionRegisterVendor::with('user')->where('vendor_id', $data['revision_vendor']->vendor_id)->orderBy('id')
@@ -294,21 +297,21 @@ class AdminVendorProfileController extends Controller
             ];
         }
 
-        $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
-        $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
-        $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
-        $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
-        $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
-        $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
-        $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
+        // $data['coa_1'] = OracleCoa::where('coa_segment', 1)->get();
+        // $data['coa_2'] = OracleCoa::where('coa_segment', 2)->get();
+        // $data['coa_3'] = OracleCoa::where('coa_segment', 3)->get();
+        // $data['coa_4'] = OracleCoa::where('coa_segment', 4)->get();
+        // $data['coa_5'] = OracleCoa::where('coa_segment', 5)->get();
+        // $data['coa_6'] = OracleCoa::where('coa_segment', 6)->get();
+        // $data['coa_7'] = OracleCoa::where('coa_segment', 7)->get();
 
-        // $data['coa_1'] = [];
-        // $data['coa_2'] = [];
-        // $data['coa_3'] = [];
-        // $data['coa_4'] = [];
-        // $data['coa_5'] = [];
-        // $data['coa_6'] = [];
-        // $data['coa_7'] = [];
+        $data['coa_1'] = [];
+        $data['coa_2'] = [];
+        $data['coa_3'] = [];
+        $data['coa_4'] = [];
+        $data['coa_5'] = [];
+        $data['coa_6'] = [];
+        $data['coa_7'] = [];
 
         $data['approver_revision_done'] = RevisionRegisterVendor::with('vendor')->where('vendor_id', $data['revision_vendor']->vendor_id)->where('status', 'disetujui')->get();
         $data['taxes'] = Tax::all();

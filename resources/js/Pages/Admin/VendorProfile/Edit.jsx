@@ -70,11 +70,11 @@ export default function Index(props) {
 		file_tdp_validate: props.data.revision_vendor.vendor.tdp_note == null ? 'TDP terdapat kesalahan' : props.data.revision_vendor.vendor.tdp_note,
 		file_nib_validate: props.data.revision_vendor.vendor.nib_note == null ? 'NIB terdapat kesalahan' : props.data.revision_vendor.vendor.nib_note,
 		file_board_of_directors_composition_validate:
-		props.data.revision_vendor.vendor
-		.board_of_directors_composition_note == null ? 'Akta Susunan Direksi terdapat kesalahan' : props.data.revision_vendor.vendor
-		.board_of_directors_composition_note,
+			props.data.revision_vendor.vendor
+				.board_of_directors_composition_note == null ? 'Akta Susunan Direksi terdapat kesalahan' : props.data.revision_vendor.vendor
+				.board_of_directors_composition_note,
 		file_non_pkp_statement_validate:
-		props.data.revision_vendor.vendor.non_pkp_statement_note == null ? 'Surat Pernyataan Non PKP terdapat kesalahan' : props.data.revision_vendor.vendor.non_pkp_statement_note,
+			props.data.revision_vendor.vendor.non_pkp_statement_note == null ? 'Surat Pernyataan Non PKP terdapat kesalahan' : props.data.revision_vendor.vendor.non_pkp_statement_note,
 		coa: "",
 	});
 
@@ -252,8 +252,7 @@ export default function Index(props) {
 					[statusKey]: false,
 				}));
 				if (fileName == 'file_npwp') {
-					if(props.data.revision_vendor.vendor.type_of_business != 'Pribadi' && props.data.revision_vendor.vendor.type_of_business != 'Pribadi Non PKP')
-					{
+					if (props.data.revision_vendor.vendor.type_of_business != 'Pribadi' && props.data.revision_vendor.vendor.type_of_business != 'Pribadi Non PKP') {
 						setNpwpNote("NPWP Terdapat Kesalahan");
 						data[fileName] = "NPWP Terdapat Kesalahan";
 						data.npwp_note = "NPWP Terdapat Kesalahan";
@@ -303,8 +302,7 @@ export default function Index(props) {
 				data[fileName] = "acc";
 			}
 			if (statusKey == "validate" && `${name}_validate` === fileName) {
-				if(stat === 0)
-				{
+				if (stat === 0) {
 					data[fileName] = "acc";
 				} else {
 					data[fileName] = "Terdapat Kesalahan";
@@ -566,13 +564,13 @@ export default function Index(props) {
 
 	const [expandedIndex, setExpandedIndex] = useState(-1);
 
-    const toggleExpand = (index) => {
-        if (expandedIndex === index) {
-        setExpandedIndex(-1);
-        } else {
-        setExpandedIndex(index);
-        }
-    };
+	const toggleExpand = (index) => {
+		if (expandedIndex === index) {
+			setExpandedIndex(-1);
+		} else {
+			setExpandedIndex(index);
+		}
+	};
 
 	const [idxfile, setidxfile] = useState(indexFile);
 
@@ -582,29 +580,29 @@ export default function Index(props) {
 	};
 
 	const closeModalFile = () => {
-        setIsModalFileOpen(false);
-    };
+		setIsModalFileOpen(false);
+	};
 
-    const prev = () => {
-        var total = props.newdocs.length;
-        if(idxfile == 0){
-            setidxfile(total - 1);
-        }else{
-            setidxfile(idxfile-1);
-        }
-    };
+	const prev = () => {
+		var total = props.newdocs.length;
+		if (idxfile == 0) {
+			setidxfile(total - 1);
+		} else {
+			setidxfile(idxfile - 1);
+		}
+	};
 
-    const next = () => {
-        var total = props.newdocs.length;
-        if(idxfile == (total - 1)){
-            setidxfile(0);
-        }else{
-            setidxfile(idxfile+1);
-        }
-    };
+	const next = () => {
+		var total = props.newdocs.length;
+		if (idxfile == (total - 1)) {
+			setidxfile(0);
+		} else {
+			setidxfile(idxfile + 1);
+		}
+	};
 
 	const [selectSupplierSite, setSelectSupplierSite] = useState();
-    const handleSupplierSiteChange = (event) => {
+	const handleSupplierSiteChange = (event) => {
 		setSelectSupplierSite(event.target.value);
 	};
 
@@ -618,14 +616,14 @@ export default function Index(props) {
 
 	const handleFile = (e, setter) => {
 		console.log(e.target.files[0]);
-        if (convertMb(e.target.files[0].size) > 5) {
-            setError(e.target.name, 'Max file size should not be greater than 5mb')
-        } else {
-            clearErrors(e.target.name);
-            setData(e.target.name, e.target.files[0]);
+		if (convertMb(e.target.files[0].size) > 5) {
+			setError(e.target.name, 'Max file size should not be greater than 5mb')
+		} else {
+			clearErrors(e.target.name);
+			setData(e.target.name, e.target.files[0]);
 			setter(e.target.files[0].name.substring(0, 35) + '...');
-        }
-    }
+		}
+	}
 
 	return (
 		<AuthenticatedLayout
@@ -646,10 +644,10 @@ export default function Index(props) {
 			/> */}
 
 			<ModalViewer
-                files={pdfUrl}
-                show={isPopupOpen}
-                onClose={closePopup}
-            />
+				files={pdfUrl}
+				show={isPopupOpen}
+				onClose={closePopup}
+			/>
 
 			<div className="page-title-box d-sm-flex align-items-center justify-content-between">
 				<h4 className="mb-sm-0 font-size-18">Data Change</h4>
@@ -1545,13 +1543,14 @@ export default function Index(props) {
 												<p className="text-sm text-gray-500 mb-4">
 													TDP
 												</p>
-											:''}
+												: ''}
 											<p className="text-sm text-gray-500 mb-4">
 												NIB
 											</p>
 											<p className="text-sm text-gray-500 mb-4">
 												Akta Susunan Direksi
 											</p>
+											<p className="text-sm text-gray-500 mb-5">Lampiran Lainnya</p>
 										</div>
 										<div className="border-dashed border-gray-300 text-sm text-gray-500">
 											<p className="mb-3">&nbsp;</p>
@@ -1923,9 +1922,9 @@ export default function Index(props) {
 												}
 											</p>
 											{props.data.revision_vendor.vendor.file_tdp ?
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
+												<p className="mb-3 flex gap-3">
+													:
+													{/* {props.data.latest_vendor !=
                                                 null ? (
                                                     props.data.latest_vendor
                                                         .file_tdp !=
@@ -1951,121 +1950,121 @@ export default function Index(props) {
                                                 ) : (
                                                     ""
                                                 )} */}
-												{props.data.revision_vendor.vendor.file_tdp ?
-												<>
-													{props.data.revision_vendor
-														.vendor.file_tdp != "" ? (
+													{props.data.revision_vendor.vendor.file_tdp ?
 														<>
-															<a
-																href="javascript:;"
-																onClick={(e) =>
-																	openPopup1(
-																		3
-																	)
-																}
-															>
-																<svg
-																	xmlns="http://www.w3.org/2000/svg"
-																	fill="none"
-																	viewBox="0 0 24 24"
-																	strokeWidth={
-																		1.5
-																	}
-																	stroke="currentColor"
-																	className="w-6 h-6 ml-2"
-																>
-																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+															{props.data.revision_vendor
+																.vendor.file_tdp != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				3
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_tdp",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileTdpStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_tdp",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileTdpStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_tdp_validate
+																		}
 																	/>
-																</svg>
-															</a>
-															<a
-																href="javascript:;"
-																onClick={(e) =>
-																	clickStatusFile(
-																		"file_tdp",
-																		0
-																	)
-																}
-																hidden={
-																	submitSuccess
-																}
-															>
-																<CheckCircle
-																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																		null
-																		? "gray"
-																		: fileStatus.fileTdpStatus ==
-																			true
-																			? "green"
-																			: "gray"
-																		}-500`}
-																/>
-															</a>
-															<a
-																href="javascript:;"
-																onClick={(e) =>
-																	clickStatusFile(
-																		"file_tdp",
-																		1
-																	)
-																}
-																hidden={
-																	submitSuccess
-																}
-															>
-																<XCircle
-																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																		null
-																		? "gray"
-																		: fileStatus.fileTdpStatus ==
-																			false
-																			? "red"
-																			: "gray"
-																		}-500`}
-																/>
-															</a>
-															<InputError
-																message={
-																	errors.file_tdp_validate
-																}
-															/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_tdp !=
+																	props.data.revision_vendor
+																		.vendor.expired_tdp ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_tdp
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+															{
+																props.data.revision_vendor
+																	.vendor.expired_tdp
+															}
 														</>
-													) : (
-														<p>-</p>
-													)}
-													/
-													{props.data.latest_vendor !=
-														null ? (
-														props.data.latest_vendor
-															.expired_tdp !=
-															props.data.revision_vendor
-																.vendor.expired_tdp ? (
-															<span
-																className={`line-through text-red-600 mr-1`}
-															>
-																{
-																	props.data
-																		.latest_vendor
-																		.expired_tdp
-																}
-															</span>
-														) : (
-															""
-														)
-													) : (
-														""
-													)}
-													{
-														props.data.revision_vendor
-															.vendor.expired_tdp
-													}
-												</>
-												:''}
-											</p>
-											:''}
+														: ''}
+												</p>
+												: ''}
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -2320,6 +2319,49 @@ export default function Index(props) {
 												)}
 												/ <p>&nbsp;</p>
 											</p>
+											<div className="mb-3 flex-gap-3"></div>
+											{
+												props.data.vendor_attachments.length > 0 ? (
+													<div className="row">
+														<ul className="list-group p-2">
+															{
+																props.data.vendor_attachments.map(
+																	(url) => (
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																			<a
+																				style={{
+																					color: "blue",
+																				}}
+																				href={
+																					url.file
+																				}
+																				target="_blank"
+																				rel="no-referrer"
+																			>
+																				{
+																					url.file
+																				}
+																			</a>
+																			{/* <span
+																				// onClick={()}
+																				style={{
+																					cursor: "pointer",
+																					background:
+																						"red",
+																					color: "white",
+																				}}
+																				class="badge badge-danger badge-pill"
+																			>
+																				X
+																			</span> */}
+																		</li>
+																	)
+																)
+															}
+														</ul>
+													</div>
+												) : null
+											}
 										</div>
 										<div className="lg:ml-5 text-sm text-gray-500">
 											<p className="font-bold text-black mb-3">
@@ -2327,44 +2369,44 @@ export default function Index(props) {
 											</p>
 											<p className="mb-3">&nbsp;</p>
 											<p className="mb-6" hidden={
-														fileStatus.fileNpwpStatus !=
-															null
-															? fileStatus.fileNpwpStatus
-															: true
-													}>Note File NPWP </p>
+												fileStatus.fileNpwpStatus !=
+													null
+													? fileStatus.fileNpwpStatus
+													: true
+											}>Note File NPWP </p>
 											<p className="mb-6" hidden={
-														fileStatus.fileSppkpStatus !=
-															null
-															? fileStatus.fileSppkpStatus
-															: true
-													}>Note File SPPKP</p>
+												fileStatus.fileSppkpStatus !=
+													null
+													? fileStatus.fileSppkpStatus
+													: true
+											}>Note File SPPKP</p>
 											<p className="mb-7" hidden={
-														fileStatus.fileSiupStatus !=
-															null
-															? fileStatus.fileSiupStatus
-															: true
-													}>Note File SIUP</p>
+												fileStatus.fileSiupStatus !=
+													null
+													? fileStatus.fileSiupStatus
+													: true
+											}>Note File SIUP</p>
 											{props.data.revision_vendor.vendor.file_tdp ?
 												<p className="mb-7" hidden={
-															fileStatus.fileTdpStatus !=
-																null
-																? fileStatus.fileTdpStatus
-																: true
-														}>Note File TDP
+													fileStatus.fileTdpStatus !=
+														null
+														? fileStatus.fileTdpStatus
+														: true
+												}>Note File TDP
 												</p>
-											:''}
+												: ''}
 											<p className="mb-7" hidden={
-														fileStatus.fileNibStatus !=
-															null
-															? fileStatus.fileNibStatus
-															: true
-													}>Note File NIB</p>
+												fileStatus.fileNibStatus !=
+													null
+													? fileStatus.fileNibStatus
+													: true
+											}>Note File NIB</p>
 											<p className="mb-7" hidden={
-														fileStatus.fileBodcStatus !=
-															null
-															? fileStatus.fileBodcStatus
-															: true
-													}>Note File Akta Susunan Direksi</p>
+												fileStatus.fileBodcStatus !=
+													null
+													? fileStatus.fileBodcStatus
+													: true
+											}>Note File Akta Susunan Direksi</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -2486,46 +2528,46 @@ export default function Index(props) {
 												</div>
 											</div>
 											{props.data.revision_vendor.vendor.file_tdp ?
-											<div hidden={submitSuccess}>
-												<div
-													className="mb-1"
-													hidden={
-														fileStatus.fileTdpStatus !=
-															null
-															? fileStatus.fileTdpStatus
-															: true
-													}
-												>
-													{/* <InputLabel
+												<div hidden={submitSuccess}>
+													<div
+														className="mb-1"
+														hidden={
+															fileStatus.fileTdpStatus !=
+																null
+																? fileStatus.fileTdpStatus
+																: true
+														}
+													>
+														{/* <InputLabel
 														value="Catatan File TDP"
 														className="font-bold"
 													/> */}
-													<input
-														type="text"
-														name="tdp_note"
-														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="Note file tdp *"
-														onChange={(e) =>
-															setData(
-																"tdp_note",
-																e.target
-																	.value
-															)
-														}
-														value={
-															data.tdp_note
-														}
-													/>
+														<input
+															type="text"
+															name="tdp_note"
+															className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+															placeholder="Note file tdp *"
+															onChange={(e) =>
+																setData(
+																	"tdp_note",
+																	e.target
+																		.value
+																)
+															}
+															value={
+																data.tdp_note
+															}
+														/>
 
-													<InputError
-														message={
-															errors.tdp_note
-														}
-														className="mt-2"
-													/>
+														<InputError
+															message={
+																errors.tdp_note
+															}
+															className="mt-2"
+														/>
+													</div>
 												</div>
-											</div>
-											:''}
+												: ''}
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -2637,10 +2679,10 @@ export default function Index(props) {
 												SIUP
 											</p>
 											{props.data.revision_vendor.vendor.file_tdp ?
-											<p className="text-sm text-gray-500 mb-4">
-												TDP
-											</p>
-											:''}
+												<p className="text-sm text-gray-500 mb-4">
+													TDP
+												</p>
+												: ''}
 											<p className="text-sm text-gray-500 mb-4">
 												NIB
 											</p>
@@ -2649,6 +2691,9 @@ export default function Index(props) {
 											</p>
 											<p className="text-sm text-gray-500 mb-4">
 												Surat Pernyataan Non PKP
+											</p>
+											<p className="text-sm text-gray-500 mb-4">
+												Lampiran Lainnya
 											</p>
 										</div>
 										<div className="border-dashed border-gray-300 text-sm text-gray-500">
@@ -3048,9 +3093,9 @@ export default function Index(props) {
 												}
 											</p>
 											{props.data.revision_vendor.vendor.file_tdp ?
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
+												<p className="mb-3 flex gap-3">
+													:
+													{/* {props.data.latest_vendor !=
                                                 null ? (
                                                     props.data.latest_vendor
                                                         .file_tdp !=
@@ -3076,122 +3121,122 @@ export default function Index(props) {
                                                 ) : (
                                                     ""
                                                 )} */}
-												{props.data.revision_vendor.vendor.file_tdp ?
-												<>
-													{props.data.revision_vendor
-														.vendor.file_tdp != "" ? (
+													{props.data.revision_vendor.vendor.file_tdp ?
 														<>
-															<a
-																href={
-																	props.data
-																		.revision_vendor
-																		.vendor
-																		.file_tdp
-																}
-																target="_blank"
-															>
-																<svg
-																	xmlns="http://www.w3.org/2000/svg"
-																	fill="none"
-																	viewBox="0 0 24 24"
-																	strokeWidth={
-																		1.5
-																	}
-																	stroke="currentColor"
-																	className="w-6 h-6 ml-2"
-																>
-																	<path
-																		strokeLinecap="round"
-																		strokeLinejoin="round"
-																		d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+															{props.data.revision_vendor
+																.vendor.file_tdp != "" ? (
+																<>
+																	<a
+																		href={
+																			props.data
+																				.revision_vendor
+																				.vendor
+																				.file_tdp
+																		}
+																		target="_blank"
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_tdp",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileTdpStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_tdp",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileTdpStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_tdp_validate
+																		}
 																	/>
-																</svg>
-															</a>
-															<a
-																href="javascript:;"
-																onClick={(e) =>
-																	clickStatusFile(
-																		"file_tdp",
-																		0
-																	)
-																}
-																hidden={
-																	submitSuccess
-																}
-															>
-																<CheckCircle
-																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																		null
-																		? "gray"
-																		: fileStatus.fileTdpStatus ==
-																			true
-																			? "green"
-																			: "gray"
-																		}-500`}
-																/>
-															</a>
-															<a
-																href="javascript:;"
-																onClick={(e) =>
-																	clickStatusFile(
-																		"file_tdp",
-																		1
-																	)
-																}
-																hidden={
-																	submitSuccess
-																}
-															>
-																<XCircle
-																	className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-																		null
-																		? "gray"
-																		: fileStatus.fileTdpStatus ==
-																			false
-																			? "red"
-																			: "gray"
-																		}-500`}
-																/>
-															</a>
-															<InputError
-																message={
-																	errors.file_tdp_validate
-																}
-															/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_tdp !=
+																	props.data.revision_vendor
+																		.vendor.expired_tdp ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_tdp
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+															{
+																props.data.revision_vendor
+																	.vendor.expired_tdp
+															}
 														</>
-													) : (
-														<p>-</p>
-													)}
-													/
-													{props.data.latest_vendor !=
-														null ? (
-														props.data.latest_vendor
-															.expired_tdp !=
-															props.data.revision_vendor
-																.vendor.expired_tdp ? (
-															<span
-																className={`line-through text-red-600 mr-1`}
-															>
-																{
-																	props.data
-																		.latest_vendor
-																		.expired_tdp
-																}
-															</span>
-														) : (
-															""
-														)
-													) : (
-														""
-													)}
-													{
-														props.data.revision_vendor
-															.vendor.expired_tdp
-													}
-												</>
-												:''}
-											</p>
-											:''}
+														: ''}
+												</p>
+												: ''}
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -3446,122 +3491,49 @@ export default function Index(props) {
 												)}
 												/ <p>&nbsp;</p>
 											</p>
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_non_pkp_statement !=
-                                                    props.data.revision_vendor
-                                                        .vendor
-                                                        .file_non_pkp_statement ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor
-													.file_non_pkp_statement !=
-													"" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	5
+											<div className="mb-3 flex-gap-3"></div>
+											{
+												props.data.vendor_attachments.length > 0 ? (
+													<div className="row">
+														<ul className="list-group p-2">
+															{
+																props.data.vendor_attachments.map(
+																	(url) => (
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																			<a
+																				style={{
+																					color: "blue",
+																				}}
+																				href={
+																					url.file
+																				}
+																				target="_blank"
+																				rel="no-referrer"
+																			>
+																				{
+																					url.file
+																				}
+																			</a>
+																			{/* <span
+																				// onClick={()}
+																				style={{
+																					cursor: "pointer",
+																					background:
+																						"red",
+																					color: "white",
+																				}}
+																				class="badge badge-danger badge-pill"
+																			>
+																				X
+																			</span> */}
+																		</li>
+																	)
 																)
 															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															hidden={
-																submitSuccess
-															}
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_non_pkp_statement",
-																	0
-																)
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNonPkpStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															hidden={
-																submitSuccess
-															}
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_non_pkp_statement",
-																	1
-																)
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNonPkpStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_non_pkp_statement_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/ <p>&nbsp;</p>
-											</p>
+														</ul>
+													</div>
+												) : null
+											}
 										</div>
 										<div className="lg:ml-5 text-sm text-gray-500">
 											<p className="font-bold text-black mb-3">
@@ -3569,49 +3541,49 @@ export default function Index(props) {
 											</p>
 											<p className="mb-3">&nbsp;</p>
 											<p className="mb-6" hidden={
-														fileStatus.fileNpwpStatus !=
-															null
-															? fileStatus.fileNpwpStatus
-															: true
-													}>Note File NPWP </p>
+												fileStatus.fileNpwpStatus !=
+													null
+													? fileStatus.fileNpwpStatus
+													: true
+											}>Note File NPWP </p>
 											<p className="mb-6" hidden={
-														fileStatus.fileSppkpStatus !=
-															null
-															? fileStatus.fileSppkpStatus
-															: true
-													}>Note File SPPKP</p>
+												fileStatus.fileSppkpStatus !=
+													null
+													? fileStatus.fileSppkpStatus
+													: true
+											}>Note File SPPKP</p>
 											<p className="mb-6" hidden={
-														fileStatus.fileSiupStatus !=
-															null
-															? fileStatus.fileSiupStatus
-															: true
-													}>Note File SIUP</p>
-													{props.data.revision_vendor.vendor.file_tdp ?
+												fileStatus.fileSiupStatus !=
+													null
+													? fileStatus.fileSiupStatus
+													: true
+											}>Note File SIUP</p>
+											{props.data.revision_vendor.vendor.file_tdp ?
+												<p className="mb-7" hidden={
+													fileStatus.fileTdpStatus !=
+														null
+														? fileStatus.fileTdpStatus
+														: true
+												}>Note File TDP</p>
+												: ''}
 											<p className="mb-7" hidden={
-														fileStatus.fileTdpStatus !=
-															null
-															? fileStatus.fileTdpStatus
-															: true
-													}>Note File TDP</p>
-													:''}
+												fileStatus.fileNibStatus !=
+													null
+													? fileStatus.fileNibStatus
+													: true
+											}>Note File NIB</p>
 											<p className="mb-7" hidden={
-														fileStatus.fileNibStatus !=
-															null
-															? fileStatus.fileNibStatus
-															: true
-													}>Note File NIB</p>
+												fileStatus.fileBodcStatus !=
+													null
+													? fileStatus.fileBodcStatus
+													: true
+											}>Note File Akta Susunan Direksi</p>
 											<p className="mb-7" hidden={
-														fileStatus.fileBodcStatus !=
-															null
-															? fileStatus.fileBodcStatus
-															: true
-													}>Note File Akta Susunan Direksi</p>
-											<p className="mb-7" hidden={
-														fileStatus.fileNonPkpStatus !=
-															null
-															? fileStatus.fileNonPkpStatus
-															: true
-													}>Note File Surat Pernyataan Non PKP</p>
+												fileStatus.fileNonPkpStatus !=
+													null
+													? fileStatus.fileNonPkpStatus
+													: true
+											}>Note File Surat Pernyataan Non PKP</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -3733,46 +3705,46 @@ export default function Index(props) {
 												</div>
 											</div>
 											{props.data.revision_vendor.vendor.file_tdp ?
-											<div hidden={submitSuccess}>
-												<div
-													className="mb-1"
-													hidden={
-														fileStatus.fileTdpStatus !=
-															null
-															? fileStatus.fileTdpStatus
-															: true
-													}
-												>
-													{/* <InputLabel
+												<div hidden={submitSuccess}>
+													<div
+														className="mb-1"
+														hidden={
+															fileStatus.fileTdpStatus !=
+																null
+																? fileStatus.fileTdpStatus
+																: true
+														}
+													>
+														{/* <InputLabel
 														value="Catatan File TDP"
 														className="font-bold"
 													/> */}
-													<input
-														type="text"
-														name="tdp_note"
-														className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-														placeholder="Note file tdp *"
-														onChange={(e) =>
-															setData(
-																"tdp_note",
-																e.target
-																	.value
-															)
-														}
-														value={
-															data.tdp_note
-														}
-													/>
+														<input
+															type="text"
+															name="tdp_note"
+															className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+															placeholder="Note file tdp *"
+															onChange={(e) =>
+																setData(
+																	"tdp_note",
+																	e.target
+																		.value
+																)
+															}
+															value={
+																data.tdp_note
+															}
+														/>
 
-													<InputError
-														message={
-															errors.tdp_note
-														}
-														className="mt-2"
-													/>
+														<InputError
+															message={
+																errors.tdp_note
+															}
+															className="mt-2"
+														/>
+													</div>
 												</div>
-											</div>
-											:''}
+												: ''}
 											<div hidden={submitSuccess}>
 												<div
 													className="mb-1"
@@ -3920,6 +3892,9 @@ export default function Index(props) {
 											</p>
 											<p className="text-sm text-gray-500 mb-3">
 												Surat Pernyataan Non PKP
+											</p>
+											<p className="text-sm text-gray-500 mb-3">
+												Lampiran Lainnya
 											</p>
 											{/* <p className='text-sm text-gray-500 mb-3'>E-KTP</p> */}
 										</div>
@@ -4157,6 +4132,49 @@ export default function Index(props) {
 												)}
 												<p>&nbsp;</p>
 											</p>
+											<div className="mb-3 flex-gap-3"></div>
+											{
+												props.data.vendor_attachments.length > 0 ? (
+													<div className="row">
+														<ul className="list-group p-2">
+															{
+																props.data.vendor_attachments.map(
+																	(url) => (
+																		<li class="list-group-item d-flex justify-content-between align-items-center">
+																			<a
+																				style={{
+																					color: "blue",
+																				}}
+																				href={
+																					url.file
+																				}
+																				target="_blank"
+																				rel="no-referrer"
+																			>
+																				{
+																					url.file
+																				}
+																			</a>
+																			{/* <span
+																				// onClick={()}
+																				style={{
+																					cursor: "pointer",
+																					background:
+																						"red",
+																					color: "white",
+																				}}
+																				class="badge badge-danger badge-pill"
+																			>
+																				X
+																			</span> */}
+																		</li>
+																	)
+																)
+															}
+														</ul>
+													</div>
+												) : null
+											}
 											{/* <p className='mb-3 flex justify-between'>: 
                                                 {props.data.revision_vendor.vendor.file_ektp != '' ? <a href={props.data.revision_vendor.vendor.file_ektp} target='_blank'>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
@@ -4172,17 +4190,17 @@ export default function Index(props) {
 											</p>
 											<p className="mb-3">&nbsp;</p>
 											<p className="mb-6" hidden={
-														fileStatus.fileNpwpStatus !=
-															null
-															? fileStatus.fileNpwpStatus
-															: true
-													}>Note File NPWP </p>
+												fileStatus.fileNpwpStatus !=
+													null
+													? fileStatus.fileNpwpStatus
+													: true
+											}>Note File NPWP </p>
 											<p className="mb-6" hidden={
-														fileStatus.fileNonPkpStatus !=
-															null
-															? fileStatus.fileNonPkpStatus
-															: true
-													}>Note File Surat Pernyataan Non PKP</p>
+												fileStatus.fileNonPkpStatus !=
+													null
+													? fileStatus.fileNonPkpStatus
+													: true
+											}>Note File Surat Pernyataan Non PKP</p>
 										</div>
 										<div className="lg:ml-5 block">
 											<p className="font-bold text-black mb-3">
@@ -5137,8 +5155,8 @@ export default function Index(props) {
 																		<div className="cursor-pointer" onClick={() => toggleExpand(index)}>
 																			{/* Card Title */}
 																			<InputLabel
-																			value={`Supplier Site: `}
-																			className="font-bold text-center"
+																				value={`Supplier Site: `}
+																				className="font-bold text-center"
 																			/>
 																			<p>{entry.supplier_site}</p>
 																		</div>
@@ -5200,7 +5218,7 @@ export default function Index(props) {
 																							</div>
 																						</div>
 																					)
-																				
+
 																				)}
 																				{props.data.permissions.includes(
 																					"update_skb_accounting_vendor_profile"
@@ -5367,19 +5385,19 @@ export default function Index(props) {
 																	<p className="font-bold mb-2">Catatan ({item.approval_role}) <br></br> {item.timestamp}</p>
 																	<div className='text-sm text-gray-500 p-1'>
 																		<div className='flex items-center align-middle'>
-																			{item.document ? 
+																			{item.document ?
 																				<a href="javascrip:;" className="mr-3" onClick={() => openPopup(item.document)}>
 																					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 ml-2">
 																						<path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
 																					</svg>
 																				</a>
-																			: null}
+																				: null}
 																			<p className='mb-3 break-all'>{item.note}</p>
 																		</div>
 																	</div>
 																</div>
 															))}
-															
+
 														</div>
 													</div>
 													: ''}
@@ -5480,7 +5498,7 @@ export default function Index(props) {
 										<option value={item.name}>{item.name}</option>
 									))
 								}
-								
+
 							</select>
 						</div>
 						{[
@@ -5797,600 +5815,600 @@ export default function Index(props) {
 					className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center z-[999999] transform transition-all"
 					onClose={closeModalFile}
 				>
-				<Transition.Child
-					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<div className="absolute inset-0 bg-gray-500/75" />
-				</Transition.Child>
-
-				<div className="fixed inset-0 overflow-y-auto">
-					<div className="flex h-full items-center justify-center p-4 text-center">
 					<Transition.Child
 						as={Fragment}
 						enter="ease-out duration-300"
-						enterFrom="opacity-0 scale-95"
-						enterTo="opacity-100 scale-100"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
 						leave="ease-in duration-200"
-						leaveFrom="opacity-100 scale-100"
-						leaveTo="opacity-0 scale-95"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
 					>
-						<Dialog.Panel className="w-full h-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-						<Dialog.Title
-							as="h3"
-							className="text-lg font-medium leading-6 text-gray-900"
-						>
-							<form onSubmit={submit}>
-								<div class="grid grid-cols-2 gap-4">
-								{Array.isArray(props.newdocs) && props.newdocs.length > 0 && (<>
-									<div class="flex justify-start gap-3">
-									{props.newdocs[idxfile].name} ({idxfile+1}/{props.newdocs.length})
-										{props.newdocs[idxfile].name == 'file_npwp' ? 
-											<textarea
-												name="npwp_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file npwp *"
-												hidden={
-													fileStatus.fileNpwpStatus !=
-														null
-														? fileStatus.fileNpwpStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"npwp_note",
-														e.target.value
-													)
-												}
-												value={data.npwp_note}
-											/>
-										: ''}
-
-										{props.newdocs[idxfile].name == 'file_sppkp' ? 
-											<textarea
-												name="sppkp_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file sppkp *"
-												hidden={
-													fileStatus.fileSppkpStatus !=
-														null
-														? fileStatus.fileSppkpStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"sppkp_note",
-														e.target.value
-													)
-												}
-												value={data.sppkp_note}
-											/>
-										: ''}
-
-										{props.newdocs[idxfile].name == 'file_siup' ? 
-											<textarea
-												name="siup_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file siup *"
-												hidden={
-													fileStatus.fileSiupStatus !=
-														null
-														? fileStatus.fileSiupStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"siup_note",
-														e.target.value
-													)
-												}
-												value={data.siup_note}
-											/>
-										: ''}
-										{props.data.revision_vendor.vendor.file_tdp ?
-										<>
-										{props.newdocs[idxfile].name == 'file_tdp' ? 
-											<textarea
-												name="tdp_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file tdp *"
-												hidden={
-													fileStatus.fileTdpStatus !=
-														null
-														? fileStatus.fileTdpStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"tdp_note",
-														e.target.value
-													)
-												}
-												value={data.tdp_note}
-											/>
-										: ''}
-										</>
-										:''}
-
-										{props.newdocs[idxfile].name == 'file_nib' ? 
-											<textarea
-												name="nib_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file nib *"
-												hidden={
-													fileStatus.fileNibStatus !=
-														null
-														? fileStatus.fileNibStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"nib_note",
-														e.target.value
-													)
-												}
-												value={data.nib_note}
-											/>
-										: ''}
-
-										{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ? 
-											<textarea
-												name="board_of_directors_composition_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file akta susunan direksi *"
-												hidden={
-													fileStatus.fileBodcStatus !=
-														null
-														? fileStatus.fileBodcStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"board_of_directors_composition_note",
-														e.target.value
-													)
-												}
-												value={data.board_of_directors_composition_note}
-											/>
-										: ''}
-
-										{props.newdocs[idxfile].name == 'file_non_pkp_statement' ? 
-											<textarea
-												name="non_pkp_statement_note"
-												className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
-												placeholder="catatan file pernyataan non pkp *"
-												hidden={
-													fileStatus.fileNonPkpStatus !=
-														null
-														? fileStatus.fileNonPkpStatus
-														: true
-												}
-												onChange={(e) =>
-													setData(
-														"non_pkp_statement_note",
-														e.target.value
-													)
-												}
-												value={data.non_pkp_statement_note}
-											/>
-										: ''}
-										</div>
-									<div class="flex justify-end gap-3 ...">
-									{props.newdocs[idxfile].name == 'file_npwp' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_npwp",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNpwpStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_npwp",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNpwpStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}
-									{props.newdocs[idxfile].name == 'file_sppkp' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_sppkp",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileSppkpStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_sppkp",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileSppkpStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}
-
-									{props.newdocs[idxfile].name == 'file_siup' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_siup",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-													null
-													? "gray"
-													: fileStatus.fileSiupStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_siup",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-													null
-													? "gray"
-													: fileStatus.fileSiupStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}
-									
-									{props.data.revision_vendor.vendor.file_tdp ?
-									<>
-										{props.newdocs[idxfile].name == 'file_tdp' ? 
-										<>
-											<a
-												href="javascript:;"
-												onClick={(e) =>
-													clickStatusFile(
-														"file_tdp",
-														0
-													)
-												}
-												hidden={
-													submitSuccess
-												}
-											>
-												<CheckCircle
-													className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-														null
-														? "gray"
-														: fileStatus.fileTdpStatus ==
-															true
-															? "green"
-															: "gray"
-														}-500`}
-												/>
-											</a>
-											<a
-												href="javascript:;"
-												onClick={(e) =>
-													clickStatusFile(
-														"file_tdp",
-														1
-													)
-												}
-												hidden={
-													submitSuccess
-												}
-											>
-												<XCircle
-													className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
-														null
-														? "gray"
-														: fileStatus.fileTdpStatus ==
-															false
-															? "red"
-															: "gray"
-														}-500`}
-												/>
-											</a>
-										</>
-										: ''}
-									</>
-									:''}
-
-									{props.newdocs[idxfile].name == 'file_nib' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_nib",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNibStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_nib",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNibStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}
-
-									{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_board_of_directors_composition",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
-													null
-													? "gray"
-													: fileStatus.fileBodcStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_board_of_directors_composition",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
-													null
-													? "gray"
-													: fileStatus.fileBodcStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}	
-
-									{props.newdocs[idxfile].name == 'file_non_pkp_statement' ? 
-									<>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_non_pkp_statement",
-													0
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<CheckCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNonPkpStatus ==
-														true
-														? "green"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												clickStatusFile(
-													"file_non_pkp_statement",
-													1
-												)
-											}
-											hidden={
-												submitSuccess
-											}
-										>
-											<XCircle
-												className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-													null
-													? "gray"
-													: fileStatus.fileNonPkpStatus ==
-														false
-														? "red"
-														: "gray"
-													}-500`}
-											/>
-										</a>
-									</>
-									: ''}							
-									<a href={props.newdocs[idxfile].origin} target="_blank" className="text-blue-500 mr-1">View Original File</a>
-									<a
-											href="javascript:;"
-											onClick={(e) =>
-												prev()
-											}
-										>
-											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
-												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"/>
-											</svg>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												next()
-											}
-										>
-											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
-												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 13 5.7-5.326a.909.909 0 0 0 0-1.348L1 1"/>
-											</svg>
-										</a>
-										<a
-											href="javascript:;"
-											onClick={(e) =>
-												closeModalFile()
-											}
-										>
-											<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-												<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-											</svg>
-										</a>
-									</div>
-								</>)}
-								</div>
-							</form>
-						</Dialog.Title>
-						<div className="mt-2" style={{height:'92%'}}>
-							{props.newdocs.length > 0 
-							&& (
-								<iframe width={'100%'} height={'100%'} src={
-									Array.isArray(props.newdocs) ? 
-									props.newdocs[idxfile].file ? props.newdocs[idxfile].file 
-										: props.newdocs[idxfile].ispdf ? baseUrl+'/pdfview?file='+props.newdocs[idxfile].edited : props.newdocs[idxfile].edited 
-									: props.newdocs
-							}></iframe>
-							)}
-						</div>
-						</Dialog.Panel>
+						<div className="absolute inset-0 bg-gray-500/75" />
 					</Transition.Child>
+
+					<div className="fixed inset-0 overflow-y-auto">
+						<div className="flex h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="w-full h-full transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+									<Dialog.Title
+										as="h3"
+										className="text-lg font-medium leading-6 text-gray-900"
+									>
+										<form onSubmit={submit}>
+											<div class="grid grid-cols-2 gap-4">
+												{Array.isArray(props.newdocs) && props.newdocs.length > 0 && (<>
+													<div class="flex justify-start gap-3">
+														{props.newdocs[idxfile].name} ({idxfile + 1}/{props.newdocs.length})
+														{props.newdocs[idxfile].name == 'file_npwp' ?
+															<textarea
+																name="npwp_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file npwp *"
+																hidden={
+																	fileStatus.fileNpwpStatus !=
+																		null
+																		? fileStatus.fileNpwpStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"npwp_note",
+																		e.target.value
+																	)
+																}
+																value={data.npwp_note}
+															/>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_sppkp' ?
+															<textarea
+																name="sppkp_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file sppkp *"
+																hidden={
+																	fileStatus.fileSppkpStatus !=
+																		null
+																		? fileStatus.fileSppkpStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"sppkp_note",
+																		e.target.value
+																	)
+																}
+																value={data.sppkp_note}
+															/>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_siup' ?
+															<textarea
+																name="siup_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file siup *"
+																hidden={
+																	fileStatus.fileSiupStatus !=
+																		null
+																		? fileStatus.fileSiupStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"siup_note",
+																		e.target.value
+																	)
+																}
+																value={data.siup_note}
+															/>
+															: ''}
+														{props.data.revision_vendor.vendor.file_tdp ?
+															<>
+																{props.newdocs[idxfile].name == 'file_tdp' ?
+																	<textarea
+																		name="tdp_note"
+																		className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																		placeholder="catatan file tdp *"
+																		hidden={
+																			fileStatus.fileTdpStatus !=
+																				null
+																				? fileStatus.fileTdpStatus
+																				: true
+																		}
+																		onChange={(e) =>
+																			setData(
+																				"tdp_note",
+																				e.target.value
+																			)
+																		}
+																		value={data.tdp_note}
+																	/>
+																	: ''}
+															</>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_nib' ?
+															<textarea
+																name="nib_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file nib *"
+																hidden={
+																	fileStatus.fileNibStatus !=
+																		null
+																		? fileStatus.fileNibStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"nib_note",
+																		e.target.value
+																	)
+																}
+																value={data.nib_note}
+															/>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ?
+															<textarea
+																name="board_of_directors_composition_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file akta susunan direksi *"
+																hidden={
+																	fileStatus.fileBodcStatus !=
+																		null
+																		? fileStatus.fileBodcStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"board_of_directors_composition_note",
+																		e.target.value
+																	)
+																}
+																value={data.board_of_directors_composition_note}
+															/>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_non_pkp_statement' ?
+															<textarea
+																name="non_pkp_statement_note"
+																className="mt-1 block w-full border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm"
+																placeholder="catatan file pernyataan non pkp *"
+																hidden={
+																	fileStatus.fileNonPkpStatus !=
+																		null
+																		? fileStatus.fileNonPkpStatus
+																		: true
+																}
+																onChange={(e) =>
+																	setData(
+																		"non_pkp_statement_note",
+																		e.target.value
+																	)
+																}
+																value={data.non_pkp_statement_note}
+															/>
+															: ''}
+													</div>
+													<div class="flex justify-end gap-3 ...">
+														{props.newdocs[idxfile].name == 'file_npwp' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_npwp",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNpwpStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_npwp",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNpwpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNpwpStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+														{props.newdocs[idxfile].name == 'file_sppkp' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_sppkp",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileSppkpStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_sppkp",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileSppkpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileSppkpStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_siup' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_siup",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileSiupStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_siup",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileSiupStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+
+														{props.data.revision_vendor.vendor.file_tdp ?
+															<>
+																{props.newdocs[idxfile].name == 'file_tdp' ?
+																	<>
+																		<a
+																			href="javascript:;"
+																			onClick={(e) =>
+																				clickStatusFile(
+																					"file_tdp",
+																					0
+																				)
+																			}
+																			hidden={
+																				submitSuccess
+																			}
+																		>
+																			<CheckCircle
+																				className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																					null
+																					? "gray"
+																					: fileStatus.fileTdpStatus ==
+																						true
+																						? "green"
+																						: "gray"
+																					}-500`}
+																			/>
+																		</a>
+																		<a
+																			href="javascript:;"
+																			onClick={(e) =>
+																				clickStatusFile(
+																					"file_tdp",
+																					1
+																				)
+																			}
+																			hidden={
+																				submitSuccess
+																			}
+																		>
+																			<XCircle
+																				className={`rounded-full text-white bg-${fileStatus.fileTdpStatus ==
+																					null
+																					? "gray"
+																					: fileStatus.fileTdpStatus ==
+																						false
+																						? "red"
+																						: "gray"
+																					}-500`}
+																			/>
+																		</a>
+																	</>
+																	: ''}
+															</>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_nib' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_nib",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNibStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_nib",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNibStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_board_of_directors_composition' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_board_of_directors_composition",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileBodcStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_board_of_directors_composition",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileBodcStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileBodcStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+
+														{props.newdocs[idxfile].name == 'file_non_pkp_statement' ?
+															<>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_non_pkp_statement",
+																			0
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<CheckCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNonPkpStatus ==
+																				true
+																				? "green"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+																<a
+																	href="javascript:;"
+																	onClick={(e) =>
+																		clickStatusFile(
+																			"file_non_pkp_statement",
+																			1
+																		)
+																	}
+																	hidden={
+																		submitSuccess
+																	}
+																>
+																	<XCircle
+																		className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
+																			null
+																			? "gray"
+																			: fileStatus.fileNonPkpStatus ==
+																				false
+																				? "red"
+																				: "gray"
+																			}-500`}
+																	/>
+																</a>
+															</>
+															: ''}
+														<a href={props.newdocs[idxfile].origin} target="_blank" className="text-blue-500 mr-1">View Original File</a>
+														<a
+															href="javascript:;"
+															onClick={(e) =>
+																prev()
+															}
+														>
+															<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
+																<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13" />
+															</svg>
+														</a>
+														<a
+															href="javascript:;"
+															onClick={(e) =>
+																next()
+															}
+														>
+															<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
+																<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 13 5.7-5.326a.909.909 0 0 0 0-1.348L1 1" />
+															</svg>
+														</a>
+														<a
+															href="javascript:;"
+															onClick={(e) =>
+																closeModalFile()
+															}
+														>
+															<svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+																<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+															</svg>
+														</a>
+													</div>
+												</>)}
+											</div>
+										</form>
+									</Dialog.Title>
+									<div className="mt-2" style={{ height: '92%' }}>
+										{props.newdocs.length > 0
+											&& (
+												<iframe width={'100%'} height={'100%'} src={
+													Array.isArray(props.newdocs) ?
+														props.newdocs[idxfile].file ? props.newdocs[idxfile].file
+															: props.newdocs[idxfile].ispdf ? baseUrl + '/pdfview?file=' + props.newdocs[idxfile].edited : props.newdocs[idxfile].edited
+														: props.newdocs
+												}></iframe>
+											)}
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
 					</div>
-				</div>
 				</Dialog>
 			</Transition>
 		</AuthenticatedLayout>
