@@ -458,7 +458,7 @@ class AdminVendorProfileController extends Controller
 
         if($request->status == 'ditolak') {
             // $document = 'required|mimes:jpg,png,pdf|max:5000';
-            $note = 'required|string|max:1000';
+            $note = 'string|max:1000';
         }
 
         $validate_npwp_note = '';
@@ -476,17 +476,13 @@ class AdminVendorProfileController extends Controller
         $validate_file_nib_validate = '';
         $validate_file_board_of_directors_composition_validate = '';
         $validate_file_non_pkp_statement_validate = '';
-        if($request->status == 'disetujui') {
-            $validate_file_npwp_validate = $request->file_npwp_validate != 'acc' ? 'required|in:acc' : '';
-            $request->file_npwp_validate = null;
-        }
         
 
         if($request->status == 'ditolak') {
             if($request->file_npwp_validate != 'Terdapat Kesalahan')
             {
                 $validate_npwp_note = $request->npwp_note == null ? 'required' : '';
-                $validate_file_npwp_validate = $request->file_npwp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                $validate_file_npwp_validate = 'required';
             }
         }
 
@@ -498,44 +494,44 @@ class AdminVendorProfileController extends Controller
             $validate_file_nib_validate = 'required';
             $validate_file_board_of_directors_composition_validate = 'required';
             if($request->status == 'disetujui') {
-                $validate_file_siup_validate = $request->file_siup_validate != 'acc' ? 'required|in:acc' : '';
-                $validate_file_sppkp_validate = $request->file_sppkp_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_siup_validate = 'required|in:acc';
+                $validate_file_sppkp_validate = 'required|in:acc';
                 if($data->vendor->file_tdp)
                 {
-                    $validate_file_tdp_validate = $request->file_tdp_validate != 'acc' ? 'required|in:acc' : '';
+                    $validate_file_tdp_validate = 'required|in:acc';
                 }
-                $validate_file_nib_validate = $request->file_nib_validate != 'acc' ? 'required|in:acc' : '';
-                $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_nib_validate = 'required|in:acc';
+                $validate_file_board_of_directors_composition_validate = 'required|in:acc';
             }
 
             if($request->status == 'ditolak') {
                 if($request->file_sppkp_validate != 'Terdapat Kesalahan')
                 {
                     $validate_sppkp_note = $request->sppkp_note == null ? 'required' : '';
-                    $validate_file_sppkp_validate = $request->file_sppkp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                    $validate_file_sppkp_validate = 'required';
                 }
                 if($request->file_siup_validate != 'Terdapat Kesalahan')
                 {
                     $validate_siup_note = $request->siup_note == null ? 'required' : '';
-                    $validate_file_siup_validate = $request->file_siup_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                    $validate_file_siup_validate = 'required';
                 }
                 if($data->vendor->file_tdp)
                 {
                     if($request->file_tdp_validate != 'Terdapat Kesalahan')
                     {
                         $validate_tdp_note = $request->tdp_note == null ? 'required' : '';
-                        $validate_file_tdp_validate = $request->file_tdp_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                        $validate_file_tdp_validate = 'required';
                     }
                 }
                 if($request->file_nib_validate != 'Terdapat Kesalahan')
                 {
                     $validate_nib_note = $request->nib_note == null ? 'required' : '';
-                    $validate_file_nib_validate = $request->file_nib_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                    $validate_file_nib_validate = 'required';
                 }
                 if($request->file_board_of_directors_composition_validate != 'Terdapat Kesalahan')
                 {
                     $validate_board_of_directors_composition_note = $request->board_of_directors_composition_note == null ? 'required' : '';
-                    $validate_file_board_of_directors_composition_validate = $request->file_board_of_directors_composition_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                    $validate_file_board_of_directors_composition_validate = 'required';
                 }
             }
         }
@@ -544,14 +540,14 @@ class AdminVendorProfileController extends Controller
         {
             $validate_file_non_pkp_statement_validate = 'required';
             if($request->status == 'disetujui') {
-                $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != 'acc' ? 'required|in:acc' : '';
+                $validate_file_non_pkp_statement_validate = 'required|in:acc';
             }
 
             if($request->status == 'ditolak') {
                 if($request->file_non_pkp_statement_validate != 'Terdapat Kesalahan')
                 {
                     $validate_non_pkp_note = $request->non_pkp_note == null ? 'required' : '';
-                    $validate_file_non_pkp_statement_validate = $request->file_non_pkp_statement_validate != 'Terdapat Kesalahan' ? 'required|in:Terdapat Kesalahan' : '';
+                    $validate_file_non_pkp_statement_validate = 'required';
                 }
             }
         }

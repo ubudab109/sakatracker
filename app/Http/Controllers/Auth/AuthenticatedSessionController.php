@@ -125,10 +125,10 @@ class AuthenticatedSessionController extends Controller
                         return Redirect::route('vendor.report.index');
                     }
                 } else {
-                    return Redirect::route('dashboard');    
+                    return Redirect::route('vendor.report.index');    
                 }
             } else {
-                return Redirect::route('dashboard');    
+                return Redirect::route('vendor.report.index');    
             }
         } else if ($user->role == 'admin') {
             return Redirect::route('admin.dashboard-report');
