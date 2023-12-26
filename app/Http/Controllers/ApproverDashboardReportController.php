@@ -88,12 +88,14 @@ class ApproverDashboardReportController extends Controller
         })->get()
         ->map(function($invoice){
             $invoice['is_late'] = 0;
-            $date_expired = Carbon::createFromFormat('Y-m-d', $invoice->batch_payment->jatuh_tempo)->format('Y-m-d');
-            $date_batch_payment = Carbon::createFromFormat('Y-m-d H:i:s', $invoice->batch_payment->updated_at)->format('Y-m-d');
-
-            if($date_expired < $date_batch_payment)
-            {
-                $invoice['is_late'] = 1;
+            if ($invoice->batch_payment->jatuh_tempo) {
+                $date_expired = Carbon::createFromFormat('Y-m-d', $invoice->batch_payment->jatuh_tempo)->format('Y-m-d');
+                $date_batch_payment = Carbon::createFromFormat('Y-m-d H:i:s', $invoice->batch_payment->updated_at)->format('Y-m-d');
+    
+                if($date_expired < $date_batch_payment)
+                {
+                    $invoice['is_late'] = 1;
+                }
             }
 
             return $invoice;

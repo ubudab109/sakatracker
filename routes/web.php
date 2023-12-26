@@ -312,6 +312,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/batch-payment/{id}/process', [BatchPaymentController::class, 'processBatchPayment'])->name('admin.batch-payment.update');
 
     Route::get('/admin/batch-payment/reject/{id}', [BatchPaymentController::class, 'rejectBatchPayment'])->name('admin.batch-payment-reject');
+    Route::put('/admin/batch-payment-invoice/{id}', [BatchPaymentController::class, 'updateStatusInvoiceBathPayment'])->name('admin.batch-payment-invoice.update');
     
     Route::get('/admin/siap-bayar', [SiapBayarController::class, 'index'])->name('admin.siap-bayar.index');
 

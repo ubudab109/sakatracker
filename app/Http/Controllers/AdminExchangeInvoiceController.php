@@ -107,7 +107,7 @@ class AdminExchangeInvoiceController extends Controller
                     {
                            $q->where('approval_permission', 'is_pic_exchange_invoice');
                     } else {
-                            $q->where('approval_permission', 'is_pic_exchange_invoice');
+                            $q->where('user_id', Auth::user()->id);
                          $q->where('status', 'menunggu persetujuan');
                     }
                  } else {

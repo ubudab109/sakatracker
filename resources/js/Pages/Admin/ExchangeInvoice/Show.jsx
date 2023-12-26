@@ -480,7 +480,8 @@ export default function Index(props) {
                                         <div className='grid grid-cols-3 w-full'>
                                             <p>DPP</p>
                                             <p className='text-center w-1'>:</p>
-                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p>
+                                            {/* <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.dpp)).replace("€", "").trim()}</p> */}
+                                            <p className='-ml-32'>-</p>
                                         </div>
                                     </div>
                                 </div>
@@ -490,7 +491,8 @@ export default function Index(props) {
                                         <div className={`grid grid-cols-3 w-full ${props.data.invoice.pdf_rfp ? props.data.invoice.ppn != props.data.total_tax ? 'text-red-500' : '' : ''}`}>
                                             <p>PPN</p>
                                             <p className='text-center w-1'>:</p>
-                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p>
+                                            {/* <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.ppn)).replace("€", "").trim()}</p> */}
+                                            <p className='-ml-32'>-</p>
                                         </div>
                                     </div>
                                 </div>
@@ -500,7 +502,8 @@ export default function Index(props) {
                                         <div className='grid grid-cols-3 w-full'>
                                             <p>Total</p>
                                             <p className='text-center w-1'>:</p>
-                                            <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p>
+                                            {/* <p className='-ml-32'>Rp. {formatterCurrency.format(parseInt(props.data.invoice.total)).replace("€", "").trim()}</p> */}
+                                            <p className='-ml-32'>-</p>
                                         </div>
                                     </div>
                                 </div>

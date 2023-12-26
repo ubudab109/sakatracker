@@ -31,9 +31,31 @@ class VendorReportController extends Controller
         $data['chart_overdue'] = $this->chartOverdue($data['month']);
 
         $data['chart_outstanding_processing'] = $this->chartOutstandingProcessing($data['month']);
-        
+        // dd('ini');
         if($data['latest'])
         {
+            $onProgressRevisionVendor = RevisionRegisterVendor::where('user_id', Auth::user()->id)
+                ->where('status', 'menunggu persetujuan')
+                ->orderBy('id', 'desc')->first();
+            if ($onProgressRevisionVendor) {
+
+                $approval = [];
+                $revisionVendors = RevisionRegisterVendor::where('vendor_id', $onProgressRevisionVendor->vendor_id)
+                    ->orderBy('id', 'asc')
+                    ->get();
+                foreach ($revisionVendors as $revision) {
+                    $approval[] = [
+                        'approval' => $revision->approval_role,
+                        'status' => ucwords($revision->status),
+                        'date' => date('Y-m-d H:i:s', strtotime($revision->updated_at))
+                    ];
+                }
+                $data['revisions'] = $approval;
+            } else {
+                $data['revisions'] = [];
+            }
+            $data['revision_vendor'] = $this->revisionVendor();
+            // dd($data);
             return Inertia::render('Vendor/Report/Index', [
                 'data' => $data
             ]);
@@ -123,12 +145,14 @@ class VendorReportController extends Controller
 		$vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 		if($vendor)
 		{
-			$data['po_amount'] = OraclePurchaseOrder::
-			where('vendor_code', $vendor->id_manual)
-			->whereDate('po_date', '>=', $month . '-01')
-			->whereDate('po_date', '<=', $month . '-30')
-			->whereNotIn('po_header_id', $arrayPo)
-			->count();
+			// $data['po_amount'] = OraclePurchaseOrder::
+			// where('vendor_code', $vendor->id_manual)
+			// ->whereDate('po_date', '>=', $month . '-01')
+			// ->whereDate('po_date', '<=', $month . '-30')
+			// ->whereNotIn('po_header_id', $arrayPo)
+			// ->count();
+			$data['po_amount'] = 0;
+
 		} else {
 			$data['po_amount'] = 0;
 		}

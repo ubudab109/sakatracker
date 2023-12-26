@@ -12,6 +12,7 @@ import CardDashboardChart from '@/Components/CardDashboardChart';
 import ChartRevisionVendor from './Partials/ChartRevisionVendor';
 import ChartOutstandingInvDept from './Partials/ChartOutstandingInvDept';
 import ChartOutstandingInvApproval from './Partials/ChartOutstandingInvApproval';
+import { formatYYYYMM } from '@/Utils/helper';
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -55,8 +56,18 @@ export default function Index(props) {
                                         type="month"
                                         className="mt-1 block w-full"
                                         autoComplete="month"
+                                        dateFormat="MMMM yyyy"
                                         isFocused={true}
-                                        onChange={(e) => setData('month', e.target.value)}
+                                        onChange={(e) => {
+                                            console.log(new Date(e))
+                                            let date;
+                                            if (e.target) {
+                                                date = e.target.value;
+                                            } else {
+                                                date = formatYYYYMM(e);
+                                            }
+                                            setData('month', date);
+                                        }}
 
                                     />
                                 </div>

@@ -10,6 +10,7 @@ import ChartOverdue from './Partials/ChartOverdue';
 import ChartOutstandingProcessing from './Partials/ChartOutstandingProcessing';
 import CardDashboardChart from '@/Components/CardDashboardChart';
 import ChartRevisionVendor from './Partials/ChartRevisionVendor';
+import RevisionHistory from '@/Components/RevisionHistory';
 
 export default function Index(props) {
     const { data, setData, post, processing, errors, recentlySuccessful, reset } = useForm({
@@ -31,6 +32,12 @@ export default function Index(props) {
                 </div>
             </div>
 
+            <div className="pt-6">
+                <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+                    <div className="p-6 text-gray-900 font-bold">Hi, Welcome</div>
+                </div>
+            </div>
+
             {/* <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
@@ -38,7 +45,34 @@ export default function Index(props) {
                     </div>
                 </div>
             </div> */}
-
+            <div className="row mt-5">
+                <div className="pt-6">
+                    <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+                        <div className="p-6 d-flex flex-wrap align-items-center mb-4">
+                            <h5 className="card-title me-2">Submission Timeline</h5>
+                            <div className="ms-auto">
+                                <div>
+                                    <button type="button" className="btn btn-soft-secondary btn-sm">
+                                        ALL
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="p-6">
+                            {
+                                props.data.revisions && props.data.revisions.length ? (
+                                    <RevisionHistory data={props.data.revisions} />
+                                ) : (
+                                    <h5>There is no process for submitting data changes at this time.</h5>
+                                )
+                            }
+                            <div className="row mt-5">
+                                <ChartRevisionVendor data={props.data.revision_vendor} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div className="pt-6">
                 <div className="">
                     <div className="border-0 border-black rounded-lg p-0">
@@ -69,7 +103,7 @@ export default function Index(props) {
                     </div>
                 </div>
             </div>
-            
+
             <div className="row mt-5">
 
                 <CardDashboardChart name="PO Outstanding" data={props.data.card_outstanding.po_amount} href={`/vendor/outstanding-purchase-order?month=${props.data.month}`} />

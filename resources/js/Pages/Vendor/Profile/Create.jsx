@@ -1479,7 +1479,7 @@ export default function Create(props) {
                                         </div>
                                         <div className="mb-3">
                                             <InputLabel
-                                                value="Lampiran Lainnya"
+                                                value="Others"
                                                 className="font-bold"
                                                 required={true}
                                             />
@@ -1507,6 +1507,40 @@ export default function Create(props) {
                                             </div>
                                             <div className="row">
                                                 <ul className="list-group p-2">
+                                                    {
+                                                        props.data.vendor.attachments.length > 0 ? (
+                                                            props.data.vendor.attachments.map(url => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
+                                                                    </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
+                                                                </li>
+                                                            ))
+                                                        ) : null
+                                                    }
                                                     {objectFilesUrl.length > 0
                                                         ? objectFilesUrl.map(
                                                             (url) => (
@@ -1549,7 +1583,7 @@ export default function Create(props) {
                                                 </ul>
                                             </div>
                                             <p>
-                                                {files
+                                                {files.length > 0 || props.data.vendor.attachments.length > 0
                                                     ? `Total File: ${files.length}`
                                                     : "no files uploaded yet"}
                                             </p>
@@ -1854,6 +1888,40 @@ export default function Create(props) {
                                             </div>
                                             <div className="row">
                                                 <ul className="list-group p-2">
+                                                    {
+                                                        props.data.vendor.attachments.length > 0 ? (
+                                                            props.data.vendor.attachments.map(url => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
+                                                                    </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
+                                                                </li>
+                                                            ))
+                                                        ) : null
+                                                    }
                                                     {objectFilesUrl.length > 0
                                                         ? objectFilesUrl.map(
                                                             (url) => (
@@ -1896,7 +1964,7 @@ export default function Create(props) {
                                                 </ul>
                                             </div>
                                             <p>
-                                                {files
+                                                {files.length > 0 || props.data.vendor.attachments.length > 0
                                                     ? `Total File: ${files.length}`
                                                     : "no files uploaded yet"}
                                             </p>
@@ -2051,6 +2119,131 @@ export default function Create(props) {
                                             <i className='text-muted'>* Max: 5mb</i>
                                             <InputError
                                                 message={errors.file_non_pkp_statement}
+                                                className="mt-2"
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <InputLabel
+                                                value="Others"
+                                                className="font-bold"
+                                                required={true}
+                                            />
+                                            <div className="flex">
+                                                <label
+                                                    htmlFor="attachment"
+                                                    className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800"
+                                                >
+                                                    CHOOSE FILE
+                                                </label>
+                                                <div className="border-1 p-3 rounded-e-lg w-50 break-all">
+                                                    No File Chosen
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    id="attachment"
+                                                    className="hidden-input"
+                                                    name="attachment"
+                                                    hidden={true}
+                                                    onChange={(e) =>
+                                                        handleFileEvent(e)
+                                                    }
+                                                    multiple={true}
+                                                />
+                                            </div>
+                                            <div className="row">
+                                                <ul className="list-group p-2">
+                                                    {
+                                                        props.data.vendor.attachments.length > 0 ? (
+                                                            props.data.vendor.attachments.map(url => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
+                                                                    </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
+                                                                </li>
+                                                            ))
+                                                        ) : null
+                                                    }
+                                                    {objectFilesUrl.length > 0
+                                                        ? objectFilesUrl.map(
+                                                            (url) => (
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.url
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.fileName
+                                                                        }
+                                                                    </a>
+                                                                    <span
+                                                                        onClick={() =>
+                                                                            removeFiles(
+                                                                                url.fileName,
+                                                                                url.fileSize
+                                                                            )
+                                                                        }
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span>
+                                                                </li>
+                                                            )
+                                                        )
+                                                        : null}
+                                                </ul>
+                                            </div>
+                                            <p>
+                                                {files.length > 0 || props.data.vendor.attachments.length > 0
+                                                    ? `Total File: ${files.length}`
+                                                    : "no files uploaded yet"}
+                                            </p>
+                                            <i className="text-muted">
+                                                * Max: 20mb
+                                            </i>
+                                            {limitedFiles > 20 ? (
+                                                <InputError
+                                                    message="Maximum files is 20 MB"
+                                                    className="mt-2"
+                                                />
+                                            ) : null}
+
+                                            <InputError
+                                                message={errors.file}
                                                 className="mt-2"
                                             />
                                         </div>

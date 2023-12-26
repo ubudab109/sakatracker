@@ -79,7 +79,9 @@ class VendorController extends Controller
         $data['auth'] = Auth::user();
         $data['suffix'] = Suffix::all();
         $data['prefix'] = Prefix::all();
-        $data['vendor'] = Vendor::with(['user', 'attachments'])->where('user_id', Auth::user()->id)->latest('created_at')->first();
+        $data['vendor'] = Vendor::with(['user'])->where('user_id', Auth::user()->id)->latest('created_at')->first();
+        $data['vendor']['attachments'] = VendorAttachment::where('vendor_id', $data['vendor']->id)->get();
+        // dd($data['vendor']);
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
         if($data['vendor'] != null)
         {

@@ -588,7 +588,7 @@ export default function Authenticated({
                                     <li>
                                         <a href={route("vendor.report.index")}>
                                             <Home />
-                                            <span>Dashboard Report Vendor</span>
+                                            <span>Home</span>
                                         </a>
                                     </li>
                                     <li>

@@ -31,13 +31,13 @@ export default function Index(props) {
             </div>
 
             <div className="mt-3 text-end">
-                {props.data.permissions.includes('store_batch_payment') ?
+                {/* {props.data.permissions.includes('store_batch_payment') ?
+                :''} */}
                     <Link href={route('admin.batch-payment.outstanding-invoice')}>
                         <PrimaryButton>
                             Oustanding Invoice
                         </PrimaryButton>
                     </Link>    
-                :''}
             </div>
 
             <div className="pt-3">

@@ -33,7 +33,7 @@ export default function Login({ status, canResetPassword }) {
 				<div class="row g-0">
 					<div class="col-xxl-3 col-lg-3 col-md-3">
 						<div class="auth-bg pt-md-5 p-4 d-flex">
-							<div class="bg-overlay bg-primary"></div>
+							<div class="bg-overlay bg-primary" style={{height: '1000px'}}></div>
 							<ul class="bg-bubbles">
 								<li></li>
 								<li></li>
@@ -64,7 +64,7 @@ export default function Login({ status, canResetPassword }) {
 							<li></li>
 						</ul>
 						<div class="auth-bg pt-md-5 p-4 d-flex">
-							<div class="bg-overlay bg-primary p-4">
+							<div class="bg-overlay bg-primary p-4" style={{height: '1000px'}}>
 								<div className="card" style={{height: '100%'}}>
 									<div className="card-body">
 										<div class="d-flex flex-column">
@@ -151,7 +151,7 @@ export default function Login({ status, canResetPassword }) {
 
 					<div class="col-xxl-3 col-lg-3 col-md-3">
 						<div class="auth-bg pt-md-5 p-4 d-flex">
-							<div class="bg-overlay bg-primary"></div>
+							<div class="bg-overlay bg-primary" style={{height: '1000px'}}></div>
 							<ul class="bg-bubbles">
 								<li></li>
 								<li></li>

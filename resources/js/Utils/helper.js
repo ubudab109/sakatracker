@@ -90,3 +90,24 @@ export const isSimilarDate = (date) => {
         currentDate.getDate() === dataDate.getDate();
     return isSimilarDate;
 }
+
+export const getBrowserInfo = (browser) => {
+    var userAgent = navigator.userAgent;
+    return userAgent.indexOf(browser) > -1;
+};
+
+export const formatYYYYMM = (date) => {
+    // Ensure 'date' is a valid Date object
+    if (!(date instanceof Date)) {
+        return "Invalid Date";
+    }
+
+    // Extract year and month
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+
+    // Create the formatted string
+    const formattedDate = `${year}-${month}`;
+
+    return formattedDate;
+}

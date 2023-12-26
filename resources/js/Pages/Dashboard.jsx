@@ -5,13 +5,18 @@ import { useEffect, useState } from 'react';
 import RevisionHistory from '@/Components/RevisionHistory';
 import ChartRevisionVendor from './Vendor/Report/Partials/ChartRevisionVendor';
 import ChartRevisionVendorApproval from '@/Components/ChartRevisionVendorApproval';
-
+import Axios from "axios";
 
 export default function Dashboard({ auth, data }) {
   const [authData, setAuthData] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [permissions, setPermissions] = useState("");
+  const getPermissions = () => {
+    Axios.get("/get-permissions").then((response) => {
+      setPermissions(response.data);
+    });
+  }
   useEffect(() => {
     const apiUrl = `/api/check-first-login?user_id=${auth.user.id}`;
 
@@ -30,6 +35,11 @@ export default function Dashboard({ auth, data }) {
         setError(error);
         setLoading(false);
       });
+      getPermissions();
+      console.log(permissions);
+      return () => {
+        setPermissions([]);
+      }
   }, []);
 
   if (loading) {
@@ -64,7 +74,7 @@ export default function Dashboard({ auth, data }) {
         </div>
       </div>
 
-      {
+      {/* {
         auth.user.role === 'vendor' ? (
           <div className="pt-6">
             <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
@@ -93,9 +103,9 @@ export default function Dashboard({ auth, data }) {
             </div>
           </div>
         ) : null
-      }
+      } */}
       {
-        auth.user.role === 'approver' ? (
+        auth.user.role === 'approver' && permissions.includes('approver_vendor') ? (
           <div className="pt-6">
             <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
               <div className="p-6 d-flex flex-wrap align-items-center mb-4">
