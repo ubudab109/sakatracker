@@ -359,7 +359,7 @@ class ExchangeInvoiceController extends Controller
 
                     if($xml->npwpPenjual == $supplier->npwp && $xml->npwpLawanTransaksi == '017242264007000' && $xml->jumlahDpp == $request->dpp && $xml->tanggalFaktur == date('d/m/Y', strtotime($request->date)))
                     {
-                        $revisionExchange = RevisionExchangeInvoice::create([
+                        RevisionExchangeInvoice::create([
                             'exchange_invoice_id' => $exchangeInvoice->id,
                             'approval_permission' => 'is_pic_exchange_invoice',
                             'status' => 'menunggu persetujuan',

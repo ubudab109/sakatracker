@@ -60,7 +60,8 @@ class BatchPaymentController extends Controller
                     $q->where('role_id', $data['user_role']->role_id);
                 }
             })
-            ->where('status', '!=', 'ready to paid')->get()
+            ->where('status', '!=', 'ready to paid')
+            ->get()
             ->map(function ($batch) use ($data) {
                 $approver_payment = ApproverPayment::where('role_id', $data['user_role']->role_id)->first();
                 if ($batch && $approver_payment) {
@@ -121,13 +122,14 @@ class BatchPaymentController extends Controller
                 }
 
                 $getRevisionReject = RevisionBatchPayment::where('batch_payment_id', $batch->id)->where('status', 'ditolak')->first();
-                if ($getRevisionReject && $batch->status == 'draft') {
+                if ($getRevisionReject) {
                     $batch['status'] = 'ditolak';
                 }
 
                 return $batch;
             });
-
+        // dd($data['batch_payments']);
+        
         if ($request->filter == 'me') {
             $data['filter'] = true;
         }

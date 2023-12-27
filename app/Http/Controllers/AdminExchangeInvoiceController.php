@@ -195,7 +195,11 @@ class AdminExchangeInvoiceController extends Controller
 
     public function show($id) {
         $data['invoice'] = ExchangeInvoice::with('purchase_orders', 'exchange_invoice_attachments', 'vendor')->findOrFail($id);
-        $data['invoice']['bank_account_number'] = $data['invoice']->vendor->bank_account_number;
+        if ($data['invoice']->vendor) {
+            $data['invoice']['bank_account_number'] = $data['invoice']->vendor->bank_account_number;
+        } else {
+            $data['invoice']['bank_account_number'] = '';
+        }
         $checkSubmitPic = RevisionExchangeInvoice::where('exchange_invoice_id', $data['invoice']->id)->where('approval_permission', 'is_pic_exchange_invoice')->first();
         if($checkSubmitPic)
 		{

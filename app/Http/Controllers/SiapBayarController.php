@@ -15,8 +15,10 @@ use App\Models\UserRole;
 use App\Models\RevisionExchangeInvoice;
 use App\Models\Vendor;
 use App\Services\PaymentGatewayService;
+use App\Traits\HelperTrait;
 use Carbon\Carbon;
 use Auth;
+use Illuminate\Support\Facades\Log;
 use Mail;
 
 class SiapBayarController extends Controller
@@ -226,21 +228,28 @@ class SiapBayarController extends Controller
         
         foreach ($request->invoices as $invoice_id) {
             $invoice = ExchangeInvoice::find($invoice_id);
+            if (HelperTrait::isEqualDate($request->payment_date)) {
+                $invoiceStatus = 'paid';
+            } else {
+                $invoiceStatus = 'submit';
+            }
             $invoice->update([
-                'status' => 'paid'
+                'status' => $invoiceStatus
             ]);
 
             $batch_payment_invoice = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['exchange_invoice_id', $invoice_id]])->first();
             $batch_payment_invoice->update([
-                'status' => 'paid'
+                'status' => $invoiceStatus
             ]);
 
-            $notif = Notification::create([
-                'user_id' => $invoice->vendor->user_id,
-                'title' => 'E-Faktur telah dibayar',
-                'description' => 'Silahkan login untuk mengecek data',
-                'url' => '/exchange-invoice/' . $invoice_id,
-            ]);
+            if ($invoice->vendor) {
+                $notif = Notification::create([
+                    'user_id' => $invoice->vendor->user_id,
+                    'title' => 'E-Faktur telah dibayar',
+                    'description' => 'Silahkan login untuk mengecek data',
+                    'url' => '/exchange-invoice/' . $invoice_id,
+                ]);
+            }
     
             $notifMail['title'] = $notif->title;
             $notifMail['description'] = $notif->description;
@@ -251,8 +260,7 @@ class SiapBayarController extends Controller
         if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {
             PaymentGatewayService::MakeTransaction($batch_payment);
         }
-
-        $unpaid_invoices = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['status', 'unpaid']])->first();
+        $unpaid_invoices = $batch_payment->batch_payment_invoices()->where('status', 'unpaid')->first();
         if ($unpaid_invoices == null) {
             $batch_payment->update([
                 'status' => 'paid',
