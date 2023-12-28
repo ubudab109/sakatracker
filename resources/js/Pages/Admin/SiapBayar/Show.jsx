@@ -38,6 +38,7 @@ export default function Show(props) {
             Axios.post('/admin/siap-bayar/paid', data)
                 .then((response) => {
                     // You can handle the API response here
+                    console.log(response);
                     refreshPage();
                 })
                 .catch((error) => {

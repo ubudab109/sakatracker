@@ -34,14 +34,14 @@ class PaymentSLAController extends Controller
     {
         $data['permissions'] = $this->checkPermission('index');
 
-        $data['approver_payments'] = ApproverPayment::with('role')->get();
+        $data['approver_payments'] = ApproverPayment::with('role')->orderBy('level')->get();
 
         $data['batch_payments'] = BatchPayment::
         where('status', '!=', 'draft')
         ->orderBy('id', 'desc')
         ->get()
         ->map(function($batch_payment){
-            $approver_payments = ApproverPayment::with('role')->get();
+            $approver_payments = ApproverPayment::with('role')->orderBy('level')->get();
             $batch_payment['total_sla'] = 0;
             foreach($approver_payments as $approver_payment)
             {

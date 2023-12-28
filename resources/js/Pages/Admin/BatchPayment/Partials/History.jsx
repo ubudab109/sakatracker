@@ -13,7 +13,7 @@ function History({data, batchPayment}) {
                                 {item.title}
                             </h3>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
-                            Status : {batchPayment.status && batchPayment.status === 'paid' ? 'disetujui' : item.status}
+                            Status : {batchPayment.status && batchPayment.status === 'paid' ? 'approved' : (item.status === 'disetujui' ? 'approved' : item.status)}
                             </p>
                             <p className={`text-base font-normal text-${item.color}-500 dark:text-gray-400`}>
                                 Note : {item.body}

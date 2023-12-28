@@ -37,7 +37,7 @@ export default function Table(props) {
                                 <th>Vendor Name</th>
                                 <th>Vendor Code</th>
                                 <th>Status</th>
-                                <th>Approve Date</th>
+                                <th>Last Update</th>
                                 <th>Document Stage</th>
                                 <th>Created Date</th>
                                 {props.data.approver_vendors.map((item, index) => (

@@ -24,7 +24,7 @@ export default function Table(props) {
         const year = date.getFullYear();
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-
+      
         return `${day}-${month}-${year} ${hours}:${minutes}`;
     }
 
@@ -33,14 +33,14 @@ export default function Table(props) {
     }
 
     const filterCompleted = (event) => {
-        if (event.target.checked) {
-            window.location.assign('/admin/batch-payment?filter=me');
+        if(event.target.checked){
+           window.location.assign('/admin/batch-payment?filter=me');
         } else {
             window.location.assign('/admin/batch-payment');
         }
-    }
+     }
 
-    // Create our number formatterCurrency.
+     // Create our number formatterCurrency.
     const formatterCurrency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'EUR',
@@ -56,7 +56,7 @@ export default function Table(props) {
         <div className="pt-6">
             <div className="max-w-7xl mx-auto">
                 <form className='mb-3'>
-                    <input type="checkbox" className='mr-3' id="filter"
+                    <input type="checkbox" className='mr-3' id="filter" 
                         onChange={event => filterCompleted(event)}
                         checked={props.data.filter}
                     />
@@ -78,21 +78,23 @@ export default function Table(props) {
                         <tbody>
                             {props.data.batch_payments.map((item, index) => (
                                 <>
-                                    <tr>
-                                        <td>
-                                            <div className='flex gap-1'>
-                                                <a href={showRoute(item.id)} className='text-gray-500'>
-                                                    <Eye />
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>{item.no_batch}</td>
-                                        <td>{item.periode}</td>
-                                        <td>{item.jatuh_tempo}</td>
-                                        <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
-                                        <td>{item.status}</td>
-                                        <td>{formatDate(item.updated_at)}</td>
-                                    </tr>
+                                    {item.show == 1 ?
+                                        <tr>
+                                            <td>
+                                                <div className='flex gap-1'>
+                                                    <a href={showRoute(item.id)} className='text-gray-500'>
+                                                        <Eye />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td>{item.no_batch}</td>
+                                            <td>{item.periode}</td>
+                                            <td>{item.jatuh_tempo}</td>
+                                            <td>{formatterCurrency.format(parseInt(item.total)).replace("€", "").trim()}</td>
+                                            <td>{item.status}</td>
+                                            <td>{formatDate(item.updated_at)}</td>
+                                        </tr>
+                                    : ''}
                                 </>
                             ))}
                         </tbody>

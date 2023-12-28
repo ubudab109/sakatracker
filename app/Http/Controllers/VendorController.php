@@ -167,7 +167,7 @@ class VendorController extends Controller
             // $expired_ektp = 'required|date|date_format:Y-m-d';
             // $file_front_page_bank = $request->file_front_page_bank != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $file_bank_account_statement_letter = $request->file_bank_account_statement_letter != null ? '' : 'required|' . 'mimes:pdf|max:5000';
-            $file_non_pkp_statement = '';
+            $file_non_pkp_statement = $request->file_non_pkp_statement != null ? '' : 'required|' . 'mimes:pdf|max:5000';
         }
 
         if($request->type_of_business == 'Non PKP')
@@ -192,7 +192,7 @@ class VendorController extends Controller
         {
             $file_npwp = $request->file_npwp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             // $expired_npwp = 'required|date|date_format:Y-m-d';
-            $file_sppkp = $request->file_sppkp != null ? '' : 'mimes:pdf|max:5000';
+            $file_sppkp = $request->file_sppkp != null ? '' : 'required|' . 'mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
             $file_siup = $request->file_siup != null ? '' : 'mimes:pdf|max:5000';
             $expired_siup = 'date|date_format:Y-m-d';
@@ -646,7 +646,7 @@ class VendorController extends Controller
             }
             if($request->type_of_business == 'Pribadi' || $request->type_of_business == 'Pribadi Non PKP') {
                 if($data->file_npwp == null) {$file_npwp = 'required|mimes:pdf|max:5000';}
-                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'mimes:pdf|max:5000';}
+                if($data->file_non_pkp_statement == null) {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
                 if($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {$file_npwp = 'required|mimes:pdf|max:5000';}
                 if($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {$file_non_pkp_statement = 'required|mimes:pdf|max:5000';}
                 // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}

@@ -26,12 +26,12 @@ class RequestGoodReceiptController extends Controller
     public function index()
     {
         $checkVendorProfile = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->first();
-        if (!$checkVendorProfile) {
+        if(!$checkVendorProfile) {
             return Redirect::route('vendor.index');
         }
-
+        
         $vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
-        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)->orderByDesc('updated_at')->get();
+        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)->orderByDesc('id')->get();
 
         return Inertia::render('Vendor/RequestGR/Index', [
             'data' => $data
@@ -50,27 +50,20 @@ class RequestGoodReceiptController extends Controller
                 $q->where('status_account', 'disetujui');
             })
             ->where('role', 'vendor')
-            ->where('id', Auth::user()->id)
-            ->first();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
-        // $poArray = $po->map(function ($po) {
-        //     return [
-        //         'value' => $po->po_num,
-        //         'label' => $po->po_num,
-        //     ];
-        // });
+        ->where('id', Auth::user()->id)
+        ->first();
+		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $poArray = $po->map(function ($po) {
+            return [
+                'value' => $po->po_num,
+                'label' => $po->po_num,
+            ];
+        });
 
-        $poArray = [
-            [
-                'value' => '1',
-                'label' => 1,
-            ]
-        ];
-
-        $data['po_array'] = $poArray;
+        $data['po_array'] = $poArray->toArray();
 
         $data['po_number'] = $request->po_number ?? null;
-
+        
         return Inertia::render('Vendor/RequestGR/Create', [
             'data' => $data
         ]);
@@ -95,8 +88,8 @@ class RequestGoodReceiptController extends Controller
             'status' => 'pending'
         ]);
 
-        if ($request->attachment != null) {
-            foreach ($request->attachment as $attachment) {
+        if($request->attachment != null) {
+            foreach($request->attachment as $attachment) {
                 $attachmentPath = '';
                 if ($request->hasFile('attachment')) {
                     $save = $attachment->store('public/attachment');
@@ -110,7 +103,7 @@ class RequestGoodReceiptController extends Controller
             }
         }
 
-        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $gr->po_number, '/admin/request-good-receipt/' . $gr->id . '/edit');
+        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $gr->po_number, '/admin/request-good-receipt/' . $gr->id . '/edit' );
 
         $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil tambah request GR', '/request-good-receipt');
 
@@ -130,6 +123,7 @@ class RequestGoodReceiptController extends Controller
      */
     public function edit($id)
     {
+
         $data['request_good_receipt'] = RequestGoodReceipt::where('id', $id)->first();
         $vendor = User::with(['vendor_latest' => function ($q) {
             $q->where('status_account', 'disetujui');
@@ -138,9 +132,9 @@ class RequestGoodReceiptController extends Controller
                 $q->where('status_account', 'disetujui');
             })
             ->where('role', 'vendor')
-            ->where('id', Auth::user()->id)
-            ->first();
-        // $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        ->where('id', Auth::user()->id)
+        ->first();
+		// $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
         // $poArray = $po->map(function ($po) {
         //     return [
         //         'value' => $po->po_num,
@@ -173,10 +167,10 @@ class RequestGoodReceiptController extends Controller
             // 'total_price' => $request->quantity * $request->unit_price,
         ]);
 
-        if ($request->attachment != null) {
+        if($request->attachment != null) {
             // $data->exchange_invoice_attachments->delete();
             RequestGoodReceiptAttachment::where('request_g_r_id', $data->id)->delete();
-            foreach ($request->attachment as $attachment) {
+            foreach($request->attachment as $attachment) {
                 $attachmentPath = '';
                 if ($request->hasFile('attachment')) {
                     $save = $attachment->store('public/attachment');
@@ -192,7 +186,7 @@ class RequestGoodReceiptController extends Controller
 
         $this->notifySelf(Auth::user()->id, 'Request GR', 'Berhasil ubah request GR', '/request-good-receipt');
 
-        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $data->po_number, '/admin/request-good-receipt/' . $data->id . '/edit');
+        $this->notifyPurchasing('Request GR', 'Menunggu verifikasi dengan No. PO: ' . $data->po_number, '/admin/request-good-receipt/' . $data->id . '/edit' );
 
         return Redirect::route('request-good-receipt.index');
     }
@@ -211,10 +205,11 @@ class RequestGoodReceiptController extends Controller
 
     public function notifyPurchasing($title, $description, $url)
     {
-        $users = User::whereHas('user_role.role.permissions', function ($q) {
+        $users = User::whereHas('user_role.role.permissions', function($q){
             $q->where('name', 'verification_request_gr');
         })->get();
-        foreach ($users as $user) {
+        foreach($users as $user)
+        {
             $notif_vendor = Notification::create([
                 'user_id' => $user->id,
                 'title' => $title,

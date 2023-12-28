@@ -118,10 +118,9 @@ export default function Table(props) {
                 <form method="post" onSubmit={submit}>
                     <div className='border-b-2 p-3'>
                         <b>Import Data</b>
-                        <p>excel column must consist of 2 Rows: </p>
-                        <p>Row 1 = date in Y-m-d format</p>
-                        <p>Row 2 = holiday description</p>
-                        <p>*note without header</p>
+                        <div className='mt-2'>
+                            <a href="/templates/sla-holiday.xlsx" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 hiver:text-black focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-800 focus:ring-offset-2 transition ease-in-out duration-150 false" target="_blank">Download Template</a>
+                        </div>
                         <div className="mb-1 mt-3">
                             <InputLabel htmlFor="excel" value="Attach File Excel" required={true} />
 

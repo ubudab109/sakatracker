@@ -85,8 +85,14 @@ class PaymentGatewayService
         
         try {
             if ($auth['success']) {
+                $dateTime = new \DateTime($batchPayment->payment_date);
+                $dateTime->setTime(0, 0);
+                $timezone = new \DateTimeZone('Asia/Bangkok');
+                $dateTime->setTimezone($timezone);
+                $formattedDate = $dateTime->format('Y-m-d\TH:i:sP');
+
                 $data = [
-                    'transactionDate' => $batchPayment->payment_date,
+                    'transactionDate' => $formattedDate,
                     'transactions' => [],
                 ];
                 $exchangeInvoices = [];
@@ -94,12 +100,12 @@ class PaymentGatewayService
                     $invoice = ExchangeInvoice::find($bi->exchange_invoice_id);
                     if ($invoice) {
                         $data['transactions'][] = [
-                            'txnReference' => $invoice->invoice_number,
+                            'txnReference' => $invoice->invoice_number . time(),
                             'partnerReferenceNo' => $invoice->invoice_number,
                             'txnType' => 'Transfer',
                             'sourceBank' => $invoice->vendor->is_bca ? 'BCA' : 'MUFG',
                             'sourceAccountNo' => $invoice->vendor->bank_account_number,
-                            'amount' => $invoice->total,
+                            'amount' => intval($invoice->total),
                             'currency' => 'IDR',
                             'recBank' => $invoice->vendor->bank_name,
                             'recBankCode' => $invoice->vendor->bank_swift_code ?? '',
@@ -119,7 +125,7 @@ class PaymentGatewayService
                     'is_success' => true,
                     'message' => 'Payment Gateway Request',
                     'desc' => 'Request send successfully',
-                    'data' => null,
+                    'data' => json_encode($data),
                 ];
                 $instance->storeLogRequest($batchPayment, $logRequestSend);
 

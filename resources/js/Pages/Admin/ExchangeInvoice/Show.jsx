@@ -134,6 +134,10 @@ export default function Index(props) {
         setIsPopupOpen(false);
     };
 
+    const backPage = () => {
+        window.history.back();
+    };
+
     const [files, setFiles] = useState([]);
     const [objectFilesUrl, setObjectFilesUrl] = useState([]);
     const [limitedFiles, setLimitedFiles] = useState(0);
@@ -1605,18 +1609,14 @@ export default function Index(props) {
                         <div className="flex justify-end items-end gap-2 mt-2">
                             {
                                 currentBatchId ? (
-                                    <Link href={route('admin.batch-payment.show', currentBatchId)}>
-                                        <SecondaryButton>
-                                            Back
-                                        </SecondaryButton>
-                                    </Link>
+                                    <SecondaryButton onClick={() => backPage()}>
+                                        Back
+                                    </SecondaryButton>
                                 ) : (
 
-                                    <Link href={route('admin.exchange-invoice.index')}>
-                                        <SecondaryButton>
-                                            Back
-                                        </SecondaryButton>
-                                    </Link>
+                                    <SecondaryButton onClick={() => backPage()}>
+                                        Back
+                                    </SecondaryButton>
                                 )
                             }
                         </div>

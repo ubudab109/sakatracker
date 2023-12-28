@@ -72,6 +72,51 @@ export default function Show(props) {
             <div className="pt-6">
                 <div className="">
                     <div className="bg-white overflow-hidden shadow-lg sm:rounded-lg">
+                        <div className='mb-3 p-6'>
+                            <p className='mb-3 font-bold text-lg'>Status Timeline</p>
+                            {/* <ul className="steps font-bold grid grid-cols-3">
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : ''}`}>Approver By Purchase</li>
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : ''}`}>Approver By Purchase</li>
+                                <li className={`step 
+                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : 'success'} 
+                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : ''}`}>Completed</li>
+                            </ul> */}
+
+                            {/* <div className='font-bold'>
+                                <div className="flex items-center whitespace-nowrap gap-3 overflow-auto">
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-white bg-red-500' : props.data.timelineRejectedBy ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            1
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-red-500' : props.data.timelineRejectedBy ? 'text-green-500' : ''}`}>
+                                            Approver By Purchase ------------{`>`}
+                                        </div>
+                                    </div>
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-white bg-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            2
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-green-500' : ''}`}>
+                                        Approver By Purchase ------------{`>`}
+                                        </div>
+                                    </div>
+                                    <div className=''>
+                                        <div className={`font-bold ${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-white bg-red-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
+                                            3
+                                        </div>
+                                        <div className={`${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-red-500' : ''}`}>
+                                            Complete ------------{`>`}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> */}
+
+                            <History data={props.data.timeline} />
+                        </div>
                         <div className="p-6 text-gray-900 font-bold">
                             <div className='mb-3'>
                                 <p className="font-bold text-black mb-3">Company Information</p>
@@ -660,51 +705,7 @@ export default function Show(props) {
                                 </div>
                         : ''}
 
-                        <div className='mb-3 p-6'>
-                            <p className='mb-3 font-bold text-lg'>Status Timeline</p>
-                            {/* <ul className="steps font-bold grid grid-cols-3">
-                                <li className={`step 
-                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : 'success'} 
-                                    step-${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'success' : props.data.timelineRejectedBy == 'Purchasing' ? 'error' : ''}`}>Approver By Purchase</li>
-                                <li className={`step 
-                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : 'success'} 
-                                    step-${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'success' : props.data.timelineRejectedBy == 'Legal' ? 'error' : ''}`}>Approver By Purchase</li>
-                                <li className={`step 
-                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : 'success'} 
-                                    step-${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'success' : props.data.timelineRejectedBy == 'Accounting' ? 'error' : ''}`}>Completed</li>
-                            </ul> */}
-
-                            {/* <div className='font-bold'>
-                                <div className="flex items-center whitespace-nowrap gap-3 overflow-auto">
-                                    <div className=''>
-                                        <div className={`font-bold ${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-white bg-red-500' : props.data.timelineRejectedBy ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
-                                            1
-                                        </div>
-                                        <div className={`${props.data.timelineLevel >= 1 && props.data.timelineRejectedBy != 'Purchasing' ? 'text-green-500' : props.data.timelineRejectedBy == 'Purchasing' ? 'text-red-500' : props.data.timelineRejectedBy ? 'text-green-500' : ''}`}>
-                                            Approver By Purchase ------------{`>`}
-                                        </div>
-                                    </div>
-                                    <div className=''>
-                                        <div className={`font-bold ${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-white bg-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-white bg-green-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
-                                            2
-                                        </div>
-                                        <div className={`${props.data.timelineLevel >= 2 && props.data.timelineRejectedBy != 'Legal' ? 'text-green-500' : props.data.timelineRejectedBy == 'Legal' ? 'text-red-500' : props.data.timelineRejectedBy && props.data.timelineRejectedBy !== 'Purchasing' ? 'text-green-500' : ''}`}>
-                                        Approver By Purchase ------------{`>`}
-                                        </div>
-                                    </div>
-                                    <div className=''>
-                                        <div className={`font-bold ${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-white bg-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-white bg-red-500' : 'text-gray-700 bg-white'} rounded-full border-2 flex items-center justify-center font-mono`} style={{height: 32, width: 32, fontSize: 12}}>
-                                            3
-                                        </div>
-                                        <div className={`${props.data.timelineLevel >= 3 && props.data.timelineRejectedBy != 'Accounting' ? 'text-green-500' : props.data.timelineRejectedBy == 'Accounting' ? 'text-red-500' : ''}`}>
-                                            Complete ------------{`>`}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
-
-                            <History data={props.data.timeline} />
-                        </div>
+                        
 
                         {/* <div className="mt-3 p-6">
                             <b>History</b>

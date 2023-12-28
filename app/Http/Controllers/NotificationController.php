@@ -12,7 +12,6 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         $data['notifications'] = Notification::where('user_id', Auth::user()->id)
-        ->orderBy('id', 'desc')
         ->orderBy('read', 'desc')
         ->get();
         return Inertia::render('Notifications/Index', ['data' => $data]);

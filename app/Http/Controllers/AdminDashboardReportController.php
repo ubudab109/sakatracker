@@ -37,22 +37,28 @@ class AdminDashboardReportController extends Controller
     public function cardOutstanding($month)
     {
         $arrayPo = PurchaseOrder::whereHas('exchange_invoice', function($q) use($month){
-            $q->whereDate('date', '>=', $month . '-01');
-            $q->whereDate('date', '<=', $month . '-30');
+            // $q->whereDate('date', '>=', $month . '-01');
+            // $q->whereDate('date', '<=', $month . '-30');
+            // $q->where('status', 'unpaid');
+
+            [$year, $month] = explode('-', $month);
+
+            $q->whereYear('date', $year);
+            $q->whereMonth('date', $month);
             $q->where('status', 'unpaid');
         })->pluck('order_id')->toArray();
 
         $data['po_amount'] = 0;
         // dd($data);
 
-        $data['invoice_amount'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        ->whereDate('date', '<=', $month . '-30')
+        [$year, $month] = explode('-', $month);
+
+        $data['invoice_amount'] = ExchangeInvoice::whereYear('date', $year)->whereMonth('date', $month)
         ->where('status', 'unpaid')
         ->count();
 		
 		$data['invoice_total'] = 0;
-        $invoices = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        ->whereDate('date', '<=', $month . '-30')
+        $invoices = ExchangeInvoice::whereYear('date', $year)->whereMonth('date', $month)
         ->where('status', 'unpaid')->get();
 		
 		foreach($invoices as $invoice)
@@ -70,8 +76,10 @@ class AdminDashboardReportController extends Controller
         $invoices = BatchPaymentInvoice::with('batch_payment', 'exchange_invoice')
         ->where('status', 'paid')
         ->whereHas('exchange_invoice', function($q) use($month){
-            $q->whereDate('date', '>=', $month . '-01');
-            $q->whereDate('date', '<=', $month . '-30');
+            [$year, $month] = explode('-', $month);
+
+            $q->whereYear('date', $year);
+            $q->whereMonth('date', $month);
         })->get()
         ->map(function($invoice){
             $invoice['is_late'] = 0;
@@ -114,8 +122,10 @@ class AdminDashboardReportController extends Controller
         })
         ->where('status', 'unpaid')
         ->whereHas('exchange_invoice', function($q) use($month){
-            $q->whereDate('date', '>=', $month . '-01');
-            $q->whereDate('date', '<=', $month . '-30');
+            [$year, $month] = explode('-', $month);
+
+            $q->whereYear('date', $year);
+            $q->whereMonth('date', $month);
             $q->where('status', 'unpaid');
         })->get()
         ->map(function($invoice){
@@ -146,19 +156,17 @@ class AdminDashboardReportController extends Controller
 
     public function chartOutstandingProcessing($month)
     {
+        [$year, $month] = explode('-', $month);
 
-        $data['rejected'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        ->whereDate('date', '<=', $month . '-30')
+        $data['rejected'] = ExchangeInvoice::whereYear('date', $year)->whereMonth('date', $month)
         ->where('status', 'ditolak')
         ->count();
 
-        $data['progress'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        ->whereDate('date', '<=', $month . '-30')
+        $data['progress'] = ExchangeInvoice::whereYear('date', $year)->whereMonth('date', $month)
         ->where('status', 'unpaid')
         ->count();
 
-        $data['payment'] = ExchangeInvoice::whereDate('date', '>=', $month . '-01')
-        ->whereDate('date', '<=', $month . '-30')
+        $data['payment'] = ExchangeInvoice::whereYear('date', $year)->whereMonth('date', $month)
         ->where('status', 'paid')
         ->count();
 
