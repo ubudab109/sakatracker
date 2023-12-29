@@ -34,23 +34,25 @@ class ApproverDashboardReportController extends Controller
 
     private function cardBatchPayments(string $type, $month)
     {
+        $startOfMonth = Carbon::parse($month . '-01');
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
         if ($type == 'new') {
-            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($month){
-                $q->whereDate('date', '>=', $month . '-01');
-                $q->whereDate('date', '<=', $month . '-30');
+            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($startOfMonth, $endOfMonth){
+                $q->whereDate('date', '>=', $startOfMonth);
+                $q->whereDate('date', '<=', $endOfMonth);
                 $q->where('status', 'sedang berlangsung')
                 ->orderBy('created_at', 'desc');
             })->count();
         } else if ($type == 'pending') {
-            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($month){
-                $q->whereDate('date', '>=', $month . '-01');
-                $q->whereDate('date', '<=', $month . '-30');
+            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($startOfMonth, $endOfMonth){
+                $q->whereDate('date', '>=', $startOfMonth);
+                $q->whereDate('date', '<=', $endOfMonth);
                 $q->where('status', 'menunggu persetujuan');
             })->count();
         } else if ($type == 'rejected') {
-            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($month){
-                $q->whereDate('date', '>=', $month . '-01');
-                $q->whereDate('date', '<=', $month . '-30');
+            $batchPayment = BatchPaymentInvoice::whereHas('exchange_invoice', function($q) use($startOfMonth, $endOfMonth){
+                $q->whereDate('date', '>=', $startOfMonth);
+                $q->whereDate('date', '<=', $endOfMonth);
                 $q->where('status', 'ditolak');
             })->count();
         } else {
@@ -60,16 +62,18 @@ class ApproverDashboardReportController extends Controller
     }
     private function cardInvoice(string $type, $month)
     {
+        $startOfMonth = Carbon::parse($month . '-01');
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
         if ($type == 'new') {
             $invoices = ExchangeInvoice::where('status', 'sedang berlangsung')
             ->orderBy('created_at', 'desc')
-            ->whereDate('date', '>=', $month. '-01')
-            ->whereDate('date', '<=', $month . '-30')
+            ->whereDate('date', '>=', $startOfMonth)
+            ->whereDate('date', '<=', $endOfMonth)
             ->count();
         } else if ($type == 'pending') {
             $invoices = ExchangeInvoice::where('status', 'menunggu persetujuan')
-            ->whereDate('date', '>=', $month. '-01')
-            ->whereDate('date', '<=', $month . '-30')
+            ->whereDate('date', '>=', $startOfMonth)
+            ->whereDate('date', '<=', $endOfMonth)
             ->count();
         } else {
             return null;
@@ -80,11 +84,13 @@ class ApproverDashboardReportController extends Controller
 
     public function chartOutstandingPercentage($month)
     {
+        $startOfMonth = Carbon::parse($month . '-01');
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $invoices = BatchPaymentInvoice::with('batch_payment', 'exchange_invoice')
         ->where('status', 'paid')
-        ->whereHas('exchange_invoice', function($q) use($month){
-            $q->whereDate('date', '>=', $month . '-01');
-            $q->whereDate('date', '<=', $month . '-30');
+        ->whereHas('exchange_invoice', function($q) use($startOfMonth, $endOfMonth){
+            $q->whereDate('date', '>=', $startOfMonth);
+            $q->whereDate('date', '<=', $endOfMonth);
         })->get()
         ->map(function($invoice){
             $invoice['is_late'] = 0;

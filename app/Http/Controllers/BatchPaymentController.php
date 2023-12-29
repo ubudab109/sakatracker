@@ -127,7 +127,7 @@ class BatchPaymentController extends Controller
 
                 return $batch;
             });
-
+        // dd($data['batch_payments']);
         if ($request->filter == 'me') {
             $data['filter'] = true;
         }
