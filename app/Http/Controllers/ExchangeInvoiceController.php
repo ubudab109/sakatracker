@@ -45,70 +45,67 @@ class ExchangeInvoiceController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {   
-        $data['invoices'] = ExchangeInvoice::whereHas('vendor', function($q){
+    {
+        $data['invoices'] = ExchangeInvoice::whereHas('vendor', function ($q) {
             $q->where('user_id', Auth::user()->id);
         })
-        ->orderBy('updated_at', 'desc')
-        ->get()
-        ->map(function ($invoice) {
-            if($invoice['status'] != 'draft')
-            {
-                // $checkRevision = RevisionExchangeInvoice::
-                // where('exchange_invoice_id', $invoice->id)
-                // ->where('status', '!=', 'disetujui')
-                // ->first();
-                // if($checkRevision) {
-				// 	if($checkRevision->user) {
-				// 		$name = $checkRevision->user->name;
-				// 	} else {
-				// 		$name = 'PIC Tukar Faktur';
-				// 	}
-                //     $invoice['status'] = $checkRevision->status . ' ' . $name;
-                // } else {
-                //     $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $invoice->id)->latest()->first();
-                //     if($checkRevision)
-                //     {
-                //         if($checkRevision->user) {
-                //             $name = $checkRevision->user->name;
-                //         } else {
-                //             $name = 'PIC Tukar Faktur';
-                //         }
-                //         if($checkRevision->status == 'disetujui')
-                //         {
-                //             $invoice['status'] = $checkRevision->status;
-                //         } else {
-                //             $invoice['status'] = $checkRevision->status . ' ' . $name;
-                //         }
-                //     } else {
-                //         $invoice['status'] = 'tukar faktur tidak valid';
-                //     }
-                // }
-                if($invoice['status'] == 'tukar faktur tidak valid')
-				{
-					$invoice['status'] = 'Submit';
-				}
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(function ($invoice) {
+                if ($invoice['status'] != 'draft') {
+                    // $checkRevision = RevisionExchangeInvoice::
+                    // where('exchange_invoice_id', $invoice->id)
+                    // ->where('status', '!=', 'disetujui')
+                    // ->first();
+                    // if($checkRevision) {
+                    // 	if($checkRevision->user) {
+                    // 		$name = $checkRevision->user->name;
+                    // 	} else {
+                    // 		$name = 'PIC Tukar Faktur';
+                    // 	}
+                    //     $invoice['status'] = $checkRevision->status . ' ' . $name;
+                    // } else {
+                    //     $checkRevision = RevisionExchangeInvoice::where('exchange_invoice_id', $invoice->id)->latest()->first();
+                    //     if($checkRevision)
+                    //     {
+                    //         if($checkRevision->user) {
+                    //             $name = $checkRevision->user->name;
+                    //         } else {
+                    //             $name = 'PIC Tukar Faktur';
+                    //         }
+                    //         if($checkRevision->status == 'disetujui')
+                    //         {
+                    //             $invoice['status'] = $checkRevision->status;
+                    //         } else {
+                    //             $invoice['status'] = $checkRevision->status . ' ' . $name;
+                    //         }
+                    //     } else {
+                    //         $invoice['status'] = 'tukar faktur tidak valid';
+                    //     }
+                    // }
+                    if ($invoice['status'] == 'tukar faktur tidak valid') {
+                        $invoice['status'] = 'Submit';
+                    }
 
-                if($invoice['status'] == 'unpaid')
-				{
-					$invoice['status'] = 'Ready to Paid';
-				}
-            } else {
-                $invoice['status'] = 'draft';
-            }
-            return $invoice;
-        });
+                    if ($invoice['status'] == 'unpaid') {
+                        $invoice['status'] = 'Ready to Paid';
+                    }
+                } else {
+                    $invoice['status'] = 'draft';
+                }
+                return $invoice;
+            });
 
         $checkVendorProfile = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->first();
-        if(!$checkVendorProfile) {
+        if (!$checkVendorProfile) {
             return Redirect::route('vendor.index');
         }
 
         $data['submissionStatus'] = Vendor::where('user_id', Auth::user()->id)
-        // ->where('status_account', '!=', 'draft')
-        ->where('status_account', '!=', 'ditolak')
-        ->where('status_account', '!=', 'disetujui')
-        ->first();
+            // ->where('status_account', '!=', 'draft')
+            ->where('status_account', '!=', 'ditolak')
+            ->where('status_account', '!=', 'disetujui')
+            ->first();
 
         $data['latest'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest('created_at')->first();
 
@@ -129,11 +126,11 @@ class ExchangeInvoiceController extends Controller
                 $q->where('status_account', 'disetujui');
             })
             ->where('role', 'vendor')
-        ->where('id', Auth::user()->id)
-        ->first();
+            ->where('id', Auth::user()->id)
+            ->first();
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = Location::all();
-		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
         $poArray = $po->map(function ($po) {
             return [
                 'value' => $po->po_header_id,
@@ -156,10 +153,9 @@ class ExchangeInvoiceController extends Controller
     public function store(Request $request)
     {
         $vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
-        if($request->status_submit == 'menunggu persetujuan') {
+        if ($request->status_submit == 'menunggu persetujuan') {
             $poValidate = '';
-            if($request->is_po == 1)
-            {
+            if ($request->is_po == 1) {
                 $poValidate = '|required|mimes:pdf';
             }
             $request->validate([
@@ -246,8 +242,8 @@ class ExchangeInvoiceController extends Controller
             'document_number' => $exchangeInvoice->id
         ]);
 
-        if($request->attachment != null) {
-            foreach($request->attachment as $attachment) {
+        if ($request->attachment != null) {
+            foreach ($request->attachment as $attachment) {
                 $attachmentPath = '';
                 if ($request->hasFile('attachment')) {
                     $filename = date('YmdHis') . rand(10, 99) . '_' . $attachment->getClientOriginalName();
@@ -261,9 +257,9 @@ class ExchangeInvoiceController extends Controller
             }
         }
 
-        if($request->gr_items != null) {
-            foreach($request->gr_items as $item) {
-                foreach($item['array'] as $item1) {
+        if ($request->gr_items != null) {
+            foreach ($request->gr_items as $item) {
+                foreach ($item['array'] as $item1) {
                     PurchaseOrder::create([
                         'exchange_invoice_id' => $exchangeInvoice->id,
                         'orderline_id' => $item1['purchase_order_detail']['po_line_id'],
@@ -280,31 +276,28 @@ class ExchangeInvoiceController extends Controller
             }
         }
 
-        if($request->status_submit == 'menunggu persetujuan') { 
+        if ($request->status_submit == 'menunggu persetujuan') {
             ini_set('memory_limit', '614M');
-            if($taxInvoicePath != '')
-            {
+            if ($taxInvoicePath != '') {
                 $pdfBarcode = new Pdf(storage_path('/app/public/tax_invoice/') . $filenameTax);
                 $pageNumbers = $pdfBarcode->getNumberOfPages();
-    
+
                 $imageArray = [];
-    
-                for($i=1; $i <= $pageNumbers; $i++)
-                {
+
+                for ($i = 1; $i <= $pageNumbers; $i++) {
                     $fileNameBarcode = date('Y-m-dH-i-s');
                     $pdfBarcode->setPage($i)->width(1200)->saveImage(public_path('/images/') . $fileNameBarcode . '.png');
                     $path = public_path('/images/') . $fileNameBarcode . '.png';
                     array_push($imageArray, $path);
                 }
-    
+
                 $textBarcode = null;
-                foreach($imageArray as $image) {
+                foreach ($imageArray as $image) {
                     $qrcode = new QrReader($image);
                     $textBarcode = $qrcode->text();
                 }
 
-                foreach($imageArray as $image)
-                {
+                foreach ($imageArray as $image) {
                     if (File::exists($image)) {
                         File::delete($image);
                     }
@@ -315,74 +308,78 @@ class ExchangeInvoiceController extends Controller
             $url = $textBarcode;
             $checkUrl = explode('http://svc.efaktur.pajak.go.id/validasi/faktur/', $url);
 
-            if(count($checkUrl) == 2)
-            {
+            if (count($checkUrl) == 2) {
                 $response = Http::get($url);
-        
+
                 if ($response->getStatusCode() == 200) {
                     // Get the XML content from the response
                     $xmlContent = (string) $response->getBody();
-        
+
                     // You can now parse and process the $xmlContent as needed
                     // For example, you can use SimpleXMLElement to work with the XML data
-        
+
                     $xml = new \SimpleXMLElement($xmlContent);
-        
+
                     $reasonNotif = 'ditolak karena';
-                    if($xml->npwpPenjual != $supplier->npwp) {
+                    if ($xml->npwpPenjual != $supplier->npwp) {
                         $reasonNotif = $reasonNotif . ' NPWP Penjual tidak cocok';
                     }
 
-                    if($xml->npwpLawanTransaksi != '017242264007000') {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->npwpLawanTransaksi != '017242264007000') {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' NPWP Lawan Transaksi tidak cocok';
                     }
 
-                    if($xml->jumlahDpp != $request->dpp) {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->jumlahDpp != $request->dpp) {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' DPP tidak cocok';
                     }
 
-                    if($xml->tanggalFaktur != date('d/m/Y', strtotime($request->date))) {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->tanggalFaktur != date('d/m/Y', strtotime($request->date))) {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' Tanggal tidak cocok';
                     }
 
-                    if($xml->npwpPenjual == $supplier->npwp && $xml->npwpLawanTransaksi == '017242264007000' && $xml->jumlahDpp == $request->dpp && $xml->tanggalFaktur == date('d/m/Y', strtotime($request->date)))
-                    {
+                    if ($xml->npwpPenjual == $supplier->npwp && $xml->npwpLawanTransaksi == '017242264007000' && $xml->jumlahDpp == $request->dpp && $xml->tanggalFaktur == date('d/m/Y', strtotime($request->date))) {
                         $revisionExchange = RevisionExchangeInvoice::create([
                             'exchange_invoice_id' => $exchangeInvoice->id,
                             'approval_permission' => 'is_pic_exchange_invoice',
                             'status' => 'menunggu persetujuan',
                             'level' => 0
                         ]);
-            
+
                         $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                        foreach($rolePermissions as $rolePermission)
-                        {
+
+                        foreach ($rolePermissions as $rolePermission) {
+                            $uniqueUserIds = [];
                             $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                            foreach($user_roles as $user_role)
-                            {
-                                $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
-                                $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $this->formatInvoiceNumber($vendor);
-                                $notifApprover['url'] = '/admin/exchange-invoice/' . $exchangeInvoice->id;
-            
-                                Notification::create([
-                                    'user_id' => $user_role->user_id,
-                                    'title' => $notifApprover['title'],
-                                    'description' => $notifApprover['description'],
-                                    'url' => $notifApprover['url'],
-                                ]);
-                                $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                            foreach ($user_roles as $user_role) {
+                                $userId = $user_role->user_id;
+
+                                // Check if the notification for this user has already been sent
+                                if (!in_array($userId, $uniqueUserIds)) {
+                                    $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
+                                    $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $this->formatInvoiceNumber($vendor);
+                                    $notifApprover['url'] = '/admin/exchange-invoice/' . $exchangeInvoice->id;
+
+                                    Notification::create([
+                                        'user_id' => $userId,
+                                        'title' => $notifApprover['title'],
+                                        'description' => $notifApprover['description'],
+                                        'url' => $notifApprover['url'],
+                                    ]);
+
+                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
+
+                                    // Add the user_id to the list of sent notifications to avoid duplicates
+                                    $uniqueUserIds[] = $userId;
+                                }
                             }
                         }
 
@@ -400,7 +397,7 @@ class ExchangeInvoiceController extends Controller
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
                         $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $this->formatInvoiceNumber($vendor) . ' ' . $reasonNotif;
                         $notifApprover['url'] = '/exchange-invoice/' . $exchangeInvoice->id;
-    
+
                         Notification::create([
                             'user_id' => $vendor->user_id,
                             'title' => $notifApprover['title'],
@@ -408,7 +405,7 @@ class ExchangeInvoiceController extends Controller
                             'url' => $notifApprover['url'],
                         ]);
 
-                        $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                        $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
                     }
                 } else {
                     // Handle error if the response status code is not 200
@@ -427,7 +424,7 @@ class ExchangeInvoiceController extends Controller
                         'url' => $notifApprover['url'],
                     ]);
 
-                    $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                    $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
                 }
             } else {
                 $exchangeInvoice->update([
@@ -445,7 +442,7 @@ class ExchangeInvoiceController extends Controller
                     'url' => $notifApprover['url'],
                 ]);
 
-                $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                $mail = Mail::to($vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
             }
         }
 
@@ -460,33 +457,30 @@ class ExchangeInvoiceController extends Controller
         $data['invoice'] = ExchangeInvoice::with('purchase_orders', 'exchange_invoice_attachments')->findOrFail($id);
         $data['invoice']['bank_account_number'] = $data['invoice']->vendor->bank_account_number;
         $checkSubmitPic = RevisionExchangeInvoice::where('exchange_invoice_id', $data['invoice']->id)->where('approval_permission', 'is_pic_exchange_invoice')->first();
-        if($checkSubmitPic)
-		{
-			if($checkSubmitPic->submit_at != null)
-			{
-				$dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $checkSubmitPic->submit_at);
-				$daysToAdd = $data['invoice']->vendor->top ?? 0;
-				$jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
-				$jatuhTempo = date('d-M-Y', strtotime($jatuhTempo));	
-			} else {
-				$jatuhTempo = '-';
-				$checkRevisionExchange = RevisionExchangeInvoice::where('exchange_invoice_id', $data['invoice']->id)->get();
-				if(count($checkRevisionExchange) > 1)
-				{
-					$dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $checkSubmitPic->updated_at);
-					$daysToAdd = $data['invoice']->vendor->top ?? 0;
-					$jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
-					$jatuhTempo = date('d-M-Y', strtotime($jatuhTempo));	
-				}
-			}
-		} else {
-			$jatuhTempo = '-';
-		}
+        if ($checkSubmitPic) {
+            if ($checkSubmitPic->submit_at != null) {
+                $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $checkSubmitPic->submit_at);
+                $daysToAdd = $data['invoice']->vendor->top ?? 0;
+                $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                $jatuhTempo = date('d-M-Y', strtotime($jatuhTempo));
+            } else {
+                $jatuhTempo = '-';
+                $checkRevisionExchange = RevisionExchangeInvoice::where('exchange_invoice_id', $data['invoice']->id)->get();
+                if (count($checkRevisionExchange) > 1) {
+                    $dateSubmitPic = Carbon::createFromFormat('Y-m-d H:i:s', $checkSubmitPic->updated_at);
+                    $daysToAdd = $data['invoice']->vendor->top ?? 0;
+                    $jatuhTempo = $dateSubmitPic->addDays($daysToAdd);
+                    $jatuhTempo = date('d-M-Y', strtotime($jatuhTempo));
+                }
+            }
+        } else {
+            $jatuhTempo = '-';
+        }
         $data['invoice']['jatuh_tempo'] = $jatuhTempo;
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
         $listRevisions = RevisionExchangeInvoice::where('exchange_invoice_id', $id)->orderBy('id', 'asc')->get();
         $data['timeline'] = [];
-        foreach($listRevisions as $revision) {
+        foreach ($listRevisions as $revision) {
             $item = [
                 'date' => '',
                 'title' => '',
@@ -496,9 +490,9 @@ class ExchangeInvoiceController extends Controller
             ];
             $item['date'] = $revision->updated_at->format('d-m-Y H:i');
             $item['title'] = $revision->approval_permission != null ? 'PIC Tukar Faktur' : $revision->user->name;
-            if($revision->status == 'disetujui') {
+            if ($revision->status == 'disetujui') {
                 $item['color'] = 'green';
-            } else if($revision->status == 'ditolak') {
+            } else if ($revision->status == 'ditolak') {
                 $item['color'] = 'red';
             }
             $item['status'] = $revision->status;
@@ -511,7 +505,7 @@ class ExchangeInvoiceController extends Controller
 
         // $data['total_debit'] = $data['outstanding_invoice']->tax_amount ?? 0;
         // $data['total_credit'] = $data['outstanding_invoice']->total_amount ?? 0;
-        
+
         // if($data['outstanding_invoice'])
         // {
         //     foreach($data['outstanding_invoice']->rfp_views as $rfp_view)
@@ -536,60 +530,57 @@ class ExchangeInvoiceController extends Controller
                 $nama_doc = basename($doc_path);
 
                 //have edited file
-                $folder = explode("/",$doc_path);
-                $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
-                $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+                $folder = explode("/", $doc_path);
+                $fileorigin = $folder[count($folder) - 2] . '/' . $folder[count($folder) - 1];
+                $fileedited = $folder[count($folder) - 2] . '/edited_' . $folder[count($folder) - 1];
                 $exist = Storage::disk('public')->exists($fileedited);
                 $newdoc = [
-                    'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
-                    'origin'=>Storage::disk('public')->url($fileorigin),
-                    'name'=>$folder[count($folder)-2],
-                    'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                    'edited' => ($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                    'origin' => Storage::disk('public')->url($fileorigin),
+                    'name' => $folder[count($folder) - 2],
+                    'ispdf' => (Str::contains($nama_doc, ".pdf") ? true : false)
                 ];
                 $newdocs[] = $newdoc;
             }
         }
 
         $arrayFile = ['invoice', 'tax_invoice', 'quotation', 'bast', 'po'];
-        foreach($arrayFile as $array)
-        {
+        foreach ($arrayFile as $array) {
             $doc_path = parse_url($data['invoice'][$array], PHP_URL_PATH);
             $nama_doc = basename($doc_path);
 
             //have edited file
-            $folder = explode("/",$doc_path);
-            if(count($folder) == 4)
-            {
-                $fileorigin = $folder[count($folder)-2].'/'.$folder[count($folder)-1];
-                $fileedited = $folder[count($folder)-2].'/edited_'.$folder[count($folder)-1];
+            $folder = explode("/", $doc_path);
+            if (count($folder) == 4) {
+                $fileorigin = $folder[count($folder) - 2] . '/' . $folder[count($folder) - 1];
+                $fileedited = $folder[count($folder) - 2] . '/edited_' . $folder[count($folder) - 1];
                 $exist = Storage::disk('public')->exists($fileedited);
                 $newdoc = [
-                    'edited'=>($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
-                    'origin'=>Storage::disk('public')->url($fileorigin),
-                    'name'=>$folder[count($folder)-2],
-                    'ispdf'=>(Str::contains($nama_doc, ".pdf") ? true : false)
+                    'edited' => ($exist ? Storage::disk('public')->url($fileedited) : Storage::disk('public')->url($fileorigin)),
+                    'origin' => Storage::disk('public')->url($fileorigin),
+                    'name' => $folder[count($folder) - 2],
+                    'ispdf' => (Str::contains($nama_doc, ".pdf") ? true : false)
                 ];
                 $newdocs[] = $newdoc;
             }
         }
-		
-		$data['timelineLevel'] = 0;
-        if($data['invoice']->status == 'menunggu persetujuan' || $data['invoice']->status == 'sedang berlangsung')
-        {
+
+        $data['timelineLevel'] = 0;
+        if ($data['invoice']->status == 'menunggu persetujuan' || $data['invoice']->status == 'sedang berlangsung') {
             $data['timelineLevel'] = 2;
-        } else if($data['invoice']->status == 'disetujui') {
+        } else if ($data['invoice']->status == 'disetujui') {
             $data['timelineLevel'] = 3;
-        } else if($data['invoice']->status == 'ditolak') {
+        } else if ($data['invoice']->status == 'ditolak') {
             $data['timelineLevel'] = 0;
-        } else if($data['invoice']->status == 'unpaid') {
+        } else if ($data['invoice']->status == 'unpaid') {
             $data['timelineLevel'] = 4;
-        } else if($data['invoice']->status == 'paid') {
+        } else if ($data['invoice']->status == 'paid') {
             $data['timelineLevel'] = 5;
         }
 
         return Inertia::render('Vendor/ExchangeInvoice/Show', [
             'data' => $data,
-            'newdocs'=>$newdocs
+            'newdocs' => $newdocs
         ]);
     }
 
@@ -598,33 +589,31 @@ class ExchangeInvoiceController extends Controller
      */
     public function edit($id)
     {
-		$vendor = User::with(['vendor_latest' => function ($q) {
+        $vendor = User::with(['vendor_latest' => function ($q) {
             $q->where('status_account', 'disetujui');
         }])
             ->whereHas('vendor_latest', function ($q) {
                 $q->where('status_account', 'disetujui');
             })
             ->where('role', 'vendor')
-        ->where('id', Auth::user()->id)
-        ->first();
+            ->where('id', Auth::user()->id)
+            ->first();
         $data['invoice'] = ExchangeInvoice::with('purchase_orders', 'exchange_invoice_attachments')->findOrFail($id);
 
-        foreach($data['invoice']->exchange_invoice_attachments as $key => $attachment)
-        {
+        foreach ($data['invoice']->exchange_invoice_attachments as $key => $attachment) {
             $data['invoice']['exchange_invoice_attachments'][$key]['url'] = $attachment->file;
             $nameFile = $attachment->file;
             $name = 'attachment' . '/';
             $testExplode = explode($name, $attachment->file);
-			$data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = 'No File Chosen';
-			if(count($testExplode) == 2)
-			{
-				$data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = $testExplode[1];
-			}
+            $data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = 'No File Chosen';
+            if (count($testExplode) == 2) {
+                $data['invoice']['exchange_invoice_attachments'][$key]['fileName'] = $testExplode[1];
+            }
         }
-        
+
         $data['categories'] = ExchangeInvoiceCategory::get();
         $data['locations'] = Location::all();
-		$po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
+        $po = OraclePurchaseOrder::where('vendor_code', $vendor->vendor_latest->id_manual)->orderBy('po_num')->get();
         $poArray = $po->map(function ($po) {
             return [
                 'value' => $po->po_header_id,
@@ -636,19 +625,17 @@ class ExchangeInvoiceController extends Controller
         $data['user'] = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
 
         $data['noDraft'] = 0;
-        if($data['invoice']->status == 'ditolak') {
+        if ($data['invoice']->status == 'ditolak') {
             $data['noDraft'] = 1;
         }
 
-		$arrayNameFile = ['quotation', 'po', 'bast', 'tax_invoice', 'invoice'];
-        foreach($arrayNameFile as $name)
-        {
+        $arrayNameFile = ['quotation', 'po', 'bast', 'tax_invoice', 'invoice'];
+        foreach ($arrayNameFile as $name) {
             $nameFile = $name;
-            $name = $name . '/'; 
+            $name = $name . '/';
             $testExplode = explode($name, $data['invoice'][$nameFile]);
             $data['invoice'][$nameFile . '_name'] = 'No File Chosen';
-            if(count($testExplode) == 2)
-            {
+            if (count($testExplode) == 2) {
                 $data['invoice'][$nameFile . '_name'] = $testExplode[1];
             }
         }
@@ -665,37 +652,42 @@ class ExchangeInvoiceController extends Controller
     {
         // dd($request->all());
         $data = ExchangeInvoice::findOrFail($id);
-        if($request->status_submit == 'menunggu persetujuan') {
+        if ($request->status_submit == 'menunggu persetujuan') {
             $invoiceValidate = '';
             $taxInvoiceValidate = '';
             $poValidate = '';
             $bastValidate = '';
             $quotationValidate = '';
-            if($request->is_po == 1 && $data->po == null)
-            {
+            if ($request->is_po == 1 && $data->po == null) {
                 $poValidate = '|required|mimes:pdf';
-                if($data->po_note != null && $data->po_note != 'acc' && $data->po_note != 'done revisi') {$poValidate = '|required|mimes:pdf';}
+                if ($data->po_note != null && $data->po_note != 'acc' && $data->po_note != 'done revisi') {
+                    $poValidate = '|required|mimes:pdf';
+                }
             }
-            if($request->bast == null && $data->bast == null)
-            {
+            if ($request->bast == null && $data->bast == null) {
                 $bastValidate = '|required|mimes:pdf';
             }
-            if($request->quotation == null && $data->quotation == null)
-            {
+            if ($request->quotation == null && $data->quotation == null) {
                 $quotationValidate = '|required|mimes:pdf';
             }
-            if($request->tax_invoice == null && $data->tax_invoice == null)
-            {
+            if ($request->tax_invoice == null && $data->tax_invoice == null) {
                 $taxInvoiceValidate = '|required|mimes:pdf';
             }
-            if($request->invoice == null && $data->invoice == null)
-            {
+            if ($request->invoice == null && $data->invoice == null) {
                 $invoiceValidate = '|required|mimes:pdf';
             }
-            if($data->tax_invoice_note != null && $data->tax_invoice_note != 'acc' && $data->tax_invoice_note != 'done revisi') {$taxInvoiceValidate = '|required|mimes:pdf';}
-            if($data->invoice_note != null && $data->invoice_note != 'acc' && $data->invoice_note != 'done revisi') {$invoiceValidate = '|required|mimes:pdf';}
-            if($data->bast_note != null && $data->bast_note != 'acc' && $data->bast_note != 'done revisi') {$bastValidate = '|required|mimes:pdf';}
-            if($data->quotation_note != null && $data->quotation_note != 'acc' && $data->quotation_note != 'done revisi') {$quotationValidate = '|required|mimes:pdf';}
+            if ($data->tax_invoice_note != null && $data->tax_invoice_note != 'acc' && $data->tax_invoice_note != 'done revisi') {
+                $taxInvoiceValidate = '|required|mimes:pdf';
+            }
+            if ($data->invoice_note != null && $data->invoice_note != 'acc' && $data->invoice_note != 'done revisi') {
+                $invoiceValidate = '|required|mimes:pdf';
+            }
+            if ($data->bast_note != null && $data->bast_note != 'acc' && $data->bast_note != 'done revisi') {
+                $bastValidate = '|required|mimes:pdf';
+            }
+            if ($data->quotation_note != null && $data->quotation_note != 'acc' && $data->quotation_note != 'done revisi') {
+                $quotationValidate = '|required|mimes:pdf';
+            }
             $request->validate([
                 // 'category' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
@@ -718,8 +710,7 @@ class ExchangeInvoiceController extends Controller
 
         $taxInvoicePath = $data->tax_invoice ?? '';
         $taxInvoiceNote = $data->tax_invoice_note != 'acc' ? $data->tax_invoice_note : 'acc';
-        if($taxInvoicePath)
-        {
+        if ($taxInvoicePath) {
             $filenameTaxExplode = explode(url('/storage/tax_invoice/'), $taxInvoicePath);
             $filenameTax = $filenameTaxExplode[1];
         }
@@ -762,7 +753,7 @@ class ExchangeInvoiceController extends Controller
         }
 
         $revisiStatus = 'menunggu persetujuan';
-        if($data->status == 'ditolak' && $request->status_submit == 'menunggu persetujuan' && $data->status_approval != '') {
+        if ($data->status == 'ditolak' && $request->status_submit == 'menunggu persetujuan' && $data->status_approval != '') {
             $revisiStatus = 'sedang berlangsung';
         }
 
@@ -794,41 +785,39 @@ class ExchangeInvoiceController extends Controller
             // 'tax_invoice_number' => $request->tax_invoice_number,
         ]);
 
-        if($request->status_submit == 'menunggu persetujuan') {
+        if ($request->status_submit == 'menunggu persetujuan') {
             $data->update([
                 'status' => $revisiStatus
             ]);
         }
 
-        if($request->attachment != null) {
-			// $data->exchange_invoice_attachments->delete();
-			ExchangeInvoiceAttachment::where('exchange_invoice_id', $data->id)->delete();
-			foreach($request->attachment as $attachment) {
-				$attachmentPath = '';
-				if(is_array($attachment))
-				{
-					$attachmentPath = $attachment['file'];
-				}
-				if($attachmentPath == null)
-				{
-					if ($request->hasFile('attachment')) {
-						$filename = date('YmdHis') . rand(10, 99) . '_' . $attachment->getClientOriginalName();
+        if ($request->attachment != null) {
+            // $data->exchange_invoice_attachments->delete();
+            ExchangeInvoiceAttachment::where('exchange_invoice_id', $data->id)->delete();
+            foreach ($request->attachment as $attachment) {
+                $attachmentPath = '';
+                if (is_array($attachment)) {
+                    $attachmentPath = $attachment['file'];
+                }
+                if ($attachmentPath == null) {
+                    if ($request->hasFile('attachment')) {
+                        $filename = date('YmdHis') . rand(10, 99) . '_' . $attachment->getClientOriginalName();
                         $save = $attachment->storeAs('public/attachment', $filename);
-						$attachmentPath = url('/') . '/storage/attachment/' . $filename;
-					}
-				}
-				ExchangeInvoiceAttachment::create([
-					'exchange_invoice_id' => $data->id,
-					'file' => $attachmentPath
-				]);
-			}
-		}
+                        $attachmentPath = url('/') . '/storage/attachment/' . $filename;
+                    }
+                }
+                ExchangeInvoiceAttachment::create([
+                    'exchange_invoice_id' => $data->id,
+                    'file' => $attachmentPath
+                ]);
+            }
+        }
 
-        if($request->gr_items != null) {
+        if ($request->gr_items != null) {
             // $data->purchase_orders->delete();
             PurchaseOrder::where('exchange_invoice_id', $data->id)->delete();
-            foreach($request->gr_items as $item) {
-                foreach($item['array'] as $item1) {
+            foreach ($request->gr_items as $item) {
+                foreach ($item['array'] as $item1) {
                     PurchaseOrder::create([
                         'exchange_invoice_id' => $data->id,
                         'orderline_id' => $item1['purchase_order_detail']['po_line_id'],
@@ -845,31 +834,28 @@ class ExchangeInvoiceController extends Controller
             }
         }
 
-        if($request->status_submit == 'menunggu persetujuan' && count($data->revision_exchange_invoices) == 0) { 
+        if ($request->status_submit == 'menunggu persetujuan' && count($data->revision_exchange_invoices) == 0) {
             ini_set('memory_limit', '614M');
-            if($taxInvoicePath != '')
-            {
+            if ($taxInvoicePath != '') {
                 $pdfBarcode = new Pdf(storage_path('/app/public/tax_invoice/') . $filenameTax);
                 $pageNumbers = $pdfBarcode->getNumberOfPages();
-    
+
                 $imageArray = [];
-    
-                for($i=1; $i <= $pageNumbers; $i++)
-                {
+
+                for ($i = 1; $i <= $pageNumbers; $i++) {
                     $fileNameBarcode = date('Y-m-dH-i-s');
                     $pdfBarcode->setPage($i)->width(1200)->saveImage(public_path('/images/') . $fileNameBarcode . '.png');
                     $path = public_path('/images/') . $fileNameBarcode . '.png';
                     array_push($imageArray, $path);
                 }
-    
+
                 $textBarcode = null;
-                foreach($imageArray as $image) {
+                foreach ($imageArray as $image) {
                     $qrcode = new QrReader($image);
                     $textBarcode = $qrcode->text();
                 }
 
-                foreach($imageArray as $image)
-                {
+                foreach ($imageArray as $image) {
                     if (File::exists($image)) {
                         File::delete($image);
                     }
@@ -880,95 +866,84 @@ class ExchangeInvoiceController extends Controller
             $url = $textBarcode;
             $checkUrl = explode('http://svc.efaktur.pajak.go.id/validasi/faktur/', $url);
 
-            if(count($checkUrl) == 2)
-            {
+            if (count($checkUrl) == 2) {
                 $response = Http::get($url);
-        
+
                 if ($response->getStatusCode() == 200) {
                     // Get the XML content from the response
                     $xmlContent = (string) $response->getBody();
-        
+
                     // You can now parse and process the $xmlContent as needed
                     // For example, you can use SimpleXMLElement to work with the XML data
-        
+
                     $xml = new \SimpleXMLElement($xmlContent);
-        
+
                     // You can then use $xml to access XML elements and attributes
 
                     $reasonNotif = ' ditolak karena';
-                    if($xml->npwpPenjual != $supplier->npwp) {
+                    if ($xml->npwpPenjual != $supplier->npwp) {
                         $reasonNotif = $reasonNotif . ' NPWP Penjual tidak cocok';
                     }
 
-                    if($xml->npwpLawanTransaksi != '017242264007000') {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->npwpLawanTransaksi != '017242264007000') {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' NPWP Lawan Transaksi tidak cocok';
                     }
 
-                    if($xml->jumlahDpp != $request->dpp) {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->jumlahDpp != $request->dpp) {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' DPP tidak cocok';
                     }
 
-                    if($xml->tanggalFaktur != date('d/m/Y', strtotime($request->date))) {
-                        if($reasonNotif != '')
-                        {
+                    if ($xml->tanggalFaktur != date('d/m/Y', strtotime($request->date))) {
+                        if ($reasonNotif != '') {
                             $reasonNotif = $reasonNotif . ',';
                         }
                         $reasonNotif = $reasonNotif . ' Tanggal tidak cocok';
                     }
-                    
-                    if($xml->npwpPenjual == $supplier->npwp && $xml->npwpLawanTransaksi == '017242264007000' && $xml->jumlahDpp == $request->dpp && $xml->tanggalFaktur == date('d/m/Y', strtotime($request->date)))
-                    {
+
+                    if ($xml->npwpPenjual == $supplier->npwp && $xml->npwpLawanTransaksi == '017242264007000' && $xml->jumlahDpp == $request->dpp && $xml->tanggalFaktur == date('d/m/Y', strtotime($request->date))) {
                         $revisionExchanges = RevisionExchangeInvoice::where('status', 'ditolak')->where('exchange_invoice_id', $data->id)->get();
-                        if(count($revisionExchanges) > 0)
-                        {
-                            foreach($revisionExchanges as $revisionExchange)
-                            {
+                        if (count($revisionExchanges) > 0) {
+                            foreach ($revisionExchanges as $revisionExchange) {
                                 $revisionExchange->update([
                                     'status' => 'menunggu persetujuan'
                                 ]);
 
                                 $user = User::where('id', $revisionExchange->user_id)->first();
-                                if($user)
-                                {
+                                if ($user) {
                                     $notifApprover1['title'] = 'E-faktur telah direvisi, dan data dikembalikan ke pic e-faktur';
                                     $notifApprover1['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                                     $notifApprover1['url'] = '/admin/exchange-invoice/' . $data->id;
-                
+
                                     Notification::create([
                                         'user_id' => $user->id,
                                         'title' => $notifApprover1['title'],
                                         'description' => $notifApprover1['description'],
                                         'url' => $notifApprover1['url'],
                                     ]);
-                                    $mail = Mail::to($user->email)->send(new ApproverInvoiceMail($notifApprover1));  
+                                    $mail = Mail::to($user->email)->send(new ApproverInvoiceMail($notifApprover1));
                                 } else {
-                                    if($revisionExchange->approval_permission == 'is_pic_exchange_invoice')
-                                    {
+                                    if ($revisionExchange->approval_permission == 'is_pic_exchange_invoice') {
                                         $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                                        foreach($rolePermissions as $rolePermission)
-                                        {
+                                        foreach ($rolePermissions as $rolePermission) {
                                             $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                                            foreach($user_roles as $user_role)
-                                            {
+                                            foreach ($user_roles as $user_role) {
                                                 $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
                                                 $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                                                 $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
-                            
+
                                                 Notification::create([
                                                     'user_id' => $user_role->user_id,
                                                     'title' => $notifApprover['title'],
                                                     'description' => $notifApprover['description'],
                                                     'url' => $notifApprover['url'],
                                                 ]);
-                                                $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                                                $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
                                             }
                                         }
                                     }
@@ -983,22 +958,20 @@ class ExchangeInvoiceController extends Controller
                             ]);
 
                             $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                            foreach($rolePermissions as $rolePermission)
-                            {
+                            foreach ($rolePermissions as $rolePermission) {
                                 $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                                foreach($user_roles as $user_role)
-                                {
+                                foreach ($user_roles as $user_role) {
                                     $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
                                     $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                                     $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
-                
+
                                     Notification::create([
                                         'user_id' => $user_role->user_id,
                                         'title' => $notifApprover['title'],
                                         'description' => $notifApprover['description'],
                                         'url' => $notifApprover['url'],
                                     ]);
-                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
                                 }
                             }
                         }
@@ -1017,7 +990,7 @@ class ExchangeInvoiceController extends Controller
                         $notifApprover['title'] = 'E-faktur Tidak Valid';
                         $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number . ' ' . $reasonNotif;
                         $notifApprover['url'] = '/exchange-invoice/' . $data->id;
-    
+
                         Notification::create([
                             'user_id' => $data->vendor->user_id,
                             'title' => $notifApprover['title'],
@@ -1025,7 +998,7 @@ class ExchangeInvoiceController extends Controller
                             'url' => $notifApprover['url'],
                         ]);
 
-                        $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                        $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
                     }
                 } else {
                     // Handle error if the response status code is not 200
@@ -1044,7 +1017,7 @@ class ExchangeInvoiceController extends Controller
                         'url' => $notifApprover['url'],
                     ]);
 
-                    $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                    $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
                 }
             } else {
                 $data->update([
@@ -1062,52 +1035,46 @@ class ExchangeInvoiceController extends Controller
                     'url' => $notifApprover['url'],
                 ]);
 
-                $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                $mail = Mail::to($data->vendor->user->email)->send(new ApproverInvoiceMail($notifApprover));
             }
-        } else if($request->status_submit == 'menunggu persetujuan') {
+        } else if ($request->status_submit == 'menunggu persetujuan') {
             $revisionExchanges = RevisionExchangeInvoice::where('status', 'ditolak')->where('exchange_invoice_id', $data->id)->get();
-            if(count($revisionExchanges) > 0)
-            {
-                foreach($revisionExchanges as $revisionExchange)
-                {
+            if (count($revisionExchanges) > 0) {
+                foreach ($revisionExchanges as $revisionExchange) {
                     $revisionExchange->update([
                         'status' => 'menunggu persetujuan'
                     ]);
 
                     $user = User::where('id', $revisionExchange->user_id)->first();
-                    if($user)
-                    {
+                    if ($user) {
                         $notifApprover1['title'] = 'E-faktur telah direvisi, dan data dikembalikan ke pic e-faktur';
                         $notifApprover1['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                         $notifApprover1['url'] = '/admin/exchange-invoice';
-    
+
                         Notification::create([
                             'user_id' => $user->id,
                             'title' => $notifApprover1['title'],
                             'description' => $notifApprover1['description'],
                             'url' => $notifApprover1['url'],
                         ]);
-                        $mail = Mail::to($user->email)->send(new ApproverInvoiceMail($notifApprover1));  
+                        $mail = Mail::to($user->email)->send(new ApproverInvoiceMail($notifApprover1));
                     } else {
-                        if($revisionExchange->approval_permission == 'is_pic_exchange_invoice')
-                        {
+                        if ($revisionExchange->approval_permission == 'is_pic_exchange_invoice') {
                             $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                            foreach($rolePermissions as $rolePermission)
-                            {
+                            foreach ($rolePermissions as $rolePermission) {
                                 $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                                foreach($user_roles as $user_role)
-                                {
+                                foreach ($user_roles as $user_role) {
                                     $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
                                     $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                                     $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
-                
+
                                     Notification::create([
                                         'user_id' => $user_role->user_id,
                                         'title' => $notifApprover['title'],
                                         'description' => $notifApprover['description'],
                                         'url' => $notifApprover['url'],
                                     ]);
-                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
                                 }
                             }
                         }
@@ -1122,27 +1089,25 @@ class ExchangeInvoiceController extends Controller
                 ]);
 
                 $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                foreach($rolePermissions as $rolePermission)
-                {
+                foreach ($rolePermissions as $rolePermission) {
                     $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                    foreach($user_roles as $user_role)
-                    {
+                    foreach ($user_roles as $user_role) {
                         $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
                         $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
                         $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
-    
+
                         Notification::create([
                             'user_id' => $user_role->user_id,
                             'title' => $notifApprover['title'],
                             'description' => $notifApprover['description'],
                             'url' => $notifApprover['url'],
                         ]);
-                        $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));  
+                        $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
                     }
                 }
             }
         }
-        
+
         return Redirect::route('exchange-invoice.index');
     }
 

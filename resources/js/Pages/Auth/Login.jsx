@@ -65,8 +65,8 @@ export default function Login({ status, canResetPassword }) {
 						</ul>
 						<div class="auth-bg pt-md-5 p-4 d-flex">
 							<div class="bg-overlay bg-primary p-4" style={{height: '1000px'}}>
-								<div className="card" style={{height: '100%'}}>
-									<div className="card-body">
+								<div className="card mt-5" style={{height: '822px'}}>
+									<div className="card-body" style={{paddingTop: '0'}}>
 										<div class="d-flex flex-column">
 											<div class="mb-1 mb-md-1 text-center max-w-screen-lg mx-auto">
 												<a href="#" class="d-block auth-logo">

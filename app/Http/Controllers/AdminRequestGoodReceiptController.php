@@ -122,28 +122,28 @@ class AdminRequestGoodReceiptController extends Controller
                 'user_id' => $data->vendor->user_id,
                 'title' => 'Request GR Ditolak',
                 'description' => 'No. PO: ' . $data->po_number ?? '-',
-                'url' => '/request-good-receipt/',
+                'url' => '/request-good-receipt/'. $id .'/edit',
             ]);
 
             $this->notifySelf(
                 Auth::user()->id, 
                 'Request GR',
                 'Berhasil tolak request GR dengan No. PO: ' . $data->po_number ?? '-',
-                '/admin/request-good-receipt/'. $data->id . '/edit'
+                '/admin/request-good-receipt/'. $data->id . '/web'
             );
         } else {
             $notif_vendor = Notification::create([
                 'user_id' => $data->vendor->user_id,
                 'title' => 'Request GR disetujui',
                 'description' => 'No. PO: ' . $data->po_number ?? '-',
-                'url' => '/request-good-receipt/',
+                'url' => '/request-good-receipt/'. $id .'/edit',
             ]);
 
             $this->notifySelf(
                 Auth::user()->id, 
                 'Request GR',
                 'Berhasil setujui request GR dengan No. PO: ' . $data->po_number ?? '-',
-                '/admin/request-good-receipt/'. $data->id . '/edit'
+                '/admin/request-good-receipt/'. $data->id . '/web'
             );
         }
 

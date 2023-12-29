@@ -507,6 +507,7 @@ class VendorController extends Controller
         $data['prefix'] = Prefix::all();
         $data['checkVerifiedData'] = Vendor::with('user')->where('user_id', $data['auth']->id)->where('status_account', 'disetujui')->first() == null ? 404 : 200;
         $data['vendor'] = Vendor::with('user')->where('id', $id)->where('user_id', $data['auth']->id)->first();
+        $data['vendor']['attachments'] = VendorAttachment::where('vendor_id', $data['vendor']->id)->get();
 
         $arrayNameFile = ['file_npwp', 'file_sppkp', 'file_siup', 'file_tdp', 'file_nib', 'file_board_of_directors_composition', 'file_non_pkp_statement'];
         foreach($arrayNameFile as $name)

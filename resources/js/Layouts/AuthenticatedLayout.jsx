@@ -198,15 +198,7 @@ export default function Authenticated({
                             <div className="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                                 aria-labelledby="page-header-notifications-dropdown">
                                 <div className="p-3">
-                                    <div className="row align-items-center mb-5">
-                                            <div className="col">
-                                                <a href={route('notification.index')} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                                                    Show All Notifications
-                                                </a>
-                                            </div>
-                                            <div className="col-auto">
-                                            </div>
-                                    </div>
+
                                     <div className="row align-items-center">
                                         <div className="col">
                                             <h6 className="m-0">
@@ -241,6 +233,18 @@ export default function Authenticated({
                                         </a>
                                     ))}
                                 </div>
+                                <div className="p-3">
+                                    <div className="row align-items-center">
+                                        <div className="col">
+                                            <a href={route('notification.index')} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                                Show All Notifications
+                                            </a>
+                                        </div>
+                                        <div className="col-auto">
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                         <div className="dropdown d-inline-block">
@@ -338,19 +342,19 @@ export default function Authenticated({
                                     {
                                         user?.role !== 'vendor' ? (
                                             <>
-                                                {permissions.includes('index_locations') 
-                                                || permissions.includes('index_user') 
-                                                || permissions.includes('index_supplier_site') 
-                                                || permissions.includes('index_approver_vendor')
-                                                || permissions.includes('index_approver_invoice')
-                                                || permissions.includes('index_approver_payment')
-                                                || permissions.includes('index_role')
-                                                || permissions.includes('index_suffix')
-                                                || permissions.includes('index_prefix')
-                                                || permissions.includes('index_payment_term')
-                                                || permissions.includes('index_tax')
-                                                || permissions.includes('index_vendors')
-                                                ?
+                                                {permissions.includes('index_locations')
+                                                    || permissions.includes('index_user')
+                                                    || permissions.includes('index_supplier_site')
+                                                    || permissions.includes('index_approver_vendor')
+                                                    || permissions.includes('index_approver_invoice')
+                                                    || permissions.includes('index_approver_payment')
+                                                    || permissions.includes('index_role')
+                                                    || permissions.includes('index_suffix')
+                                                    || permissions.includes('index_prefix')
+                                                    || permissions.includes('index_payment_term')
+                                                    || permissions.includes('index_tax')
+                                                    || permissions.includes('index_vendors')
+                                                    ?
                                                     <li>
                                                         <a href="javascript:;">
 
@@ -358,13 +362,13 @@ export default function Authenticated({
                                                             <SidebarDropdown title="Master Data">
                                                                 <ul>
                                                                     {permissions.includes('index_role') ?
-                                                                    <li>
-                                                                        <a href={route("role.index")}>
-                                                                            <Lock />
-                                                                            <span>Role</span>
-                                                                        </a>
-                                                                    </li>
-                                                                    : ''}
+                                                                        <li>
+                                                                            <a href={route("role.index")}>
+                                                                                <Lock />
+                                                                                <span>Role</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        : ''}
                                                                     {permissions.includes('index_user') ?
                                                                         <li>
 
@@ -411,23 +415,23 @@ export default function Authenticated({
                                                                             <span>Master Approver Payment</span>
                                                                         </a></li>
                                                                         : ''}
-                                                                        {permissions.includes('index_suffix') ?
-                                                                            <li>
-                                                                                <a href={route("suffix.index")}>
-                                                                                    <Database />
-                                                                                    <span>Suffix</span>
-                                                                                </a>
-                                                                            </li>
-                                                                            : ''}
-                                                                        {permissions.includes('index_prefix') ?
-                                                                            <li>
-                                                                                <a href={route("prefix.index")}>
-                                                                                    <Database />
-                                                                                    <span>Prefix</span>
-                                                                                </a>
-                                                                            </li>
-                                                                            : ''}
-                                                                        {permissions.includes('index_payment_term') ?
+                                                                    {permissions.includes('index_suffix') ?
+                                                                        <li>
+                                                                            <a href={route("suffix.index")}>
+                                                                                <Database />
+                                                                                <span>Suffix</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        : ''}
+                                                                    {permissions.includes('index_prefix') ?
+                                                                        <li>
+                                                                            <a href={route("prefix.index")}>
+                                                                                <Database />
+                                                                                <span>Prefix</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        : ''}
+                                                                    {permissions.includes('index_payment_term') ?
                                                                         <li>
                                                                             <a href={route("payment-term.index")}>
                                                                                 <Calendar />
@@ -435,28 +439,28 @@ export default function Authenticated({
                                                                             </a>
                                                                         </li>
                                                                         : ''}
-                                                                        {permissions.includes('index_tax') ?
-                                                                            <li>
-                                                                                <a href={route("tax.index")}>
-                                                                                    <Percent />
-                                                                                    <span>Tax</span>
-                                                                                </a>
-                                                                            </li>
-                                                                            : ''}
-                                                                        {permissions.includes('index_vendors') ?
-                                                                            <li>
-                                                                                <a href={route("admin.vendor.index")}>
-                                                                                    <Users />
-                                                                                    <span>Vendor</span>
-                                                                                </a>
-                                                                            </li>
-                                                                            : ''}
+                                                                    {permissions.includes('index_tax') ?
+                                                                        <li>
+                                                                            <a href={route("tax.index")}>
+                                                                                <Percent />
+                                                                                <span>Tax</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        : ''}
+                                                                    {permissions.includes('index_vendors') ?
+                                                                        <li>
+                                                                            <a href={route("admin.vendor.index")}>
+                                                                                <Users />
+                                                                                <span>Vendor</span>
+                                                                            </a>
+                                                                        </li>
+                                                                        : ''}
                                                                 </ul>
                                                             </SidebarDropdown>
                                                         </a>
 
                                                     </li>
-                                                : null }
+                                                    : null}
                                             </>
                                         ) : null
                                     }

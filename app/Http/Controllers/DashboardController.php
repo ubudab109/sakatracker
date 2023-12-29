@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Notification;
 use App\Models\RevisionRegisterVendor;
 use App\Models\User;
+use App\Models\Vendor;
 use Inertia\Inertia;
 use Storage;
 use Auth;
@@ -74,13 +75,54 @@ class DashboardController extends Controller
     private function revisionVendor(int $userId = null)
     {
         if ($userId) {
-            $data['revisionApproved'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'disetujui')->count();
-            $data['revisionRejected'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'ditolak')->count();
-            $data['revisionProgress'] = RevisionRegisterVendor::where('user_id', Auth::user()->id)->where('status', 'menunggu persetujuan')->count();
+            $revisionApproved = 0;
+            $revisionRejected = 0;
+            $revisionProgress = 0;
+            Vendor::where('user_id', $userId)
+                ->with('revision_register_vendor_latest')
+                ->orderBy('updated_at', 'desc')->get()
+                ->map(function ($vendor) use ($revisionApproved, $revisionProgress, $revisionRejected) {
+                    if ($vendor->status_account == 'ditolak') {
+                        $revisionRejected += 1;
+                    }
+
+                    if ($vendor->status_account == 'pengajuan perubahan') {
+                        $revisionProgress += 1;
+                    }
+
+                    if ($vendor->status_account == 'disetujui') {
+                        $revisionApproved += 1;
+                    }
+
+                    return $vendor;
+                });
+            $data['revisionApproved'] = $revisionApproved;
+            $data['revisionRejected'] = $revisionRejected;
+            $data['revisionProgress'] = $revisionProgress;
         } else {
-            $data['revisionApproved'] = RevisionRegisterVendor::where('status', 'disetujui')->count();
-            $data['revisionRejected'] = RevisionRegisterVendor::where('status', 'ditolak')->count();
-            $data['revisionProgress'] = RevisionRegisterVendor::where('status', 'menunggu persetujuan')->count();
+            $revisionApproved = 0;
+            $revisionRejected = 0;
+            $revisionProgress = 0;
+            Vendor::with('revision_register_vendor_latest')
+                ->orderBy('updated_at', 'desc')->get()
+                ->map(function ($vendor) use ($revisionApproved, $revisionProgress, $revisionRejected) {
+                    if ($vendor->status_account == 'ditolak') {
+                        $revisionRejected += 1;
+                    }
+
+                    if ($vendor->status_account == 'pengajuan perubahan') {
+                        $revisionProgress += 1;
+                    }
+
+                    if ($vendor->status_account == 'disetujui') {
+                        $revisionApproved += 1;
+                    }
+
+                    return $vendor;
+                });
+            $data['revisionApproved'] = $revisionApproved;
+            $data['revisionRejected'] = $revisionRejected;
+            $data['revisionProgress'] = $revisionProgress;
         }
         return $data;
     }
