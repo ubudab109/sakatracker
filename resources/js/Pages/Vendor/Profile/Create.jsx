@@ -93,7 +93,6 @@ export default function Create(props) {
     }
 
     const handleDocumentType = (e) => {
-        console.log(e.target.value);
         setDocumentCompanyType(e.target.value);
     }
 

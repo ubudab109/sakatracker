@@ -391,7 +391,8 @@ class VendorController extends Controller
                 }
                 VendorAttachment::create([
                     'vendor_id' => $vendor->id,
-                    'file' => $attachmentPath
+                    'file' => $attachmentPath,
+                    'filename' => $filename,
                 ]);
             }
         }
