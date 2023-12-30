@@ -15,9 +15,7 @@ export default function Table(props) {
     const tableRef = useRef(null);
 
     useEffect(() => {
-        $(tableRef.current).DataTable({
-            order:[[4, 'desc']]
-        });
+        $(tableRef.current).DataTable();
     }, []);
 
     return (

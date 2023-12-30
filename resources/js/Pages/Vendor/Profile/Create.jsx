@@ -69,7 +69,7 @@ export default function Create(props) {
         suffix: props.data.vendor != null ? props.data.vendor.suffix : '',
         term_condition: '',
         status_submit: '',
-        company_document_type: props.data.vendor ? (props.data.vendor.company_document_type ? props.data.vendor.company_document_type : 'siup') : '',
+
         document_type: props.data.vendor ? props.data.vendor.type_of_business == 'PKP' || props.data.vendor.type_of_business == 'Non PKP' ? 'npwp' : 'ktp' : 'ktp',
         ktp: props.data.vendor != null ? props.data.vendor.ktp : '',
         ktp_address: props.data.vendor != null ? props.data.vendor.ktp_address : '',
@@ -86,15 +86,15 @@ export default function Create(props) {
 
     const [selectedNameBusiness, setSelectedNameBusiness] = useState(props.data.vendor != null ? props.data.vendor.name_business : '');
 
-    const [documentCompanyType, setDocumentCompanyType] = useState(props.data.vendor ? (props.data.vendor.company_document_type ? props.data.vendor.company_document_type : 'siup') : '');
+    const [documentCompanyType, setDocumentCompanyType] = useState(props.data.vendor.file_siup ? 'SIUP' : (props.data.vendor.file_nib ? props.data.vendor.file_nib : ''));
     const handleNameBusiness = (event) => {
         data.name_business = event.target.value;
         setSelectedNameBusiness(data.name_business);
     }
 
     const handleDocumentType = (e) => {
+        console.log(e.target.value);
         setDocumentCompanyType(e.target.value);
-        setData('company_document_type', e.target.value);
     }
 
     const submit = (e) => {
@@ -1372,8 +1372,8 @@ export default function Create(props) {
                                                         type="radio"
                                                         name="document_company_type"
                                                         className="form-checkbox"
-                                                        value="siup"
-                                                        checked={documentCompanyType === 'siup'}
+                                                        value="SIUP"
+                                                        checked={documentCompanyType === 'SIUP'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">SIUP</span>
@@ -1383,8 +1383,8 @@ export default function Create(props) {
                                                         type="radio"
                                                         name="document_company_type"
                                                         className="form-checkbox"
-                                                        value="nib"
-                                                        checked={documentCompanyType === 'nib'}
+                                                        value="NIB"
+                                                        checked={documentCompanyType === 'NIB'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">NIB</span>
@@ -1511,16 +1511,32 @@ export default function Create(props) {
                                                         props.data.vendor.attachments.length > 0 ? (
                                                             props.data.vendor.attachments.map(url => (
                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                                    <p>
-                                                                        {
-                                                                            url.filename
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
                                                                         }
-                                                                    </p>
-                                                                    <a href="javascrip:;" onClick={() => openPopup(url.file)}>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                                        </svg>
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
                                                                     </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
                                                                 </li>
                                                             ))
                                                         ) : null
@@ -1607,7 +1623,7 @@ export default function Create(props) {
                                             />
                                         </div>
                                         {
-                                            documentCompanyType === 'siup' ? (
+                                            documentCompanyType === 'SIUP' ? (
                                                 <div className="mb-3">
                                                     <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
                                                     <TextInput
@@ -1646,7 +1662,7 @@ export default function Create(props) {
                                                 className="mt-2"
                                             />
                                         </div>
-
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -1737,8 +1753,8 @@ export default function Create(props) {
                                                         type="radio"
                                                         name="document_company_type"
                                                         className="form-checkbox"
-                                                        value="siup"
-                                                        checked={documentCompanyType === 'siup'}
+                                                        value="SIUP"
+                                                        checked={documentCompanyType === 'SIUP'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">SIUP</span>
@@ -1748,8 +1764,8 @@ export default function Create(props) {
                                                         type="radio"
                                                         name="document_company_type"
                                                         className="form-checkbox"
-                                                        value="nib"
-                                                        checked={documentCompanyType === 'nib'}
+                                                        value="NIB"
+                                                        checked={documentCompanyType === 'NIB'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">NIB</span>
@@ -1876,16 +1892,32 @@ export default function Create(props) {
                                                         props.data.vendor.attachments.length > 0 ? (
                                                             props.data.vendor.attachments.map(url => (
                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                                    <p>
-                                                                        {
-                                                                            url.filename
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
                                                                         }
-                                                                    </p>
-                                                                    <a href="javascrip:;" onClick={() => openPopup(url.file)}>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                                        </svg>
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
                                                                     </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
                                                                 </li>
                                                             ))
                                                         ) : null
@@ -1990,7 +2022,7 @@ export default function Create(props) {
                                             />
                                         </div>
                                         {
-                                            documentCompanyType === 'siup' ? (
+                                            documentCompanyType === 'SIUP' ? (
                                                 <div className="mb-3">
                                                     <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
                                                     <TextInput
@@ -2063,7 +2095,7 @@ export default function Create(props) {
                                                 className="mt-2"
                                             />
                                         </div>
-                                        {/* <div className="mb-3">
+                                        <div className="mb-3">
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
@@ -2089,7 +2121,7 @@ export default function Create(props) {
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
                                             />
-                                        </div> */}
+                                        </div>
                                         <div className="mb-3">
                                             <InputLabel
                                                 value="Others"
@@ -2124,16 +2156,32 @@ export default function Create(props) {
                                                         props.data.vendor.attachments.length > 0 ? (
                                                             props.data.vendor.attachments.map(url => (
                                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                                    <p>
-                                                                        {
-                                                                            url.filename
+                                                                    <a
+                                                                        style={{
+                                                                            color: "blue",
+                                                                        }}
+                                                                        href={
+                                                                            url.file
                                                                         }
-                                                                    </p>
-                                                                    <a href="javascrip:;" onClick={() => openPopup(url.file)}>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 ml-2">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
-                                                                        </svg>
+                                                                        target="_blank"
+                                                                        rel="no-referrer"
+                                                                    >
+                                                                        {
+                                                                            url.file
+                                                                        }
                                                                     </a>
+                                                                    {/* <span
+                                                                        // onClick={}
+                                                                        style={{
+                                                                            cursor: "pointer",
+                                                                            background:
+                                                                                "red",
+                                                                            color: "white",
+                                                                        }}
+                                                                        class="badge badge-danger badge-pill"
+                                                                    >
+                                                                        X
+                                                                    </span> */}
                                                                 </li>
                                                             ))
                                                         ) : null

@@ -15,7 +15,6 @@ use App\Models\UserRole;
 use App\Models\RevisionExchangeInvoice;
 use App\Models\Vendor;
 use App\Services\PaymentGatewayService;
-use App\Traits\HelperTrait;
 use Carbon\Carbon;
 use Auth;
 use Mail;
@@ -224,39 +223,29 @@ class SiapBayarController extends Controller
 
     public function paidInvoices(Request $request){
         $batch_payment = BatchPayment::find($request->batch_payment['id']);
-        // dd($request->invoices);
+        
         foreach ($request->invoices as $invoice_id) {
             $invoice = ExchangeInvoice::find($invoice_id);
-
-            if (HelperTrait::isEqualDate($request->payment_date)) {
-                $invoiceStatus = 'paid';
-            } else {
-                $invoiceStatus = 'submit';
-            }
             $invoice->update([
-                'status' => $invoiceStatus
+                'status' => 'paid'
             ]);
 
-            $batch_payment_invoice = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)
-            ->where('exchange_invoice_id', $invoice_id)->first();
-
+            $batch_payment_invoice = BatchPaymentInvoice::where([['batch_payment_id', $batch_payment->id], ['exchange_invoice_id', $invoice_id]])->first();
             $batch_payment_invoice->update([
-                'status' => $invoiceStatus
+                'status' => 'paid'
             ]);
 
-            if ($invoice->vendor) {
-                $notif = Notification::create([
-                    'user_id' => $invoice->vendor->user_id,
-                    'title' => 'E-Faktur telah dibayar',
-                    'description' => 'Silahkan login untuk mengecek data',
-                    'url' => '/exchange-invoice/' . $invoice_id,
-                ]);
-        
-                $notifMail['title'] = $notif->title;
-                $notifMail['description'] = $notif->description;
-                $notifMail['url'] = $notif->url;
-                Mail::to($invoice->vendor->user->email)->send(new ApproverInvoiceMail($notifMail));
-            }
+            $notif = Notification::create([
+                'user_id' => $invoice->vendor->user_id,
+                'title' => 'E-Faktur telah dibayar',
+                'description' => 'Silahkan login untuk mengecek data',
+                'url' => '/exchange-invoice/' . $invoice_id,
+            ]);
+    
+            $notifMail['title'] = $notif->title;
+            $notifMail['description'] = $notif->description;
+            $notifMail['url'] = $notif->url;
+            Mail::to($invoice->vendor->user->email)->send(new ApproverInvoiceMail($notifMail));
         }
 
         if (date('Y-m-d', strtotime($request->payment_date)) == date('Y-m-d', strtotime(now()))) {

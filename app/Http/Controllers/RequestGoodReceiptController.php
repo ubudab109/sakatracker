@@ -31,10 +31,8 @@ class RequestGoodReceiptController extends Controller
         }
         
         $vendor = Vendor::where('user_id', Auth::user()->id)->where('status_account', 'disetujui')->latest()->first();
-        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)
-        ->orderByDesc('status')
-        ->orderByDesc('id')
-        ->get();
+        $data['request_good_receipts'] = RequestGoodReceipt::where('vendor_id', $vendor->id)->orderByDesc('id')->get();
+
         return Inertia::render('Vendor/RequestGR/Index', [
             'data' => $data
         ]);
