@@ -2063,7 +2063,7 @@ export default function Create(props) {
                                                 className="mt-2"
                                             />
                                         </div>
-                                        <div className="mb-3">
+                                        {/* <div className="mb-3">
                                             <InputLabel value="Surat Pernyataan Non PKP (Bermaterai)" className="font-bold" required={true} />
                                             <div className="flex">
                                                 <label htmlFor="file-non-kpk" className="border-1 p-3 rounded-s-lg w-15 m-0 text-white bg-slate-800">
@@ -2089,7 +2089,7 @@ export default function Create(props) {
                                                 message={errors.file_non_pkp_statement}
                                                 className="mt-2"
                                             />
-                                        </div>
+                                        </div> */}
                                         <div className="mb-3">
                                             <InputLabel
                                                 value="Others"
