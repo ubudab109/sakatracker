@@ -1530,23 +1530,44 @@ export default function Index(props) {
 											<p className="text-sm text-gray-500 mb-3">
 												Type
 											</p>
-											<p className="text-sm text-gray-500 mb-3">
+											<p className="text-sm text-gray-500 mb-4">
 												NPWP
 											</p>
-											<p className="text-sm text-gray-500 mb-3">
+											<p className="text-sm text-gray-500 mb-4">
 												SPPKP
 											</p>
-											<p className="text-sm text-gray-500 mb-4">
-												SIUP
-											</p>
+
+											{
+												props.data.revision_vendor.vendor.company_document_type ? (
+													props.data.revision_vendor.vendor.company_document_type === 'siup' ? (
+														<p className="text-sm text-gray-500 mb-4">
+															SIUP
+														</p>
+													) : (
+														<p className="text-sm text-gray-500 mb-4">
+															NIB
+														</p>
+													)
+												) : (
+													props.data.revision_vendor.vendor.file_siup ? (
+														<p className="text-sm text-gray-500 mb-4">
+															SIUP
+														</p>
+													) : (
+														<p className="text-sm text-gray-500 mb-4">
+															NIB
+														</p>
+													)
+												)
+											}
+
+
 											{props.data.revision_vendor.vendor.file_tdp ?
 												<p className="text-sm text-gray-500 mb-4">
 													TDP
 												</p>
 												: ''}
-											<p className="text-sm text-gray-500 mb-4">
-												NIB
-											</p>
+
 											<p className="text-sm text-gray-500 mb-4">
 												Akta Susunan Direksi
 											</p>
@@ -1783,144 +1804,459 @@ export default function Index(props) {
 														.vendor.expired_sppkp
 												}
 											</p>
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_siup !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_siup ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor.file_siup != "" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	2
+
+											{
+												props.data.revision_vendor.vendor.company_document_type ? (
+													props.data.revision_vendor.vendor.company_document_type === 'siup' ? (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_siup != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				2
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_siup_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_siup !=
+																	props.data.revision_vendor
+																		.vendor.expired_siup ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_siup
+																		}
+																	</span>
+																) : (
+																	""
 																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_siup",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileSiupStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_siup",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileSiupStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_siup_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_siup !=
-														props.data.revision_vendor
-															.vendor.expired_siup ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
+															) : (
+																""
+															)}
 															{
-																props.data
-																	.latest_vendor
-																	.expired_siup
+																props.data.revision_vendor
+																	.vendor.expired_siup
 															}
-														</span>
+														</p>
 													) : (
-														""
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_nib != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				4
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_nib_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_nib !=
+																	props.data.revision_vendor
+																		.vendor.expired_nib ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_nib
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+														</p>
 													)
 												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_siup
-												}
-											</p>
+													props.data.revision_vendor.vendor.file_siup ? (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_siup != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				2
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_siup_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_siup !=
+																	props.data.revision_vendor
+																		.vendor.expired_siup ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_siup
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+															{
+																props.data.revision_vendor
+																	.vendor.expired_siup
+															}
+														</p>
+													) : (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_nib != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				4
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_nib_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_nib !=
+																	props.data.revision_vendor
+																		.vendor.expired_nib ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_nib
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+														</p>
+													)
+												)
+											}
+
 											{props.data.revision_vendor.vendor.file_tdp ?
 												<p className="mb-3 flex gap-3">
 													:
@@ -2065,144 +2401,7 @@ export default function Index(props) {
 														: ''}
 												</p>
 												: ''}
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_nib !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_nib ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor.file_nib != "" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	4
-																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_nib",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNibStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_nib",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNibStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_nib_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_nib !=
-														props.data.revision_vendor
-															.vendor.expired_nib ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
-															{
-																props.data
-																	.latest_vendor
-																	.expired_nib
-															}
-														</span>
-													) : (
-														""
-													)
-												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_nib
-												}
-											</p>
+
 											<p className="mb-3 flex gap-3">
 												:
 												{/* {props.data.latest_vendor !=
@@ -2669,23 +2868,42 @@ export default function Index(props) {
 											<p className="text-sm text-gray-500 mb-3">
 												Type
 											</p>
-											<p className="text-sm text-gray-500 mb-3">
+											<p className="text-sm text-gray-500 mb-4">
 												NPWP
 											</p>
-											<p className="text-sm text-gray-500 mb-3">
+											<p className="text-sm text-gray-500 mb-4">
 												SPPKP
 											</p>
-											<p className="text-sm text-gray-500 mb-3">
-												SIUP
-											</p>
+
+											{
+												props.data.revision_vendor.vendor.company_document_type ? (
+													props.data.revision_vendor.vendor.company_document_type === 'siup' ? (
+														<p className="text-sm text-gray-500 mb-4">
+															SIUP
+														</p>
+													) : (
+														<p className="text-sm text-gray-500 mb-4">
+															NIB
+														</p>
+													)
+												) : (
+													props.data.revision_vendor.vendor.file_siup ? (
+														<p className="text-sm text-gray-500 mb-4">
+															SIUP
+														</p>
+													) : (
+														<p className="text-sm text-gray-500 mb-4">
+															NIB
+														</p>
+													)
+												)
+											}
 											{props.data.revision_vendor.vendor.file_tdp ?
 												<p className="text-sm text-gray-500 mb-4">
 													TDP
 												</p>
 												: ''}
-											<p className="text-sm text-gray-500 mb-4">
-												NIB
-											</p>
+
 											<p className="text-sm text-gray-500 mb-4">
 												Akta Susunan Direksi
 											</p>
@@ -2954,173 +3172,463 @@ export default function Index(props) {
 														.vendor.expired_sppkp
 												}
 											</p>
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_siup !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_siup ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor.file_siup != "" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	2
+
+
+											{
+												props.data.revision_vendor.vendor.company_document_type ? (
+													props.data.revision_vendor.vendor.company_document_type === 'siup' ? (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_siup != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				2
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_siup_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_siup !=
+																	props.data.revision_vendor
+																		.vendor.expired_siup ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_siup
+																		}
+																	</span>
+																) : (
+																	""
 																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_siup",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileSiupStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_siup",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileSiupStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_siup_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_siup !=
-														props.data.revision_vendor
-															.vendor.expired_siup ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
+															) : (
+																""
+															)}
 															{
-																props.data
-																	.latest_vendor
-																	.expired_siup
+																props.data.revision_vendor
+																	.vendor.expired_siup
 															}
-														</span>
+														</p>
 													) : (
-														""
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_nib != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				4
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_nib_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_nib !=
+																	props.data.revision_vendor
+																		.vendor.expired_nib ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_nib
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+														</p>
 													)
 												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_siup
-												}
-											</p>
+													props.data.revision_vendor.vendor.file_siup ? (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_siup != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				2
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_siup",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileSiupStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileSiupStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_siup_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_siup !=
+																	props.data.revision_vendor
+																		.vendor.expired_siup ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_siup
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+															{
+																props.data.revision_vendor
+																	.vendor.expired_siup
+															}
+														</p>
+													) : (
+														<p className="mb-3 flex gap-3">
+															:
+															{props.data.revision_vendor
+																.vendor.file_nib != "" ? (
+																<>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			openPopup1(
+																				4
+																			)
+																		}
+																	>
+																		<svg
+																			xmlns="http://www.w3.org/2000/svg"
+																			fill="none"
+																			viewBox="0 0 24 24"
+																			strokeWidth={
+																				1.5
+																			}
+																			stroke="currentColor"
+																			className="w-6 h-6 ml-2"
+																		>
+																			<path
+																				strokeLinecap="round"
+																				strokeLinejoin="round"
+																				d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
+																			/>
+																		</svg>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				0
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<CheckCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					true
+																					? "green"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<a
+																		href="javascript:;"
+																		onClick={(e) =>
+																			clickStatusFile(
+																				"file_nib",
+																				1
+																			)
+																		}
+																		hidden={
+																			submitSuccess
+																		}
+																	>
+																		<XCircle
+																			className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
+																				null
+																				? "gray"
+																				: fileStatus.fileNibStatus ==
+																					false
+																					? "red"
+																					: "gray"
+																				}-500`}
+																		/>
+																	</a>
+																	<InputError
+																		message={
+																			errors.file_nib_validate
+																		}
+																	/>
+																</>
+															) : (
+																<p>-</p>
+															)}
+															/
+															{props.data.latest_vendor !=
+																null ? (
+																props.data.latest_vendor
+																	.expired_nib !=
+																	props.data.revision_vendor
+																		.vendor.expired_nib ? (
+																	<span
+																		className={`line-through text-red-600 mr-1`}
+																	>
+																		{
+																			props.data
+																				.latest_vendor
+																				.expired_nib
+																		}
+																	</span>
+																) : (
+																	""
+																)
+															) : (
+																""
+															)}
+														</p>
+													)
+												)
+											}
+
 											{props.data.revision_vendor.vendor.file_tdp ?
 												<p className="mb-3 flex gap-3">
 													:
-													{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_tdp !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_tdp ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
 													{props.data.revision_vendor.vendor.file_tdp ?
 														<>
 															{props.data.revision_vendor
@@ -3237,173 +3745,9 @@ export default function Index(props) {
 														: ''}
 												</p>
 												: ''}
+
 											<p className="mb-3 flex gap-3">
 												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_nib !=
-                                                    props.data.revision_vendor
-                                                        .vendor.file_nib ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor.file_nib != "" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	3
-																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_nib",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNibStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_nib",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNibStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNibStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_nib_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
-												)}
-												/
-												{props.data.latest_vendor !=
-													null ? (
-													props.data.latest_vendor
-														.expired_nib !=
-														props.data.revision_vendor
-															.vendor.expired_nib ? (
-														<span
-															className={`line-through text-red-600 mr-1`}
-														>
-															{
-																props.data
-																	.latest_vendor
-																	.expired_nib
-															}
-														</span>
-													) : (
-														""
-													)
-												) : (
-													""
-												)}
-												{
-													props.data.revision_vendor
-														.vendor.expired_nib
-												}
-											</p>
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_board_of_directors_composition !=
-                                                    props.data.revision_vendor
-                                                        .vendor
-                                                        .file_board_of_directors_composition ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
 												{props.data.revision_vendor
 													.vendor
 													.file_board_of_directors_composition !=
@@ -3891,9 +4235,6 @@ export default function Index(props) {
 												NPWP/KTP
 											</p>
 											<p className="text-sm text-gray-500 mb-3">
-												Surat Pernyataan Non PKP
-											</p>
-											<p className="text-sm text-gray-500 mb-3">
 												Lampiran Lainnya
 											</p>
 											{/* <p className='text-sm text-gray-500 mb-3'>E-KTP</p> */}
@@ -4013,122 +4354,6 @@ export default function Index(props) {
 													</>
 												) : (
 													""
-												)}
-												<p>&nbsp;</p>
-											</p>
-											<p className="mb-3 flex gap-3">
-												:
-												{/* {props.data.latest_vendor !=
-                                                null ? (
-                                                    props.data.latest_vendor
-                                                        .file_non_pkp_statement !=
-                                                    props.data.revision_vendor
-                                                        .vendor
-                                                        .file_non_pkp_statement ? (
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            strokeWidth={1.5}
-                                                            stroke="red"
-                                                            className="w-6 h-6 ml-2"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-                                                            />
-                                                        </svg>
-                                                    ) : (
-                                                        ""
-                                                    )
-                                                ) : (
-                                                    ""
-                                                )} */}
-												{props.data.revision_vendor
-													.vendor
-													.file_non_pkp_statement !=
-													"" ? (
-													<>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																openPopup1(
-																	1
-																)
-															}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																strokeWidth={
-																	1.5
-																}
-																stroke="currentColor"
-																className="w-6 h-6 ml-2"
-															>
-																<path
-																	strokeLinecap="round"
-																	strokeLinejoin="round"
-																	d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"
-																/>
-															</svg>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_non_pkp_statement",
-																	0
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<CheckCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNonPkpStatus ==
-																		true
-																		? "green"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<a
-															href="javascript:;"
-															onClick={(e) =>
-																clickStatusFile(
-																	"file_non_pkp_statement",
-																	1
-																)
-															}
-															hidden={
-																submitSuccess
-															}
-														>
-															<XCircle
-																className={`rounded-full text-white bg-${fileStatus.fileNonPkpStatus ==
-																	null
-																	? "gray"
-																	: fileStatus.fileNonPkpStatus ==
-																		false
-																		? "red"
-																		: "gray"
-																	}-500`}
-															/>
-														</a>
-														<InputError
-															message={
-																errors.file_non_pkp_statement_validate
-															}
-														/>
-													</>
-												) : (
-													<p>-</p>
 												)}
 												<p>&nbsp;</p>
 											</p>
