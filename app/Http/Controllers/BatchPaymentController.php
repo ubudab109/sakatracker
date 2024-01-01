@@ -653,11 +653,13 @@ class BatchPaymentController extends Controller
             if ($invoice->document_status != 'ditolak') {
                 $exchange_invoice = ExchangeInvoice::find($invoice->exchange_invoice_id);
                 $approver_payment_now = ApproverPayment::where('role_id', $data['user_role']->role_id)->first();
+                $batchPayment = BatchPaymentInvoice::where('batch_payment_id', $id)->where('exchange_invoice_id', $invoice->exchange_invoice_id)->first();
                 if ($approver_payment_now && ($approver_payment_now->level < $data['batch_payment']->level)) $data['batch_payment']->status = 'disetujui';
                 $exchange_invoice['jatuh_tempo'] = $invoice->jatuh_tempo;
                 $exchange_invoice['batch_invoice_id'] = $invoice->id;
                 $exchange_invoice['batch_invoice_status'] = $invoice->document_status;
                 $exchange_invoice['batch_invoice_notes'] = $invoice->notes;
+                $exchange_invoice['document_status'] = $batchPayment->document_status;
                 array_push($data['batch_payment_invoices'], $exchange_invoice);
             }
         }
@@ -680,59 +682,31 @@ class BatchPaymentController extends Controller
         return redirect('/admin/batch-payment');
     }
 
-    public function processBatchPayment($id)
+    public function processBatchPayment(Request $request, $id)
     {
-        $batch_payment = BatchPayment::find($id);
+        // dd(json_decode($request->invoices, true));
+        DB::beginTransaction();
+        try {
+            $batch_payment = BatchPayment::find($id);
 
-        $approver_payment_now = ApproverPayment::where('level', $batch_payment->level)->first();
-        if ($approver_payment_now) {
-            $checkRevisionBatchPayment = RevisionBatchPayment::where('approval_role', $approver_payment_now->role->name)->first();
-            if ($checkRevisionBatchPayment) {
-                $checkRevisionBatchPayment->update([
-                    'user_id' => Auth::user()->id,
-                    'submit_at' => date('Y-m-d H:i:s')
-                ]);
+            $approver_payment_now = ApproverPayment::where('level', $batch_payment->level)->first();
+            if ($approver_payment_now) {
+                $checkRevisionBatchPayment = RevisionBatchPayment::where('approval_role', $approver_payment_now->role->name)->first();
+                if ($checkRevisionBatchPayment) {
+                    $checkRevisionBatchPayment->update([
+                        'user_id' => Auth::user()->id,
+                        'submit_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
             }
-        }
 
-        $level = $batch_payment->level + 1;
+            $level = $batch_payment->level + 1;
 
-        $approver_payment = ApproverPayment::where('level', $level)->first();
+            $approver_payment = ApproverPayment::where('level', $level)->first();
 
-        while ($approver_payment != null) {
-            if ($batch_payment->total >= $approver_payment->start_fee) {
-                if ($approver_payment->end_fee == 0) {
-                    $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
-                    $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
-
-                    while ($sla_holiday || $dateCarbon->isWeekend()) {
-                        $dateCarbon->addDay();
-                        $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-                    }
-
-                    $revision = RevisionBatchPayment::create([
-                        'batch_payment_id' => $batch_payment->id,
-                        'approval_role' => $approver_payment->role->name,
-                        'sla_at' => $dateCarbon->addHours($approver_payment->sla)
-                    ]);
-
-                    $batch_payment->update([
-                        'level' => $approver_payment->level,
-                        'role_id' => $approver_payment->role_id,
-                    ]);
-
-                    $notificationData = [
-                        "title" => "Batch Payment Menunggu Verifikasi",
-                        "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " menunggu verifikasi",
-                        "url" => "/admin/batch-payment/" . $batch_payment->id,
-                        "user_id" => null,
-                    ];
-
-                    $this->sendBatchPaymentNotifications($approver_payment->role_id, $notificationData);
-
-                    break;
-                } else {
-                    if ($batch_payment->total <= $approver_payment->end_fee) {
+            while ($approver_payment != null) {
+                if ($batch_payment->total >= $approver_payment->start_fee) {
+                    if ($approver_payment->end_fee == 0) {
                         $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
                         $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
 
@@ -749,7 +723,7 @@ class BatchPaymentController extends Controller
 
                         $batch_payment->update([
                             'level' => $approver_payment->level,
-                            'role_id' => $approver_payment->role_id
+                            'role_id' => $approver_payment->role_id,
                         ]);
 
                         $notificationData = [
@@ -762,203 +736,118 @@ class BatchPaymentController extends Controller
                         $this->sendBatchPaymentNotifications($approver_payment->role_id, $notificationData);
 
                         break;
+                    } else {
+                        if ($batch_payment->total <= $approver_payment->end_fee) {
+                            $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
+                            $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+
+                            while ($sla_holiday || $dateCarbon->isWeekend()) {
+                                $dateCarbon->addDay();
+                                $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
+                            }
+
+                            $revision = RevisionBatchPayment::create([
+                                'batch_payment_id' => $batch_payment->id,
+                                'approval_role' => $approver_payment->role->name,
+                                'sla_at' => $dateCarbon->addHours($approver_payment->sla)
+                            ]);
+
+                            $batch_payment->update([
+                                'level' => $approver_payment->level,
+                                'role_id' => $approver_payment->role_id
+                            ]);
+
+                            $notificationData = [
+                                "title" => "Batch Payment Menunggu Verifikasi",
+                                "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " menunggu verifikasi",
+                                "url" => "/admin/batch-payment/" . $batch_payment->id,
+                                "user_id" => null,
+                            ];
+
+                            $this->sendBatchPaymentNotifications($approver_payment->role_id, $notificationData);
+
+                            break;
+                        }
                     }
+                }
+
+                $level++;
+                $approver_payment = ApproverPayment::where('level', $level)->first();
+            }
+
+            $countInvoiceBatchPayment = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->count();
+            $countRejectedInvoice = 0;
+            foreach (json_decode($request->invoices, true) as $invoice) {
+                if (!empty($invoice['document_status']) && $invoice['document_status'] == 'ditolak') {
+                    $countRejectedInvoice++;
+                    $exchangeInvoice = ExchangeInvoice::find($invoice['id']);
+                    $user = Auth::user()->name;
+                    $exchangeInvoice->update([
+                        'status' => 'ditolak',
+                        'note' => 'Cancel By '. $user. ' - '. $invoice['note'],
+                    ]);
+                    $batchPaymentInvoice = BatchPaymentInvoice::find($invoice['batch_invoice_id']);
+                    $batchPaymentInvoice->update([
+                        'document_status' => 'ditolak',
+                        'notes' => 'Cancel By '. $user. ' - '. $invoice['note'],
+                    ]);
                 }
             }
 
-            $level++;
-            $approver_payment = ApproverPayment::where('level', $level)->first();
-        }
-
-        $countInvoiceBatchPayment = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->count();
-        $countRejectedInvoice = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->where('document_status', 'ditolak')->count();
-        if ($countInvoiceBatchPayment == $countRejectedInvoice) {
-            $batch_payment->update([
-                'status' => 'ditolak'
-            ]);
-            $manager = Role::where('name', 'Manager')->first();
-
-            $notificationData = [
-                "title" => "Batch Payment Siap Dibayar",
-                "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " ditolak",
-                "url" => "/admin/siap-bayar/" . $batch_payment->id,
-                "user_id" => null,
-            ];
-            $this->sendBatchPaymentNotifications($manager->id, $notificationData);
-        } else {
-            if ($approver_payment == null) {
+            if ($countInvoiceBatchPayment == $countRejectedInvoice) {
+                
                 $batch_payment->update([
-                    'status' => 'ready to paid'
+                    'status' => 'ditolak'
                 ]);
-
-                $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->get();
-
-                foreach ($batch_payment_invoices as $data) {
-                    $invoice = ExchangeInvoice::find($data->exchange_invoice_id);
-                    $invoice->update([
-                        'status' => 'unpaid'
-                    ]);
-                }
-
                 $manager = Role::where('name', 'Manager')->first();
 
                 $notificationData = [
-                    "title" => "Batch Payment Siap Dibayar",
-                    "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " siap dibayar",
+                    "title" => "Batch Payment Ditolak",
+                    "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " ditolak",
                     "url" => "/admin/siap-bayar/" . $batch_payment->id,
                     "user_id" => null,
                 ];
-
                 $this->sendBatchPaymentNotifications($manager->id, $notificationData);
+            } else {
+                if ($approver_payment == null) {
+                    $batch_payment->update([
+                        'status' => 'ready to paid'
+                    ]);
+
+                    $batch_payment_invoices = json_decode($request->invoices, true);
+
+                    foreach ($batch_payment_invoices as $data) {
+                        if (!empty($data['document_status']) && $data['document_status'] != 'ditolak') {
+                            $invoice = ExchangeInvoice::find($data['id']);
+                            $invoice->update([
+                                'status' => 'unpaid'
+                            ]);
+                            $batchPaymentInvoice = BatchPaymentInvoice::find($data['batch_invoice_id']);
+                            $batchPaymentInvoice->update([
+                                'document_status' => 'approve',
+                                'notes' =>  $invoice['note'],
+                            ]);
+                        }
+                    }
+
+                    $manager = Role::where('name', 'Manager')->first();
+
+                    $notificationData = [
+                        "title" => "Batch Payment Siap Dibayar",
+                        "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " siap dibayar",
+                        "url" => "/admin/siap-bayar/" . $batch_payment->id,
+                        "user_id" => null,
+                    ];
+
+                    $this->sendBatchPaymentNotifications($manager->id, $notificationData);
+                }
             }
+            DB::commit();
+            return response()->json(['success' => true], 200);
+        } catch (\Exception $err) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $err->getMessage()], 500);
         }
-
-
-
-
-        // if ($approver_payment != null) {
-        //     if($batch_payment->total >= $approver_payment->start_fee)
-        //     {
-        // 		if($approver_payment->end_fee == 0)
-        // 		{
-        //             $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
-        //             $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
-
-        //             while ($sla_holiday || $dateCarbon->isWeekend()) {
-        //                 $dateCarbon->addDay();
-        //                 $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-        //             }
-
-        //             $revision = RevisionBatchPayment::create([
-        //                 'batch_payment_id' => $batch_payment->id,
-        //                 'approval_role' => $approver_payment->role->name,
-        //                 'sla_at' => $dateCarbon->addHours($approver_payment->sla)
-        //             ]);
-
-        //             $batch_payment->update([
-        //                 'level' => $approver_payment->level,
-        //                 'role_id' => $approver_payment->role_id
-        //             ]);
-
-        //             $notificationData = [
-        //                 "title" => "Batch Payment Menunggu Verifikasi",
-        //                 "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " menunggu verifikasi",
-        //                 "url" => "/admin/batch-payment/" . $batch_payment->id,
-        //                 "user_id" => null,
-        //             ];
-
-        //             $this->sendBatchPaymentNotifications($approver_payment->role_id, $notificationData);
-        // 		} else {
-        // 			if($batch_payment->total <= $approver_payment->end_fee)
-        // 			{
-        //                 $sla_holiday = SlaHoliday::whereDate('date', date('Y-m-d H:i:s'))->first();
-        //                 $dateCarbon = Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
-
-        //                 while ($sla_holiday || $dateCarbon->isWeekend()) {
-        //                     $dateCarbon->addDay();
-        //                     $sla_holiday = SlaHoliday::whereDate('date', $dateCarbon)->first();
-        //                 }
-
-        //                 $revision = RevisionBatchPayment::create([
-        //                     'batch_payment_id' => $batch_payment->id,
-        //                     'approval_role' => $approver_payment->role->name,
-        //                     'sla_at' => $dateCarbon->addHours($approver_payment->sla)
-        //                 ]);
-
-        //                 $batch_payment->update([
-        //                     'level' => $approver_payment->level,
-        //                     'role_id' => $approver_payment->role_id
-        //                 ]);
-
-        //                 $notificationData = [
-        //                     "title" => "Batch Payment Menunggu Verifikasi",
-        //                     "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " menunggu verifikasi",
-        //                     "url" => "/admin/batch-payment/" . $batch_payment->id,
-        //                     "user_id" => null,
-        //                 ];
-
-        //                 $this->sendBatchPaymentNotifications($approver_payment->role_id, $notificationData);
-        // 			} 
-        //             // else {
-        //             //     $batch_payment->update([
-        //             //         'status' => 'ready to paid'
-        //             //     ]);
-
-        //             //     $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->get();
-
-        //             //     foreach ($batch_payment_invoices as $data) {
-        //             //         $invoice = ExchangeInvoice::find($data->exchange_invoice_id);
-        //             //         $invoice->update([
-        //             //             'status' => 'unpaid'
-        //             //         ]);
-        //             //     }
-
-        //             //     $manager = Role::where('name', 'Manager')->first();
-
-        //             //     $notificationData = [
-        //             //         "title" => "Batch Payment Siap Dibayar",
-        //             //         "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " siap dibayar",
-        //             //         "url" => "/admin/siap-bayar/" . $batch_payment->id,
-        //             //         "user_id" => null,
-        //             //     ];
-
-        //             //     $this->sendBatchPaymentNotifications($manager->id, $notificationData);
-        // 			// }
-        // 		}
-        //     } else {
-        //         $batch_payment->update([
-        //             'status' => 'ready to paid'
-        //         ]);
-
-        //         $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->get();
-
-        //         foreach ($batch_payment_invoices as $data) {
-        //             $invoice = ExchangeInvoice::find($data->exchange_invoice_id);
-        //             $invoice->update([
-        //                 'status' => 'unpaid'
-        //             ]);
-        //         }
-
-        //         $manager = Role::where('name', 'Manager')->first();
-
-        //         $notificationData = [
-        //             "title" => "Batch Payment Siap Dibayar",
-        //             "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " siap dibayar",
-        //             "url" => "/admin/siap-bayar/" . $batch_payment->id,
-        //             "user_id" => null,
-        //         ];
-
-        //         $this->sendBatchPaymentNotifications($manager->id, $notificationData);
-        //     }
-        // } else {
-        //     $batch_payment->update([
-        //         'status' => 'ready to paid'
-        //     ]);
-
-        //     $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $batch_payment->id)->get();
-
-        //     foreach ($batch_payment_invoices as $data) {
-        //         $invoice = ExchangeInvoice::find($data->exchange_invoice_id);
-        //         $invoice->update([
-        //             'status' => 'unpaid'
-        //         ]);
-        //     }
-
-        //     $manager = Role::where('name', 'Manager')->first();
-
-        //     $notificationData = [
-        //         "title" => "Batch Payment Siap Dibayar",
-        //         "description" => "Batch Payment dengan Nomor: " .  $batch_payment->no_batch . " siap dibayar",
-        //         "url" => "/admin/siap-bayar/" . $batch_payment->id,
-        //         "user_id" => null,
-        //     ];
-
-        //     $this->sendBatchPaymentNotifications($manager->id, $notificationData);
-        // }
-
-
-
-        return redirect()->back();
     }
 
 

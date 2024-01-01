@@ -13,7 +13,9 @@ export default function Table(props) {
     const tableRef = useRef(null);
 
     useEffect(() => {
-        $(tableRef.current).DataTable();
+        $(tableRef.current).DataTable({
+            order: [[3, 'desc']]
+        });
     }, []);
 
     function formatDate(timestamp) {

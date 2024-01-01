@@ -118,7 +118,7 @@ class SiapBayarController extends Controller
         if($data['batch_payment']->batch_payment_invoice)
         {
             $batch = $data['batch_payment']->id;
-            $checkBatchPaymentInvoices = BatchPaymentInvoice::where('batch_payment_id', $batch)->get();
+            $checkBatchPaymentInvoices = BatchPaymentInvoice::where('batch_payment_id', $batch)->where('document_status', '!=', 'ditolak')->get();
             $data['batch_payment']['jatuh_tempo'] = '-';
             foreach($checkBatchPaymentInvoices as $checkBatchPaymentInvoice)
             {
@@ -154,7 +154,7 @@ class SiapBayarController extends Controller
         }
 
         $data['batch_payment_invoices'] = [];
-        $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->get()
+        $batch_payment_invoices = BatchPaymentInvoice::where('batch_payment_id', $id)->where('document_status', '!=', 'ditolak')->get()
         ->map(function($batch_payment){
             $batch_payment['jatuh_tempo'] = '-';
             $exchangeInvoice = ExchangeInvoice::where('id', $batch_payment->exchange_invoice_id)->first();

@@ -309,7 +309,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/admin/batch-payment/{id}/delete', [BatchPaymentController::class, 'deleteBatchPayment'])->name('admin.batch-payment.delete');
     
-    Route::get('/admin/batch-payment/{id}/process', [BatchPaymentController::class, 'processBatchPayment'])->name('admin.batch-payment.update');
+    Route::any('/admin/batch-payment/{id}/process', [BatchPaymentController::class, 'processBatchPayment'])->name('admin.batch-payment.update');
 
     Route::get('/admin/batch-payment/reject/{id}', [BatchPaymentController::class, 'rejectBatchPayment'])->name('admin.batch-payment-reject');
     Route::put('/admin/batch-payment-invoice/{id}', [BatchPaymentController::class, 'updateStatusInvoiceBathPayment'])->name('admin.batch-payment-invoice.update');

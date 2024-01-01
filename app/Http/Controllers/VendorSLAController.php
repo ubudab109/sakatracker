@@ -144,59 +144,62 @@ class VendorSLAController extends Controller
         $data['permissions'] = $this->checkPermission('index');
 
         $approvers = ApproverVendor::with('role')
-        ->join('roles', 'approver_vendors.role_id', 'roles.id')
-        ->orderBy('roles.name')
-        ->get();
-        // $approverVendor = [];
+            ->join('roles', 'approver_vendors.role_id', 'roles.id')
+            ->orderBy('roles.name')
+            ->get();
+        $approverVendor = [];
         foreach ($approvers as $index => $approver) {
             $role = $approver->role;
             if (strtolower($role->name) == 'purchasing') {
                 $approvers[$index]['order'] = 0;
+                array_push($approverVendor, $approvers[$index]);
             } else if (strtolower($role->name) == 'legal') {
                 $approvers[$index]['order'] = 1;
+                array_push($approverVendor, $approvers[$index]);
             } else if (strtolower($role->name) == 'accounting') {
                 $approvers[$index]['order'] = 2;
-            } 
-            // else {
-            //     $approvers[$index]['order'] = $index;
-            // }
-            
+                array_push($approverVendor, $approvers[$index]);
+            }
         }
-        $sortedArray = collect($approvers)->sortBy('order')->values()->all();
+        $sortedArray = collect($approverVendor)->sortBy('order')->values()->all();
+        // dd($sortedArray);
         $data['approver_vendors'] = $sortedArray;
         // foreach ($approvers as $approver) {
         //     // if ($approver->role->)
         // }
         $data['vendors'] = Vendor::where('status_account', '!=', 'draft')
             ->orderBy('id', 'desc')
-            ->get()
-            ->map(function ($vendor) {
-                $approver_vendors = ApproverVendor::with('role')->get();
-                $vendor['total_sla'] = 0;
-                foreach ($approver_vendors as $approver_vendor) {
-                    $vendor[$approver_vendor->role->name] = 0;
-                    $getRevision = RevisionRegisterVendor::where('vendor_id', $vendor->id)
-                        ->where('approval_role', $approver_vendor->role->name)
-                        ->first();
+            ->get();
+        // dd($sortedArray);
+        foreach ($data['vendors'] as $vendor) {
+            $approver_vendors = $sortedArray;
+            $vendor['total_sla'] = 0;
+            foreach ($approver_vendors as $index => $approver_vendor) {
+                $vendor[$approver_vendor['name']] = 0;
+                $getRevision = RevisionRegisterVendor::where('vendor_id', $vendor->id)
+                    ->where('approval_role', $approver_vendor['name'])
+                    ->first();
 
-                    if ($getRevision) {
-
-                        if (!empty($getRevision->submit_at)) {
-                            if ($getRevision->submit_at < $getRevision->sla_at) {
-                                $vendor[$approver_vendor->role->name] = 1;
-                            } else {
-                                $vendor[$approver_vendor->role->name] = 2;
-                            }
-                        } else {
-                            $vendor[$approver_vendor->role->name] = 1;
+                if ($getRevision) {
+                    if ($getRevision->status == 'menunggu persetujuan') {
+                        $vendor['Purchasing'] += 1;
+                    }
+                    if (!empty($getRevision->submit_at)) {
+                        if (strtotime($getRevision->submit_at) < strtotime($getRevision->sla_at)) {
+                            $vendor[$approver_vendor['name']] += 1;
                         }
                     }
-
-                    $vendor['total_sla'] += $vendor[$approver_vendor->role->name];
+                    //  else {
+                    //     $getPrevRevision = RevisionRegisterVendor::where('vendor_id', $vendor->id)
+                    //     ->where('approval_role', $approver_vendor[]['name'])
+                    //     ->first();
+                    //     $vendor[$approver_vendor['name']] += 1;
+                    // }
                 }
 
-                return $vendor;
-            });
+                $vendor['total_sla'] += $vendor[$approver_vendor['name']];
+            }
+        }
 
         return Inertia::render('Admin/MonitoringSLA/Vendor/Index', [
             'data' => $data

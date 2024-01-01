@@ -94,7 +94,7 @@ class AdminExchangeInvoiceController extends Controller
             ->where('level', $revision->level - 1)
             ->first();
             if($checkStatusRevision) {
-                if($checkStatusRevision->status == 'disetujui') {
+                if($checkStatusRevision->status != 'ditolak' || str_contains($checkStatusRevision->status, 'ditolak')) {
                     array_push($revisionId, $revision->id);
                 }
             }
@@ -107,7 +107,6 @@ class AdminExchangeInvoiceController extends Controller
                     {
                            $q->where('approval_permission', 'is_pic_exchange_invoice');
                     } else {
-                            $q->where('user_id', Auth::user()->id);
                          $q->where('status', 'menunggu persetujuan');
                     }
                  } else {
@@ -182,7 +181,7 @@ class AdminExchangeInvoiceController extends Controller
             ->where('level', $revision->level - 1)
             ->first();
             if($checkStatusRevision) {
-                if($checkStatusRevision->status == 'disetujui') {
+                if($checkStatusRevision->status != 'ditolak' || str_contains($checkStatusRevision->status, 'ditolak')) {
                     array_push($revisionId, $revision->id);
                 }
             }

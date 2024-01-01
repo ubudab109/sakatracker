@@ -5,13 +5,14 @@ import { Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import $ from 'jquery';
 import 'datatables.net';
-import { CheckSquare, Edit, Eye, Info, X } from 'react-feather';
+import { CheckCircle, CheckSquare, Edit, Eye, Info, X, XCircle } from 'react-feather';
 import axios from 'axios';
 import Modal from '@/Components/Modal';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
 import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
 
 
 
@@ -19,7 +20,7 @@ export default function ShowBatchTable(props) {
     // console.log(props);
 
     const tableRef = useRef(null);
-
+    const [invoices, setInvoices] = useState(props.data ?? []);
     const [currentIdInvoice, setCurrentIdInvoice] = useState('');
     const [isModalRejectOpen, setIsModalRejectOpen] = useState(false);
     const [isModalApproveOpen, setIsModalApproveOpen] = useState(false);
@@ -50,14 +51,19 @@ export default function ShowBatchTable(props) {
         setIsModalApproveOpen(false);
     }
 
-    const openModal = (type, id) => {
-        setCurrentIdInvoice(id);
-        if (type === 'ditolak') {
-            setIsModalRejectOpen(true);
-        } else if (type === 'disetujui') {
-            setIsModalApproveOpen(true);
-        }
+    const noteOnChange = (index, event) => {
+        const cloneInvoices = [...invoices];
+        cloneInvoices[index]['note'] = event.target.value;
+        setInvoices(cloneInvoices);
+    };
+
+    const approveRejectInvoice = (index, type) => {
+        const cloneInvoices = [...invoices];
+        cloneInvoices[index]['document_status'] = type;
+        cloneInvoices[index]['note'] = '';
+        setInvoices(cloneInvoices);
     }
+
     useEffect(() => {
 
     }, []);
@@ -87,44 +93,6 @@ export default function ShowBatchTable(props) {
 
     return (
         <div className="pt-6">
-            <Modal show={isModalRejectOpen} onClose={closeModal}>
-                <div className='border-b-2 p-3'>
-                    <b>Are you sure you want to reject this invoices?</b>
-                </div>
-                <div className="border-b-2 p-3">
-                    <div>
-                        <InputLabel value="Notes" className="font-bold" required={false} />
-                        <input
-                            type="text"
-                            name="notes"
-                            required
-                            className="border-gray-300 focus:border-gray-800 focus:ring-gray-800 rounded-md shadow-sm mt-1 block w-full"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                        />
-                        <InputError message={errorNotes} className="mt-2" />
-                    </div>
-                </div>
-                <div className="p-3">
-                    <div className="mt-6 flex justify-end gap-3">
-                        <SecondaryButton onClick={closeModal}>Close</SecondaryButton>
-                        <PrimaryButton onClick={() => updateInvoiceBatchPayment('ditolak')}>Submit</PrimaryButton>
-                    </div>
-                </div>
-            </Modal>
-
-            <Modal show={isModalApproveOpen} onClose={closeModal}>
-                <div className='border-b-2 p-3'>
-                    <b>Are you sure you want to Approve this invoices?</b>
-                </div>
-                <div className="p-3">
-                    <div className="mt-6 flex justify-end gap-3">
-                        <SecondaryButton onClick={closeModal}>Close</SecondaryButton>
-                        <PrimaryButton onClick={() => updateInvoiceBatchPayment('disetujui')}>Submit</PrimaryButton>
-                    </div>
-                </div>
-            </Modal>
-
             <div className="max-w-7xl mx-auto">
                 <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full overflow-x-auto">
                     <table ref={tableRef} className="w-full table">
@@ -142,8 +110,8 @@ export default function ShowBatchTable(props) {
                             </tr>
                         </thead>
                         <tbody>
-                            {props.data.map((item, index) => (
-                                <tr>
+                            {invoices.map((item, index) => (
+                                <tr key={index}>
                                     <td>
                                         <div className='flex gap-1'>
                                             <a href={route('admin.exchange-invoice.show', { id: item.id, batchId: props.batchId })} className='text-gray-500'>
@@ -160,16 +128,39 @@ export default function ShowBatchTable(props) {
                                     <td className='border border-slate-600' width={1}>
                                         <div className='flex gap-1'>
                                             <>
-                                                <div style={{cursor: 'pointer'}} onClick={() => openModal('disetujui', item.batch_invoice_id)}>
-                                                    <CheckSquare color="green" />
+                                                <div style={{ cursor: 'pointer' }} onClick={() => approveRejectInvoice(index, 'approve')}>
+                                                    <CheckCircle
+                                                        className={`rounded-full text-white bg-${!item.document_status ? "gray"
+                                                            : item.document_status ==
+                                                                'approve'
+                                                                ? "green"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
                                                 </div>
-                                                <div style={{cursor: 'pointer'}} onClick={() => openModal('ditolak', item.batch_invoice_id)}>
-                                                    <X color="red" />
+                                                <div style={{ cursor: 'pointer' }} onClick={() => approveRejectInvoice(index, 'reject')}>
+                                                    <XCircle
+                                                        className={`rounded-full text-white bg-${!item.document_status
+                                                            ? "gray"
+                                                            : item.document_status ==
+                                                                'reject'
+                                                                ? "red"
+                                                                : "gray"
+                                                            }-500`}
+                                                    />
                                                 </div>
                                             </>
                                         </div>
                                     </td>
-                                    <td>{item.batch_invoice_notes}</td>
+                                    <td>
+                                        {
+                                            !item.document_status ? null : (
+                                                item.document_status === 'reject' ? (
+                                                    <TextInput type="text" onChange={e => noteOnChange(index, e)} value={item.note} />
+                                                ) : item.notes ?? '-'
+                                            )
+                                        }
+                                    </td>
 
                                 </tr>
                             ))}
