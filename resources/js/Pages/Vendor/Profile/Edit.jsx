@@ -84,7 +84,7 @@ export default function Edit(props) {
     );
     const [objectFilesUrl, setObjectFilesUrl] = useState([]);
     const [limitedFiles, setLimitedFiles] = useState(0);
-    const [documentCompanyType, setDocumentCompanyType] = useState(props.data.vendor.file_siup ? 'SIUP' : (props.data.vendor.file_nib ? props.data.vendor.file_nib : ''));
+    const [documentCompanyType, setDocumentCompanyType] = useState(props.data.vendor ? (props.data.vendor.company_document_type ? props.data.vendor.company_document_type : 'siup') : '');
 
 
     const handleDocumentType = (e) => {
@@ -1366,7 +1366,7 @@ export default function Edit(props) {
                                                         name="document_company_type"
                                                         className="form-checkbox"
                                                         value="SIUP"
-                                                        checked={documentCompanyType === 'SIUP'}
+                                                        checked={documentCompanyType === 'siup'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">SIUP</span>
@@ -1377,7 +1377,7 @@ export default function Edit(props) {
                                                         name="document_company_type"
                                                         className="form-checkbox"
                                                         value="NIB"
-                                                        checked={documentCompanyType === 'NIB'}
+                                                        checked={documentCompanyType === 'nib'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">NIB</span>
@@ -1600,7 +1600,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         {
-                                            documentCompanyType === 'SIUP' ? (
+                                            documentCompanyType === 'siup' ? (
                                                 <div className="mb-3">
                                                     <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
                                                     <TextInput
@@ -1731,7 +1731,7 @@ export default function Edit(props) {
                                                         name="document_company_type"
                                                         className="form-checkbox"
                                                         value="SIUP"
-                                                        checked={documentCompanyType === 'SIUP'}
+                                                        checked={documentCompanyType === 'siup'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">SIUP</span>
@@ -1742,7 +1742,7 @@ export default function Edit(props) {
                                                         name="document_company_type"
                                                         className="form-checkbox"
                                                         value="NIB"
-                                                        checked={documentCompanyType === 'NIB'}
+                                                        checked={documentCompanyType === 'nib'}
                                                         onChange={handleDocumentType}
                                                     />
                                                     <span className="ml-2">NIB</span>
@@ -1983,7 +1983,7 @@ export default function Edit(props) {
                                             />
                                         </div>
                                         {
-                                            documentCompanyType === 'SIUP' ? (
+                                            documentCompanyType === 'siup' ? (
                                                 <div className="mb-3">
                                                     <InputLabel value="Tanggal Expired SIUP" className="font-bold" required={true} />
                                                     <TextInput

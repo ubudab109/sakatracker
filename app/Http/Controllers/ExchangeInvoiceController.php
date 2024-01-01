@@ -962,21 +962,39 @@ class ExchangeInvoiceController extends Controller
                                 'level' => 0
                             ]);
 
-                            $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
-                            foreach ($rolePermissions as $rolePermission) {
-                                $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
-                                foreach ($user_roles as $user_role) {
-                                    $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
-                                    $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
-                                    $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
+                            $user = User::whereHas('user_role.role', function ($query) {
+                                $query->whereIn('name', ['PIC TUKAR FAKTUR', 'Preparer']);
+                            })->first();
 
-                                    Notification::create([
-                                        'user_id' => $user_role->user_id,
-                                        'title' => $notifApprover['title'],
-                                        'description' => $notifApprover['description'],
-                                        'url' => $notifApprover['url'],
-                                    ]);
-                                    $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
+                            if ($user) {
+                                $notifApprover1['title'] = 'E-faktur telah direvisi, dan data dikembalikan ke pic e-faktur';
+                                $notifApprover1['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
+                                $notifApprover1['url'] = '/admin/exchange-invoice/' . $data->id;
+
+                                Notification::create([
+                                    'user_id' => $user->id,
+                                    'title' => $notifApprover1['title'],
+                                    'description' => $notifApprover1['description'],
+                                    'url' => $notifApprover1['url'],
+                                ]);
+                                $mail = Mail::to($user->email)->send(new ApproverInvoiceMail($notifApprover1));
+                            } else {
+                                $rolePermissions = RolePermission::where('name', 'is_pic_exchange_invoice')->get();
+                                foreach ($rolePermissions as $rolePermission) {
+                                    $user_roles = UserRole::where('role_id', $rolePermission->role_id)->get();
+                                    foreach ($user_roles as $user_role) {
+                                        $notifApprover['title'] = 'E-faktur Menunggu Verifikasi';
+                                        $notifApprover['description'] = 'E-faktur dengan ID Tukar Faktur: ' . $data->tax_invoice_number;
+                                        $notifApprover['url'] = '/admin/exchange-invoice/' . $data->id;
+    
+                                        Notification::create([
+                                            'user_id' => $user_role->user_id,
+                                            'title' => $notifApprover['title'],
+                                            'description' => $notifApprover['description'],
+                                            'url' => $notifApprover['url'],
+                                        ]);
+                                        $mail = Mail::to($user_role->user->email)->send(new ApproverInvoiceMail($notifApprover));
+                                    }
                                 }
                             }
                         }

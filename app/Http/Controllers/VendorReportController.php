@@ -89,27 +89,26 @@ class VendorReportController extends Controller
         $revisionApproved = 0;
         $revisionRejected = 0;
         $revisionProgress = 0;
-        Vendor::where('user_id', Auth::user()->id)
+        $vendors = Vendor::where('user_id', Auth::user()->id)
             ->with('revision_register_vendor_latest')
-            ->orderBy('updated_at', 'desc')->get()
-            ->map(function ($vendor) use ($revisionApproved, $revisionProgress, $revisionRejected) {
-                if ($vendor->status_account == 'ditolak') {
-                    $revisionRejected += 1;
-                }
+            ->orderBy('updated_at', 'desc')->get();
+        foreach ($vendors as $vendor) {
+            if ($vendor->status_account == 'ditolak') {
+                $revisionRejected++;
+            }
 
-                if ($vendor->status_account == 'pengajuan perubahan') {
-                    $revisionProgress += 1;
-                }
+            if ($vendor->status_account == 'pengajuan perubahan') {
+                $revisionProgress++;
+            }
 
-                if ($vendor->status_account == 'disetujui') {
-                    $revisionApproved += 1;
-                }
-
-                return $vendor;
-            });
+            if ($vendor->status_account == 'disetujui') {
+                $revisionApproved++;
+            }
+        }
         $data['revisionApproved'] = $revisionApproved;
         $data['revisionRejected'] = $revisionRejected;
         $data['revisionProgress'] = $revisionProgress;
+        // dd($data);
         return $data;
     }
 

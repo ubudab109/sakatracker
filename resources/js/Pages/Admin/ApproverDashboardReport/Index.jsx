@@ -72,6 +72,7 @@ export default function Index(props) {
                 <CardDashboardChart name="New Invoice Batch" data={props.data.card_bp_new} />
                 <CardDashboardChart name="Pending Invoice Batch" data={props.data.card_bp_pending} />
                 <CardDashboardChart name="Reject Invoice Batch" data={props.data.card_bp_rejected} />
+                <CardDashboardChart name="Vendor Waiting Approval" data={props.data.card_need_approval_vendor} />
             </div>
 
             {/* <CardOutstanding className="pt-6" data={props.data.card_outstanding} month={data.month} /> */}

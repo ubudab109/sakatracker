@@ -625,11 +625,10 @@ class VendorController extends Controller
             // $file_sppkp = 'required|mimes:pdf|max:5000';
             $expired_sppkp = 'required|date|date_format:Y-m-d';
             // $file_siup = 'required|mimes:pdf|max:5000';
-            $expired_siup = 'required|date|date_format:Y-m-d';
+            $expired_siup = 'date|date_format:Y-m-d';
             // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = '';
             // $file_nib = 'required|mimes:pdf|max:5000';
-            $expired_nib = 'required|date|date_format:Y-m-d';
             // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
             // $file_non_pkp_statement = 'required|mimes:pdf|max:5000';
         }
@@ -644,7 +643,6 @@ class VendorController extends Controller
             // $file_tdp = 'required|mimes:pdf|max:5000';
             $expired_tdp = '';
             // $file_nib = 'required|mimes:pdf|max:5000';
-            $expired_nib = 'required|date|date_format:Y-m-d';
             // $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
         }
 
@@ -663,7 +661,7 @@ class VendorController extends Controller
                     $file_tdp = 'max:5000';
                 }
                 if ($data->file_nib == null) {
-                    $file_nib = 'required|mimes:pdf|max:5000';
+                    $file_nib = 'mimes:pdf|max:5000';
                 }
                 if ($data->file_board_of_directors_composition == null) {
                     $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
@@ -676,13 +674,13 @@ class VendorController extends Controller
                     $file_sppkp = 'required|mimes:pdf|max:5000';
                 }
                 if ($data->siup_note != null && $data->siup_note != 'acc' && $data->siup_note != 'done revisi') {
-                    $file_siup = 'required|mimes:pdf|max:5000';
+                    $file_siup = 'mimes:pdf|max:5000';
                 }
                 if ($data->tdp_note != null && $data->tdp_note != 'acc' && $data->tdp_note != 'done revisi') {
                     $file_tdp = 'max:5000';
                 }
                 if ($data->nib_note != null && $data->nib_note != 'acc' && $data->nib_note != 'done revisi') {
-                    $file_nib = 'required|mimes:pdf|max:5000';
+                    $file_nib = 'mimes:pdf|max:5000';
                 }
                 if ($data->board_of_directors_composition_note != null && $data->board_of_directors_composition_note != 'acc' && $data->board_of_directors_composition_note != 'done revisi') {
                     $file_board_of_directors_composition = 'required|mimes:pdf|max:5000';
@@ -703,13 +701,13 @@ class VendorController extends Controller
                     $file_npwp = 'required|mimes:pdf|max:5000';
                 }
                 if ($data->file_non_pkp_statement == null) {
-                    $file_non_pkp_statement = 'required|mimes:pdf|max:5000';
+                    $file_non_pkp_statement = 'mimes:pdf|max:5000';
                 }
                 if ($data->npwp_note != null && $data->npwp_note != 'acc' && $data->npwp_note != 'done revisi') {
                     $file_npwp = 'required|mimes:pdf|max:5000';
                 }
                 if ($data->non_pkp_statement_note != null && $data->non_pkp_statement_note != 'acc' && $data->non_pkp_statement_note != 'done revisi') {
-                    $file_non_pkp_statement = 'required|mimes:pdf|max:5000';
+                    $file_non_pkp_statement = 'mimes:pdf|max:5000';
                 }
                 // if($data->file_front_page_bank == null) {$file_front_page_bank = 'required|mimes:pdf|max:5000';}
                 // if($data->file_bank_account_statement_letter == null) {$file_bank_account_statement_letter = 'required|mimes:pdf|max:5000';}

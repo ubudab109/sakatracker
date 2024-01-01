@@ -19,9 +19,11 @@ class ApproverDashboardReportController extends Controller
 {
     public function index(Request $request)
     {
+        // dd('test');
         $data['month'] = $request->month ?? date('Y-m');
         $data['month_name'] = date('F', strtotime($data['month']));
         $data['card_new_invoice'] = $this->cardInvoice('new', $data['month']);
+        $data['card_need_approval_vendor'] = $this->cardVendorApproval();
         $data['card_pending_invoice'] = $this->cardInvoice('pending', $data['month']);
         $data['card_bp_new'] = $this->cardBatchPayments('new', $data['month']);
         $data['card_bp_pending'] = $this->cardBatchPayments('pending', $data['month']);
@@ -30,6 +32,67 @@ class ApproverDashboardReportController extends Controller
         return Inertia::render('Admin/ApproverDashboardReport/Index', [
             'data' => $data
         ]);
+    }
+
+    private function cardVendorApproval()
+    {
+        $roleUser = [];
+        if(Auth::user()->user_role != null) {
+            foreach(Auth::user()->user_role as $item) {
+                array_push($roleUser, $item->role->name);
+            }
+        }
+        $registerList = RevisionRegisterVendor::
+        where('status', 'menunggu persetujuan')
+        ->whereDoesntHave('vendor', function($q){
+            $q->where('status_account', 'ditolak');
+        })
+        ->whereHas('vendor.user')
+        ->whereIn('approval_role', $roleUser)
+        ->orderBy('id', 'desc')
+        ->get();
+
+        $vendorIds = []; // Untuk melacak vendor_id yang telah muncul
+
+        $data['revision_vendors'] = $registerList->filter(function ($item) use (&$vendorIds, $roleUser) {
+            if (!in_array($item->vendor_id, $vendorIds)) {
+                $vendorIds[] = $item->vendor_id; // Menambahkan vendor_id ke dalam array
+
+                $arrayRegister = RevisionRegisterVendor::where('vendor_id', $item->vendor_id)
+                ->where('status', 'disetujui')
+                ->orderBy('id', 'desc')
+                ->first();
+				
+				if($arrayRegister)
+				{
+					if($item->id - 1 == $arrayRegister->id)
+					{
+						return true;
+					}
+				} else {
+					$arrayRegisterCheck = RevisionRegisterVendor::
+				    where('vendor_id', $item->vendor_id)
+					->where('status', 'menunggu persetujuan')
+					->orderBy('id', 'asc')
+					->first();
+					if($arrayRegisterCheck->id == $item->id)
+					{
+						return true;
+					}
+				}
+                
+            }
+
+            return false;
+        })
+        ->pluck('id');
+		
+        $totalApprovalVendor = RevisionRegisterVendor::with('vendor.user')
+        ->whereIn('id', $data['revision_vendors'])
+        ->orderBy('id', 'desc')
+        ->count();
+
+        return $totalApprovalVendor;
     }
 
     private function cardBatchPayments(string $type, $month)
@@ -60,6 +123,7 @@ class ApproverDashboardReportController extends Controller
         }
         return $batchPayment;
     }
+
     private function cardInvoice(string $type, $month)
     {
         $startOfMonth = Carbon::parse($month . '-01');
