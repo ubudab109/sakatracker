@@ -4,7 +4,7 @@ import 'datatables.net-dt/css/jquery.dataTables.min.css';
 import Dropdown from '@/Components/Dropdown';
 import $ from 'jquery';
 import 'datatables.net';
-import { Edit, Trash, X, Check } from 'react-feather';
+import { Edit, Trash, X, Check, Eye } from 'react-feather';
 
 export default function Table(props) {
     console.log(props);
@@ -16,7 +16,7 @@ export default function Table(props) {
 
     useEffect(() => {
         $(tableRef.current).DataTable({
-            order:[[4, 'desc']]
+            order: [[4, 'desc']]
         });
     }, []);
 
@@ -42,11 +42,17 @@ export default function Table(props) {
                             {props.data.map((item, index) => (
                                 <tr className="border-t bg-gray-100">
                                     <td className='border border-slate-600'>
-                                        {item.status == 'reject' ?
+
+                                        <div className='flex gap-1'>
+                                            {item.status == 'reject' ?
+                                                <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
+                                                    <Edit />
+                                                </a>
+                                                : '-'}
                                             <a href={route(props.routeEdit, item.id)} className='text-blue-500'>
-                                                <Edit />
+                                                <Eye />
                                             </a>
-                                        : '-'}
+                                        </div>
                                     </td>
                                     <td className='border border-slate-600'>{item.po_number}</td>
                                     <td className='border border-slate-600'>{item.document_number}</td>
@@ -56,11 +62,11 @@ export default function Table(props) {
                                     <td className='border border-slate-600'>{item.unit_price}</td>
                                     <td className='border border-slate-600'>{item.total_price}</td> */}
                                     <td className='border border-slate-600'>
-                                        {item.status == 'approved' ? 
+                                        {item.status == 'approved' ?
                                             <div className="badge bg-green-300 text-green-700 font-size-12">Approved</div>
-                                        : item.status == 'reject' ? 
-                                            <div className="badge bg-red-300 text-red-700 font-size-12">Rejected</div>
-                                        : <div className="badge bg-gray-300 text-gray-700 font-size-12 capitalize">{item.status}</div>
+                                            : item.status == 'reject' ?
+                                                <div className="badge bg-red-300 text-red-700 font-size-12">Rejected</div>
+                                                : <div className="badge bg-gray-300 text-gray-700 font-size-12 capitalize">{item.status}</div>
                                         }
                                     </td>
                                 </tr>
